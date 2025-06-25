@@ -26,6 +26,7 @@ public class ClothDesign : ModuleRules
 			new string[]
 			{
 				"Core",
+
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -44,7 +45,9 @@ public class ClothDesign : ModuleRules
 				"UnrealEd",
 				"LevelEditor",
 				"InteractiveToolsFramework",
-				"EditorInteractiveToolsFramework"
+				"EditorInteractiveToolsFramework",
+				"ToolMenus" // for 2d window
+
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

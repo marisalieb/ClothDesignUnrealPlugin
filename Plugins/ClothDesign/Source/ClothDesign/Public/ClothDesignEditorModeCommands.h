@@ -18,6 +18,9 @@ public:
 	TSharedPtr<FUICommandInfo> SimpleTool;
 	TSharedPtr<FUICommandInfo> InteractiveTool;
 
+	TSharedPtr<FUICommandInfo> Open2DWindow;
+
 protected:
 	TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> Commands;
 };
+

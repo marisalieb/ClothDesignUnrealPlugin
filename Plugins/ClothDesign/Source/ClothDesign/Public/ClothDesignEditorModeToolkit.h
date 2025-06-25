@@ -25,6 +25,8 @@ public:
 	// custom UI
 	virtual TSharedPtr<SWidget> GetInlineContent() const override;
 
+	FReply OnOpen2DWindowClicked();
+
 private:
 	TSharedPtr<SWidget> ToolkitWidget;
 };

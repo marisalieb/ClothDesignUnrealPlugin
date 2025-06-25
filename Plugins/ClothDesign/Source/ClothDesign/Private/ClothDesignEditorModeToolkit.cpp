@@ -27,7 +27,7 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 	.Padding(4)
 	[
 		SNew(STextBlock)
-		.Text(FText::FromString("Cloth Design Editor Mode"))
+		.Text(FText::FromString("Cloth Design Editor"))
 	]
 
 	+ SVerticalBox::Slot()
@@ -39,7 +39,9 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 		.AutoWidth()
 		[
 			SNew(SButton)
-			.Text(FText::FromString("Open 22D Window"))
+			.Text(FText::FromString("Open 2D Window"))
+			.OnClicked(FOnClicked::CreateSP(this, &FClothDesignEditorModeToolkit::OnOpen2DWindowClicked))
+
 		]
 
 		+ SHorizontalBox::Slot()
@@ -71,5 +73,16 @@ TSharedPtr<SWidget> FClothDesignEditorModeToolkit::GetInlineContent() const
 {
 	return ToolkitWidget;
 }
+
+
+FReply FClothDesignEditorModeToolkit::OnOpen2DWindowClicked()
+{
+	// Replace with your actual TabName if different
+	static const FName TwoDTabName("TwoDWindowTab");
+
+	FGlobalTabmanager::Get()->TryInvokeTab(TwoDTabName);
+	return FReply::Handled();
+}
+
 
 #undef LOCTEXT_NAMESPACE

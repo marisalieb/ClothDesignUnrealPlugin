@@ -15,4 +15,13 @@ public:
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
+	
+	void Spawn2DWindow();
+	TSharedRef<class SDockTab> OnSpawn2DWindowTab(const class FSpawnTabArgs& SpawnTabArgs);
+
+	static const FName TwoDTabName;
+
+private:
+	TSharedPtr<class FUICommandList> PluginCommands;
+
 };

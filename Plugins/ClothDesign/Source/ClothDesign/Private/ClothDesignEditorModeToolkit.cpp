@@ -48,7 +48,7 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 		.AutoWidth()
 		[
 			SNew(SButton)
-			.Text(FText::FromString("Save Pattern"))
+			.Text(FText::FromString("Save Pattern")) // needs additional functionality
 		]
 	];
 }
@@ -77,8 +77,7 @@ TSharedPtr<SWidget> FClothDesignEditorModeToolkit::GetInlineContent() const
 
 FReply FClothDesignEditorModeToolkit::OnOpen2DWindowClicked()
 {
-	// Replace with your actual TabName if different
-	static const FName TwoDTabName("TwoDWindowTab");
+	static const FName TwoDTabName("TwoDWindowTab"); // change name here
 
 	FGlobalTabmanager::Get()->TryInvokeTab(TwoDTabName);
 	return FReply::Handled();

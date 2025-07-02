@@ -54,7 +54,6 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 	return SNew(SDockTab)
 	  .TabRole(ETabRole::NomadTab)
 	  [
-		//—your custom window content here—
 		SNew(SBox)
 		.HAlign(HAlign_Center)
 		.VAlign(VAlign_Center)

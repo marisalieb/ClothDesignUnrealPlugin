@@ -4,8 +4,8 @@
 
 #include "Framework/Commands/Commands.h"
 
-/**
- * This class contains info about the full set of commands used in this editor mode.
+/*
+ This class contains info about the full set of commands used in this editor mode.
  */
 class FClothDesignEditorModeCommands : public TCommands<FClothDesignEditorModeCommands>
 {

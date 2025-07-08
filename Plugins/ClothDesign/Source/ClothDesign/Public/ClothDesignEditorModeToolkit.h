@@ -5,6 +5,9 @@
 #include "Toolkits/BaseToolkit.h"
 #include "ClothDesignEditorMode.h"
 
+#include "PropertyCustomizationHelpers.h"
+#include "GameFramework/Actor.h"
+
 /**
  * This FModeToolkit just creates a basic UI panel that allows various InteractiveTools to
  * be initialized, and a DetailsView used to show properties of the active Tool.
@@ -27,6 +30,25 @@ public:
 
 	FReply OnOpen2DWindowClicked();
 
+	
+	void OnClothObjectPicked(const FAssetData& AssetData);
+	TWeakObjectPtr<AActor> ClothActor;
+	
+	// TWeakObjectPtr<UObject> SelectedClothObject;
+	TWeakObjectPtr<USkeletalMesh> SelectedSkeletalMesh;
+	TWeakObjectPtr<USkeletalMesh> SelectedClothMesh;
+	TWeakObjectPtr<UMaterialInterface> SelectedTextileMaterial;
+
+
+	FString GetSelectedSkeletalMeshPath() const;
+	void OnSkeletalMeshSelected(const FAssetData& AssetData);
+
+	FString GetSelectedClothMeshPath() const;
+	void OnClothMeshSelected(const FAssetData& AssetData);
+
+	FString GetSelectedTextileMaterialPath() const;
+	void OnTextileMaterialSelected(const FAssetData& AssetData);
+	
 private:
 	TSharedPtr<SWidget> ToolkitWidget;
 };

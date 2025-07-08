@@ -46,7 +46,9 @@ public class ClothDesign : ModuleRules
 				"LevelEditor",
 				"InteractiveToolsFramework",
 				"EditorInteractiveToolsFramework",
-				"ToolMenus" // for 2d window
+				"ToolMenus", // for 2d window
+				"PropertyEditor",
+
 
 				// ... add private dependencies that you statically link with here ...	
 			}

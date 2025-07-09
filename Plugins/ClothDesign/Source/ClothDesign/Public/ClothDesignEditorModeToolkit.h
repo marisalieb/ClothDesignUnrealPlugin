@@ -31,15 +31,16 @@ public:
 	FReply OnOpen2DWindowClicked();
 
 	
-	void OnClothObjectPicked(const FAssetData& AssetData);
-	TWeakObjectPtr<AActor> ClothActor;
-	
+	// void OnClothObjectPicked(const FAssetData& AssetData);
+	// TWeakObjectPtr<AActor> ClothActor;
 	// TWeakObjectPtr<UObject> SelectedClothObject;
+
+	// objects for pickers: collision body mesh, cloth, object, material for fabric
 	TWeakObjectPtr<USkeletalMesh> SelectedSkeletalMesh;
 	TWeakObjectPtr<USkeletalMesh> SelectedClothMesh;
 	TWeakObjectPtr<UMaterialInterface> SelectedTextileMaterial;
 
-
+	// functions for each picker
 	FString GetSelectedSkeletalMeshPath() const;
 	void OnSkeletalMeshSelected(const FAssetData& AssetData);
 

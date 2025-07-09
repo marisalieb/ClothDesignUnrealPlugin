@@ -22,6 +22,8 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 	// custom UI
 	ToolkitWidget = SNew(SVerticalBox)
 
+
+	// title of the editor mode
 	// + SVerticalBox::Slot()
 	// .AutoHeight()
 	// .Padding(4)
@@ -29,7 +31,8 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 	// 	SNew(STextBlock)
 	// 	.Text(FText::FromString("Cloth Design Editor"))
 	// ]
-
+	
+	// open 2d button
 	+ SVerticalBox::Slot()
 	.AutoHeight()
 	.Padding(4)
@@ -44,17 +47,9 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 			.OnClicked(FOnClicked::CreateSP(this, &FClothDesignEditorModeToolkit::OnOpen2DWindowClicked))
 
 		]
-
-		// + SVerticalBox::Slot()
-		// // .AutoHeight()
-		// .FillHeight(1.0f)
-		// [
-		// 	SNew(SButton)
-		// 	.Text(FText::FromString("Save Pattern")) // needs additional functionality
-		// ]
 	]
 
-		
+	// collision body picker
 	+ SVerticalBox::Slot()
 	.AutoHeight()
 	.Padding(4)
@@ -79,7 +74,8 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 			.OnObjectChanged(this, &FClothDesignEditorModeToolkit::OnSkeletalMeshSelected)
 		]
 	]
-		
+	
+	// cloth object picker
 	+ SVerticalBox::Slot()
 	.AutoHeight()
 	.Padding(4)
@@ -105,6 +101,7 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 		]
 	]
 
+	// cloth material picker
 	+ SVerticalBox::Slot()
 	.AutoHeight()
 	.Padding(2)
@@ -130,6 +127,7 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 		]
 	]
 
+	// save button
 	+ SVerticalBox::Slot()
 	.AutoHeight()
 	.Padding(4)
@@ -183,7 +181,7 @@ void FClothDesignEditorModeToolkit::OnTextileMaterialSelected(const FAssetData& 
 
 
 
-
+/*
 void FClothDesignEditorModeToolkit::OnClothObjectPicked(const FAssetData& AssetData)
 {
 	UObject* PickedObject = AssetData.GetAsset();
@@ -192,12 +190,20 @@ void FClothDesignEditorModeToolkit::OnClothObjectPicked(const FAssetData& AssetD
 		ClothActor = PickedActor;
 		UE_LOG(LogTemp, Log, TEXT("Selected Cloth Actor: %s"), *PickedActor->GetName());
 	}
-}
+} 
+
+*/
 
 void FClothDesignEditorModeToolkit::GetToolPaletteNames(TArray<FName>& PaletteNames) const
 {
 	PaletteNames.Add(NAME_Default);
 }
+
+TSharedPtr<SWidget> FClothDesignEditorModeToolkit::GetInlineContent() const
+{
+	return ToolkitWidget;
+}
+
 
 
 FName FClothDesignEditorModeToolkit::GetToolkitFName() const
@@ -210,10 +216,9 @@ FText FClothDesignEditorModeToolkit::GetBaseToolkitName() const
 	return LOCTEXT("DisplayName", "ClothDesignEditorMode Toolkit");
 }
 
-TSharedPtr<SWidget> FClothDesignEditorModeToolkit::GetInlineContent() const
-{
-	return ToolkitWidget;
-}
+
+
+
 
 
 FReply FClothDesignEditorModeToolkit::OnOpen2DWindowClicked()

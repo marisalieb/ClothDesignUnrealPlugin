@@ -5,6 +5,7 @@
 #include "EdModeInteractiveToolsContext.h"
 #include "InteractiveToolManager.h"
 #include "ClothDesignEditorModeCommands.h"
+#include "ClothDesignStyle.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -31,9 +32,12 @@ UClothDesignEditorMode::UClothDesignEditorMode()
 	FModuleManager::Get().LoadModule("EditorStyle");
 
 	// appearance and icon in the editing mode ribbon can be customized here
-	Info = FEditorModeInfo(UClothDesignEditorMode::EM_ClothDesignEditorModeId,
+	Info = FEditorModeInfo(
+		UClothDesignEditorMode::EM_ClothDesignEditorModeId,
 		LOCTEXT("ModeName", "ClothDesign"),
 		FSlateIcon(),
+		// FSlateIcon(FClothDesignStyle::GetStyleSetName(), "ClothDesignEditorMode.Icon40"),
+
 		true);
 }
 

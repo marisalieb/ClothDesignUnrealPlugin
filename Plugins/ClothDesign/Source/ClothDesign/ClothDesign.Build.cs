@@ -48,6 +48,7 @@ public class ClothDesign : ModuleRules
 				"EditorInteractiveToolsFramework",
 				"ToolMenus", // for 2d window
 				"PropertyEditor",
+				"Projects",
 
 
 				// ... add private dependencies that you statically link with here ...	

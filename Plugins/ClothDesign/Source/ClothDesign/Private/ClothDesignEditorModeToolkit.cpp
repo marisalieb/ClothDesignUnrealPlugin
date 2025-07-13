@@ -23,7 +23,7 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 	ToolkitWidget = SNew(SVerticalBox)
 
 
-	// title of the editor mode
+	// // title of the editor mode
 	// + SVerticalBox::Slot()
 	// .AutoHeight()
 	// .Padding(4)
@@ -31,7 +31,7 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 	// 	SNew(STextBlock)
 	// 	.Text(FText::FromString("Cloth Design Editor"))
 	// ]
-	
+	//
 	// open 2d button
 	+ SVerticalBox::Slot()
 	.AutoHeight()

@@ -14,7 +14,7 @@
  * Take a look at the UEdMode markup for more extensibility options.
  */
 UCLASS()
-class UClothDesignEditorMode : public UEdMode
+class CLOTHDESIGN_API UClothDesignEditorMode : public UEdMode
 {
 	GENERATED_BODY()
 

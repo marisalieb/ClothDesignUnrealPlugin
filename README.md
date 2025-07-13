@@ -39,4 +39,15 @@ I am still working with these three main goals: pattern creation in 2D, edge-bas
 ### This empty 2D viewport opens from the button in the editor mode 
 ![photo](media/photo3.png)
 
+#
+#
 
+to run tests either go to Riders test section in the bar on the left and run the tests there by clicking 'run unit tests'. or go to UE: tools > session frontend > automation > search for your tests there and click run to check them in UE
+
+crtl shift b
+save before 
+
+
+
+
+in UE to switch between viewports click alt g h j k for the main different ones

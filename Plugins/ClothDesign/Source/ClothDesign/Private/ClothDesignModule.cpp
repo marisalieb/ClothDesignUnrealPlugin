@@ -58,7 +58,52 @@ void FClothDesignModule::Spawn2DWindow()
 	FGlobalTabmanager::Get()->TryInvokeTab(FName("TwoDWindowTab"));
 }
 
-//
+
+// TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
+// {
+// 	return SNew(SDockTab)
+// 		.TabRole(ETabRole::NomadTab)
+// 		[
+// 			SNew(SClothDesignCanvas) 
+// 		];
+// }
+
+TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
+{
+	return SNew(SDockTab)
+		.TabRole(ETabRole::NomadTab)
+		[
+			SNew(SVerticalBox)
+
+			// Button
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(10)
+			[
+				SNew(SButton)
+				.Text(FText::FromString("Generate Mesh"))
+				.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
+			]
+
+			// Canvas
+			+ SVerticalBox::Slot()
+			.FillHeight(1.0f)
+			[
+				SAssignNew(CanvasWidget, SClothDesignCanvas)
+			]
+		];
+}
+
+FReply FClothDesignModule::OnGenerateMeshClicked()
+{
+	if (CanvasWidget.IsValid())
+	{
+		CanvasWidget->TriangulateAndBuildMesh();
+	}
+	return FReply::Handled();
+}
+
+
 // TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
 // {
 // 	return SNew(SDockTab)
@@ -73,16 +118,6 @@ void FClothDesignModule::Spawn2DWindow()
 // 		]
 // 	  ];
 // }
-
-
-TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
-{
-	return SNew(SDockTab)
-		.TabRole(ETabRole::NomadTab)
-		[
-			SNew(SClothDesignCanvas) 
-		];
-}
 
 #undef LOCTEXT_NAMESPACE
 

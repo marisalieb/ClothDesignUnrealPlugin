@@ -26,7 +26,10 @@ public class ClothDesign : ModuleRules
 			new string[]
 			{
 				"Core",
-
+				"GeometryFramework", 
+				"MeshDescription", 
+				"StaticMeshDescription",
+				"ProceduralMeshComponent"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -49,6 +52,8 @@ public class ClothDesign : ModuleRules
 				"ToolMenus", // for 2d window
 				"PropertyEditor",
 				"Projects",
+				"GeometryCore",
+
 
 
 				// ... add private dependencies that you statically link with here ...	

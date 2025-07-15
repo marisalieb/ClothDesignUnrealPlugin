@@ -23,5 +23,9 @@ public:
 
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;
+	
+	TSharedPtr<class SClothDesignCanvas> CanvasWidget;
+
+	FReply OnGenerateMeshClicked();  // Declare the handler
 
 };

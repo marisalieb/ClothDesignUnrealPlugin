@@ -51,3 +51,8 @@ save before
 
 
 in UE to switch between viewports click alt g h j k for the main different ones
+
+
+sources:
+https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/GeometryCore/CompGeom/PolygonTriangulation__Triangulat-/1
+https://dev.epicgames.com/community/learning/tutorials/LZZo/unreal-engine-epic-games-store-chaos-cloth-updates-5-6

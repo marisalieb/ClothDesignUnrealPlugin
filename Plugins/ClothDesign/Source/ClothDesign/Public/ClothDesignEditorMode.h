@@ -3,6 +3,10 @@
 #pragma once
 
 #include "Tools/UEdMode.h"
+#include "UnrealWidget.h"
+#include "UnrealWidgetFwd.h"
+#include "EdMode.h"
+
 #include "ClothDesignEditorMode.generated.h"
 
 /**
@@ -13,23 +17,45 @@
  * The functions provided here are the minimum to get started inserting some custom behavior.
  * Take a look at the UEdMode markup for more extensibility options.
  */
-UCLASS()
+ UCLASS()
+
 class CLOTHDESIGN_API UClothDesignEditorMode : public UEdMode
+
+// class UClothDesignEditorMode : public FEdMode
 {
 	GENERATED_BODY()
 
 public:
 	const static FEditorModeID EM_ClothDesignEditorModeId;
-
+	
 	static FString SimpleToolName;
 	static FString InteractiveToolName;
-
+	
 	UClothDesignEditorMode();
-	virtual ~UClothDesignEditorMode();
+	virtual ~UClothDesignEditorMode() override;
+	
+	// const static FEditorModeID EM_ClothDesignEditorModeId;
+	//
+	// UClothDesignEditorMode();
+	// virtual ~UClothDesignEditorMode() override;
 
 	/** UEdMode interface */
 	virtual void Enter() override;
 	virtual void ActorSelectionChangeNotify() override;
-	virtual void CreateToolkit() override;
-	virtual TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> GetModeCommands() const override;
+	virtual void CreateToolkit() override; // took out override 
+	virtual TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> GetModeCommands() const; // took out override
+
+
+	virtual bool UsesTransformWidget() const { return true;}
+	// virtual bool UsesTransformWidget(UE::Widget::EWidgetMode InWidgetMode) const
+	// {
+	// 	return true; // You can also check InWidgetMode to conditionally enable move/rotate/scale
+	// }
+
+ 	
+ // private:
+ // 	class UInteractiveTool* ActiveTool;
+
+
+ 	
 };

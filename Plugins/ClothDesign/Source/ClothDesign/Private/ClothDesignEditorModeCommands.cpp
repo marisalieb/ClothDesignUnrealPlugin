@@ -10,7 +10,8 @@ FClothDesignEditorModeCommands::FClothDesignEditorModeCommands()
 	: TCommands<FClothDesignEditorModeCommands>("ClothDesignEditorMode",
 		NSLOCTEXT("ClothDesignEditorMode", "ClothDesignEditorModeCommands", "ClothDesign Editor Mode"),
 		NAME_None,
-		FEditorStyle::GetStyleSetName())
+		//FEditorStyle::GetStyleSetName())
+		FAppStyle::GetAppStyleSetName())
 {
 }
 

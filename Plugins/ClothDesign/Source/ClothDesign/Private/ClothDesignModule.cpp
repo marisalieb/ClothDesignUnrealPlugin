@@ -7,7 +7,10 @@
 #include "EditorModeManager.h"
 #include "ClothDesignEditorMode.h"
 #include "EditorModeRegistry.h"
-
+#include "Widgets/Docking/SDockTab.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Tickable.h"
+#include "Containers/Ticker.h"
 
 #define LOCTEXT_NAMESPACE "ClothDesignModule"
 
@@ -68,9 +71,19 @@ void FClothDesignModule::Spawn2DWindow()
 // 		];
 // }
 
+
+void FClothDesignModule::OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivationCause ActivationCause)
+{
+	if (CanvasWidget.IsValid())
+	{
+		FSlateApplication::Get().SetKeyboardFocus(CanvasWidget.ToSharedRef());
+	}
+}
+
 TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
 {
-	return SNew(SDockTab)
+	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
+	// SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
 			SNew(SVerticalBox)
@@ -79,12 +92,17 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 			+ SVerticalBox::Slot()
 			.AutoHeight()
 			.Padding(10)
+			.HAlign(HAlign_Left) // Optional: Align button to the left
 			[
-				SNew(SButton)
-				.Text(FText::FromString("Generate Mesh"))
-				.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
+				SNew(SBox)
+				.WidthOverride(150.f) // Set desired fixed width here
+				[
+					SNew(SButton)
+					.Text(FText::FromString("Generate Mesh"))
+					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
+				]
 			]
-
+			
 			// Canvas
 			+ SVerticalBox::Slot()
 			.FillHeight(1.0f)
@@ -92,7 +110,21 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 				SAssignNew(CanvasWidget, SClothDesignCanvas)
 			]
 		];
+	
+	// Delay focus until next tick/frame to ensure UI is ready
+	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this, NewTab](float DeltaTime)
+	{
+		if (CanvasWidget.IsValid())
+		{
+			FSlateApplication::Get().SetKeyboardFocus(CanvasWidget.ToSharedRef());
+		}
+		return false; // don't keep ticking
+	}));
+	
+	return NewTab;
+	
 }
+
 
 FReply FClothDesignModule::OnGenerateMeshClicked()
 {

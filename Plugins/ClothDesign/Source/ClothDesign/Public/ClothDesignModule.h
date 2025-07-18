@@ -20,6 +20,7 @@ public:
 	TSharedRef<class SDockTab> OnSpawn2DWindowTab(const class FSpawnTabArgs& SpawnTabArgs);
 
 	static const FName TwoDTabName;
+	void OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivationCause ActivationCause);
 
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;

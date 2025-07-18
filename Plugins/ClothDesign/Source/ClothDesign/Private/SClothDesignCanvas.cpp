@@ -3,35 +3,125 @@
 
 
 #include "CompGeom/PolygonTriangulation.h"
+#include "CompGeom/Delaunay2.h"
+#include "Curve/GeneralPolygon2.h"
+#include "Polygon2.h"
+#include "DynamicMesh/DynamicMesh3.h"
+#include "DynamicMeshEditor.h" 
 
+#include "MeshUtilitiesCommon.h"
+#include "Remesher.h"
+#include "DynamicMesh/DynamicMeshOctree3.h"
+#include "VectorTypes.h"
+#include "VectorTypes.h"
+#include "CompGeom/PolygonTriangulation.h"
+#include "DynamicMeshEditor.h"
 
-
+#include "CoreMinimal.h"
+#include "Math/MathFwd.h"
+#include "UObject/Class.h"
 // #include "SClothShapeCanvas.h"
 #include "Rendering/DrawElements.h"
 
 // using namespace UE::Geometry;
 
 
+
 void SClothDesignCanvas::Construct(const FArguments& InArgs)
 {
 	// Optional: set focusable, mouse events, etc.
+	// Example: just an empty canvas with custom drawing
+	ChildSlot
+	[
+		SNew(SOverlay)
+		+ SOverlay::Slot()
+		[
+			// You could add child widgets here, if needed
+			SNullWidget::NullWidget
+		]
+	];
+	
+	this->SetEnabled(true);
+	this->SetCanTick(true);
+	
+
+	FSlateApplication::Get().SetKeyboardFocus(SharedThis(this));
 }
 
-FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+// FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+// {
+// 	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+// 	{
+// 		const FVector2D LocalClickPos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
+// 		Points.Add(LocalClickPos);
+// 		return FReply::Handled();
+// 	}
+// 	return FReply::Unhandled();
+// }
+
+
+
+FVector2D SClothDesignCanvas::TransformPoint(const FVector2D& Point) const
 {
-	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	return (Point * ZoomFactor) + PanOffset;
+}
+
+FVector2D SClothDesignCanvas::InverseTransformPoint(const FVector2D& ScreenPoint) const
+{
+	return (ScreenPoint - PanOffset) / ZoomFactor;
+}
+
+
+int32 SClothDesignCanvas::OnPaint(
+	const FPaintArgs& Args,
+	const FGeometry& AllottedGeometry,
+	const FSlateRect& MyCullingRect,
+	FSlateWindowElementList& OutDrawElements,
+	int32 LayerId,
+	const FWidgetStyle& InWidgetStyle,
+	bool bParentEnabled) const
+{
+	
+	// --- Draw Grid ---
+	const FVector2D Size = AllottedGeometry.GetLocalSize();
+	const float GridSpacing = 100.f * ZoomFactor; // spacing in pixels
+
+	// Grid color
+	const FLinearColor GridColor(0.1f, 0.1f, 0.1f, 0.4f);
+
+	for (float x = FMath::Fmod(-PanOffset.X, GridSpacing); x < Size.X; x += GridSpacing)
 	{
-		const FVector2D LocalClickPos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
-		Points.Add(LocalClickPos);
-		return FReply::Handled();
+		FSlateDrawElement::MakeLines(
+			OutDrawElements,
+			LayerId,
+			AllottedGeometry.ToPaintGeometry(),
+			{ FVector2D(x, 0), FVector2D(x, Size.Y) },
+			ESlateDrawEffect::None,
+			GridColor,
+			true,
+			1.0f
+		);
 	}
-	return FReply::Unhandled();
-}
 
-int32 SClothDesignCanvas::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
-								 const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements,
-								 int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
-{
+	for (float y = FMath::Fmod(-PanOffset.Y, GridSpacing); y < Size.Y; y += GridSpacing)
+	{
+		FSlateDrawElement::MakeLines(
+			OutDrawElements,
+			LayerId,
+			AllottedGeometry.ToPaintGeometry(),
+			{ FVector2D(0, y), FVector2D(Size.X, y) },
+			ESlateDrawEffect::None,
+			GridColor,
+			true,
+			1.0f
+		);
+	}
+
+	// --- Advance Layer for shapes ---
+	LayerId++;
+
+
+	
 	// Draw lines between points
 	for (int32 i = 0; i < Points.Num() - 1; ++i)
 	{
@@ -39,7 +129,7 @@ int32 SClothDesignCanvas::OnPaint(const FPaintArgs& Args, const FGeometry& Allot
 			OutDrawElements,
 			LayerId,
 			AllottedGeometry.ToPaintGeometry(),
-			TArray<FVector2D>({ Points[i], Points[i + 1] }),
+		{ TransformPoint(Points[i]), TransformPoint(Points[i + 1]) },
 			ESlateDrawEffect::None,
 			FLinearColor::Gray,
 			true,
@@ -54,7 +144,7 @@ int32 SClothDesignCanvas::OnPaint(const FPaintArgs& Args, const FGeometry& Allot
 			OutDrawElements,
 			LayerId,
 			AllottedGeometry.ToPaintGeometry(),
-			TArray<FVector2D>({ Points.Last(), Points[0] }),
+			{ TransformPoint(Points.Last()), TransformPoint(Points[0]) },
 			ESlateDrawEffect::None,
 			FLinearColor::Gray,
 			true,
@@ -62,10 +152,220 @@ int32 SClothDesignCanvas::OnPaint(const FPaintArgs& Args, const FGeometry& Allot
 		);
 	}
 
+	// 3. Advance layer so points draw on top of lines
+	LayerId++;
+
+	// 4. Draw interactive points as boxes (highlight selected)
+	for (int32 i = 0; i < Points.Num(); ++i)
+	{
+		FVector2D DrawPos = TransformPoint(Points[i]);
+		FLinearColor Color = (i == SelectedPointIndex) ? FLinearColor::Yellow : FLinearColor::White;
+
+		FSlateDrawElement::MakeBox(
+			OutDrawElements,
+			LayerId,
+			AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3, 3), FVector2D(6, 6)),
+			FCoreStyle::Get().GetBrush("WhiteBrush"),
+			ESlateDrawEffect::None,
+			Color
+		);
+	}
+	
 	return LayerId;
 }
 
 
+FReply SClothDesignCanvas::OnMouseWheel(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+{
+	const float ScrollDelta = MouseEvent.GetWheelDelta();
+	const float ZoomDelta = 0.1f; // How fast to zoom
+
+	// Get mouse position relative to the widget
+	const FVector2D MousePos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
+
+	// Compute the world position under the mouse before zoom
+	const FVector2D WorldBeforeZoom = (MousePos - PanOffset) / ZoomFactor;
+
+	// Adjust zoom factor
+	ZoomFactor = FMath::Clamp(ZoomFactor + ScrollDelta * ZoomDelta, 0.1f, 10.0f);
+
+	// Recalculate pan offset to keep zoom centered under mouse
+	PanOffset = MousePos - WorldBeforeZoom * ZoomFactor;
+
+	// Repaint
+	Invalidate(EInvalidateWidget::LayoutAndVolatility);
+
+	return FReply::Handled();
+}
+
+
+
+FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnMouseButtonDown fired. Mode: %d"), (int32)CurrentMode);
+
+	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		const FVector2D LocalClickPos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
+		const FVector2D CanvasClickPos = InverseTransformPoint(LocalClickPos);
+
+		// Draw
+		if (CurrentMode == EClothEditorMode::Draw)
+		{
+			Points.Add(CanvasClickPos);
+			UE_LOG(LogTemp, Warning, TEXT("Draw mode: Added point at (%f, %f)"), CanvasClickPos.X, CanvasClickPos.Y);
+
+			return FReply::Handled();
+		}
+
+		// Select and Move
+		else if (CurrentMode == EClothEditorMode::Select) // || CurrentMode == EClothEditorMode::Move)
+		{
+			const float SelectionRadius = 10.0f;
+			for (int32 i = 0; i < Points.Num(); ++i)
+			{
+				if (FVector2D::Distance(Points[i], CanvasClickPos) < SelectionRadius / ZoomFactor)
+				{
+					SelectedPointIndex = i;
+					bIsShapeSelected = false;
+					bIsDraggingPoint = true;
+
+					UE_LOG(LogTemp, Warning, TEXT("Selected point %d"), i);
+
+					return FReply::Handled()
+						.CaptureMouse(SharedThis(this))
+						.SetUserFocus(SharedThis(this), EFocusCause::SetDirectly);
+				}
+			}
+
+			// No point selected, check if clicked near a line
+			const float LineSelectThreshold = 10.f / ZoomFactor;
+			for (int32 i = 0; i < Points.Num(); ++i)
+			{
+				const FVector2D A = Points[i];
+				const FVector2D B = Points[(i + 1) % Points.Num()]; // Loop around if closed
+
+				if (IsPointNearLine(CanvasClickPos, A, B, LineSelectThreshold))
+				{
+					bIsShapeSelected = true;
+					SelectedPointIndex = INDEX_NONE;
+					bIsDraggingShape = true;
+					return FReply::Handled().CaptureMouse(SharedThis(this));
+				}
+			}
+
+			
+			// Clicked on empty space; DESELECT
+			SelectedPointIndex = INDEX_NONE;
+			bIsDraggingPoint = false;
+			bIsShapeSelected = false;
+			UE_LOG(LogTemp, Warning, TEXT("Deselected all"));
+			return FReply::Handled()
+				.SetUserFocus(SharedThis(this), EFocusCause::SetDirectly);
+		}
+	}
+
+	return FReply::Unhandled();
+}
+
+FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+{
+	if ((CurrentMode == EClothEditorMode::Move || CurrentMode == EClothEditorMode::Select) && MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
+	{
+		if (bIsDraggingPoint && SelectedPointIndex != INDEX_NONE)
+		{
+			FVector2D LocalMousePos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
+			const FVector2D CanvasMousePos = InverseTransformPoint(LocalMousePos);
+
+			// Points[SelectedPointIndex] = InverseTransformPoint(LocalPos);
+			Points[SelectedPointIndex] = CanvasMousePos;
+
+			return FReply::Handled();
+		}
+	}
+
+	return FReply::Unhandled();
+}
+
+FReply SClothDesignCanvas::OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+{
+	if (bIsDraggingPoint && MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	// if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton && bIsDragging)
+	{
+		bIsDragging = false;
+		return FReply::Handled().ReleaseMouseCapture();
+	}
+
+	return FReply::Unhandled();
+}
+
+FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Key pressed: %s"), *InKeyEvent.GetKey().ToString());
+
+	const FKey Key = InKeyEvent.GetKey();
+
+
+	if (Key == EKeys::Delete || Key == EKeys::BackSpace)
+	{
+		if (SelectedPointIndex != INDEX_NONE && SelectedPointIndex < Points.Num())
+		{
+			Points.RemoveAt(SelectedPointIndex);
+			SelectedPointIndex = INDEX_NONE;
+			// You may also want to refresh/redraw the canvas here if needed
+		}
+		else if (bIsShapeSelected)
+		{
+			Points.Empty();
+			bIsShapeSelected = false;
+		}
+		return FReply::Handled();
+	}
+	
+	if (Key == EKeys::One)
+	{
+		CurrentMode = EClothEditorMode::Draw;
+		UE_LOG(LogTemp, Warning, TEXT("Switched to Draw mode"));
+		return FReply::Handled();
+	}
+	else if (Key == EKeys::Two)
+	{
+		CurrentMode = EClothEditorMode::Select;
+		UE_LOG(LogTemp, Warning, TEXT("Switched to Select/Move mode"));
+
+		return FReply::Handled();
+	}
+	// else if (InKeyEvent.GetKey() == EKeys::Three)
+	// {
+	// 	CurrentMode = EClothEditorMode::Move;
+	// 	UE_LOG(LogTemp, Warning, TEXT("Switched to Move mode"));
+	//
+	// 	return FReply::Handled();
+	// }
+
+	return FReply::Unhandled();
+}
+
+
+bool SClothDesignCanvas::IsPointNearLine(const FVector2D& P, const FVector2D& A, const FVector2D& B, float Threshold) const
+{
+	const FVector2D AP = P - A;
+	const FVector2D AB = B - A;
+
+	const float ABLengthSq = AB.SizeSquared();
+	if (ABLengthSq == 0.f) return false;
+
+	const float T = FMath::Clamp(FVector2D::DotProduct(AP, AB) / ABLengthSq, 0.f, 1.f);
+	const FVector2D ClosestPoint = A + T * AB;
+	return FVector2D::Distance(P, ClosestPoint) <= Threshold;
+}
+
+
+FReply SClothDesignCanvas::OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Canvas received keyboard focus"));
+	return FReply::Handled();
+}
 void SClothDesignCanvas::TriangulateAndBuildMesh()
 {
 	if (Points.Num() < 3)
@@ -74,48 +374,264 @@ void SClothDesignCanvas::TriangulateAndBuildMesh()
 		return;
 	}
 
-	// Step 1: Convert FVector2D 
-	TArray<PolygonTriangulation::TVector2<float>> PolygonVerts;
-	
-	// Convert from your Points (FVector2D) to PolygonVerts
+	// Step 1: Convert to UE::Geometry::FVector2f
+	TArray<FVector2f> PolyVerts;
 	for (const FVector2D& P : Points)
 	{
-		PolygonVerts.Add(PolygonTriangulation::TVector2<float>(P.X, P.Y));
+		PolyVerts.Add(FVector2f(P.X, P.Y));
 	}
 
-	// Step 2: Triangulate using GeometryProcessing
+	// Step 2: Triangulate
 	TArray<UE::Geometry::FIndex3i> Triangles;
-
-
-	PolygonTriangulation::TriangulateSimplePolygon<float>(PolygonVerts, Triangles, false);
+	PolygonTriangulation::TriangulateSimplePolygon<float>(PolyVerts, Triangles, false);
 
 	if (Triangles.Num() == 0)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Triangulation failed"));
 		return;
 	}
-	// Step 3: Convert results to Unreal-friendly format
+
+	// Step 3: Build DynamicMesh
+	UE::Geometry::FDynamicMesh3 Mesh;
+
+	// WORKING but not smooth at all so lots of different sized triangles
+	// Insert vertices
+	TArray<int> VertexIDs;
+	for (const FVector2f& V : PolyVerts)
+	{
+		int VID = Mesh.AppendVertex(FVector3d(V.X, V.Y, 0)); // z = 0
+		VertexIDs.Add(VID);
+	}
+	
+	// Insert triangles
+	for (const UE::Geometry::FIndex3i& Tri : Triangles)
+	{
+		Mesh.AppendTriangle(VertexIDs[Tri.A], VertexIDs[Tri.B], VertexIDs[Tri.C]);
+	}
+
+	// 2. Remesher setup
+	UE::Geometry::FRemesher Remesher(&Mesh);
+	Remesher.SetTargetEdgeLength(50.50); // Set this to desired density
+	
+	Remesher.SmoothSpeedT = 0.0f; // Optional tweak
+
+	for (int i = 0; i < 2; ++i)  // 1 not enough, 3-5 too much in terms of edge vertices changing
+	{
+		Remesher.BasicRemeshPass();
+	}
+
+
+	// (Optional) Subdivide for more detail
+	UE::Geometry::FDynamicMeshEditor Editor(&Mesh);
+	
+	int32 NumSubdivisions = 3;
+	double MaxEdgeLength = 1.0;
+	
+	for (int32 Pass = 0; Pass < NumSubdivisions; ++Pass)
+	{
+		TArray<int32> EdgesToSplit;
+		for (int32 eid : Mesh.EdgeIndicesItr())
+		{
+			UE::Geometry::FIndex2i EdgeVerts = Mesh.GetEdgeV(eid);
+			FVector3d A = Mesh.GetVertex(EdgeVerts.A);
+			FVector3d B = Mesh.GetVertex(EdgeVerts.B);
+	
+			if (FVector3d::Distance(A, B) > MaxEdgeLength)
+			{
+				EdgesToSplit.Add(eid);
+			}
+		}
+	
+		for (int32 eid : EdgesToSplit)
+		{
+			UE::Geometry::FDynamicMesh3::FEdgeSplitInfo SplitInfo;
+			Mesh.SplitEdge(eid, SplitInfo);
+		}
+	}
+	
+
+	
+	
+	// Step 4: Extract to UE arrays
 	TArray<FVector> Vertices;
 	TArray<int32> Indices;
 
-	for (const PolygonTriangulation::TVector2<float>& V : PolygonVerts)
+	for (int vid : Mesh.VertexIndicesItr())
 	{
-		Vertices.Add(FVector(V.X, V.Y, 0.f));  // Z=0 since it’s flat
+		FVector3d Pos = Mesh.GetVertex(vid);
+		Vertices.Add(FVector(Pos.X, Pos.Y, Pos.Z));
 	}
 
-	
-	for (const UE::Geometry::FIndex3i& Tri : Triangles)
+	for (int tid : Mesh.TriangleIndicesItr())
 	{
+		UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
 		Indices.Add(Tri.C);
 		Indices.Add(Tri.B);
 		Indices.Add(Tri.A);
 	}
 
-	// Step 4: Spawn procedural mesh (next step)
+	// Step 5: Build procedural mesh
 	CreateProceduralMesh(Vertices, Indices);
 }
 
 
+// third version
+// void SClothDesignCanvas::TriangulateAndBuildMesh()
+// {
+//     if (Points.Num() < 3)
+//     {
+//         UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
+//         return;
+//     }
+//
+//     // 1) Build a flat-outline triangulation
+//     TArray<PolygonTriangulation::TVector2<float>> Poly2d;
+//     Poly2d.Reserve(Points.Num());
+//     for (const FVector2D& P : Points)
+//     {
+//         Poly2d.Add(PolygonTriangulation::TVector2<float>(P.X, P.Y));
+//     }
+//
+//     TArray<UE::Geometry::FIndex3i> InitialTris;
+//     PolygonTriangulation::TriangulateSimplePolygon<float>(Poly2d, InitialTris, false);
+//     if (InitialTris.Num() == 0)
+//     {
+//         UE_LOG(LogTemp, Error, TEXT("Triangulation failed"));
+//         return;
+//     }
+//
+//     // 2) Populate a DynamicMesh3 by appending verts & tris
+//     UE::Geometry::FDynamicMesh3 Mesh;
+//
+// 	
+// 	for (const auto& V2 : Poly2d)
+// 	{
+// 		Mesh.AppendVertex((double)V2.X, (double)V2.Y, 0.0);
+// 	}
+// 	for (const UE::Geometry::FIndex3i& T : InitialTris)
+// 	{
+// 		Mesh.AppendTriangle(T.A, T.B, T.C);
+// 	}
+//     // 3) (Optional) Subdivide for higher density
+//     UE::Geometry::FDynamicMeshEditor Subdivider(&Mesh);
+//     for (int Pass = 0; Pass < 2; ++Pass)
+//     {
+//         Subdivider.SubdivideEdges(
+//             [](const UE::Geometry::FVector3d& A, const UE::Geometry::FVector3d& B)
+//             {
+//                 return A.Distance(B) > 0.1; // split edges longer than 0.1
+//             }
+//         );
+//     }
+//
+//     // 4) Extract into Unreal arrays for procedural mesh
+//     TArray<FVector> FinalVerts;  
+//     FinalVerts.SetNum(Mesh.VertexCount());
+//     for (int VID : Mesh.VertexIndicesItr())
+//     {
+//         auto P = Mesh.GetVertex(VID); // P is FVector3d
+//         FinalVerts[VID] = FVector(P.X, P.Y, 0.0f);
+//     }
+//
+//     TArray<int32> FinalTris;
+//     FinalTris.Reserve(Mesh.TriangleCount() * 3);
+//     for (int TID : Mesh.TriangleIndicesItr())
+//     {
+//         auto Tri = Mesh.GetTriangle(TID);
+//         FinalTris.Add(Tri.A);
+//         FinalTris.Add(Tri.B);
+//         FinalTris.Add(Tri.C);
+//     }
+//
+//     // 5) Spawn the procedural mesh
+//     CreateProceduralMesh(FinalVerts, FinalTris);
+// }
+
+
+// first version working !!
+// void SClothDesignCanvas::TriangulateAndBuildMesh()
+// {
+// 	if (Points.Num() < 3)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
+// 		return;
+// 	}
+//
+// 	// Step 1: Convert FVector2D 
+// 	TArray<PolygonTriangulation::TVector2<float>> PolygonVerts;
+// 	
+// 	// Convert from your Points (FVector2D) to PolygonVerts
+// 	for (const FVector2D& P : Points)
+// 	{
+// 		PolygonVerts.Add(PolygonTriangulation::TVector2<float>(P.X, P.Y));
+// 	}
+//
+// 	// Step 2: Triangulate using GeometryProcessing
+// 	TArray<UE::Geometry::FIndex3i> Triangles;
+//
+//
+// 	PolygonTriangulation::TriangulateSimplePolygon<float>(PolygonVerts, Triangles, false);
+//
+// 	if (Triangles.Num() == 0)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Triangulation failed"));
+// 		return;
+// 	}
+// 	// Step 3: Convert results to Unreal-friendly format
+// 	TArray<FVector> Vertices;
+// 	TArray<int32> Indices;
+//
+// 	for (const PolygonTriangulation::TVector2<float>& V : PolygonVerts)
+// 	{
+// 		Vertices.Add(FVector(V.X, V.Y, 0.f));  // Z=0 since it’s flat
+// 	}
+//
+// 	
+// 	for (const UE::Geometry::FIndex3i& Tri : Triangles)
+// 	{
+// 		Indices.Add(Tri.C);
+// 		Indices.Add(Tri.B);
+// 		Indices.Add(Tri.A);
+// 	}
+//
+// 	// Step 4: Spawn procedural mesh (next step)
+// 	CreateProceduralMesh(Vertices, Indices);
+// }
+
+// i think second verion but not sure if its working
+// void SClothDesignCanvas::TriangulateAndBuildMesh()
+// {
+// 	// UE::Geometry::TGeneralPolygon2<float> Polygon;
+// 	if (Points.Num() < 3)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
+// 		return;
+// 	}
+// 	
+//     // 1) Convert FVector2D points into the float‐precision polygon
+// 	// TArray<FVector2d> Poly;
+// 	// for (auto& P : Points) Poly.Add(FVector2d(P.X, P.Y));
+// 	// Step 1: Convert FVector2D 
+// 	TArray<PolygonTriangulation::TVector2<float>> Poly2d;
+// 	
+// 	// Convert from Points (FVector2D) to PolygonVerts
+// 	for (const FVector2D& P : Points)
+// 	{
+// 		Poly2d.Add(PolygonTriangulation::TVector2<float>(P.X, P.Y));
+// 	}
+//
+// 	// 2) Coarse triangulation of that outline
+//
+// 	TArray<UE::Geometry::FIndex3i> InitialTris;
+// 	
+// 	PolygonTriangulation::TriangulateSimplePolygon<float>(Poly2d, InitialTris, false);
+// 	if (InitialTris.Num() == 0)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Triangulation failed"));
+// 		return;
+// 	}
+// 	
+// }
 
 void SClothDesignCanvas::CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices)
 {

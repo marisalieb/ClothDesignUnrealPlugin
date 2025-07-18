@@ -29,7 +29,9 @@ public class ClothDesign : ModuleRules
 				"GeometryFramework", 
 				"MeshDescription", 
 				"StaticMeshDescription",
-				"ProceduralMeshComponent"
+				"ProceduralMeshComponent",
+				"GeometryCore",
+
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -53,7 +55,11 @@ public class ClothDesign : ModuleRules
 				"PropertyEditor",
 				"Projects",
 				"GeometryCore",
-
+				"GeometryAlgorithms",
+				"GeometryFramework", 
+				"DynamicMesh",      // for FDynamicMesh3
+				"GeometryCore",        // Core geometry types
+				"MeshModelingTools", // Optional but useful
 
 
 				// ... add private dependencies that you statically link with here ...	

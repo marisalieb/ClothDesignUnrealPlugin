@@ -46,6 +46,9 @@ void SClothDesignCanvas::Construct(const FArguments& InArgs)
 	
 
 	FSlateApplication::Get().SetKeyboardFocus(SharedThis(this));
+
+
+
 }
 
 // FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
@@ -81,39 +84,114 @@ int32 SClothDesignCanvas::OnPaint(
 	const FWidgetStyle& InWidgetStyle,
 	bool bParentEnabled) const
 {
+	// Grid color
+	const FLinearColor GridColor(0.1f, 0.1f, 0.1f, 0.4f);
 	
 	// --- Draw Grid ---
 	const FVector2D Size = AllottedGeometry.GetLocalSize();
-	const float GridSpacing = 100.f * ZoomFactor; // spacing in pixels
+	const float NonScaledGridSpacing = 100.f; // spacing in pixels
 
-	// Grid color
-	const FLinearColor GridColor(0.1f, 0.1f, 0.1f, 0.4f);
+	const float GridSpacing = NonScaledGridSpacing* ZoomFactor; // spacing in pixels
 
-	for (float x = FMath::Fmod(-PanOffset.X, GridSpacing); x < Size.X; x += GridSpacing)
+	const FVector2D TopLeftScreen     = FVector2D(0, 0);
+	const FVector2D BottomRightScreen = Size;
+
+	// Convert those to “world” (canvas) coordinates
+	FVector2D WorldTopLeft     = InverseTransformPoint(TopLeftScreen);
+	FVector2D WorldBottomRight = InverseTransformPoint(BottomRightScreen);
+	const float WorldGridSpacing = 100.f;  // e.g. every 100 “canvas” units
+
+	 // Compute starting points for vertical lines
+	// float StartX = FMath::Fmod(-PanOffset.X * ZoomFactor, GridSpacing);
+	// if (StartX < 0) StartX += GridSpacing;
+	// for (float x = -StartX; x < Size.X; x += GridSpacing)
+	// for (float x = FMath::Fmod(-PanOffset.X, GridSpacing); x < Size.X; x += GridSpacing)
+
+	// // Anchor to world origin, transformed
+	// FVector2D AnchorScreen = TransformPoint(FVector2D(0, 0));
+	//
+	// // Compute offset from anchor to screen
+	// float StartX = FMath::Fmod(AnchorScreen.X, GridSpacing);
+	// if (StartX < 0) StartX += GridSpacing;
+	
+	float StartX = FMath::FloorToFloat(WorldTopLeft.X / WorldGridSpacing) * WorldGridSpacing;
+	float EndX   = WorldBottomRight.X;
+
+	float StartY = FMath::FloorToFloat(WorldTopLeft.Y / WorldGridSpacing) * WorldGridSpacing;
+	float EndY   = WorldBottomRight.Y;
+	
+	// for (float x = -StartX; x < Size.X; x += GridSpacing)
+	// {	
+	// 	FSlateDrawElement::MakeLines(
+	// 		OutDrawElements,
+	// 		LayerId,
+	// 		AllottedGeometry.ToPaintGeometry(),
+	// 		{ FVector2D(x, 0), FVector2D(x, Size.Y) },
+	// 		ESlateDrawEffect::None,
+	// 		GridColor,
+	// 		true,
+	// 		1.0f
+	// 	);
+	// }
+
+	
+	// // Same for horizontal lines:
+	// float StartY = FMath::Fmod(-PanOffset.Y * ZoomFactor, GridSpacing);
+	// if (StartY < 0) StartY += GridSpacing;
+	// for (float y = -StartY; y < Size.Y; y += GridSpacing)
+	// for (float y = FMath::Fmod(-PanOffset.Y, GridSpacing); y < Size.Y; y += GridSpacing)
+	
+	// float StartY = FMath::Fmod(AnchorScreen.Y, GridSpacing);
+	// if (StartY < 0) StartY += GridSpacing;
+
+	// for (float y = -StartY; y < Size.Y; y += GridSpacing)
+	// {
+	// 	FSlateDrawElement::MakeLines(
+	// 		OutDrawElements,
+	// 		LayerId,
+	// 		AllottedGeometry.ToPaintGeometry(),
+	// 		{ FVector2D(0, y), FVector2D(Size.X, y) },
+	// 		ESlateDrawEffect::None,
+	// 		GridColor,
+	// 		true,
+	// 		1.0f
+	// 	);
+	// }
+
+	
+	// Vertical lines
+	for (float wx = StartX; wx <= EndX; wx += WorldGridSpacing)
 	{
+		// world‑space endpoints
+		FVector2D A_world(wx, WorldTopLeft.Y);
+		FVector2D B_world(wx, WorldBottomRight.Y);
+
+		// to screen
+		float Ax = TransformPoint(A_world).X;
+		float Bx = TransformPoint(B_world).X;
+
 		FSlateDrawElement::MakeLines(
-			OutDrawElements,
-			LayerId,
+			OutDrawElements, LayerId,
 			AllottedGeometry.ToPaintGeometry(),
-			{ FVector2D(x, 0), FVector2D(x, Size.Y) },
-			ESlateDrawEffect::None,
-			GridColor,
-			true,
-			1.0f
+			{ FVector2D(Ax, 0), FVector2D(Bx, Size.Y) },
+			ESlateDrawEffect::None, GridColor, true, 1.0f
 		);
 	}
 
-	for (float y = FMath::Fmod(-PanOffset.Y, GridSpacing); y < Size.Y; y += GridSpacing)
+	// Horizontal lines
+	for (float wy = StartY; wy <= EndY; wy += WorldGridSpacing)
 	{
+		FVector2D A_world(WorldTopLeft.X, wy);
+		FVector2D B_world(WorldBottomRight.X, wy);
+
+		float Ay = TransformPoint(A_world).Y;
+		float By = TransformPoint(B_world).Y;
+
 		FSlateDrawElement::MakeLines(
-			OutDrawElements,
-			LayerId,
+			OutDrawElements, LayerId,
 			AllottedGeometry.ToPaintGeometry(),
-			{ FVector2D(0, y), FVector2D(Size.X, y) },
-			ESlateDrawEffect::None,
-			GridColor,
-			true,
-			1.0f
+			{ FVector2D(0, Ay), FVector2D(Size.X, By) },
+			ESlateDrawEffect::None, GridColor, true, 1.0f
 		);
 	}
 
@@ -212,6 +290,7 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 		// Draw
 		if (CurrentMode == EClothEditorMode::Draw)
 		{
+			SaveStateForUndo();
 			Points.Add(CanvasClickPos);
 			UE_LOG(LogTemp, Warning, TEXT("Draw mode: Added point at (%f, %f)"), CanvasClickPos.X, CanvasClickPos.Y);
 
@@ -226,6 +305,7 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 			{
 				if (FVector2D::Distance(Points[i], CanvasClickPos) < SelectionRadius / ZoomFactor)
 				{
+					SaveStateForUndo();
 					SelectedPointIndex = i;
 					bIsShapeSelected = false;
 					bIsDraggingPoint = true;
@@ -238,18 +318,27 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 				}
 			}
 
+			
+			if (Points.Num() < 2)
+				return FReply::Handled(); // not enough points
+
 			// No point selected, check if clicked near a line
 			const float LineSelectThreshold = 10.f / ZoomFactor;
-			for (int32 i = 0; i < Points.Num(); ++i)
+			for (int32 i = 0; i < Points.Num() - 1; ++i)
 			{
 				const FVector2D A = Points[i];
 				const FVector2D B = Points[(i + 1) % Points.Num()]; // Loop around if closed
 
 				if (IsPointNearLine(CanvasClickPos, A, B, LineSelectThreshold))
 				{
+					UE_LOG(LogTemp, Warning, TEXT("ZoomFactor: %f"), ZoomFactor);
+
+					SaveStateForUndo();
 					bIsShapeSelected = true;
 					SelectedPointIndex = INDEX_NONE;
 					bIsDraggingShape = true;
+
+					UE_LOG(LogTemp, Warning, TEXT("Selected line near segment %d"), i);
 					return FReply::Handled().CaptureMouse(SharedThis(this));
 				}
 			}
@@ -292,7 +381,7 @@ FReply SClothDesignCanvas::OnMouseButtonUp(const FGeometry& MyGeometry, const FP
 	if (bIsDraggingPoint && MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	// if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton && bIsDragging)
 	{
-		bIsDragging = false;
+		bIsDraggingPoint = false;
 		return FReply::Handled().ReleaseMouseCapture();
 	}
 
@@ -343,7 +432,24 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 	// 	return FReply::Handled();
 	// }
 
-	return FReply::Unhandled();
+	
+	// Check for Undo (Ctrl+Z)
+	if (Key == EKeys::Z && InKeyEvent.IsControlDown())
+	{
+		Undo();
+		return FReply::Handled();
+	}
+
+	// Check for Redo (Ctrl+Y)
+	if (Key == EKeys::Y && InKeyEvent.IsControlDown())
+	{
+		Redo();
+		return FReply::Handled();
+	}
+	
+	//return FReply::Unhandled();
+	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
+
 }
 
 
@@ -473,6 +579,80 @@ void SClothDesignCanvas::TriangulateAndBuildMesh()
 	// Step 5: Build procedural mesh
 	CreateProceduralMesh(Vertices, Indices);
 }
+
+
+
+void SClothDesignCanvas::CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices)
+{
+	UWorld* World = GEditor->GetEditorWorldContext().World();
+	if (!World) return;
+
+	AClothPatternMeshActor* MeshActor = World->SpawnActor<AClothPatternMeshActor>();
+	if (!MeshActor) return;
+
+	TArray<FVector> Normals;
+	TArray<FVector2D> UV0;
+	TArray<FLinearColor> VertexColors;
+	TArray<FProcMeshTangent> Tangents;
+
+	for (int32 i = 0; i < Vertices.Num(); ++i)
+	{
+		Normals.Add(FVector::UpVector);
+		UV0.Add(FVector2D(Vertices[i].X * 0.01f, Vertices[i].Y * 0.01f));
+		VertexColors.Add(FLinearColor::White);
+		Tangents.Add(FProcMeshTangent(1.0f, 0.0f, 0.0f));
+	}
+
+	MeshActor->MeshComponent->CreateMeshSection_LinearColor(0, Vertices, Indices, Normals, UV0, VertexColors, Tangents, true);
+}
+
+
+void SClothDesignCanvas::SaveStateForUndo()
+{
+	UndoStack.Add(GetCurrentCanvasState());
+	RedoStack.Empty(); // Clear redo on new action
+}
+
+FCanvasState SClothDesignCanvas::GetCurrentCanvasState() const
+{
+	FCanvasState State;
+	State.Points = Points;
+	State.SelectedPointIndex = SelectedPointIndex;
+	State.PanOffset = PanOffset;
+	State.ZoomFactor = ZoomFactor;
+	return State;
+}
+
+void SClothDesignCanvas::RestoreCanvasState(const FCanvasState& State)
+{
+	Points = State.Points;
+	SelectedPointIndex = State.SelectedPointIndex;
+	PanOffset = State.PanOffset;
+	ZoomFactor = State.ZoomFactor;
+
+	Invalidate(EInvalidateWidgetReason::Paint | EInvalidateWidgetReason::Layout);
+}
+
+void SClothDesignCanvas::Undo()
+{
+	if (UndoStack.Num() > 0)
+	{
+		RedoStack.Add(GetCurrentCanvasState());
+		const FCanvasState PreviousState = UndoStack.Pop();
+		RestoreCanvasState(PreviousState);
+	}
+}
+
+void SClothDesignCanvas::Redo()
+{
+	if (RedoStack.Num() > 0)
+	{
+		UndoStack.Add(GetCurrentCanvasState());
+		const FCanvasState NextState = RedoStack.Pop();
+		RestoreCanvasState(NextState);
+	}
+}
+
 
 
 // third version
@@ -632,28 +812,3 @@ void SClothDesignCanvas::TriangulateAndBuildMesh()
 // 	}
 // 	
 // }
-
-void SClothDesignCanvas::CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices)
-{
-	UWorld* World = GEditor->GetEditorWorldContext().World();
-	if (!World) return;
-
-	AClothPatternMeshActor* MeshActor = World->SpawnActor<AClothPatternMeshActor>();
-	if (!MeshActor) return;
-
-	TArray<FVector> Normals;
-	TArray<FVector2D> UV0;
-	TArray<FLinearColor> VertexColors;
-	TArray<FProcMeshTangent> Tangents;
-
-	for (int32 i = 0; i < Vertices.Num(); ++i)
-	{
-		Normals.Add(FVector::UpVector);
-		UV0.Add(FVector2D(Vertices[i].X * 0.01f, Vertices[i].Y * 0.01f));
-		VertexColors.Add(FLinearColor::White);
-		Tangents.Add(FProcMeshTangent(1.0f, 0.0f, 0.0f));
-	}
-
-	MeshActor->MeshComponent->CreateMeshSection_LinearColor(0, Vertices, Indices, Normals, UV0, VertexColors, Tangents, true);
-}
-

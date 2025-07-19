@@ -7,6 +7,25 @@
 // using namespace UE::Geometry;
 #include "VectorTypes.h"
 
+
+// Canvas state struct
+struct FCanvasState
+{
+	TArray<FVector2D> Points;
+	int32 SelectedPointIndex = INDEX_NONE;
+	FVector2D PanOffset = FVector2D::ZeroVector;
+	float ZoomFactor = 1.0f;
+
+	// Optional equality operator
+	bool operator==(const FCanvasState& Other) const
+	{
+		return Points == Other.Points &&
+			   SelectedPointIndex == Other.SelectedPointIndex &&
+			   PanOffset == Other.PanOffset &&
+			   FMath::IsNearlyEqual(ZoomFactor, Other.ZoomFactor);
+	}
+};
+
 class SClothDesignCanvas : public SCompoundWidget
 {
 public:
@@ -62,10 +81,23 @@ public:
 	bool bIsShapeSelected = false;
 	bool IsPointNearLine(const FVector2D& P, const FVector2D& A, const FVector2D& B, float Threshold) const;
 
-	
+	TWeakObjectPtr<UTexture2D> BackgroundTexture;
+
 protected:
 	void CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices);
 
+	// Undo/Redo stacks
+	TArray<FCanvasState> UndoStack;
+	TArray<FCanvasState> RedoStack;
+
+	// State management
+	void SaveStateForUndo();
+	FCanvasState GetCurrentCanvasState() const;
+	void RestoreCanvasState(const FCanvasState& State);
+
+	void Undo();
+	void Redo();
+	
 private:
 	TArray<FVector2D> Points;
 };

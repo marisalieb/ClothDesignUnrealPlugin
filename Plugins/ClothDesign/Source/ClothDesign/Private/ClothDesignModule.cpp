@@ -11,6 +11,9 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Tickable.h"
 #include "Containers/Ticker.h"
+#include "PropertyCustomizationHelpers.h"
+#include "ContentBrowserModule.h"
+#include "IContentBrowserSingleton.h"
 
 #define LOCTEXT_NAMESPACE "ClothDesignModule"
 
@@ -20,7 +23,7 @@ const FName FClothDesignModule::TwoDTabName(TEXT("TwoDWindowTab"));
 void FClothDesignModule::StartupModule()
 {
 
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+	// This code will execute after module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 
 	FClothDesignEditorModeCommands::Register();
 	PluginCommands = MakeShareable(new FUICommandList);
@@ -29,7 +32,12 @@ void FClothDesignModule::StartupModule()
 	  FExecuteAction::CreateRaw(this, &FClothDesignModule::Spawn2DWindow),
 	  FCanExecuteAction()
 	);
-
+	
+	if (!FClothDesignEditorModeCommands::Get().Open2DWindow.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("Open2DWindow command NOT valid after Register()!"));
+	}
+	
 	// UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FYourEditorModeModule::RegisterMenus));
 
 	// static const FName TwoDTabName("TwoDWindowTab");
@@ -45,7 +53,7 @@ void FClothDesignModule::ShutdownModule()
 {
 
 	
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
+	// This function may be called during shutdown to clean up module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
 
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(TwoDTabName);
@@ -103,12 +111,121 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 				]
 			]
 			
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(2)
+			[
+				SNew(SHorizontalBox)
+			
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(4)
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString("Background Image:"))
+				]
+			
+				// + SHorizontalBox::Slot()
+				// .AutoWidth()
+				// .Padding(4)
+				// [
+				// 	SNew(SObjectPropertyEntryBox)
+				// 	.AllowedClass(UTexture2D::StaticClass())
+				// 	.ObjectPath(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::GetSelectedTexturePath)
+				// 	.OnObjectChanged(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::OnBackgroundTextureSelected)
+				// ]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(4)
+				[
+					SNew(SObjectPropertyEntryBox)
+					.AllowedClass(UTexture2D::StaticClass())
+					.ObjectPath_Lambda([this]()
+					{
+						if (this->CanvasWidget.IsValid())
+						{
+							return this->CanvasWidget->GetSelectedTexturePath();
+						}
+						return FString();
+					})
+					.OnObjectChanged_Lambda([this](const FAssetData& AssetData)
+					{
+						if (this->CanvasWidget.IsValid())
+						{
+							this->CanvasWidget->OnBackgroundTextureSelected(AssetData);
+						}
+					})
+				]
+
+			]
+			
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(2)
+			[
+				SNew(SHorizontalBox)
+			
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(4)
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(TEXT("Background Image Scale:")))
+				]
+			
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(4)
+				[
+					SNew(SNumericEntryBox<float>)
+					
+					// .Value(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::GetBackgroundImageScale)
+					// .OnValueChanged(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::OnBackgroundImageScaleChanged)
+					// .Value_Lambda([this]() -> TOptional<float>
+					// {
+					// 	return CanvasWidget.IsValid() ? CanvasWidget->GetBackgroundImageScale() : 1.0f;
+					// })
+					// .OnValueChanged_Lambda([this](float NewValue)
+					// {
+					// 	if (CanvasWidget.IsValid())
+					// 	{
+					// 		CanvasWidget->OnBackgroundImageScaleChanged(NewValue);
+					// 	}
+					// })
+					.Value_Lambda([this]() -> TOptional<float>
+						{
+							if (CanvasWidget.IsValid())
+							{
+								return CanvasWidget->GetBackgroundImageScale();
+							}
+							return TOptional<float>();
+						})
+						.OnValueChanged_Lambda([this](float NewValue)
+						{
+							if (CanvasWidget.IsValid())
+							{
+								CanvasWidget->OnBackgroundImageScaleChanged(NewValue);
+							}
+						})
+					
+					.MinValue(0.1f)
+					.MaxValue(10.0f)
+					.MinSliderValue(0.1f)
+					.MaxSliderValue(10.0f)
+					.AllowSpin(true)
+					.LabelPadding(FMargin(0))
+				]
+			]
+
+
 			// Canvas
 			+ SVerticalBox::Slot()
 			.FillHeight(1.0f)
 			[
 				SAssignNew(CanvasWidget, SClothDesignCanvas)
 			]
+			
+
 		];
 	
 	// Delay focus until next tick/frame to ensure UI is ready

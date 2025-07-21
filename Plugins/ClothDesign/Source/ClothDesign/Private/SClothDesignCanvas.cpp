@@ -4,18 +4,10 @@
 
 #include "CompGeom/PolygonTriangulation.h"
 #include "CompGeom/Delaunay2.h"
-#include "Curve/GeneralPolygon2.h"
-#include "Polygon2.h"
 #include "DynamicMesh/DynamicMesh3.h"
-#include "DynamicMeshEditor.h" 
-
-#include "MeshUtilitiesCommon.h"
+#include "DynamicMeshEditor.h"
 #include "Remesher.h"
 #include "DynamicMesh/DynamicMeshOctree3.h"
-#include "VectorTypes.h"
-#include "VectorTypes.h"
-#include "CompGeom/PolygonTriangulation.h"
-#include "DynamicMeshEditor.h"
 
 #include "CoreMinimal.h"
 #include "Math/MathFwd.h"
@@ -47,7 +39,7 @@ void SClothDesignCanvas::Construct(const FArguments& InArgs)
 
 	FSlateApplication::Get().SetKeyboardFocus(SharedThis(this));
 
-
+	// CurvePoints.Points.Empty();
 
 }
 
@@ -84,14 +76,54 @@ int32 SClothDesignCanvas::OnPaint(
 	const FWidgetStyle& InWidgetStyle,
 	bool bParentEnabled) const
 {
+	if (BackgroundTexture.IsValid())
+	{
+		FVector2D NativeImageSize(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY());
+
+		// Apply user scale to the world size of the background image
+		FVector2D WorldImageSize = NativeImageSize * BackgroundImageScale;
+
+		// Define top-left in world space (0,0 or any other logic if needed)
+		FVector2D WorldTopLeft = FVector2D(0.f, 0.f);
+
+		// Convert world size and position to screen space
+		FVector2D ScreenTopLeft = TransformPoint(WorldTopLeft);
+		FVector2D ScreenSize     = WorldImageSize * ZoomFactor;
+		
+		FSlateBrush Brush;
+		Brush.SetResourceObject(BackgroundTexture.Get());
+		
+		// // Brush.ImageSize = FVector2D(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY());GetSizeY
+
+		// FVector2D ImageSize = FVector2D(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY()) * BackgroundImageScale;
+		// Brush.ImageSize = ImageSize;
+		Brush.ImageSize = NativeImageSize; // Keep the native size here, scaling happens in the draw element
+
+
+		Brush.TintColor = FSlateColor(FLinearColor(1.f, 1.f, 1.f, 0.35f)); // opacity
+		
+		FSlateDrawElement::MakeBox(
+			OutDrawElements,
+			LayerId,
+		    // AllottedGeometry.ToPaintGeometry(FVector2D(0, 0), ImageSize),
+		    AllottedGeometry.ToPaintGeometry(ScreenTopLeft, ScreenSize),
+		    &Brush,
+			ESlateDrawEffect::None,
+			Brush.GetTint(InWidgetStyle)
+		);
+	
+		++LayerId;
+	}
+	
+	
 	// Grid color
 	const FLinearColor GridColor(0.1f, 0.1f, 0.1f, 0.4f);
 	
 	// --- Draw Grid ---
 	const FVector2D Size = AllottedGeometry.GetLocalSize();
-	const float NonScaledGridSpacing = 100.f; // spacing in pixels
+	// const float NonScaledGridSpacing = 100.f; // spacing in pixels
 
-	const float GridSpacing = NonScaledGridSpacing* ZoomFactor; // spacing in pixels
+	// const float GridSpacing = NonScaledGridSpacing* ZoomFactor; // spacing in pixels
 
 	const FVector2D TopLeftScreen     = FVector2D(0, 0);
 	const FVector2D BottomRightScreen = Size;
@@ -101,62 +133,12 @@ int32 SClothDesignCanvas::OnPaint(
 	FVector2D WorldBottomRight = InverseTransformPoint(BottomRightScreen);
 	const float WorldGridSpacing = 100.f;  // e.g. every 100 “canvas” units
 
-	 // Compute starting points for vertical lines
-	// float StartX = FMath::Fmod(-PanOffset.X * ZoomFactor, GridSpacing);
-	// if (StartX < 0) StartX += GridSpacing;
-	// for (float x = -StartX; x < Size.X; x += GridSpacing)
-	// for (float x = FMath::Fmod(-PanOffset.X, GridSpacing); x < Size.X; x += GridSpacing)
-
-	// // Anchor to world origin, transformed
-	// FVector2D AnchorScreen = TransformPoint(FVector2D(0, 0));
-	//
-	// // Compute offset from anchor to screen
-	// float StartX = FMath::Fmod(AnchorScreen.X, GridSpacing);
-	// if (StartX < 0) StartX += GridSpacing;
 	
 	float StartX = FMath::FloorToFloat(WorldTopLeft.X / WorldGridSpacing) * WorldGridSpacing;
 	float EndX   = WorldBottomRight.X;
 
 	float StartY = FMath::FloorToFloat(WorldTopLeft.Y / WorldGridSpacing) * WorldGridSpacing;
 	float EndY   = WorldBottomRight.Y;
-	
-	// for (float x = -StartX; x < Size.X; x += GridSpacing)
-	// {	
-	// 	FSlateDrawElement::MakeLines(
-	// 		OutDrawElements,
-	// 		LayerId,
-	// 		AllottedGeometry.ToPaintGeometry(),
-	// 		{ FVector2D(x, 0), FVector2D(x, Size.Y) },
-	// 		ESlateDrawEffect::None,
-	// 		GridColor,
-	// 		true,
-	// 		1.0f
-	// 	);
-	// }
-
-	
-	// // Same for horizontal lines:
-	// float StartY = FMath::Fmod(-PanOffset.Y * ZoomFactor, GridSpacing);
-	// if (StartY < 0) StartY += GridSpacing;
-	// for (float y = -StartY; y < Size.Y; y += GridSpacing)
-	// for (float y = FMath::Fmod(-PanOffset.Y, GridSpacing); y < Size.Y; y += GridSpacing)
-	
-	// float StartY = FMath::Fmod(AnchorScreen.Y, GridSpacing);
-	// if (StartY < 0) StartY += GridSpacing;
-
-	// for (float y = -StartY; y < Size.Y; y += GridSpacing)
-	// {
-	// 	FSlateDrawElement::MakeLines(
-	// 		OutDrawElements,
-	// 		LayerId,
-	// 		AllottedGeometry.ToPaintGeometry(),
-	// 		{ FVector2D(0, y), FVector2D(Size.X, y) },
-	// 		ESlateDrawEffect::None,
-	// 		GridColor,
-	// 		true,
-	// 		1.0f
-	// 	);
-	// }
 
 	
 	// Vertical lines
@@ -198,38 +180,93 @@ int32 SClothDesignCanvas::OnPaint(
 	// --- Advance Layer for shapes ---
 	LayerId++;
 
+	
+	 // Compute starting points for vertical lines
+	// float StartX = FMath::Fmod(-PanOffset.X * ZoomFactor, GridSpacing);
+	// if (StartX < 0) StartX += GridSpacing;
+	// for (float x = -StartX; x < Size.X; x += GridSpacing)
+	// for (float x = FMath::Fmod(-PanOffset.X, GridSpacing); x < Size.X; x += GridSpacing)
+
+	// // Anchor to world origin, transformed
+	// FVector2D AnchorScreen = TransformPoint(FVector2D(0, 0));
+	//
+	// // Compute offset from anchor to screen
+	// float StartX = FMath::Fmod(AnchorScreen.X, GridSpacing);
+	// if (StartX < 0) StartX += GridSpacing;
+	
+	// for (float x = -StartX; x < Size.X; x += GridSpacing)
+	// {	
+	// 	FSlateDrawElement::MakeLines(
+	// 		OutDrawElements,
+	// 		LayerId,
+	// 		AllottedGeometry.ToPaintGeometry(),
+	// 		{ FVector2D(x, 0), FVector2D(x, Size.Y) },
+	// 		ESlateDrawEffect::None,
+	// 		GridColor,
+	// 		true,
+	// 		1.0f
+	// 	);
+	// }
 
 	
-	// Draw lines between points
-	for (int32 i = 0; i < Points.Num() - 1; ++i)
-	{
-		FSlateDrawElement::MakeLines(
-			OutDrawElements,
-			LayerId,
-			AllottedGeometry.ToPaintGeometry(),
-		{ TransformPoint(Points[i]), TransformPoint(Points[i + 1]) },
-			ESlateDrawEffect::None,
-			FLinearColor::Gray,
-			true,
-			2.0f
-		);
-	}
+	// // Same for horizontal lines:
+	// float StartY = FMath::Fmod(-PanOffset.Y * ZoomFactor, GridSpacing);
+	// if (StartY < 0) StartY += GridSpacing;
+	// for (float y = -StartY; y < Size.Y; y += GridSpacing)
+	// for (float y = FMath::Fmod(-PanOffset.Y, GridSpacing); y < Size.Y; y += GridSpacing)
+	
+	// float StartY = FMath::Fmod(AnchorScreen.Y, GridSpacing);
+	// if (StartY < 0) StartY += GridSpacing;
 
-	// Draw closing line if shape is closed
-	if (Points.Num() > 2)
-	{
-		FSlateDrawElement::MakeLines(
-			OutDrawElements,
-			LayerId,
-			AllottedGeometry.ToPaintGeometry(),
-			{ TransformPoint(Points.Last()), TransformPoint(Points[0]) },
-			ESlateDrawEffect::None,
-			FLinearColor::Gray,
-			true,
-			2.0f
-		);
-	}
+	// for (float y = -StartY; y < Size.Y; y += GridSpacing)
+	// {
+	// 	FSlateDrawElement::MakeLines(
+	// 		OutDrawElements,
+	// 		LayerId,
+	// 		AllottedGeometry.ToPaintGeometry(),
+	// 		{ FVector2D(0, y), FVector2D(Size.X, y) },
+	// 		ESlateDrawEffect::None,
+	// 		GridColor,
+	// 		true,
+	// 		1.0f
+	// 	);
+	// }
 
+	
+	
+	// // Draw lines between points
+	// for (int32 i = 0; i < Points.Num() - 1; ++i)
+	// {
+	// 	FSlateDrawElement::MakeLines(
+	// 		OutDrawElements,
+	// 		LayerId,
+	// 		AllottedGeometry.ToPaintGeometry(),
+	// 	{ TransformPoint(Points[i]), TransformPoint(Points[i + 1]) },
+	// 		ESlateDrawEffect::None,
+	// 		FLinearColor::Gray,
+	// 		true,
+	// 		2.0f
+	// 	);
+	// }
+	//
+	// // Draw closing line if shape is closed
+	// if (Points.Num() > 2)
+	// {
+	// 	FSlateDrawElement::MakeLines(
+	// 		OutDrawElements,
+	// 		LayerId,
+	// 		AllottedGeometry.ToPaintGeometry(),
+	// 		{ TransformPoint(Points.Last()), TransformPoint(Points[0]) },
+	// 		ESlateDrawEffect::None,
+	// 		FLinearColor::Gray,
+	// 		true,
+	// 		2.0f
+	// 	);
+	// }
+
+
+
+	
 	// 3. Advance layer so points draw on top of lines
 	LayerId++;
 
@@ -248,8 +285,152 @@ int32 SClothDesignCanvas::OnPaint(
 			Color
 		);
 	}
+
+
+	// if (CurvePoints.Points.Num() >= 2)
+	// {
+	// 	TArray<FVector2D> CurveSamples;
+	//
+	// 	// Sample curve between 0 and max key (e.g., 0 to last point's input)
+	// 	// float StartKey = CurvePoints.Points[0].InVal;
+	// 	// float EndKey = CurvePoints.Points.Last().InVal;
+	// 	float StartKey = 0.f;
+	// 	float EndKey = CurvePoints.Points.Num() - 1;
+	// 	
+	// 	const int NumSamples = 50; // How smooth the curve is
+	// 	for (int i = 0; i <= NumSamples; i++)
+	// 	{
+	// 		float Alpha = FMath::Lerp(StartKey, EndKey, float(i) / NumSamples);
+	// 		FVector2D PointOnCurve = CurvePoints.Eval(Alpha);
+ //        
+	// 		// TransformPoint is your function that converts from canvas to screen coords
+	// 		FVector2D ScreenPoint = TransformPoint(PointOnCurve);
+	// 		CurveSamples.Add(ScreenPoint);
+	// 	}
+	// 	
+	// 	// Draw lines between the sampled points to render the curve
+	// 	for (int i = 0; i < CurveSamples.Num() - 1; i++)
+	// 	{
+	// 		FSlateDrawElement::MakeLines(
+	// 			OutDrawElements, LayerId,
+	// 			AllottedGeometry.ToPaintGeometry(),
+	// 			{ CurveSamples[i], CurveSamples[i + 1] },
+	// 			ESlateDrawEffect::None,
+	// 			FLinearColor::Green, // or your color
+	// 			true, 2.0f // anti-aliased, thickness
+	// 		);
+	// 	}
+	//
+	// 	LayerId++;
+	// }
+	if (CurvePoints.Points.Num() >= 2)
+	{
+		const int SamplesPerSegment = 10; // Smoothness
+
+		for (int SegIndex = 0; SegIndex < CurvePoints.Points.Num() - 1; ++SegIndex)
+		{
+			float StartInVal = CurvePoints.Points[SegIndex].InVal;
+			float EndInVal   = CurvePoints.Points[SegIndex + 1].InVal;
+
+			for (int i = 0; i < SamplesPerSegment; ++i)
+			{
+				float AlphaStart = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
+				float AlphaEnd   = FMath::Lerp(StartInVal, EndInVal, float(i + 1) / SamplesPerSegment);
+
+				FVector2D P1 = TransformPoint(CurvePoints.Eval(AlphaStart));
+				FVector2D P2 = TransformPoint(CurvePoints.Eval(AlphaEnd));
+
+				FSlateDrawElement::MakeLines(
+					OutDrawElements, LayerId,
+					AllottedGeometry.ToPaintGeometry(),
+					{ P1, P2 },
+					ESlateDrawEffect::None,
+					FLinearColor::Green,
+					true, 2.0f
+				);
+			}
+		}
+
+		++LayerId;
+	}
+	if (CurvePoints.Points.Num() > 2)
+	{
+		const FVector2D LastPt = TransformPoint(CurvePoints.Points.Last().OutVal);
+		const FVector2D FirstPt = TransformPoint(CurvePoints.Points[0].OutVal);
+	
+		FSlateDrawElement::MakeLines(
+			OutDrawElements,
+			LayerId,
+			AllottedGeometry.ToPaintGeometry(),
+			{ LastPt, FirstPt },
+			ESlateDrawEffect::None,
+			FLinearColor::Black,
+			true,
+			2.0f
+		);
+		++LayerId;
+	}
+
+
+	// // 4. Draw interactive points as boxes (highlight selected)
+	// for (int32 i = 0; i < Points.Num(); ++i)
+	// {
+	// 	FVector2D DrawPos = TransformPoint(Points[i]);
+	// 	FLinearColor Color = (i == SelectedPointIndex) ? FLinearColor::Yellow : FLinearColor::White;
+	//
+	// 	FSlateDrawElement::MakeBox(
+	// 		OutDrawElements,
+	// 		LayerId,
+	// 		AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3, 3), FVector2D(6, 6)),
+	// 		FCoreStyle::Get().GetBrush("WhiteBrush"),
+	// 		ESlateDrawEffect::None,
+	// 		Color
+	// 	);
+	// }
+	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
+	{
+		FVector2D DrawPos = TransformPoint(CurvePoints.Points[i].OutVal);
+		FLinearColor Color = (i == SelectedPointIndex) ? FLinearColor::Yellow : FLinearColor::White;
+
+		FSlateDrawElement::MakeBox(
+			OutDrawElements,
+			LayerId,
+			AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3, 3), FVector2D(6, 6)),
+			FCoreStyle::Get().GetBrush("WhiteBrush"),
+			ESlateDrawEffect::None,
+			Color
+		);
+	}
 	
 	return LayerId;
+}
+
+TOptional<float> SClothDesignCanvas::GetBackgroundImageScale() const
+{
+	return BackgroundImageScale;
+}
+
+void SClothDesignCanvas::OnBackgroundImageScaleChanged(float NewScale)
+{
+	BackgroundImageScale = NewScale;
+	// Force redraw after scale change
+	this->Invalidate(EInvalidateWidget::LayoutAndVolatility);
+
+}
+
+FString SClothDesignCanvas::GetSelectedTexturePath() const
+{
+	return BackgroundTexture.IsValid() ? BackgroundTexture->GetPathName() : FString();
+}
+
+void SClothDesignCanvas::OnBackgroundTextureSelected(const FAssetData& AssetData)
+{
+	BackgroundTexture = Cast<UTexture2D>(AssetData.GetAsset());
+
+	if (BackgroundTexture.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Selected texture: %s"), *BackgroundTexture->GetName());
+	}
 }
 
 
@@ -291,9 +472,27 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 		if (CurrentMode == EClothEditorMode::Draw)
 		{
 			SaveStateForUndo();
-			Points.Add(CanvasClickPos);
-			UE_LOG(LogTemp, Warning, TEXT("Draw mode: Added point at (%f, %f)"), CanvasClickPos.X, CanvasClickPos.Y);
+			// Points.Add(CanvasClickPos);
+			// float Key = CanvasClickPos.X; // or use an incrementing ID if you want to decouple from X
+			// CurvePoints.Points.Add(FInterpCurvePoint<FVector2D>(Key, CanvasClickPos));
+			// CurvePoints.Points.Sort([](const FInterpCurvePoint<FVector2D>& A, const FInterpCurvePoint<FVector2D>& B) {
+			// 	return A.InVal < B.InVal;
+			// });
+			FInterpCurvePoint<FVector2D> NewPoint;
+			NewPoint.InVal = CurvePoints.Points.Num(); // Or use a running float like TotalDistance or cumulative X
+			NewPoint.OutVal = CanvasClickPos; // Clicked canvas-space position
+			NewPoint.InterpMode = CIM_CurveAuto; // Or CIM_Linear if you want sharp lines
+			// for (auto& Point : CurvePoints.Points)
+			// {
+			// 	Point.InterpMode = CIM_CurveAuto;
+			// }
 
+
+			CurvePoints.Points.Add(NewPoint);
+			CurvePoints.AutoSetTangents();
+
+			
+			UE_LOG(LogTemp, Warning, TEXT("Draw mode: Added point at (%f, %f)"), CanvasClickPos.X, CanvasClickPos.Y);
 			return FReply::Handled();
 		}
 
@@ -528,7 +727,7 @@ void SClothDesignCanvas::TriangulateAndBuildMesh()
 
 
 	// (Optional) Subdivide for more detail
-	UE::Geometry::FDynamicMeshEditor Editor(&Mesh);
+	// UE::Geometry::FDynamicMeshEditor Editor(&Mesh);
 	
 	int32 NumSubdivisions = 3;
 	double MaxEdgeLength = 1.0;

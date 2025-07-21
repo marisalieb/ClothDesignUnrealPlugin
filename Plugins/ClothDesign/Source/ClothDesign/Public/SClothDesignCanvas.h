@@ -3,10 +3,12 @@
 #include "Widgets/SCompoundWidget.h"
 #include "CompGeom/PolygonTriangulation.h"
 #include "ProceduralMeshComponent.h"
+// #include "Math/InterpCurve.h"
 
 // using namespace UE::Geometry;
 #include "VectorTypes.h"
-
+#include "Math/InterpCurve.h"
+// #include "Math/Vector2D.h"
 
 // Canvas state struct
 struct FCanvasState
@@ -81,8 +83,22 @@ public:
 	bool bIsShapeSelected = false;
 	bool IsPointNearLine(const FVector2D& P, const FVector2D& A, const FVector2D& B, float Threshold) const;
 
+
 	TWeakObjectPtr<UTexture2D> BackgroundTexture;
 
+	FString GetSelectedTexturePath() const;
+	void OnBackgroundTextureSelected(const FAssetData& AssetData);
+	float BackgroundImageScale = 1.0f;
+
+	
+	TOptional<float> GetBackgroundImageScale() const;
+	void OnBackgroundImageScaleChanged(float NewScale);
+
+
+	// This holds your curve control points and interpolation mode
+	FInterpCurve<FVector2D> CurvePoints;
+
+	
 protected:
 	void CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices);
 

@@ -60,7 +60,9 @@ public class ClothDesign : ModuleRules
 				"DynamicMesh",      // for FDynamicMesh3
 				"GeometryCore",        // Core geometry types
 				"MeshModelingTools", // Optional but useful
-
+				"ContentBrowser",
+				"PropertyEditor",
+				"EditorStyle"
 
 				// ... add private dependencies that you statically link with here ...	
 			}

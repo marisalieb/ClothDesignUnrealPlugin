@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Modules/ModuleManager.h"
+#include "Widgets/Input/SNumericEntryBox.h"
 
 /*
  This is the module definition for the editor mode. You can implement custom functionality

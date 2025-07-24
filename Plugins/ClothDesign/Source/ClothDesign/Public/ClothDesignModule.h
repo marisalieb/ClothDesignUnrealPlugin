@@ -30,4 +30,7 @@ private:
 
 	FReply OnGenerateMeshClicked();  // Declare the handler
 
+	FReply OnSewingClicked();  // Declare the handler
+
+		
 };

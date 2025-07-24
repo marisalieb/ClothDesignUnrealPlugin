@@ -217,7 +217,23 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 				]
 			]
 
+			// sewing Button
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(10)
+			.HAlign(HAlign_Left) // Optional: Align button to the left
+			[
+				SNew(SBox)
+				.WidthOverride(150.f) // Set desired fixed width here
+				[
+					SNew(SButton)
+					.Text(FText::FromString("Sewing"))
+					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSewingClicked))
+				]
+			]
 
+
+			
 			// Canvas
 			+ SVerticalBox::Slot()
 			.FillHeight(1.0f)
@@ -247,10 +263,23 @@ FReply FClothDesignModule::OnGenerateMeshClicked()
 {
 	if (CanvasWidget.IsValid())
 	{
-		CanvasWidget->TriangulateAndBuildMesh();
+		//CanvasWidget->TriangulateAndBuildMesh();
+		CanvasWidget->TriangulateAndBuildAllMeshes();
 	}
 	return FReply::Handled();
 }
+
+FReply FClothDesignModule::OnSewingClicked()
+{
+	if (CanvasWidget.IsValid())
+	{
+		//CanvasWidget->TriangulateAndBuildMesh();
+		CanvasWidget->SewingStart();
+	}
+	return FReply::Handled();
+}
+
+
 
 
 // TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)

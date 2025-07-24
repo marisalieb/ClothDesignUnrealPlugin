@@ -10,18 +10,26 @@
 #include "Math/InterpCurve.h"
 // #include "Math/Vector2D.h"
 
+#include "PatternSewingConstraint.h"
+
 // Canvas state struct
 struct FCanvasState
 {
-	TArray<FVector2D> Points;
-	int32 SelectedPointIndex = INDEX_NONE;
-	FVector2D PanOffset = FVector2D::ZeroVector;
-	float ZoomFactor = 1.0f;
+	// TArray<FVector2D> Points;
+	// int32 SelectedPointIndex = INDEX_NONE;
+	// FVector2D PanOffset = FVector2D::ZeroVector;
+	// float ZoomFactor = 1.0f;
+	FInterpCurve<FVector2D> CurvePoints;  // Was: TArray<FVector2D> Points
+	TArray<FInterpCurve<FVector2D>> CompletedShapes;
+
+	int32 SelectedPointIndex;
+	FVector2D PanOffset;
+	float ZoomFactor;
 
 	// Optional equality operator
 	bool operator==(const FCanvasState& Other) const
 	{
-		return Points == Other.Points &&
+		return CurvePoints == Other.CurvePoints &&
 			   SelectedPointIndex == Other.SelectedPointIndex &&
 			   PanOffset == Other.PanOffset &&
 			   FMath::IsNearlyEqual(ZoomFactor, Other.ZoomFactor);
@@ -47,7 +55,7 @@ public:
 						  int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
 
 	// Trigger mesh generation from drawn shape
-	void TriangulateAndBuildMesh();
+	void TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape);
 	
 	float ZoomFactor = 1.0f;
 	FVector2D PanOffset = FVector2D::ZeroVector;
@@ -70,6 +78,8 @@ public:
 		Select,
 		Move
 	};
+
+	USkeletalMeshComponent* SkeletalMesh = nullptr;
 	
 	EClothEditorMode CurrentMode = EClothEditorMode::Draw;
 	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
@@ -98,7 +108,38 @@ public:
 	// This holds your curve control points and interpolation mode
 	FInterpCurve<FVector2D> CurvePoints;
 
-	
+	enum class ETangentHandle
+	{
+		None,
+		Arrive,
+		Leave
+	};
+
+	// for drawing multiple shapes
+	TArray<FInterpCurve<FVector2D>> CompletedShapes;
+	mutable int32 SelectedShapeIndex = INDEX_NONE;
+	void TriangulateAndBuildAllMeshes();
+
+
+	// sewing
+	TArray<FPatternSewingConstraint> SewingConstraints;
+
+	void AddSewingConstraints(
+		AActor* PatternPiece1,
+		const TArray<int32>& Vertices1,
+		AActor* PatternPiece2,
+		const TArray<int32>& Vertices2,
+		float Stiffness,
+		TArray<FPatternSewingConstraint>& OutConstraints
+	);
+
+	void SewingTest();
+	void ApplySewingConstraints();
+
+	FVector GetSkinnedVertexPosition(USkeletalMeshComponent* MeshComp, int32 VertexIndex);
+
+	void SewingStart();
+
 protected:
 	void CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices);
 
@@ -116,4 +157,8 @@ protected:
 	
 private:
 	TArray<FVector2D> Points;
+
+	ETangentHandle SelectedTangentHandle = ETangentHandle::None;
+	bool bIsDraggingTangent = false;
+	float TangentHandleRadius = 25.0f; // or whatever pixel radius
 };

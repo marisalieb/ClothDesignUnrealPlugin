@@ -1,5 +1,5 @@
 var classFClothDesignEditorModeToolkit =
 [
-    [ "GetToolkitFName", "classFClothDesignEditorModeToolkit.html#a37cc57cf942fdbf0a5653a5e6781f101", null ],
-    [ "Init", "classFClothDesignEditorModeToolkit.html#a1485a89abaaa8c6975307bb580279fe7", null ]
+    [ "GetToolkitFName", "classFClothDesignEditorModeToolkit.html#a80e12a1d46c11af3c2862265faae77ed", null ],
+    [ "Init", "classFClothDesignEditorModeToolkit.html#acc3bea3390c41cb05ca7f64eb1550f5f", null ]
 ];

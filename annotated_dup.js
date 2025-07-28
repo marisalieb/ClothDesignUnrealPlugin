@@ -7,6 +7,6 @@ var annotated_dup =
     [ "FClothDesignModule", "classFClothDesignModule.html", "classFClothDesignModule" ],
     [ "FClothDesignStyle", "classFClothDesignStyle.html", null ],
     [ "FPatternSewingConstraint", "structFPatternSewingConstraint.html", null ],
-    [ "SClothDesignCanvas", "classSClothDesignCanvas.html", null ],
+    [ "SClothDesignCanvas", "classSClothDesignCanvas.html", "classSClothDesignCanvas" ],
     [ "UClothDesignEditorMode", "classUClothDesignEditorMode.html", "classUClothDesignEditorMode" ]
 ];

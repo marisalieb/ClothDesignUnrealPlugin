@@ -4,6 +4,7 @@ var hierarchy =
       [ "AClothPatternMeshActor", "classAClothPatternMeshActor.html", null ]
     ] ],
     [ "FCanvasState", "structFCanvasState.html", null ],
+    [ "SClothDesignCanvas::FClickTarget", "structSClothDesignCanvas_1_1FClickTarget.html", null ],
     [ "FClothDesignStyle", "classFClothDesignStyle.html", null ],
     [ "FModeToolkit", null, [
       [ "FClothDesignEditorModeToolkit", "classFClothDesignEditorModeToolkit.html", null ]

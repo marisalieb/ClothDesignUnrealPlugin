@@ -92,6 +92,7 @@ $(document).ready(function(){initNavTree('classSClothDesignCanvas.html',''); ini
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
@@ -108,11 +109,17 @@ Inheritance diagram for SClothDesignCanvas:</div>
   <img src="classSClothDesignCanvas.png" alt=""/>
  </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a52130105a63f2d73cb879fad1af11fd4" id="r_a52130105a63f2d73cb879fad1af11fd4"><td class="memItemLeft" align="right" valign="top"><a id="a52130105a63f2d73cb879fad1af11fd4" name="a52130105a63f2d73cb879fad1af11fd4"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>EClothEditorMode</b> { <b>Draw</b>
 , <b>Select</b>
 , <b>Move</b>
+, <b>Sew</b>
  }</td></tr>
 <tr class="separator:a52130105a63f2d73cb879fad1af11fd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13fb058ed866c1e7b997f3ba8c41b096" id="r_a13fb058ed866c1e7b997f3ba8c41b096"><td class="memItemLeft" align="right" valign="top"><a id="a13fb058ed866c1e7b997f3ba8c41b096" name="a13fb058ed866c1e7b997f3ba8c41b096"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>ETangentHandle</b> { <b>None</b>
@@ -120,6 +127,16 @@ Public Types</h2></td></tr>
 , <b>Leave</b>
  }</td></tr>
 <tr class="separator:a13fb058ed866c1e7b997f3ba8c41b096"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a240df242f3b1d8817c50f8b8530906a3" id="r_a240df242f3b1d8817c50f8b8530906a3"><td class="memItemLeft" align="right" valign="top"><a id="a240df242f3b1d8817c50f8b8530906a3" name="a240df242f3b1d8817c50f8b8530906a3"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>ESeamClickState</b> : uint8 { <br />
+&#160;&#160;<b>None</b>
+, <b>ClickedAStart</b>
+, <b>ClickedAEnd</b>
+, <b>ClickedBStart</b>
+, <br />
+&#160;&#160;<b>ClickedBEnd</b>
+<br />
+ }</td></tr>
+<tr class="separator:a240df242f3b1d8817c50f8b8530906a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -132,33 +149,33 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Construct</b> (const 
 <tr class="memitem:afbc1325fd18ee8fb5568bbd2666b6ba6" id="r_afbc1325fd18ee8fb5568bbd2666b6ba6"><td class="memItemLeft" align="right" valign="top"><a id="afbc1325fd18ee8fb5568bbd2666b6ba6" name="afbc1325fd18ee8fb5568bbd2666b6ba6"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>SupportsKeyboardFocus</b> () const override</td></tr>
 <tr class="separator:afbc1325fd18ee8fb5568bbd2666b6ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a623871024036142f9bb9a31f229552" id="r_a6a623871024036142f9bb9a31f229552"><td class="memItemLeft" align="right" valign="top"><a id="a6a623871024036142f9bb9a31f229552" name="a6a623871024036142f9bb9a31f229552"></a>
+<tr class="memitem:a2a3ea8d0db032f84e30a40332d9fc20e" id="r_a2a3ea8d0db032f84e30a40332d9fc20e"><td class="memItemLeft" align="right" valign="top"><a id="a2a3ea8d0db032f84e30a40332d9fc20e" name="a2a3ea8d0db032f84e30a40332d9fc20e"></a>
 virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnMouseButtonDown</b> (const FGeometry &amp;MyGeometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
-<tr class="separator:a6a623871024036142f9bb9a31f229552"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d2e2c3cab3db20dce9dbf9609540695" id="r_a5d2e2c3cab3db20dce9dbf9609540695"><td class="memItemLeft" align="right" valign="top"><a id="a5d2e2c3cab3db20dce9dbf9609540695" name="a5d2e2c3cab3db20dce9dbf9609540695"></a>
+<tr class="separator:a2a3ea8d0db032f84e30a40332d9fc20e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac994a352ab1d36ac1324e8ae449f2735" id="r_ac994a352ab1d36ac1324e8ae449f2735"><td class="memItemLeft" align="right" valign="top"><a id="ac994a352ab1d36ac1324e8ae449f2735" name="ac994a352ab1d36ac1324e8ae449f2735"></a>
 virtual int32&#160;</td><td class="memItemRight" valign="bottom"><b>OnPaint</b> (const FPaintArgs &amp;Args, const FGeometry &amp;AllottedGeometry, const FSlateRect &amp;MyCullingRect, FSlateWindowElementList &amp;OutDrawElements, int32 LayerId, const FWidgetStyle &amp;InWidgetStyle, bool bParentEnabled) const override</td></tr>
-<tr class="separator:a5d2e2c3cab3db20dce9dbf9609540695"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3fd0e36156626846e911865c452ff38f" id="r_a3fd0e36156626846e911865c452ff38f"><td class="memItemLeft" align="right" valign="top"><a id="a3fd0e36156626846e911865c452ff38f" name="a3fd0e36156626846e911865c452ff38f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>TriangulateAndBuildMesh</b> (const FInterpCurve&lt; FVector2D &gt; &amp;Shape)</td></tr>
-<tr class="separator:a3fd0e36156626846e911865c452ff38f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:ac994a352ab1d36ac1324e8ae449f2735"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd0f07a528465cff41c0f46108256a77" id="r_abd0f07a528465cff41c0f46108256a77"><td class="memItemLeft" align="right" valign="top"><a id="abd0f07a528465cff41c0f46108256a77" name="abd0f07a528465cff41c0f46108256a77"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>TriangulateAndBuildMesh</b> (const FInterpCurve&lt; FVector2D &gt; &amp;Shape, bool bRecordSeam=false, int32 AStartIdx=-1, int32 AEndIdx=-1)</td></tr>
+<tr class="separator:abd0f07a528465cff41c0f46108256a77"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f655901c138a2739bfd5616b507fb23" id="r_a2f655901c138a2739bfd5616b507fb23"><td class="memItemLeft" align="right" valign="top"><a id="a2f655901c138a2739bfd5616b507fb23" name="a2f655901c138a2739bfd5616b507fb23"></a>
 FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>TransformPoint</b> (const FVector2D &amp;Point) const</td></tr>
 <tr class="separator:a2f655901c138a2739bfd5616b507fb23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83fcec0015fff14cd2bc49ad3d5e603f" id="r_a83fcec0015fff14cd2bc49ad3d5e603f"><td class="memItemLeft" align="right" valign="top"><a id="a83fcec0015fff14cd2bc49ad3d5e603f" name="a83fcec0015fff14cd2bc49ad3d5e603f"></a>
+<tr class="memitem:a638492ffeb034c98d49bd979f5e2f7a1" id="r_a638492ffeb034c98d49bd979f5e2f7a1"><td class="memItemLeft" align="right" valign="top"><a id="a638492ffeb034c98d49bd979f5e2f7a1" name="a638492ffeb034c98d49bd979f5e2f7a1"></a>
 virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnMouseWheel</b> (const FGeometry &amp;MyGeometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
-<tr class="separator:a83fcec0015fff14cd2bc49ad3d5e603f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6939cacfa9d3cde41bb74cd3a0d5341e" id="r_a6939cacfa9d3cde41bb74cd3a0d5341e"><td class="memItemLeft" align="right" valign="top"><a id="a6939cacfa9d3cde41bb74cd3a0d5341e" name="a6939cacfa9d3cde41bb74cd3a0d5341e"></a>
+<tr class="separator:a638492ffeb034c98d49bd979f5e2f7a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98192619a454d03040cef22de481d46a" id="r_a98192619a454d03040cef22de481d46a"><td class="memItemLeft" align="right" valign="top"><a id="a98192619a454d03040cef22de481d46a" name="a98192619a454d03040cef22de481d46a"></a>
 virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnMouseMove</b> (const FGeometry &amp;MyGeometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
-<tr class="separator:a6939cacfa9d3cde41bb74cd3a0d5341e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71c6a98d5f51a6bb34bf42da2007b9c3" id="r_a71c6a98d5f51a6bb34bf42da2007b9c3"><td class="memItemLeft" align="right" valign="top"><a id="a71c6a98d5f51a6bb34bf42da2007b9c3" name="a71c6a98d5f51a6bb34bf42da2007b9c3"></a>
+<tr class="separator:a98192619a454d03040cef22de481d46a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fb1488fe36123ea2d9fe66288a82aa8" id="r_a6fb1488fe36123ea2d9fe66288a82aa8"><td class="memItemLeft" align="right" valign="top"><a id="a6fb1488fe36123ea2d9fe66288a82aa8" name="a6fb1488fe36123ea2d9fe66288a82aa8"></a>
 virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnMouseButtonUp</b> (const FGeometry &amp;MyGeometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
-<tr class="separator:a71c6a98d5f51a6bb34bf42da2007b9c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e595d770a1a60a6e09d90fbaa5ec382" id="r_a5e595d770a1a60a6e09d90fbaa5ec382"><td class="memItemLeft" align="right" valign="top"><a id="a5e595d770a1a60a6e09d90fbaa5ec382" name="a5e595d770a1a60a6e09d90fbaa5ec382"></a>
+<tr class="separator:a6fb1488fe36123ea2d9fe66288a82aa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ab60d5b55561b28f4aed0ed9f1d269b" id="r_a3ab60d5b55561b28f4aed0ed9f1d269b"><td class="memItemLeft" align="right" valign="top"><a id="a3ab60d5b55561b28f4aed0ed9f1d269b" name="a3ab60d5b55561b28f4aed0ed9f1d269b"></a>
 virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnKeyDown</b> (const FGeometry &amp;MyGeometry, const FKeyEvent &amp;InKeyEvent) override</td></tr>
-<tr class="separator:a5e595d770a1a60a6e09d90fbaa5ec382"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c2a1adcaeaa7e2943542c5200d92ad5" id="r_a7c2a1adcaeaa7e2943542c5200d92ad5"><td class="memItemLeft" align="right" valign="top"><a id="a7c2a1adcaeaa7e2943542c5200d92ad5" name="a7c2a1adcaeaa7e2943542c5200d92ad5"></a>
+<tr class="separator:a3ab60d5b55561b28f4aed0ed9f1d269b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee1c0648b2a70fe0dda41cf8e59dc9de" id="r_aee1c0648b2a70fe0dda41cf8e59dc9de"><td class="memItemLeft" align="right" valign="top"><a id="aee1c0648b2a70fe0dda41cf8e59dc9de" name="aee1c0648b2a70fe0dda41cf8e59dc9de"></a>
 virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnFocusReceived</b> (const FGeometry &amp;MyGeometry, const FFocusEvent &amp;InFocusEvent) override</td></tr>
-<tr class="separator:a7c2a1adcaeaa7e2943542c5200d92ad5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:aee1c0648b2a70fe0dda41cf8e59dc9de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a554253f9466ef2dba2a93e87762dea38" id="r_a554253f9466ef2dba2a93e87762dea38"><td class="memItemLeft" align="right" valign="top"><a id="a554253f9466ef2dba2a93e87762dea38" name="a554253f9466ef2dba2a93e87762dea38"></a>
 FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>InverseTransformPoint</b> (const FVector2D &amp;ScreenPoint) const</td></tr>
 <tr class="separator:a554253f9466ef2dba2a93e87762dea38"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -195,9 +212,39 @@ FVector&#160;</td><td class="memItemRight" valign="bottom"><b>GetSkinnedVertexPo
 <tr class="memitem:a36b1adbdcd5bd417c70c3463ac280052" id="r_a36b1adbdcd5bd417c70c3463ac280052"><td class="memItemLeft" align="right" valign="top"><a id="a36b1adbdcd5bd417c70c3463ac280052" name="a36b1adbdcd5bd417c70c3463ac280052"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SewingStart</b> ()</td></tr>
 <tr class="separator:a36b1adbdcd5bd417c70c3463ac280052"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addc7369751f3e44268049eab448f05cb" id="r_addc7369751f3e44268049eab448f05cb"><td class="memItemLeft" align="right" valign="top"><a id="addc7369751f3e44268049eab448f05cb" name="addc7369751f3e44268049eab448f05cb"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>ApplySpringSeamForces</b> (const TArray&lt; <a class="el" href="structFPatternSewingConstraint.html">FPatternSewingConstraint</a> &gt; &amp;Constraints, float DeltaTime)</td></tr>
+<tr class="separator:addc7369751f3e44268049eab448f05cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae72b196fe61539f46a94c6ace7dd9e19" id="r_ae72b196fe61539f46a94c6ace7dd9e19"><td class="memItemLeft" align="right" valign="top"><a id="ae72b196fe61539f46a94c6ace7dd9e19" name="ae72b196fe61539f46a94c6ace7dd9e19"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>FinalizeSeamDefinition</b> (const FVector2D &amp;AStart, const FVector2D &amp;AEnd, const FVector2D &amp;BStart, const FVector2D &amp;BEnd)</td></tr>
+<tr class="separator:ae72b196fe61539f46a94c6ace7dd9e19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae86d0f86039574250ac09f53b25a7025" id="r_ae86d0f86039574250ac09f53b25a7025"><td class="memItemLeft" align="right" valign="top"><a id="ae86d0f86039574250ac09f53b25a7025" name="ae86d0f86039574250ac09f53b25a7025"></a>
+FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>GetPointFromShape</b> (int32 ShapeIndex, int32 PointIndex)</td></tr>
+<tr class="separator:ae86d0f86039574250ac09f53b25a7025"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fe25949d243fcade48643fc193ce494" id="r_a4fe25949d243fcade48643fc193ce494"><td class="memItemLeft" align="right" valign="top"><a id="a4fe25949d243fcade48643fc193ce494" name="a4fe25949d243fcade48643fc193ce494"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>FinalizeSeamDefinitionByIndex</b> (<a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a> AStart, <a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a> AEnd, <a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a> BStart, <a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a> BEnd)</td></tr>
+<tr class="separator:a4fe25949d243fcade48643fc193ce494"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96632930f308d24052bac23361d1deea" id="r_a96632930f308d24052bac23361d1deea"><td class="memItemLeft" align="right" valign="top"><a id="a96632930f308d24052bac23361d1deea" name="a96632930f308d24052bac23361d1deea"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>FinalizeSeamDefinitionByTargets</b> (const <a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a> &amp;AStart, const <a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a> &amp;AEnd, const <a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a> &amp;BStart, const <a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a> &amp;BEnd)</td></tr>
+<tr class="separator:a96632930f308d24052bac23361d1deea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54b847be9b0527934721b47da5f95880" id="r_a54b847be9b0527934721b47da5f95880"><td class="memItemLeft" align="right" valign="top"><a id="a54b847be9b0527934721b47da5f95880" name="a54b847be9b0527934721b47da5f95880"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>AlignSeamMeshes</b> (<a class="el" href="classAClothPatternMeshActor.html">AClothPatternMeshActor</a> *A, <a class="el" href="classAClothPatternMeshActor.html">AClothPatternMeshActor</a> *B)</td></tr>
+<tr class="separator:a54b847be9b0527934721b47da5f95880"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bf942b5f3a1931f8c7a7d13ee401865" id="r_a5bf942b5f3a1931f8c7a7d13ee401865"><td class="memItemLeft" align="right" valign="top"><a id="a5bf942b5f3a1931f8c7a7d13ee401865" name="a5bf942b5f3a1931f8c7a7d13ee401865"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>BuildAndAlignClickedSeam</b> ()</td></tr>
+<tr class="separator:a5bf942b5f3a1931f8c7a7d13ee401865"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fcdfff0b7684224890904a045a047cf" id="r_a5fcdfff0b7684224890904a045a047cf"><td class="memItemLeft" align="right" valign="top"><a id="a5fcdfff0b7684224890904a045a047cf" name="a5fcdfff0b7684224890904a045a047cf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>MergeLastTwoMeshes</b> ()</td></tr>
+<tr class="separator:a5fcdfff0b7684224890904a045a047cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf5bd423d906c15718ca480d8c2ec618" id="r_adf5bd423d906c15718ca480d8c2ec618"><td class="memItemLeft" align="right" valign="top"><a id="adf5bd423d906c15718ca480d8c2ec618" name="adf5bd423d906c15718ca480d8c2ec618"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>MergeAndWeldLastTwoMeshes</b> ()</td></tr>
+<tr class="separator:adf5bd423d906c15718ca480d8c2ec618"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:a9ee68a6eaa06d1d58d4f5df51584820f" id="r_a9ee68a6eaa06d1d58d4f5df51584820f"><td class="memItemLeft" align="right" valign="top"><a id="a9ee68a6eaa06d1d58d4f5df51584820f" name="a9ee68a6eaa06d1d58d4f5df51584820f"></a>
+TArray&lt; int32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>LastSeamVertexIDs</b></td></tr>
+<tr class="separator:a9ee68a6eaa06d1d58d4f5df51584820f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5d18928680ebfe5e589466092992b65" id="r_ab5d18928680ebfe5e589466092992b65"><td class="memItemLeft" align="right" valign="top"><a id="ab5d18928680ebfe5e589466092992b65" name="ab5d18928680ebfe5e589466092992b65"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>ZoomFactor</b> = 1.0f</td></tr>
 <tr class="separator:ab5d18928680ebfe5e589466092992b65"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -243,6 +290,51 @@ int32&#160;</td><td class="memItemRight" valign="bottom"><b>SelectedShapeIndex</
 <tr class="memitem:ad3e044421fd54ec981f33a869d5ee077" id="r_ad3e044421fd54ec981f33a869d5ee077"><td class="memItemLeft" align="right" valign="top"><a id="ad3e044421fd54ec981f33a869d5ee077" name="ad3e044421fd54ec981f33a869d5ee077"></a>
 TArray&lt; <a class="el" href="structFPatternSewingConstraint.html">FPatternSewingConstraint</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SewingConstraints</b></td></tr>
 <tr class="separator:ad3e044421fd54ec981f33a869d5ee077"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a6e55dd38f62e20df616e02c6acb9db" id="r_a4a6e55dd38f62e20df616e02c6acb9db"><td class="memItemLeft" align="right" valign="top"><a id="a4a6e55dd38f62e20df616e02c6acb9db" name="a4a6e55dd38f62e20df616e02c6acb9db"></a>
+ESeamClickState&#160;</td><td class="memItemRight" valign="bottom"><b>SeamClickState</b> = ESeamClickState::None</td></tr>
+<tr class="separator:a4a6e55dd38f62e20df616e02c6acb9db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b7a139ecf9efe82821f559d252ca650" id="r_a8b7a139ecf9efe82821f559d252ca650"><td class="memItemLeft" align="right" valign="top"><a id="a8b7a139ecf9efe82821f559d252ca650" name="a8b7a139ecf9efe82821f559d252ca650"></a>
+FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>AStart</b></td></tr>
+<tr class="separator:a8b7a139ecf9efe82821f559d252ca650"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a81e057c5ecebfed488aae3d32a4fc4" id="r_a3a81e057c5ecebfed488aae3d32a4fc4"><td class="memItemLeft" align="right" valign="top"><a id="a3a81e057c5ecebfed488aae3d32a4fc4" name="a3a81e057c5ecebfed488aae3d32a4fc4"></a>
+FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>AEnd</b></td></tr>
+<tr class="separator:a3a81e057c5ecebfed488aae3d32a4fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef7ac8b8aa4ff326ae94eb8c565ba8ad" id="r_aef7ac8b8aa4ff326ae94eb8c565ba8ad"><td class="memItemLeft" align="right" valign="top"><a id="aef7ac8b8aa4ff326ae94eb8c565ba8ad" name="aef7ac8b8aa4ff326ae94eb8c565ba8ad"></a>
+FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>BStart</b></td></tr>
+<tr class="separator:aef7ac8b8aa4ff326ae94eb8c565ba8ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03a2a955dcba6f86940a81aeec137c9f" id="r_a03a2a955dcba6f86940a81aeec137c9f"><td class="memItemLeft" align="right" valign="top"><a id="a03a2a955dcba6f86940a81aeec137c9f" name="a03a2a955dcba6f86940a81aeec137c9f"></a>
+FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>BEnd</b></td></tr>
+<tr class="separator:a03a2a955dcba6f86940a81aeec137c9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3b5f632a1863f3aff0ee86c0d8123d6" id="r_af3b5f632a1863f3aff0ee86c0d8123d6"><td class="memItemLeft" align="right" valign="top"><a id="af3b5f632a1863f3aff0ee86c0d8123d6" name="af3b5f632a1863f3aff0ee86c0d8123d6"></a>
+TArray&lt; <a class="el" href="structFPatternSewingConstraint.html">FPatternSewingConstraint</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>AllDefinedSeams</b></td></tr>
+<tr class="separator:af3b5f632a1863f3aff0ee86c0d8123d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a500ecf41bd738880f3bfbeca6fda1003" id="r_a500ecf41bd738880f3bfbeca6fda1003"><td class="memItemLeft" align="right" valign="top"><a id="a500ecf41bd738880f3bfbeca6fda1003" name="a500ecf41bd738880f3bfbeca6fda1003"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>bIsSeamReady</b> = false</td></tr>
+<tr class="separator:a500ecf41bd738880f3bfbeca6fda1003"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab92aee7425432f0690bf00982a23ab02" id="r_ab92aee7425432f0690bf00982a23ab02"><td class="memItemLeft" align="right" valign="top"><a id="ab92aee7425432f0690bf00982a23ab02" name="ab92aee7425432f0690bf00982a23ab02"></a>
+int32&#160;</td><td class="memItemRight" valign="bottom"><b>SeamAStartIndex</b> = INDEX_NONE</td></tr>
+<tr class="separator:ab92aee7425432f0690bf00982a23ab02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cecd6ad2e85219a7b4614a2898b5232" id="r_a0cecd6ad2e85219a7b4614a2898b5232"><td class="memItemLeft" align="right" valign="top"><a id="a0cecd6ad2e85219a7b4614a2898b5232" name="a0cecd6ad2e85219a7b4614a2898b5232"></a>
+int32&#160;</td><td class="memItemRight" valign="bottom"><b>SeamAEndIndex</b> = INDEX_NONE</td></tr>
+<tr class="separator:a0cecd6ad2e85219a7b4614a2898b5232"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e30bd92acac76ab1af81e9a4109004d" id="r_a4e30bd92acac76ab1af81e9a4109004d"><td class="memItemLeft" align="right" valign="top"><a id="a4e30bd92acac76ab1af81e9a4109004d" name="a4e30bd92acac76ab1af81e9a4109004d"></a>
+int32&#160;</td><td class="memItemRight" valign="bottom"><b>SeamBStartIndex</b> = INDEX_NONE</td></tr>
+<tr class="separator:a4e30bd92acac76ab1af81e9a4109004d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64e00e041acee332b53eb1d8c5c78a5d" id="r_a64e00e041acee332b53eb1d8c5c78a5d"><td class="memItemLeft" align="right" valign="top"><a id="a64e00e041acee332b53eb1d8c5c78a5d" name="a64e00e041acee332b53eb1d8c5c78a5d"></a>
+int32&#160;</td><td class="memItemRight" valign="bottom"><b>SeamBEndIndex</b> = INDEX_NONE</td></tr>
+<tr class="separator:a64e00e041acee332b53eb1d8c5c78a5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51cf4b9e372cdf9df1d411081def0d33" id="r_a51cf4b9e372cdf9df1d411081def0d33"><td class="memItemLeft" align="right" valign="top"><a id="a51cf4b9e372cdf9df1d411081def0d33" name="a51cf4b9e372cdf9df1d411081def0d33"></a>
+<a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a>&#160;</td><td class="memItemRight" valign="bottom"><b>AStartTarget</b></td></tr>
+<tr class="separator:a51cf4b9e372cdf9df1d411081def0d33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bb84b5922787391b45f7d1658a276e7" id="r_a9bb84b5922787391b45f7d1658a276e7"><td class="memItemLeft" align="right" valign="top"><a id="a9bb84b5922787391b45f7d1658a276e7" name="a9bb84b5922787391b45f7d1658a276e7"></a>
+<a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a>&#160;</td><td class="memItemRight" valign="bottom"><b>AEndTarget</b></td></tr>
+<tr class="separator:a9bb84b5922787391b45f7d1658a276e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06dfe399bbe7052b98095e2d78d0801f" id="r_a06dfe399bbe7052b98095e2d78d0801f"><td class="memItemLeft" align="right" valign="top"><a id="a06dfe399bbe7052b98095e2d78d0801f" name="a06dfe399bbe7052b98095e2d78d0801f"></a>
+<a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a>&#160;</td><td class="memItemRight" valign="bottom"><b>BStartTarget</b></td></tr>
+<tr class="separator:a06dfe399bbe7052b98095e2d78d0801f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af68febbaa79d76192c47b6bae0b50065" id="r_af68febbaa79d76192c47b6bae0b50065"><td class="memItemLeft" align="right" valign="top"><a id="af68febbaa79d76192c47b6bae0b50065" name="af68febbaa79d76192c47b6bae0b50065"></a>
+<a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a>&#160;</td><td class="memItemRight" valign="bottom"><b>BEndTarget</b></td></tr>
+<tr class="separator:af68febbaa79d76192c47b6bae0b50065"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -273,9 +365,42 @@ TArray&lt; <a class="el" href="structFCanvasState.html">FCanvasState</a> &gt;&#1
 <tr class="memitem:a801cfde007e90506c08b0c3197044f0a" id="r_a801cfde007e90506c08b0c3197044f0a"><td class="memItemLeft" align="right" valign="top"><a id="a801cfde007e90506c08b0c3197044f0a" name="a801cfde007e90506c08b0c3197044f0a"></a>
 TArray&lt; <a class="el" href="structFCanvasState.html">FCanvasState</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>RedoStack</b></td></tr>
 <tr class="separator:a801cfde007e90506c08b0c3197044f0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd750e7c051d2a2a714f3705096e1859" id="r_abd750e7c051d2a2a714f3705096e1859"><td class="memItemLeft" align="right" valign="top">TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAClothPatternMeshActor.html">AClothPatternMeshActor</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#abd750e7c051d2a2a714f3705096e1859">SpawnedPatternActors</a></td></tr>
+<tr class="separator:abd750e7c051d2a2a714f3705096e1859"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a599d7babfd7fca7099f7c7491370eb59" id="r_a599d7babfd7fca7099f7c7491370eb59"><td class="memItemLeft" align="right" valign="top"><a id="a599d7babfd7fca7099f7c7491370eb59" name="a599d7babfd7fca7099f7c7491370eb59"></a>
+UE::Geometry::FDynamicMesh3&#160;</td><td class="memItemRight" valign="bottom"><b>LastBuiltMesh</b></td></tr>
+<tr class="separator:a599d7babfd7fca7099f7c7491370eb59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04b97ca66198fcad162731589a933e39" id="r_a04b97ca66198fcad162731589a933e39"><td class="memItemLeft" align="right" valign="top"><a id="a04b97ca66198fcad162731589a933e39" name="a04b97ca66198fcad162731589a933e39"></a>
+TArray&lt; int32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>LastBuiltSeamVertexIDs</b></td></tr>
+<tr class="separator:a04b97ca66198fcad162731589a933e39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="abd750e7c051d2a2a714f3705096e1859" name="abd750e7c051d2a2a714f3705096e1859"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd750e7c051d2a2a714f3705096e1859">&#9670;&#160;</a></span>SpawnedPatternActors</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TArray&lt;TWeakObjectPtr&lt;<a class="el" href="classAClothPatternMeshActor.html">AClothPatternMeshActor</a>&gt; &gt; SClothDesignCanvas::SpawnedPatternActors</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>All the procedural mesh actors we’ve spawned for patterns </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>Plugins/ClothDesign/Source/ClothDesign/Public/<a class="el" href="SClothDesignCanvas_8h_source.html">SClothDesignCanvas.h</a></li>
+<li>Plugins/ClothDesign/Source/ClothDesign/Private/<b>SClothDesignCanvas.cpp</b></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
+#include "DynamicMesh/DynamicMesh3.h"
 
 // Required for UCLASS to work:
 #include "AClothPatternMeshActor.generated.h" // necessary because UE's UCLASS relies on the UHT
@@ -19,5 +20,15 @@ public:
 	UProceduralMeshComponent* MeshComponent;
 
 	AClothPatternMeshActor();
+
+	// Store the seam vertex IDs you recorded when building
+	UPROPERTY()
+	TArray<int32> LastSeamVertexIDs;
+
+	// Keep the entire dynamic mesh around so we can query vertex positions
+	// at alignment time.
+	UE::Geometry::FDynamicMesh3 DynamicMesh;
+
+	
 };
 

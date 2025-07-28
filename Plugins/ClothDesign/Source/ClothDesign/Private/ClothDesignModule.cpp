@@ -264,7 +264,11 @@ FReply FClothDesignModule::OnGenerateMeshClicked()
 	if (CanvasWidget.IsValid())
 	{
 		//CanvasWidget->TriangulateAndBuildMesh();
-		CanvasWidget->TriangulateAndBuildAllMeshes();
+		// CanvasWidget->TriangulateAndBuildAllMeshes();
+		//CanvasWidget->BuildAndAlignClickedSeam(); MergeLastTwoMeshes
+		// CanvasWidget->MergeLastTwoMeshes();
+		CanvasWidget->MergeAndWeldLastTwoMeshes();
+
 	}
 	return FReply::Handled();
 }
@@ -274,7 +278,9 @@ FReply FClothDesignModule::OnSewingClicked()
 	if (CanvasWidget.IsValid())
 	{
 		//CanvasWidget->TriangulateAndBuildMesh();
-		CanvasWidget->SewingStart();
+		// CanvasWidget->SewingStart();
+		CanvasWidget->BuildAndAlignClickedSeam();
+
 	}
 	return FReply::Handled();
 }

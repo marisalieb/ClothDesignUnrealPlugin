@@ -23,5 +23,11 @@ struct FPatternSewingConstraint
 
 	UPROPERTY()
 	float Stiffness;
+
 	
+	UPROPERTY()
+	TArray<FVector2D> ScreenPointsA;
+
+	UPROPERTY()
+	TArray<FVector2D> ScreenPointsB;
 };

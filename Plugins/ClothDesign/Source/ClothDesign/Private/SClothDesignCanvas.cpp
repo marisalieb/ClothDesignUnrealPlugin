@@ -24,6 +24,23 @@
 #include "Rendering/SkeletalMeshRenderData.h"
 #include "Rendering/SkeletalMeshModel.h"
 #include "Engine/SkeletalMesh.h"
+#include "ClothingSimulationInteractor.h"
+#include "ClothingSimulation.h"
+#include "ClothingSimulationFactory.h"
+#include "ClothingAssetBase.h"
+#include "SkeletalRenderPublic.h"
+#include "ChaosCloth/ChaosClothingSimulation.h"
+#include "ChaosCloth/ChaosClothingSimulationInteractor.h"
+#include "ChaosCloth/ChaosClothingSimulationSolver.h"
+#include "ChaosCloth/ChaosClothingSimulationCloth.h"
+#include "ChaosCloth/ChaosClothingSimulation.h"
+#include "ChaosCloth/ChaosClothingSimulation.h"          // for FClothingSimulation
+#include "ChaosCloth/ChaosClothingSimulationCloth.h"     // for FClothingSimulationCloth
+#include "ChaosCloth/ChaosClothingSimulationInteractor.h"
+#include "ClothingSimulationFactory.h"                   // UClothingSimulationInteractor
+
+#include "Chaos/PBDParticles.h"
+
 
 void SClothDesignCanvas::Construct(const FArguments& InArgs)
 {
@@ -188,149 +205,6 @@ int32 SClothDesignCanvas::OnPaint(
 	LayerId++;
 
 	
-	 // Compute starting points for vertical lines
-	// float StartX = FMath::Fmod(-PanOffset.X * ZoomFactor, GridSpacing);
-	// if (StartX < 0) StartX += GridSpacing;
-	// for (float x = -StartX; x < Size.X; x += GridSpacing)
-	// for (float x = FMath::Fmod(-PanOffset.X, GridSpacing); x < Size.X; x += GridSpacing)
-
-	// // Anchor to world origin, transformed
-	// FVector2D AnchorScreen = TransformPoint(FVector2D(0, 0));
-	//
-	// // Compute offset from anchor to screen
-	// float StartX = FMath::Fmod(AnchorScreen.X, GridSpacing);
-	// if (StartX < 0) StartX += GridSpacing;
-	
-	// for (float x = -StartX; x < Size.X; x += GridSpacing)
-	// {	
-	// 	FSlateDrawElement::MakeLines(
-	// 		OutDrawElements,
-	// 		LayerId,
-	// 		AllottedGeometry.ToPaintGeometry(),
-	// 		{ FVector2D(x, 0), FVector2D(x, Size.Y) },
-	// 		ESlateDrawEffect::None,
-	// 		GridColor,
-	// 		true,
-	// 		1.0f
-	// 	);
-	// }
-
-	
-	// // Same for horizontal lines:
-	// float StartY = FMath::Fmod(-PanOffset.Y * ZoomFactor, GridSpacing);
-	// if (StartY < 0) StartY += GridSpacing;
-	// for (float y = -StartY; y < Size.Y; y += GridSpacing)
-	// for (float y = FMath::Fmod(-PanOffset.Y, GridSpacing); y < Size.Y; y += GridSpacing)
-	
-	// float StartY = FMath::Fmod(AnchorScreen.Y, GridSpacing);
-	// if (StartY < 0) StartY += GridSpacing;
-
-	// for (float y = -StartY; y < Size.Y; y += GridSpacing)
-	// {
-	// 	FSlateDrawElement::MakeLines(
-	// 		OutDrawElements,
-	// 		LayerId,
-	// 		AllottedGeometry.ToPaintGeometry(),
-	// 		{ FVector2D(0, y), FVector2D(Size.X, y) },
-	// 		ESlateDrawEffect::None,
-	// 		GridColor,
-	// 		true,
-	// 		1.0f
-	// 	);
-	// }
-
-	
-	
-	// // Draw lines between points
-	// for (int32 i = 0; i < Points.Num() - 1; ++i)
-	// {
-	// 	FSlateDrawElement::MakeLines(
-	// 		OutDrawElements,
-	// 		LayerId,
-	// 		AllottedGeometry.ToPaintGeometry(),
-	// 	{ TransformPoint(Points[i]), TransformPoint(Points[i + 1]) },
-	// 		ESlateDrawEffect::None,
-	// 		FLinearColor::Gray,
-	// 		true,
-	// 		2.0f
-	// 	);
-	// }
-	//
-	// // Draw closing line if shape is closed
-	// if (Points.Num() > 2)
-	// {
-	// 	FSlateDrawElement::MakeLines(
-	// 		OutDrawElements,
-	// 		LayerId,
-	// 		AllottedGeometry.ToPaintGeometry(),
-	// 		{ TransformPoint(Points.Last()), TransformPoint(Points[0]) },
-	// 		ESlateDrawEffect::None,
-	// 		FLinearColor::Gray,
-	// 		true,
-	// 		2.0f
-	// 	);
-	// }
-
-
-
-	//
-	// // 3. Advance layer so points draw on top of lines
-	// LayerId++;
-
-	// // 4. Draw interactive points as boxes (highlight selected)
-	// for (int32 i = 0; i < Points.Num(); ++i)
-	// {
-	// 	FVector2D DrawPos = TransformPoint(Points[i]);
-	// 	FLinearColor Color = (i == SelectedPointIndex) ? FLinearColor::Yellow : FLinearColor::White;
-	//
-	// 	FSlateDrawElement::MakeBox(
-	// 		OutDrawElements,
-	// 		LayerId,
-	// 		AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3, 3), FVector2D(6, 6)),
-	// 		FCoreStyle::Get().GetBrush("WhiteBrush"),
-	// 		ESlateDrawEffect::None,
-	// 		Color
-	// 	);
-	// }
-	//
-
-	// if (CurvePoints.Points.Num() >= 2)
-	// {
-	// 	TArray<FVector2D> CurveSamples;
-	//
-	// 	// Sample curve between 0 and max key (e.g., 0 to last point's input)
-	// 	// float StartKey = CurvePoints.Points[0].InVal;
-	// 	// float EndKey = CurvePoints.Points.Last().InVal;
-	// 	float StartKey = 0.f;
-	// 	float EndKey = CurvePoints.Points.Num() - 1;
-	// 	
-	// 	const int NumSamples = 50; // How smooth the curve is
-	// 	for (int i = 0; i <= NumSamples; i++)
-	// 	{
-	// 		float Alpha = FMath::Lerp(StartKey, EndKey, float(i) / NumSamples);
-	// 		FVector2D PointOnCurve = CurvePoints.Eval(Alpha);
- //        
-	// 		// TransformPoint is your function that converts from canvas to screen coords
-	// 		FVector2D ScreenPoint = TransformPoint(PointOnCurve);
-	// 		CurveSamples.Add(ScreenPoint);
-	// 	}
-	// 	
-	// 	// Draw lines between the sampled points to render the curve
-	// 	for (int i = 0; i < CurveSamples.Num() - 1; i++)
-	// 	{
-	// 		FSlateDrawElement::MakeLines(
-	// 			OutDrawElements, LayerId,
-	// 			AllottedGeometry.ToPaintGeometry(),
-	// 			{ CurveSamples[i], CurveSamples[i + 1] },
-	// 			ESlateDrawEffect::None,
-	// 			FLinearColor::Green, // or your color
-	// 			true, 2.0f // anti-aliased, thickness
-	// 		);
-	// 	}
-	//
-	// 	LayerId++;
-	// }
-
 	// Draw completed shapes first
 	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
 	{
@@ -536,10 +410,15 @@ int32 SClothDesignCanvas::OnPaint(
 			FCoreStyle::Get().GetBrush("WhiteBrush"),
 			ESlateDrawEffect::None, FLinearColor::Yellow);
 	}
+
+
+
+	
+
+
 	
 	return LayerId;
 }
-
 
 
 
@@ -607,37 +486,6 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 		const FVector2D LocalClickPos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
 		const FVector2D CanvasClickPos = InverseTransformPoint(LocalClickPos);
 
-		// // Draw
-		// if (CurrentMode == EClothEditorMode::Draw)
-		// {
-		// 	SaveStateForUndo();
-		// 	// Points.Add(CanvasClickPos);
-		// 	// float Key = CanvasClickPos.X; // or use an incrementing ID if you want to decouple from X
-		// 	// CurvePoints.Points.Add(FInterpCurvePoint<FVector2D>(Key, CanvasClickPos));
-		// 	// CurvePoints.Points.Sort([](const FInterpCurvePoint<FVector2D>& A, const FInterpCurvePoint<FVector2D>& B) {
-		// 	// 	return A.InVal < B.InVal;
-		// 	// });
-		// 	FInterpCurvePoint<FVector2D> NewPoint;
-		// 	NewPoint.InVal = CurvePoints.Points.Num(); // Or use a running float like TotalDistance or cumulative X
-		// 	NewPoint.OutVal = CanvasClickPos; // Clicked canvas-space position
-		// 	NewPoint.InterpMode = CIM_CurveAuto; // or auto like before,  Or CIM_Linear if you want sharp lines
-		// 	// for (auto& Point : CurvePoints.Points)
-		// 	// {
-		// 	// 	Point.InterpMode = CIM_CurveAuto;
-		// 	// }
-		//
-		//
-		// 	CurvePoints.Points.Add(NewPoint);
-		// 	CurvePoints.AutoSetTangents();
-		//
-		// 	
-		// 	UE_LOG(LogTemp, Warning, TEXT("Draw mode: Added point at (%f, %f)"), CanvasClickPos.X, CanvasClickPos.Y);
-		// 	return FReply::Handled();
-		// }
-
-
-
-
 		
 		// /*
 		// When the user hits Enter, push CurvePoints to CompletedShapes and clear it to start a new one.
@@ -659,76 +507,170 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 			UE_LOG(LogTemp, Warning, TEXT("Draw mode: Added point at (%f, %f)"), CanvasClickPos.X, CanvasClickPos.Y);
 			return FReply::Handled();
 		}
-
-
-
-		// SINGLE SHAPE
-		// // Select and Move
-		// else if (CurrentMode == EClothEditorMode::Select) // || CurrentMode == EClothEditorMode::Move)
+		
+		// else if (CurrentMode == EClothEditorMode::Sew)
 		// {
-		// 	FVector2D LocalClick = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
-		// 	FVector2D CanvasClick = InverseTransformPoint(LocalClick);
 		//
-		// 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
+		// 	//const FVector2D ClickPos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
+		//
+		// 	switch (SeamClickState)
 		// 	{
-		// 		const auto& Pt = CurvePoints.Points[i];
-		// 		const FVector2D PointPos = Pt.OutVal;
+		// 	case ESeamClickState::None:
+		// 		AStart = CanvasClickPos;
+		// 		SeamClickState = ESeamClickState::ClickedAStart;
+		// 		break;
 		//
-		// 		FVector2D Arrive = PointPos - Pt.ArriveTangent;
-		// 		FVector2D Leave  = PointPos + Pt.LeaveTangent;
+		// 	case ESeamClickState::ClickedAStart:
+		// 		AEnd = CanvasClickPos;
+		// 		SeamClickState = ESeamClickState::ClickedAEnd;
+		// 		break;
 		//
-		// 		if (FVector2D::Distance(CanvasClick, Arrive) < TangentHandleRadius / ZoomFactor)
-		// 		{
-		// 			SaveStateForUndo();
-		// 			SelectedPointIndex = i;
-		// 			SelectedTangentHandle = ETangentHandle::Arrive;
-		// 			bIsDraggingTangent = true;
-		// 			UE_LOG(LogTemp, Warning, TEXT("Selected arrive handle for point %d"), i);
+		// 	case ESeamClickState::ClickedAEnd:
+		// 		BStart = CanvasClickPos;
+		// 		SeamClickState = ESeamClickState::ClickedBStart;
+		// 		break;
 		//
-		// 			return FReply::Handled().CaptureMouse(SharedThis(this));
-		// 		}
-		// 		else if (FVector2D::Distance(CanvasClick, Leave) < TangentHandleRadius / ZoomFactor)
-		// 		{
-		// 			SaveStateForUndo();
-		// 			SelectedPointIndex = i;
-		// 			SelectedTangentHandle = ETangentHandle::Leave;
-		// 			bIsDraggingTangent = true;
-		// 			UE_LOG(LogTemp, Warning, TEXT("Selected leave handle for point %d"), i);
+		// 	case ESeamClickState::ClickedBStart:
+		// 		BEnd = CanvasClickPos;
+		// 		SeamClickState = ESeamClickState::ClickedBEnd;
+		// 		bIsSeamReady = true;
 		//
-		// 			return FReply::Handled().CaptureMouse(SharedThis(this));
-		// 		}
+		// 		// Now you can finalize the seam
+		// 		FinalizeSeamDefinition(AStart, AEnd, BStart, BEnd);
+		// 		SeamClickState = ESeamClickState::None; // Reset for next seam
+		// 		break;
 		// 	}
 		//
-		//
-		// 	
-		// 	const float SelectionRadius = 10.0f;
-		// 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-		// 	{
-		// 		FVector2D WorldPoint = CurvePoints.Points[i].OutVal;
-		// 		if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
-		// 		{
-		// 			SaveStateForUndo();
-		// 			SelectedPointIndex = i;
-		// 			bIsShapeSelected = false;
-		// 			bIsDraggingPoint = true;
-		//
-		// 			UE_LOG(LogTemp, Warning, TEXT("Selected point %d"), i);
-		//
-		// 			return FReply::Handled()
-		// 				.CaptureMouse(SharedThis(this))
-		// 				.SetUserFocus(SharedThis(this), EFocusCause::SetDirectly);
-		// 		}
-		// 	}
-
-
-		// Check completed shapes first
-		for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
+		// 	return FReply::Handled();
+		// }
+		
+		else if (CurrentMode == EClothEditorMode::Sew)
 		{
-			const auto& Shape = CompletedShapes[ShapeIndex];
+		    // 1) Find nearest control point across all shapes + current
+		    const float SelRadius = 10.0f / ZoomFactor;
+		    const float BestRadiusSq = SelRadius * SelRadius;
 
-			for (int32 i = 0; i < Shape.Points.Num(); ++i)
+		    int32  BestShape   = INDEX_NONE;
+		    int32  BestPoint   = INDEX_NONE;
+		    float  BestDistSq  = BestRadiusSq;
+
+		    // -- Check current in-progress shape first --
+		    for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
+		    {
+		        FVector2D Pt = CurvePoints.Points[i].OutVal;   //TransformPoint(CurvePoints.Points[i].OutVal);
+		        float D2 = FVector2D::DistSquared(Pt, CanvasClickPos);
+		    	
+		        if (D2 < BestDistSq)
+		        {
+		            BestDistSq = D2;
+		            BestShape  = INDEX_NONE;
+		            BestPoint  = i;
+		        }
+		    }
+
+		    // -- Then each completed shape --
+		    for (int32 s = 0; s < CompletedShapes.Num(); ++s)
+		    {
+		        for (int32 i = 0; i < CompletedShapes[s].Points.Num(); ++i)
+		        {
+		            FVector2D Pt = CompletedShapes[s].Points[i].OutVal;   //TransformPoint(CompletedShapes[s].Points[i].OutVal);
+		            float D2 = FVector2D::DistSquared(Pt, CanvasClickPos);
+		        	
+		            if (D2 < BestDistSq)
+		            {
+		                BestDistSq = D2;
+		                BestShape  = s;
+		                BestPoint  = i;
+		            }
+		        }
+		    }
+
+		    // If we didn't hit anything, just consume the click and exit
+		    if (BestPoint == INDEX_NONE)
+		    {
+		        UE_LOG(LogTemp, Verbose, TEXT("Sew click missed all control points."));
+		        return FReply::Handled();
+		    }
+
+		    // 2) Advance our 4-click state, storing shape+point each time
+		    switch (SeamClickState)
+		    {
+		    case ESeamClickState::None:
+		        AStartTarget = { BestShape, BestPoint };
+		        SeamClickState = ESeamClickState::ClickedAStart;
+		        UE_LOG(LogTemp, Log, TEXT("Sew: AStart = [%d,%d]"), BestShape, BestPoint);
+		        break;
+
+		    case ESeamClickState::ClickedAStart:
+		        AEndTarget = { BestShape, BestPoint };
+		        SeamClickState = ESeamClickState::ClickedAEnd;
+		        UE_LOG(LogTemp, Log, TEXT("Sew: AEnd   = [%d,%d]"), BestShape, BestPoint);
+		        break;
+
+		    case ESeamClickState::ClickedAEnd:
+		        BStartTarget = { BestShape, BestPoint };
+		        SeamClickState = ESeamClickState::ClickedBStart;
+		        UE_LOG(LogTemp, Log, TEXT("Sew: BStart = [%d,%d]"), BestShape, BestPoint);
+		        break;
+
+		    case ESeamClickState::ClickedBStart:
+		        BEndTarget = { BestShape, BestPoint };
+		        SeamClickState = ESeamClickState::ClickedBEnd;
+		        bIsSeamReady = true;
+		        UE_LOG(LogTemp, Log, TEXT("Sew: BEnd   = [%d,%d]"), BestShape, BestPoint);
+
+		        // 3) Finalize: now you have (shape,index) for all four clicks
+		        FinalizeSeamDefinitionByTargets(AStartTarget, AEndTarget, BStartTarget, BEndTarget);
+
+		        // Reset for next seam
+		        SeamClickState = ESeamClickState::None;
+		        break;
+		    }
+
+		    return FReply::Handled();
+		}
+
+		else if (CurrentMode == EClothEditorMode::Select)
+		{
+			// Check completed shapes first
+			for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
 			{
-				const auto& Pt = Shape.Points[i];
+				const auto& Shape = CompletedShapes[ShapeIndex];
+
+				for (int32 i = 0; i < Shape.Points.Num(); ++i)
+				{
+					const auto& Pt = Shape.Points[i];
+					const FVector2D PointPos = Pt.OutVal;
+					FVector2D Arrive = PointPos - Pt.ArriveTangent;
+					FVector2D Leave = PointPos + Pt.LeaveTangent;
+
+					if (FVector2D::Distance(CanvasClickPos, Arrive) < TangentHandleRadius / ZoomFactor)
+					{
+						SaveStateForUndo();
+						SelectedShapeIndex = ShapeIndex;
+						SelectedPointIndex = i;
+						SelectedTangentHandle = ETangentHandle::Arrive;
+						bIsDraggingTangent = true;
+
+						return FReply::Handled().CaptureMouse(SharedThis(this));
+					}
+					else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentHandleRadius / ZoomFactor)
+					{
+						SaveStateForUndo();
+						SelectedShapeIndex = ShapeIndex;
+						SelectedPointIndex = i;
+						SelectedTangentHandle = ETangentHandle::Leave;
+						bIsDraggingTangent = true;
+
+						return FReply::Handled().CaptureMouse(SharedThis(this));
+					}
+				}
+			}
+
+			// Also check current in-progress shape (if needed)
+			for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
+			{
+				const auto& Pt = CurvePoints.Points[i];
 				const FVector2D PointPos = Pt.OutVal;
 				FVector2D Arrive = PointPos - Pt.ArriveTangent;
 				FVector2D Leave = PointPos + Pt.LeaveTangent;
@@ -736,7 +678,7 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 				if (FVector2D::Distance(CanvasClickPos, Arrive) < TangentHandleRadius / ZoomFactor)
 				{
 					SaveStateForUndo();
-					SelectedShapeIndex = ShapeIndex;
+					SelectedShapeIndex = INDEX_NONE; // current shape
 					SelectedPointIndex = i;
 					SelectedTangentHandle = ETangentHandle::Arrive;
 					bIsDraggingTangent = true;
@@ -746,7 +688,7 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 				else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentHandleRadius / ZoomFactor)
 				{
 					SaveStateForUndo();
-					SelectedShapeIndex = ShapeIndex;
+					SelectedShapeIndex = INDEX_NONE;
 					SelectedPointIndex = i;
 					SelectedTangentHandle = ETangentHandle::Leave;
 					bIsDraggingTangent = true;
@@ -754,112 +696,66 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 					return FReply::Handled().CaptureMouse(SharedThis(this));
 				}
 			}
-		}
 
-		// Also check current in-progress shape (if needed)
-		for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-		{
-			const auto& Pt = CurvePoints.Points[i];
-			const FVector2D PointPos = Pt.OutVal;
-			FVector2D Arrive = PointPos - Pt.ArriveTangent;
-			FVector2D Leave = PointPos + Pt.LeaveTangent;
+			const float SelectionRadius = 10.0f;
 
-			if (FVector2D::Distance(CanvasClickPos, Arrive) < TangentHandleRadius / ZoomFactor)
+			// Check completed shapes
+			for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
 			{
-				SaveStateForUndo();
-				SelectedShapeIndex = INDEX_NONE; // current shape
-				SelectedPointIndex = i;
-				SelectedTangentHandle = ETangentHandle::Arrive;
-				bIsDraggingTangent = true;
+				const auto& Shape = CompletedShapes[ShapeIndex];
 
-				return FReply::Handled().CaptureMouse(SharedThis(this));
+				for (int32 i = 0; i < Shape.Points.Num(); ++i)
+				{
+					FVector2D WorldPoint = Shape.Points[i].OutVal;
+					if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
+					{
+						SaveStateForUndo();
+						SelectedShapeIndex = ShapeIndex;
+						SelectedPointIndex = i;
+						bIsShapeSelected = true;
+						bIsDraggingPoint = true;
+
+						UE_LOG(LogTemp, Warning, TEXT("Selected point %d in shape %d"), i, ShapeIndex);
+
+						return FReply::Handled()
+							.CaptureMouse(SharedThis(this))
+							.SetUserFocus(SharedThis(this), EFocusCause::SetDirectly);
+					}
+				}
 			}
-			else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentHandleRadius / ZoomFactor)
+
+			// Check current in-progress shape
+			for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
 			{
-				SaveStateForUndo();
-				SelectedShapeIndex = INDEX_NONE;
-				SelectedPointIndex = i;
-				SelectedTangentHandle = ETangentHandle::Leave;
-				bIsDraggingTangent = true;
-
-				return FReply::Handled().CaptureMouse(SharedThis(this));
-			}
-		}
-
-		const float SelectionRadius = 10.0f;
-
-		// Check completed shapes
-		for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
-		{
-			const auto& Shape = CompletedShapes[ShapeIndex];
-
-			for (int32 i = 0; i < Shape.Points.Num(); ++i)
-			{
-				FVector2D WorldPoint = Shape.Points[i].OutVal;
+				FVector2D WorldPoint = CurvePoints.Points[i].OutVal;
 				if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
 				{
 					SaveStateForUndo();
-					SelectedShapeIndex = ShapeIndex;
+					SelectedShapeIndex = INDEX_NONE;  // current shape
 					SelectedPointIndex = i;
 					bIsShapeSelected = true;
 					bIsDraggingPoint = true;
 
-					UE_LOG(LogTemp, Warning, TEXT("Selected point %d in shape %d"), i, ShapeIndex);
+					UE_LOG(LogTemp, Warning, TEXT("Selected point %d in current shape"), i);
 
 					return FReply::Handled()
 						.CaptureMouse(SharedThis(this))
 						.SetUserFocus(SharedThis(this), EFocusCause::SetDirectly);
 				}
 			}
+
+			return FReply::Handled();
 		}
-
-		// Check current in-progress shape
-		for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-		{
-			FVector2D WorldPoint = CurvePoints.Points[i].OutVal;
-			if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
-			{
-				SaveStateForUndo();
-				SelectedShapeIndex = INDEX_NONE;  // current shape
-				SelectedPointIndex = i;
-				bIsShapeSelected = true;
-				bIsDraggingPoint = true;
-
-				UE_LOG(LogTemp, Warning, TEXT("Selected point %d in current shape"), i);
-
-				return FReply::Handled()
-					.CaptureMouse(SharedThis(this))
-					.SetUserFocus(SharedThis(this), EFocusCause::SetDirectly);
-			}
-		}
-
 		
+		
+		
+
+
+
 		if (Points.Num() < 2)
 			return FReply::Handled(); // not enough points
 
-			// // No point selected, check if clicked near a line
-			// const float LineSelectThreshold = 10.f / ZoomFactor;
-			// for (int32 i = 0; i < Points.Num() - 1; ++i)
-			// {
-			// 	const FVector2D A = Points[i];
-			// 	const FVector2D B = Points[(i + 1) % Points.Num()]; // Loop around if closed
-			//
-			// 	if (IsPointNearLine(CanvasClickPos, A, B, LineSelectThreshold))
-			// 	{
-			// 		UE_LOG(LogTemp, Warning, TEXT("ZoomFactor: %f"), ZoomFactor);
-			//
-			// 		SaveStateForUndo();
-			// 		bIsShapeSelected = true;
-			// 		SelectedPointIndex = INDEX_NONE;
-			// 		bIsDraggingShape = true;
-			//
-			// 		UE_LOG(LogTemp, Warning, TEXT("Selected line near segment %d"), i);
-			// 		return FReply::Handled().CaptureMouse(SharedThis(this));
-			// 	}
-			// }
-
-
-
+			
 		// Clicked on empty space; DESELECT
 		SelectedPointIndex = INDEX_NONE;
 		bIsDraggingPoint = false;
@@ -872,53 +768,125 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 
 	return FReply::Unhandled();
 }
-//
-// FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+
+
+void SClothDesignCanvas::FinalizeSeamDefinitionByTargets(
+	const FClickTarget& AStart,
+	const FClickTarget& AEnd,
+	const FClickTarget& BStart,
+	const FClickTarget& BEnd)
+{
+	const int32 NumSeamPoints = 10;
+	TArray<FVector2D> PointsA, PointsB;
+
+	auto GetPt = [&](const FClickTarget& T) {
+		if (T.ShapeIndex == INDEX_NONE)
+			return CurvePoints.Points[T.PointIndex].OutVal;
+		else
+			return CompletedShapes[T.ShapeIndex].Points[T.PointIndex].OutVal;
+	};
+
+	FVector2D A1 = GetPt(AStart), A2 = GetPt(AEnd);
+	FVector2D B1 = GetPt(BStart), B2 = GetPt(BEnd);
+
+	for (int32 i = 0; i < NumSeamPoints; ++i)
+	{
+		float Alpha = float(i) / (NumSeamPoints - 1);
+		PointsA.Add(FMath::Lerp(A1, A2, Alpha));
+		PointsB.Add(FMath::Lerp(B1, B2, Alpha));
+	}
+
+	FPatternSewingConstraint NewSeam;
+	NewSeam.ScreenPointsA = PointsA;
+	NewSeam.ScreenPointsB = PointsB;
+	AllDefinedSeams.Add(NewSeam);
+
+	UE_LOG(LogTemp, Log, TEXT("Seam finalized between [%d,%d] and [%d,%d]"),
+		AStart.ShapeIndex, AStart.PointIndex,
+		BStart.ShapeIndex, BStart.PointIndex);
+}
+
+
+
+
+
+FVector2D SClothDesignCanvas::GetPointFromShape(int32 ShapeIndex, int32 PointIndex)
+{
+	if (ShapeIndex == INDEX_NONE)
+	{
+		return CurvePoints.Points[PointIndex].OutVal;
+	}
+	else
+	{
+		return CompletedShapes[ShapeIndex].Points[PointIndex].OutVal;
+	}
+}
+
+void SClothDesignCanvas::FinalizeSeamDefinitionByIndex(
+	FClickTarget AStart, FClickTarget AEnd,
+	FClickTarget BStart, FClickTarget BEnd)
+{
+	const int32 NumSeamPoints = 10;
+	TArray<FVector2D> PointsA, PointsB;
+
+	FVector2D A1 = GetPointFromShape(AStart.ShapeIndex, AStart.PointIndex);
+	FVector2D A2 = GetPointFromShape(AEnd.ShapeIndex, AEnd.PointIndex);
+	FVector2D B1 = GetPointFromShape(BStart.ShapeIndex, BStart.PointIndex);
+	FVector2D B2 = GetPointFromShape(BEnd.ShapeIndex, BEnd.PointIndex);
+
+	for (int32 i = 0; i < NumSeamPoints; ++i)
+	{
+		float Alpha = float(i) / (NumSeamPoints - 1);
+		PointsA.Add(FMath::Lerp(A1, A2, Alpha));
+		PointsB.Add(FMath::Lerp(B1, B2, Alpha));
+	}
+
+	FPatternSewingConstraint NewSeam;
+	NewSeam.ScreenPointsA = PointsA;
+	NewSeam.ScreenPointsB = PointsB;
+	AllDefinedSeams.Add(NewSeam);
+
+	UE_LOG(LogTemp, Log, TEXT("Seam defined with %d points per side."), NumSeamPoints);
+	UE_LOG(LogTemp, Log, TEXT("AStart: (%f, %f), AEnd: (%f, %f)"), A1.X, A1.Y, A2.X, A2.Y);
+	UE_LOG(LogTemp, Log, TEXT("BStart: (%f, %f), BEnd: (%f, %f)"), B1.X, B1.Y, B2.X, B2.Y);
+}
+
+
+// void SClothDesignCanvas::FinalizeSeamDefinitionByIndex(
+// 	int32 AStartIdx, int32 AEndIdx,
+// 	int32 BStartIdx, int32 BEndIdx)
 // {
-// 	if ((CurrentMode == EClothEditorMode::Move || CurrentMode == EClothEditorMode::Select) && MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
+// 	// Sample between those two points in your curve:
+// 	const int32 NumSeamPoints = 10;
+// 	TArray<FVector2D> PointsA, PointsB;
+//
+// 	//auto& PointsRef = /* same logic to pick CurvePoints or CompletedShapes */;
+// 	// 1) Choose the right point list
+// 	TArray<FInterpCurvePoint<FVector2D>>& PointArray =
+// 		(SelectedShapeIndex == INDEX_NONE)
+// 			? CurvePoints.Points
+// 			: CompletedShapes[SelectedShapeIndex].Points;
+// 	FVector2D A1 = PointArray[AStartIdx].OutVal;
+// 	FVector2D A2 = PointArray[AEndIdx].OutVal;
+// 	FVector2D B1 = PointArray[BStartIdx].OutVal;
+// 	FVector2D B2 = PointArray[BEndIdx].OutVal;
+//
+// 	for (int32 i = 0; i < NumSeamPoints; ++i)
 // 	{
-// 		FVector2D LocalMousePos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
-// 		const FVector2D CanvasMousePos = InverseTransformPoint(LocalMousePos);
-// 		UE_LOG(LogTemp, Warning, TEXT("CanvasClick: %s"), *CanvasMousePos.ToString());
-//
-// 		// for curve handles
-// 		if (bIsDraggingTangent && SelectedPointIndex != INDEX_NONE)
-// 		{
-//
-// 			FVector2D PointPos = CurvePoints.Points[SelectedPointIndex].OutVal;
-// 			FVector2D Delta = CanvasMousePos - PointPos;
-//
-// 			if (SelectedTangentHandle == ETangentHandle::Arrive)
-// 			{
-// 				UE_LOG(LogTemp, Warning, TEXT("Click on Arrive handle of point"));
-// 				CurvePoints.Points[SelectedPointIndex].ArriveTangent = -Delta;
-// 				//CurvePoints.Points[SelectedPointIndex].LeaveTangent = Delta;
-//
-// 			}
-// 			else if (SelectedTangentHandle == ETangentHandle::Leave)
-// 			{
-// 				UE_LOG(LogTemp, Warning, TEXT("Click on leave handle of point"));
-// 				CurvePoints.Points[SelectedPointIndex].LeaveTangent = Delta;
-// 				//CurvePoints.Points[SelectedPointIndex].ArriveTangent = -Delta;
-// 			}
-// 			UE_LOG(LogTemp, Warning, TEXT("Dragging tangent for point %d"), SelectedPointIndex);
-//
-// 			return FReply::Handled();
-// 		}
-// 		
-// 		if (bIsDraggingPoint && SelectedPointIndex != INDEX_NONE)
-// 		{
-// 			
-// 			// Points[SelectedPointIndex] = InverseTransformPoint(LocalPos);
-// 			CurvePoints.Points[SelectedPointIndex].OutVal = CanvasMousePos;
-// 			UE_LOG(LogTemp, Warning, TEXT("Dragging for point %d"), SelectedPointIndex);
-//
-// 			return FReply::Handled();
-// 		}
+// 		float Alpha = float(i) / (NumSeamPoints - 1);
+// 		PointsA.Add(FMath::Lerp(A1, A2, Alpha));
+// 		PointsB.Add(FMath::Lerp(B1, B2, Alpha));
 // 	}
-// 	
 //
-// 	return FReply::Unhandled();
+// 	FPatternSewingConstraint NewSeam;
+// 	NewSeam.ScreenPointsA = PointsA;
+// 	NewSeam.ScreenPointsB = PointsB;
+// 	AllDefinedSeams.Add(NewSeam);
+//
+// 	UE_LOG(LogTemp, Log, TEXT(
+// 	   "SeamIndices: A[%d→%d], B[%d→%d]"), 
+// 	   AStartIdx, AEndIdx, BStartIdx, BEndIdx
+// 	);
 // }
 
 FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
@@ -1091,7 +1059,13 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 	//
 	// 	return FReply::Handled();
 	// }
+	else if (Key == EKeys::Four)
+	{
+		CurrentMode = EClothEditorMode::Sew;
+		UE_LOG(LogTemp, Warning, TEXT("Switched to Sew mode"));
 
+		return FReply::Handled();
+	}
 	
 	// Check for Undo (Ctrl+Z)
 	if (Key == EKeys::Z && InKeyEvent.IsControlDown())
@@ -1160,7 +1134,17 @@ FReply SClothDesignCanvas::OnFocusReceived(const FGeometry& MyGeometry, const FF
 // 		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
 // 		return;
 // 	}
-void SClothDesignCanvas::TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape)
+
+
+//void SClothDesignCanvas::TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape)
+
+
+void SClothDesignCanvas::TriangulateAndBuildMesh(
+	const FInterpCurve<FVector2D>& Shape,
+	bool bRecordSeam,
+	int32 StartPointIdx2D,
+	int32 EndPointIdx2D
+)
 {
 	if (Shape.Points.Num() < 3)
 	{
@@ -1170,50 +1154,75 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& 
 
 	TArray<FVector2f> PolyVerts;
 	const int SamplesPerSegment = 10;
-
-	for (int SegIndex = 0; SegIndex < Shape.Points.Num() - 1; ++SegIndex)
-	{
-		float StartInVal = Shape.Points[SegIndex].InVal;
-		float EndInVal   = Shape.Points[SegIndex + 1].InVal;
-
-		for (int i = 0; i < SamplesPerSegment; ++i)
-		{
-			float Alpha = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
-			FVector2D Sample = Shape.Eval(Alpha);
-			PolyVerts.Add(FVector2f(Sample.X, Sample.Y));
-		}
-	}
-	// ...rest of triangulation and mesh creation code...
-
-	// // Step 1: Sample the curve into straight segments
-	// TArray<FVector2f> PolyVerts;
+	// Step 3: Build DynamicMesh
+	UE::Geometry::FDynamicMesh3 Mesh;
+	// WORKING but not smooth at all so lots of different sized triangles
+	// Insert vertices
+	// TArray<int> VertexIDs;
 	//
-	// const int SamplesPerSegment = 10;
-	//
-	// for (int SegIndex = 0; SegIndex < CurvePoints.Points.Num() - 1; ++SegIndex)
+	// LastSeamVertexIDs.Empty();
+	// int TotalSamples = PolyVerts.Num();
+
+
+
+
+
+	// for (int SegIndex = 0; SegIndex < Shape.Points.Num() - 1; ++SegIndex)
 	// {
-	// 	float StartInVal = CurvePoints.Points[SegIndex].InVal;
-	// 	float EndInVal   = CurvePoints.Points[SegIndex + 1].InVal;
+	// 	float StartInVal = Shape.Points[SegIndex].InVal;
+	// 	float EndInVal   = Shape.Points[SegIndex + 1].InVal;
 	//
 	// 	for (int i = 0; i < SamplesPerSegment; ++i)
 	// 	{
 	// 		float Alpha = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
-	// 		FVector2D Sample = CurvePoints.Eval(Alpha);
+	// 		FVector2D Sample = Shape.Eval(Alpha);
 	// 		PolyVerts.Add(FVector2f(Sample.X, Sample.Y));
 	// 	}
 	// }
-	//
-	//
-	//
-	// if (PolyVerts.Num() < 3)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("Not enough curve samples to triangulate"));
-	// 	return;
-	// }
+	
+
+	
+	LastSeamVertexIDs.Empty();
+	TArray<int32> VertexIDs;
+
+	int TotalSamples = (Shape.Points.Num()-1) * SamplesPerSegment;
+	int SampleCounter = 0;
+
+	for (int Seg=0; Seg<Shape.Points.Num()-1; ++Seg)
+	{
+		float In0 = Shape.Points[Seg].InVal;
+		float In1 = Shape.Points[Seg+1].InVal;
+
+		for (int i=0; i<SamplesPerSegment; ++i, ++SampleCounter)
+		{
+			float tSeg = float(i) / SamplesPerSegment;
+			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, tSeg));
+			PolyVerts.Add(FVector2f(P2.X, P2.Y));
+
+			// store in mesh
+			int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
+			VertexIDs.Add(VID);
+
+			// record seam if in range
+			if (bRecordSeam)
+			{
+				float tCurve = float(SampleCounter) / float(TotalSamples-1);
+				float tMin = Shape.Points[StartPointIdx2D].InVal / Shape.Points.Last().InVal;
+				float tMax = Shape.Points[EndPointIdx2D].InVal   / Shape.Points.Last().InVal;
+				if (tCurve >= tMin && tCurve <= tMax)
+				{
+					LastSeamVertexIDs.Add(VID);
+				}
+			}
+		}
+	}
+	
 	
 	// Step 2: Triangulate
 	TArray<UE::Geometry::FIndex3i> Triangles;
 	PolygonTriangulation::TriangulateSimplePolygon<float>(PolyVerts, Triangles, false);
+
+
 
 	if (Triangles.Num() == 0)
 	{
@@ -1221,62 +1230,49 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& 
 		return;
 	}
 
-	// Step 3: Build DynamicMesh
-	UE::Geometry::FDynamicMesh3 Mesh;
 
-	// WORKING but not smooth at all so lots of different sized triangles
-	// Insert vertices
-	TArray<int> VertexIDs;
 	for (const FVector2f& V : PolyVerts)
 	{
 		int VID = Mesh.AppendVertex(FVector3d(V.X, V.Y, 0)); // z = 0
 		VertexIDs.Add(VID);
 	}
+	// Assume PolyVerts is TArray<FVector2f> of your samples in order
+	float SignedArea = 0.f;
+	int N = PolyVerts.Num();
+	for (int i = 0; i < N; ++i)
+	{
+		const FVector2f& A = PolyVerts[i];
+		const FVector2f& B = PolyVerts[(i+1) % N];
+		SignedArea += (A.X * B.Y - B.X * A.Y);
+	}
+	SignedArea *= 0.5f;
+	
+	// for (int idx = 0; idx < TotalSamples; ++idx)
+	// {
+	// 	FVector2f V2 = PolyVerts[idx];
+	// 	int VID = Mesh.AppendVertex(FVector3d(V2.X, V2.Y, 0));
+	// 	VertexIDs.Add(VID);
+	//
+	// 	if (bRecordSeam)
+	// 	{
+	// 		// Decide whether idx falls into your seam index range
+	// 		// (you can map StartPointIdx2D→EndPointIdx2D into sample indices)
+	// 		if (idx >= SeamSampleStart && idx <= SeamSampleEnd)
+	// 		{
+	// 			LastSeamVertexIDs.Add(VID);
+	// 		}
+	// 	}
+	// }
+
+
+
+
+
 	
 	// Insert triangles
 	for (const UE::Geometry::FIndex3i& Tri : Triangles)
 	{
 		Mesh.AppendTriangle(VertexIDs[Tri.A], VertexIDs[Tri.B], VertexIDs[Tri.C]);
-	}
-	
-	// 2. Remesher setup
-	UE::Geometry::FRemesher Remesher(&Mesh);
-	Remesher.SetTargetEdgeLength(1.50); // Set this to desired density
-	
-	Remesher.SmoothSpeedT = 0.0f; // Optional tweak
-	
-	for (int i = 0; i < 2; ++i)  // 1 not enough, 3-5 too much in terms of edge vertices changing
-	{
-		// Remesher.BasicRemeshPass();
-	}
-
-
-	// // (Optional) Subdivide for more detail
-	// // UE::Geometry::FDynamicMeshEditor Editor(&Mesh);
-	
-	int32 NumSubdivisions = 3;
-	double MaxEdgeLength = 1.50;
-	
-	for (int32 Pass = 0; Pass < NumSubdivisions; ++Pass)
-	{
-		TArray<int32> EdgesToSplit;
-		for (int32 eid : Mesh.EdgeIndicesItr())
-		{
-			UE::Geometry::FIndex2i EdgeVerts = Mesh.GetEdgeV(eid);
-			FVector3d A = Mesh.GetVertex(EdgeVerts.A);
-			FVector3d B = Mesh.GetVertex(EdgeVerts.B);
-	
-			if (FVector3d::Distance(A, B) > MaxEdgeLength)
-			{
-				EdgesToSplit.Add(eid);
-			}
-		}
-	
-		for (int32 eid : EdgesToSplit)
-		{
-			UE::Geometry::FDynamicMesh3::FEdgeSplitInfo SplitInfo;
-			Mesh.SplitEdge(eid, SplitInfo);
-		}
 	}
 	
 	
@@ -1289,20 +1285,201 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& 
 		FVector3d Pos = Mesh.GetVertex(vid);
 		Vertices.Add(FVector(Pos.X, Pos.Y, Pos.Z));
 	}
+	
+	bool bReverseWinding = (SignedArea < 0.f);
+	// for (int tid : Mesh.TriangleIndicesItr())
+	// {
+	// 	UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+	// 	Indices.Add(Tri.A);
+	// 	Indices.Add(Tri.B);
+	// 	Indices.Add(Tri.C);
+	// }
 
 	for (int tid : Mesh.TriangleIndicesItr())
 	{
 		UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
-		Indices.Add(Tri.C);
-		Indices.Add(Tri.B);
-		Indices.Add(Tri.A);
+		if (bReverseWinding)
+		{
+			// flip each triangle
+			Indices.Add(Tri.A);
+			Indices.Add(Tri.B);
+			Indices.Add(Tri.C);
+		}
+		else
+		{
+			// keep normal winding, here c to a is noremal winding
+			Indices.Add(Tri.C);
+			Indices.Add(Tri.B);
+			Indices.Add(Tri.A);
+		}
 	}
+	
+	LastBuiltMesh           = MoveTemp(Mesh);
+	LastBuiltSeamVertexIDs  = MoveTemp(LastSeamVertexIDs);
 
 	// Step 5: Build procedural mesh
 	CreateProceduralMesh(Vertices, Indices);
 }
 
 
+// void SClothDesignCanvas::TriangulateAndBuildMesh(
+// 	const FInterpCurve<FVector2D>& Shape,
+// 	bool bRecordSeam,
+// 	int32 StartPointIdx2D,
+// 	int32 EndPointIdx2D
+// )
+// {
+// 	if (Shape.Points.Num() < 3)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
+// 		return;
+// 	}
+//
+// 	TArray<FVector2f> PolyVerts;
+// 	const int SamplesPerSegment = 10;
+//
+// 	for (int SegIndex = 0; SegIndex < Shape.Points.Num() - 1; ++SegIndex)
+// 	{
+// 		float StartInVal = Shape.Points[SegIndex].InVal;
+// 		float EndInVal   = Shape.Points[SegIndex + 1].InVal;
+//
+// 		for (int i = 0; i < SamplesPerSegment; ++i)
+// 		{
+// 			float Alpha = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
+// 			FVector2D Sample = Shape.Eval(Alpha);
+// 			PolyVerts.Add(FVector2f(Sample.X, Sample.Y));
+// 		}
+// 	}
+// 	
+// 	// Step 2: Triangulate
+// 	TArray<UE::Geometry::FIndex3i> Triangles;
+// 	PolygonTriangulation::TriangulateSimplePolygon<float>(PolyVerts, Triangles, false);
+//
+// 	if (Triangles.Num() == 0)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Triangulation failed"));
+// 		return;
+// 	}
+//
+// 	// Step 3: Build DynamicMesh
+// 	UE::Geometry::FDynamicMesh3 Mesh;
+// 	// WORKING but not smooth at all so lots of different sized triangles
+// 	// Insert vertices
+// 	TArray<int> VertexIDs;
+// 	for (const FVector2f& V : PolyVerts)
+// 	{
+// 		int VID = Mesh.AppendVertex(FVector3d(V.X, V.Y, 0)); // z = 0
+// 		VertexIDs.Add(VID);
+// 	}
+// 	
+// 	// Insert triangles
+// 	for (const UE::Geometry::FIndex3i& Tri : Triangles)
+// 	{
+// 		Mesh.AppendTriangle(VertexIDs[Tri.A], VertexIDs[Tri.B], VertexIDs[Tri.C]);
+// 	}
+// 	
+//
+// 	
+// 	LastSeamVertexIDs.Empty();
+// 	int   SampleCounter = 0;
+// 	int   TotalSamples  = (Shape.Points.Num() - 1) * SamplesPerSegment;
+//
+// 	// Insert vertices
+// 	for (int SegIndex = 0; SegIndex < Shape.Points.Num() - 1; ++SegIndex) {
+// 		float StartInVal = Shape.Points[SegIndex].InVal;
+// 		float EndInVal   = Shape.Points[SegIndex+1].InVal;
+//
+// 		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter) {
+// 			float Alpha = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
+// 			FVector2D Sample2D = Shape.Eval(Alpha);
+// 			int VID = Mesh.AppendVertex(FVector3d(Sample2D.X, Sample2D.Y, 0));
+//
+// 			// If this segment covers your 2D seam range, record it
+// 			if (bRecordSeam) {
+// 				// Map SampleCounter to an 2D-curve segment index:
+// 				float t2d = (float)SampleCounter / (TotalSamples-1);
+// 				// If t2d lies between your start/end 2D-curve InVals:
+// 				float startT = Shape.Points[StartPointIdx2D].InVal;
+// 				float endT   = Shape.Points[EndPointIdx2D].InVal;
+// 				if (t2d >= startT && t2d <= endT) {
+// 					LastSeamVertexIDs.Add(VID);
+// 				}
+// 			}
+//
+// 			VertexIDs.Add(VID);
+// 		}
+// 	}
+// 	
+//
+//
+//
+//
+// 	// // 2. Remesher setup
+// 	// UE::Geometry::FRemesher Remesher(&Mesh);
+// 	// Remesher.SetTargetEdgeLength(1.50); // Set this to desired density
+// 	//
+// 	// Remesher.SmoothSpeedT = 0.0f; // Optional tweak
+// 	//
+// 	// for (int i = 0; i < 2; ++i)  // 1 not enough, 3-5 too much in terms of edge vertices changing
+// 	// {
+// 	// 	// Remesher.BasicRemeshPass();
+// 	// }
+//
+//
+// 	// // // (Optional) Subdivide for more detail
+// 	// // // UE::Geometry::FDynamicMeshEditor Editor(&Mesh);
+// 	//
+// 	// int32 NumSubdivisions = 3;
+// 	// double MaxEdgeLength = 1.50;
+// 	//
+// 	// for (int32 Pass = 0; Pass < NumSubdivisions; ++Pass)
+// 	// {
+// 	// 	TArray<int32> EdgesToSplit;
+// 	// 	for (int32 eid : Mesh.EdgeIndicesItr())
+// 	// 	{
+// 	// 		UE::Geometry::FIndex2i EdgeVerts = Mesh.GetEdgeV(eid);
+// 	// 		FVector3d A = Mesh.GetVertex(EdgeVerts.A);
+// 	// 		FVector3d B = Mesh.GetVertex(EdgeVerts.B);
+// 	//
+// 	// 		if (FVector3d::Distance(A, B) > MaxEdgeLength)
+// 	// 		{
+// 	// 			EdgesToSplit.Add(eid);
+// 	// 		}
+// 	// 	}
+// 	//
+// 	// 	for (int32 eid : EdgesToSplit)
+// 	// 	{
+// 	// 		UE::Geometry::FDynamicMesh3::FEdgeSplitInfo SplitInfo;
+// 	// 		Mesh.SplitEdge(eid, SplitInfo);
+// 	// 	}
+// 	// }
+// 	
+// 	
+// 	// Step 4: Extract to UE arrays
+// 	TArray<FVector> Vertices;
+// 	TArray<int32> Indices;
+//
+// 	for (int vid : Mesh.VertexIndicesItr())
+// 	{
+// 		FVector3d Pos = Mesh.GetVertex(vid);
+// 		Vertices.Add(FVector(Pos.X, Pos.Y, Pos.Z));
+// 	}
+//
+// 	for (int tid : Mesh.TriangleIndicesItr())
+// 	{
+// 		UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+// 		Indices.Add(Tri.C);
+// 		Indices.Add(Tri.B);
+// 		Indices.Add(Tri.A);
+// 	}
+//
+// 	
+// 	LastBuiltMesh           = MoveTemp(Mesh);
+// 	LastBuiltSeamVertexIDs  = MoveTemp(LastSeamVertexIDs);
+//
+// 	// Step 5: Build procedural mesh
+// 	CreateProceduralMesh(Vertices, Indices);
+// }
 
 void SClothDesignCanvas::CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices)
 {
@@ -1317,18 +1494,24 @@ void SClothDesignCanvas::CreateProceduralMesh(const TArray<FVector>& Vertices, c
 	FActorSpawnParameters SpawnParams;
 	AClothPatternMeshActor* MeshActor = World->SpawnActor<AClothPatternMeshActor>(SpawnParams);
 	if (!MeshActor) return;
+	
+	// Record for later
+	SpawnedPatternActors.Add(MeshActor);
 
+	// (1) Move the mesh data into the actor
+	MeshActor->DynamicMesh        = MoveTemp(LastBuiltMesh);
 
+	// (2) Move the seam IDs in as well
+	MeshActor->LastSeamVertexIDs = MoveTemp(LastBuiltSeamVertexIDs);
+
+	
 	FString FolderName = TEXT("GeneratedClothActors");
 	MeshActor->SetFolderPath(FName(*FolderName));
 	
-	// ✅ Set a visible name in World Outliner
+	// Set a visible name in World Outliner
 #if WITH_EDITOR
 	MeshActor->SetActorLabel(UniqueLabel);
 #endif
-	
-	// AClothPatternMeshActor* MeshActor = World->SpawnActor<AClothPatternMeshActor>();
-	// if (!MeshActor) return;
 
 	TArray<FVector> Normals;
 	TArray<FVector2D> UV0;
@@ -1347,8 +1530,13 @@ void SClothDesignCanvas::CreateProceduralMesh(const TArray<FVector>& Vertices, c
 
 }
 
+
+
+
+
 void SClothDesignCanvas::TriangulateAndBuildAllMeshes()
 {
+
 	// Loop over all completed shapes
 	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
 	{
@@ -1359,6 +1547,171 @@ void SClothDesignCanvas::TriangulateAndBuildAllMeshes()
 	if (CurvePoints.Points.Num() >= 3)
 	{
 		TriangulateAndBuildMesh(CurvePoints);
+	}
+}
+
+
+
+void SClothDesignCanvas::AlignSeamMeshes(
+	AClothPatternMeshActor* MeshActorA,
+	AClothPatternMeshActor* MeshActorB)
+{
+	// // 2) Fetch world positions
+	// TArray<FVector> WorldA, WorldB;
+	//
+	// for (int VID : MeshActorA->LastSeamVertexIDs)
+	// {
+	// 	FVector Loc = MeshActorA->DynamicMesh.GetVertex(VID);
+	// 	WorldA.Add(MeshActorA->GetActorTransform().TransformPosition(Loc));
+	// }
+	// for (int VID : MeshActorB->LastSeamVertexIDs)
+	// {
+	// 	FVector Loc = MeshActorB->DynamicMesh.GetVertex(VID);
+	// 	WorldB.Add(MeshActorB->GetActorTransform().TransformPosition(Loc));
+	// }
+
+	// Access the stored vertex IDs and dynamic meshes:
+	const TArray<int32>& IDsA = MeshActorA->LastSeamVertexIDs;
+	const TArray<int32>& IDsB = MeshActorB->LastSeamVertexIDs;
+
+	// // Query world-space positions from each actor’s DynamicMesh:
+	// TArray<FVector> WorldA, WorldB;
+	//
+	// for (int VID : IDsA)
+	// {
+	// 	FVector Local = (FVector)MeshActorA->DynamicMesh.GetVertex(VID);
+	// 	WorldA.Add(MeshActorA->GetActorTransform().TransformPosition(Local));
+	// }
+	// for (int VID : IDsB)
+	// {
+	// 	FVector Local = (FVector)MeshActorB->DynamicMesh.GetVertex(VID);
+	// 	WorldB.Add(MeshActorB->GetActorTransform().TransformPosition(Local));
+	// }
+	//
+	// // Compute average offset, apply it...
+	//
+	//
+	// // 3) Compute & apply offset
+	// FVector TotalOff = FVector::ZeroVector;
+	// const int Count = WorldA.Num();
+	// for (int i = 0; i < Count; ++i)
+	// {
+	// 	TotalOff += (WorldA[i] - WorldB[i]);
+	// }
+	// FVector AvgOff = TotalOff / Count;
+	//
+	// FTransform T = MeshActorB->GetActorTransform();
+	// T.AddToTranslation(AvgOff);
+	// MeshActorB->SetActorTransform(T);
+	//
+	// UE_LOG(LogTemp, Log, TEXT("Aligned MeshB by %s"), *AvgOff.ToString());
+
+
+
+	
+	// 1) Guard against empty or mismatched arrays
+	int32 NumA = IDsA.Num();
+	int32 NumB = IDsB.Num();
+	if (NumA == 0 || NumB == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot align: one of the seam lists is empty (A=%d, B=%d)"), NumA, NumB);
+		return;
+	}
+	if (NumA != NumB)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot align: seam lists length mismatch (A=%d, B=%d)"), NumA, NumB);
+		return;
+	}
+
+	// 2) Fetch world positions
+	TArray<FVector> WorldA, WorldB;
+	WorldA.Reserve(NumA);
+	WorldB.Reserve(NumA);
+
+	for (int i = 0; i < NumA; ++i)
+	{
+		FVector LocalA = FVector(MeshActorA->DynamicMesh.GetVertex(IDsA[i]));
+		FVector LocalB = FVector(MeshActorB->DynamicMesh.GetVertex(IDsB[i]));
+		WorldA.Add( MeshActorA->GetActorTransform().TransformPosition(LocalA) );
+		WorldB.Add( MeshActorB->GetActorTransform().TransformPosition(LocalB) );
+	}
+
+	// 3) Compute average offset safely
+	FVector TotalOffset = FVector::ZeroVector;
+	for (int i = 0; i < NumA; ++i)
+	{
+		TotalOffset += (WorldA[i] - WorldB[i]);
+	}
+
+	// Now we know NumA > 0, so this is safe:
+	FVector AverageOffset = TotalOffset / float(NumA);
+
+	// 4) Apply the translation to MeshActorB
+	FTransform NewTransform = MeshActorB->GetActorTransform();
+	NewTransform.AddToTranslation(AverageOffset);
+	MeshActorB->SetActorTransform(NewTransform);
+
+	UE_LOG(LogTemp, Log, TEXT("Aligned MeshB by %s"), *AverageOffset.ToString());
+}
+
+// void SClothDesignCanvas::BuildAndAlignClickedSeam()
+// {
+// 	// 1) Rebuild all meshes so SpawnedPatternActors matches CompletedShapes order
+// 	//TriangulateAndBuildAllMeshes();
+//
+// 	// 2) Determine which shapes the seam came from
+// 	//    (Assuming AStartTarget.ShapeIndex and BStartTarget.ShapeIndex were filled)
+// 	int32 ShapeAIdx = AStartTarget.ShapeIndex; // INDEX_NONE means the “current” shape
+// 	int32 ShapeBIdx = BStartTarget.ShapeIndex;
+//
+// 	// 3) Translate shape indices to actor indices
+// 	//    CompletedShapes are built first, then the current shape
+// 	int32 ActorAIdx = ShapeAIdx == INDEX_NONE ? CompletedShapes.Num() : ShapeAIdx;
+// 	int32 ActorBIdx = ShapeBIdx == INDEX_NONE ? CompletedShapes.Num() : ShapeBIdx;
+//
+// 	// 4) Grab the actors
+// 	if ( SpawnedPatternActors.IsValidIndex(ActorAIdx) &&
+// 		 SpawnedPatternActors.IsValidIndex(ActorBIdx) )
+// 	{
+// 		AClothPatternMeshActor* ActorA = SpawnedPatternActors[ActorAIdx].Get();
+// 		AClothPatternMeshActor* ActorB = SpawnedPatternActors[ActorBIdx].Get();
+// 		if (ActorA && ActorB)
+// 		{
+// 			AlignSeamMeshes(ActorA, ActorB);
+// 		}
+// 	}
+// }
+
+void SClothDesignCanvas::BuildAndAlignClickedSeam()
+{
+	// 1) Clear out previous actors
+	for (auto& Weak : SpawnedPatternActors)
+		if (auto* A = Weak.Get()) A->Destroy();
+	SpawnedPatternActors.Empty();
+
+	// 2) Build the first mesh (Shape A) and record its seam
+	{
+		int32 ShapeIdx = AStartTarget.ShapeIndex;
+		const FInterpCurve<FVector2D>& Shape = 
+			(ShapeIdx == INDEX_NONE) ? CurvePoints : CompletedShapes[ShapeIdx];
+		TriangulateAndBuildMesh( Shape, /*bRecordSeam=*/true,
+								 AStartTarget.PointIndex, AEndTarget.PointIndex );
+	}
+
+	// 3) Build the second mesh (Shape B) and record its seam
+	{
+		int32 ShapeIdx = BStartTarget.ShapeIndex;
+		const FInterpCurve<FVector2D>& Shape = 
+			(ShapeIdx == INDEX_NONE) ? CurvePoints : CompletedShapes[ShapeIdx];
+		TriangulateAndBuildMesh( Shape, /*bRecordSeam=*/true,
+								 BStartTarget.PointIndex, BEndTarget.PointIndex );
+	}
+
+	// 4) Now you have exactly two spawned actors with seams recorded
+	if (SpawnedPatternActors.Num() == 2)
+	{
+		AlignSeamMeshes( SpawnedPatternActors[0].Get(),
+						 SpawnedPatternActors[1].Get() );
 	}
 }
 
@@ -1589,6 +1942,380 @@ void SClothDesignCanvas::SewingStart()
 
 	UE_LOG(LogTemp, Warning, TEXT("Moved mesh by %s to preview sewing."), *AverageOffset.ToString());
 }
+
+
+
+UClothingSimulationInteractor* GetClothInteractor(USkeletalMeshComponent* Mesh)
+{
+	if (!Mesh) return nullptr;
+
+	return Mesh->GetClothingSimulationInteractor();
+}
+
+void SClothDesignCanvas::ApplySpringSeamForces(
+	const TArray<FPatternSewingConstraint>& Constraints,
+	float DeltaTime)
+{
+	
+	if (Constraints.Num() == 0) return;
+
+	// —————————————————————————————————————————
+	// 1) Grab the Chaos Clothing Interactor
+	// —————————————————————————————————————————
+	USkeletalMeshComponent* Mesh = Constraints[0].MeshA;
+	if (!Mesh) return;
+
+	// UClothingSimulationInteractor is the base, cast to Chaos version:
+	UChaosClothingSimulationInteractor* ChaosInteractor =
+		Cast<UChaosClothingSimulationInteractor>(
+			Mesh->GetClothingSimulationInteractor()
+		);
+	if (!ChaosInteractor) return;
+	
+	
+}
+
+
+
+
+void SClothDesignCanvas::FinalizeSeamDefinition(
+	const FVector2D& AStart,
+	const FVector2D& AEnd,
+	const FVector2D& BStart,
+	const FVector2D& BEnd)
+{
+	// Step 1: Find the nearest mesh + edge for each click range (optional or future logic)
+
+	// Step 2: Sample N points along each line
+	const int32 NumSeamPoints = 10;
+	TArray<FVector2D> PointsA, PointsB;
+
+	for (int32 i = 0; i < NumSeamPoints; ++i)
+	{
+		float Alpha = (float)i / (NumSeamPoints - 1);
+		PointsA.Add(FMath::Lerp(AStart, AEnd, Alpha));
+		PointsB.Add(FMath::Lerp(BStart, BEnd, Alpha));
+	}
+
+	// Step 3: Store seam definition
+	FPatternSewingConstraint NewSeam;
+	NewSeam.ScreenPointsA = PointsA;
+	NewSeam.ScreenPointsB = PointsB;
+
+	AllDefinedSeams.Add(NewSeam);
+
+	
+	UE_LOG(LogTemp, Log, TEXT("Seam defined with %d points per side."), NumSeamPoints);
+	UE_LOG(LogTemp, Log, TEXT("AStart: (%.2f, %.2f), AEnd: (%.2f, %.2f)"), AStart.X, AStart.Y, AEnd.X, AEnd.Y);
+	UE_LOG(LogTemp, Log, TEXT("BStart: (%.2f, %.2f), BEnd: (%.2f, %.2f)"), BStart.X, BStart.Y, BEnd.X, BEnd.Y);
+}
+
+
+
+void SClothDesignCanvas::MergeLastTwoMeshes()
+{
+    // 1) Make sure we have at least two actors
+    if (SpawnedPatternActors.Num() < 2)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Need at least two meshes to merge"));
+        return;
+    }
+    // Grab the last two
+    AClothPatternMeshActor* ActorA = SpawnedPatternActors[SpawnedPatternActors.Num() - 2].Get();
+    AClothPatternMeshActor* ActorB = SpawnedPatternActors[SpawnedPatternActors.Num() - 1].Get();
+    if (!ActorA || !ActorB)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("One of the two actors is invalid"));
+        return;
+    }
+
+    // 2) Copy their dynamic meshes
+    UE::Geometry::FDynamicMesh3 MergedMesh = ActorA->DynamicMesh;
+    int32 BaseVID = MergedMesh.VertexCount();
+
+    // Append B’s vertices
+    for (int32 VID : ActorB->DynamicMesh.VertexIndicesItr())
+    {
+        FVector3d P = ActorB->DynamicMesh.GetVertex(VID);
+        MergedMesh.AppendVertex(P);
+    }
+
+    // Append B’s triangles (offset indices by BaseVID)
+    for (int32 TID : ActorB->DynamicMesh.TriangleIndicesItr())
+    {
+        UE::Geometry::FIndex3i Tri = ActorB->DynamicMesh.GetTriangle(TID);
+        MergedMesh.AppendTriangle(
+            Tri.A + BaseVID,
+            Tri.B + BaseVID,
+            Tri.C + BaseVID
+        );
+    }
+
+    // 3) Extract to raw arrays for ProceduralMeshComponent
+    TArray<FVector> Vertices;
+    TArray<int32>   Indices;
+    Vertices.Reserve(MergedMesh.VertexCount());
+    Indices.Reserve(MergedMesh.TriangleCount() * 3);
+
+    for (int32 VID : MergedMesh.VertexIndicesItr())
+    {
+        FVector3d P = MergedMesh.GetVertex(VID);
+        Vertices.Add(FVector(P.X, P.Y, P.Z));
+    }
+    for (int32 TID : MergedMesh.TriangleIndicesItr())
+    {
+        UE::Geometry::FIndex3i Tri = MergedMesh.GetTriangle(TID);
+        Indices.Add(Tri.A);
+        Indices.Add(Tri.B);
+        Indices.Add(Tri.C);
+    }
+
+    // 4) Spawn a new actor for the merged mesh
+    UWorld* World = GEditor->GetEditorWorldContext().World();
+    if (!World) return;
+
+    FActorSpawnParameters Params;
+    AClothPatternMeshActor* MergedActor =
+        World->SpawnActor<AClothPatternMeshActor>(Params);
+    if (!MergedActor) return;
+
+#if WITH_EDITOR
+    MergedActor->SetActorLabel(TEXT("MergedPatternMesh"));
+#endif
+
+    // Store the merged dynamic mesh
+    MergedActor->DynamicMesh = MoveTemp(MergedMesh);
+
+    // Create the visible section
+    TArray<FVector> Normals; Normals.Init(FVector::UpVector, Vertices.Num());
+    TArray<FVector2D> UV0;  UV0.Init(FVector2D::ZeroVector, Vertices.Num());
+    TArray<FLinearColor> VertexColors; VertexColors.Init(FLinearColor::White, Vertices.Num());
+    TArray<FProcMeshTangent> Tangents;   Tangents.Init(FProcMeshTangent(1,0,0), Vertices.Num());
+
+    MergedActor->MeshComponent->CreateMeshSection_LinearColor(
+        0, Vertices, Indices,
+        Normals, UV0, VertexColors, Tangents,
+        /*bCreateCollision=*/true
+    );
+
+    UE_LOG(LogTemp, Log, TEXT("Merged two meshes into '%s' (%d verts, %d tris)"),
+        *MergedActor->GetActorLabel(),
+        Vertices.Num(), Indices.Num() / 3
+    );
+}
+
+
+
+
+
+void SClothDesignCanvas::MergeAndWeldLastTwoMeshes()
+{
+    // 1) Grab the last two actors
+    if (SpawnedPatternActors.Num() < 2) { return; }
+    AClothPatternMeshActor* A = SpawnedPatternActors.Last(1).Get();
+    AClothPatternMeshActor* B = SpawnedPatternActors.Last().Get();
+    if (!A || !B) { return; }
+
+    // 2) Merge their DynamicMesh3’s
+    UE::Geometry::FDynamicMesh3 Merged = A->DynamicMesh;
+    int32 BaseVID = Merged.VertexCount();
+    for (int vid : B->DynamicMesh.VertexIndicesItr())
+    {
+        Merged.AppendVertex(B->DynamicMesh.GetVertex(vid));
+    }
+    for (int tid : B->DynamicMesh.TriangleIndicesItr())
+    {
+        auto T = B->DynamicMesh.GetTriangle(tid);
+        Merged.AppendTriangle(T.A + BaseVID, T.B + BaseVID, T.C + BaseVID);
+    }
+	
+	// 2) Build loops of exactly two vertices each, for each seam pair
+	TArray<TArray<int>> WeldLoops;
+	int32 Count = FMath::Min(A->LastSeamVertexIDs.Num(), B->LastSeamVertexIDs.Num());
+	WeldLoops.Reserve(Count);
+	for (int32 i = 0; i < Count; ++i)
+	{
+		int VA = A->LastSeamVertexIDs[i];
+		int VB = B->LastSeamVertexIDs[i] + BaseVID;
+		WeldLoops.Add( TArray<int>({ VA, VB }) );
+	}
+
+	
+	if (!Merged.HasAttributes())
+	{
+		Merged.EnableAttributes();
+	}
+
+
+	
+    // 3) Weld each seam‐vertex pair
+    UE::Geometry::FDynamicMeshEditor Editor(&Merged);
+	TArray<int32> LoopA;
+	TArray<int32> LoopB;
+	for (int32 i = 0; i < Count; ++i)
+	{
+		int VA = A->LastSeamVertexIDs[i];
+		int VB = B->LastSeamVertexIDs[i] + BaseVID;
+		LoopA.Add(VA);
+		LoopB.Add(VB);
+		
+		// TArray<int32> Pair = { VA, VB };
+		// TArray<int32> Removed;
+		// Editor.WeldVertexLoops(Pair, Removed);
+	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("LoopA has %d vertices:"), LoopA.Num());
+	// for (int i = 0; i < LoopA.Num(); ++i)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("A[%d] = %d"), i, LoopA[i]);
+	// }
+
+	UE_LOG(LogTemp, Warning, TEXT("LoopB has %d vertices:"), LoopB.Num());
+	// for (int i = 0; i < LoopB.Num(); ++i)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("B[%d] = %d"), i, LoopB[i]);
+	// }
+
+	// TArray<int32> Removed;
+	// Editor.WeldVertexLoops(LoopA, LoopB);
+	//
+	// if (!Editor.WeldVertexLoops(LoopA, LoopB))
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("WeldVertexLoops failed! Loops may be mismatched or invalid."));
+	// 	return;
+	// }
+	//
+
+
+	if (LoopA.Num() != LoopB.Num())
+	{
+		UE_LOG(LogTemp, Error, TEXT("Loop sizes don't match: A=%d, B=%d"), LoopA.Num(), LoopB.Num());
+		return;
+	}
+
+	for (int32 i = 0; i < LoopA.Num(); ++i)
+	{
+		int32 VA = LoopA[i];
+		int32 VB = LoopB[i];
+
+		// Move VB to the position of VA
+		Merged.SetVertex(VB, Merged.GetVertex(VA));
+
+		// Replace all uses of VB in triangles with VA
+		TArray<int32> TrianglesToUpdate;
+		Merged.GetVtxTriangles(VB, TrianglesToUpdate);
+
+		for (int32 TID : TrianglesToUpdate)
+		{
+			auto Tri = Merged.GetTriangle(TID);
+			for (int j = 0; j < 3; ++j)
+			{
+				if (Tri[j] == VB)
+				{
+					Tri[j] = VA;
+				}
+			}
+			Merged.SetTriangle(TID, Tri);
+		}
+
+		// Optionally delete VB if it's no longer referenced
+		if (Merged.IsVertex(VB) && Merged.GetVtxTriangleCount(VB) == 0)
+		{
+			Merged.RemoveVertex(VB, false);
+		}
+	}
+
+	
+	// 4) Export welded mesh to a new actor
+	//    (same code as before to flatten vertices+indices + spawn)
+	TArray<FVector>    Verts;    Verts.Reserve(Merged.VertexCount());
+	TArray<int32>      Inds;     Inds.Reserve(Merged.TriangleCount()*3);
+	for (int vid : Merged.VertexIndicesItr())
+	{
+		auto P = Merged.GetVertex(vid);
+		Verts.Add(FVector(P.X,P.Y,P.Z));
+	}
+	for (int tid : Merged.TriangleIndicesItr())
+	{
+		auto T = Merged.GetTriangle(tid);
+		Inds.Add(T.A); Inds.Add(T.B); Inds.Add(T.C);
+	}
+
+	UWorld* World = GEditor->GetEditorWorldContext().World();
+	if (!World) return;
+	AClothPatternMeshActor* MergedActor =
+		World->SpawnActor<AClothPatternMeshActor>();
+#if WITH_EDITOR
+	MergedActor->SetActorLabel(TEXT("WeldedPatternMesh"));
+#endif
+	MergedActor->DynamicMesh = MoveTemp(Merged);
+
+	TArray<FVector> Normals;     Normals.Init(FVector::UpVector, Verts.Num());
+	TArray<FVector2D> UV0;       UV0.Init(FVector2D::ZeroVector, Verts.Num());
+	TArray<FLinearColor> Colors; Colors.Init(FLinearColor::White,  Verts.Num());
+	TArray<FProcMeshTangent> Tangs; Tangs.Init(FProcMeshTangent(1,0,0), Verts.Num());
+
+	MergedActor->MeshComponent->CreateMeshSection_LinearColor(
+		0, Verts, Inds,
+		Normals, UV0, Colors, Tangs,
+		/*bCreateCollision=*/true
+	);
+
+	UE_LOG(LogTemp, Log, TEXT("Merged & welded: %d verts, %d tris"),
+		   Verts.Num(), Inds.Num()/3);
+}
+
+//     // 4) Export welded mesh to new actor
+//     //   (similar to your previous spawn logic)
+//     UWorld* World = GEditor->GetEditorWorldContext().World();
+//     if (!World) return;
+//     FActorSpawnParameters Params;
+//     AClothPatternMeshActor* MergedActor =
+//         World->SpawnActor<AClothPatternMeshActor>(Params);
+// #if WITH_EDITOR
+//     MergedActor->SetActorLabel(TEXT("WeldedPatternMesh"));
+// #endif
+//
+//     // Store welded mesh
+//     MergedActor->DynamicMesh = MoveTemp(Merged);
+//
+//     // Build ProceduralMeshComponent section
+//     TArray<FVector>    Verts;    Verts.Reserve(MergedActor->DynamicMesh.VertexCount());
+//     TArray<int32>      Inds;     Inds.Reserve(MergedActor->DynamicMesh.TriangleCount()*3);
+//     for (int vid : MergedActor->DynamicMesh.VertexIndicesItr())
+//     {
+//         auto P = MergedActor->DynamicMesh.GetVertex(vid);
+//         Verts.Add(FVector(P.X, P.Y, P.Z));
+//     }
+//     for (int tid : MergedActor->DynamicMesh.TriangleIndicesItr())
+//     {
+//         auto T = MergedActor->DynamicMesh.GetTriangle(tid);
+//         Inds.Add(T.A); Inds.Add(T.B); Inds.Add(T.C);
+//     }
+//
+//     TArray<FVector>       Normals;     Normals.Init(FVector::UpVector,    Verts.Num());
+//     TArray<FVector2D>     UV0;         UV0.Init(FVector2D::ZeroVector,  Verts.Num());
+//     TArray<FLinearColor>  Colors;      Colors.Init(FLinearColor::White,   Verts.Num());
+//     TArray<FProcMeshTangent> Tangs;    Tangs.Init(FProcMeshTangent(1,0,0),Verts.Num());
+//
+//     MergedActor->MeshComponent->CreateMeshSection_LinearColor(
+//         0, Verts, Inds, Normals, UV0, Colors, Tangs, true
+//     );
+//
+//     UE_LOG(LogTemp, Log, TEXT("Merged & welded meshes: %d verts, %d tris"),
+//            Verts.Num(), Inds.Num()/3);
+// }
+
+
+
+
+
+
+
+
+
+
+
 
 
 // void SClothDesignCanvas::ApplySewingConstraints()

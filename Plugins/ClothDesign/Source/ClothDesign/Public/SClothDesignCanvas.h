@@ -9,8 +9,11 @@
 #include "VectorTypes.h"
 #include "Math/InterpCurve.h"
 // #include "Math/Vector2D.h"
+#include "DynamicMesh/DynamicMesh3.h"
+#include "DynamicMeshEditor.h"
 
 #include "PatternSewingConstraint.h"
+#include "AClothPatternMeshActor.h"
 
 // Canvas state struct
 struct FCanvasState
@@ -55,7 +58,14 @@ public:
 						  int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
 
 	// Trigger mesh generation from drawn shape
-	void TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape);
+	//void TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape);
+
+	TArray<int32> LastSeamVertexIDs;  // filled each time you build a mesh
+
+	void TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape, bool bRecordSeam = false,
+								 int32 AStartIdx = -1, int32 AEndIdx = -1);
+
+	
 	
 	float ZoomFactor = 1.0f;
 	FVector2D PanOffset = FVector2D::ZeroVector;
@@ -76,7 +86,8 @@ public:
 	{
 		Draw,
 		Select,
-		Move
+		Move,
+		Sew
 	};
 
 	USkeletalMeshComponent* SkeletalMesh = nullptr;
@@ -139,7 +150,79 @@ public:
 	FVector GetSkinnedVertexPosition(USkeletalMeshComponent* MeshComp, int32 VertexIndex);
 
 	void SewingStart();
+	void ApplySpringSeamForces(const TArray<FPatternSewingConstraint>& Constraints, float DeltaTime);
 
+
+
+	// sew
+	enum class ESeamClickState : uint8
+	{
+		None,
+		ClickedAStart,
+		ClickedAEnd,
+		ClickedBStart,
+		ClickedBEnd
+	};
+
+	ESeamClickState SeamClickState = ESeamClickState::None;
+	FVector2D AStart, AEnd, BStart, BEnd;
+	void FinalizeSeamDefinition(
+		const FVector2D& AStart,
+		const FVector2D& AEnd,
+		const FVector2D& BStart,
+		const FVector2D& BEnd);
+	
+	TArray<FPatternSewingConstraint> AllDefinedSeams;
+	bool bIsSeamReady = false;
+
+	// In your .h
+	int32 SeamAStartIndex  = INDEX_NONE;
+	int32 SeamAEndIndex    = INDEX_NONE;
+	int32 SeamBStartIndex  = INDEX_NONE;
+	int32 SeamBEndIndex    = INDEX_NONE;
+
+
+	
+	struct FClickTarget {
+		int32 ShapeIndex;
+		int32 PointIndex;
+	};
+	
+	FClickTarget AStartTarget, AEndTarget, BStartTarget, BEndTarget;
+	FVector2D GetPointFromShape(int32 ShapeIndex, int32 PointIndex);
+	
+	void FinalizeSeamDefinitionByIndex(FClickTarget AStart, FClickTarget AEnd, FClickTarget BStart, FClickTarget BEnd);
+
+	void FinalizeSeamDefinitionByTargets(
+		const FClickTarget& AStart,
+		const FClickTarget& AEnd,
+		const FClickTarget& BStart,
+		const FClickTarget& BEnd);
+
+	// void SClothDesignCanvas::AlignSeamMeshes(
+	// 	AClothPatternMeshActor* MeshActorA,
+	// 	AClothPatternMeshActor* MeshActorB
+	// );
+	void AlignSeamMeshes(AClothPatternMeshActor* A, AClothPatternMeshActor* B);
+
+	//UE::Geometry::FDynamicMesh3 DynamicMesh;
+
+	void BuildAndAlignClickedSeam();
+
+	void MergeLastTwoMeshes();
+	void MergeAndWeldLastTwoMeshes();
+
+
+
+
+
+
+
+
+
+
+
+	
 protected:
 	void CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices);
 
@@ -154,6 +237,12 @@ protected:
 
 	void Undo();
 	void Redo();
+
+	
+	/** All the procedural mesh actors we’ve spawned for patterns */
+	TArray<TWeakObjectPtr<AClothPatternMeshActor>> SpawnedPatternActors;
+	UE::Geometry::FDynamicMesh3 LastBuiltMesh;
+	TArray<int32>  LastBuiltSeamVertexIDs;
 	
 private:
 	TArray<FVector2D> Points;

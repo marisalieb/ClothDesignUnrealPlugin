@@ -31,6 +31,7 @@ public class ClothDesign : ModuleRules
 				"StaticMeshDescription",
 				"ProceduralMeshComponent",
 				"GeometryCore",
+				"ChaosCloth"
 
 				// ... add other public dependencies that you statically link with here ...
 			}
@@ -62,7 +63,19 @@ public class ClothDesign : ModuleRules
 				"MeshModelingTools", // Optional but useful
 				"ContentBrowser",
 				"PropertyEditor",
-				"EditorStyle"
+				"EditorStyle",
+				"ClothingSystemRuntimeInterface",
+				"ClothingSystemRuntimeCommon",
+				"ChaosCloth",
+				"InputCore",
+				"Core", "CoreUObject", "Engine", "InputCore",
+				"ClothingSystemRuntimeCommon",
+				"ClothingSystemRuntimeInterface",
+				"ChaosCloth",
+				"Core", "CoreUObject", "Engine",
+				"ClothingSystemRuntimeCommon",
+				"ClothingSystemRuntimeInterface",
+				"ChaosCloth"
 
 				// ... add private dependencies that you statically link with here ...	
 			}

@@ -19,7 +19,7 @@ var NAVTREEINDEX0 =
 "classFClothDesignModule.html#a9366364045bcc30c8c43c17a8025cf1c":[0,0,4,0],
 "classFClothDesignStyle.html":[0,0,5],
 "classSClothDesignCanvas.html":[0,0,7],
-"classSClothDesignCanvas.html#abd750e7c051d2a2a714f3705096e1859":[0,0,7,1],
+"classSClothDesignCanvas.html#abd750e7c051d2a2a714f3705096e1859":[0,0,7,2],
 "classUClothDesignEditorMode.html":[0,0,8],
 "classUClothDesignEditorMode.html#a362b63c16d276796091f5b3aa47ad2d0":[0,0,8,0],
 "classes.html":[0,1],
@@ -37,5 +37,6 @@ var NAVTREEINDEX0 =
 "pages.html":[],
 "structFCanvasState.html":[0,0,1],
 "structFPatternSewingConstraint.html":[0,0,6],
-"structSClothDesignCanvas_1_1FClickTarget.html":[0,0,7,0]
+"structSClothDesignCanvas_1_1FClickTarget.html":[0,0,7,0],
+"structSClothDesignCanvas_1_1FSeamDefinition.html":[0,0,7,1]
 };

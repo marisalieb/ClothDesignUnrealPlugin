@@ -10,6 +10,7 @@ var hierarchy =
       [ "FClothDesignEditorModeToolkit", "classFClothDesignEditorModeToolkit.html", null ]
     ] ],
     [ "FPatternSewingConstraint", "structFPatternSewingConstraint.html", null ],
+    [ "SClothDesignCanvas::FSeamDefinition", "structSClothDesignCanvas_1_1FSeamDefinition.html", null ],
     [ "IModuleInterface", null, [
       [ "FClothDesignModule", "classFClothDesignModule.html", null ]
     ] ],

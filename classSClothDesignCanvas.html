@@ -113,6 +113,8 @@ Inheritance diagram for SClothDesignCanvas:</div>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSClothDesignCanvas_1_1FSeamDefinition.html">FSeamDefinition</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
@@ -155,9 +157,9 @@ virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnMouseButt
 <tr class="memitem:ac994a352ab1d36ac1324e8ae449f2735" id="r_ac994a352ab1d36ac1324e8ae449f2735"><td class="memItemLeft" align="right" valign="top"><a id="ac994a352ab1d36ac1324e8ae449f2735" name="ac994a352ab1d36ac1324e8ae449f2735"></a>
 virtual int32&#160;</td><td class="memItemRight" valign="bottom"><b>OnPaint</b> (const FPaintArgs &amp;Args, const FGeometry &amp;AllottedGeometry, const FSlateRect &amp;MyCullingRect, FSlateWindowElementList &amp;OutDrawElements, int32 LayerId, const FWidgetStyle &amp;InWidgetStyle, bool bParentEnabled) const override</td></tr>
 <tr class="separator:ac994a352ab1d36ac1324e8ae449f2735"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd0f07a528465cff41c0f46108256a77" id="r_abd0f07a528465cff41c0f46108256a77"><td class="memItemLeft" align="right" valign="top"><a id="abd0f07a528465cff41c0f46108256a77" name="abd0f07a528465cff41c0f46108256a77"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>TriangulateAndBuildMesh</b> (const FInterpCurve&lt; FVector2D &gt; &amp;Shape, bool bRecordSeam=false, int32 AStartIdx=-1, int32 AEndIdx=-1)</td></tr>
-<tr class="separator:abd0f07a528465cff41c0f46108256a77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41f80523ccb66e813431b84c11e3ed9b" id="r_a41f80523ccb66e813431b84c11e3ed9b"><td class="memItemLeft" align="right" valign="top"><a id="a41f80523ccb66e813431b84c11e3ed9b" name="a41f80523ccb66e813431b84c11e3ed9b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>TriangulateAndBuildMesh</b> (const FInterpCurve&lt; FVector2D &gt; &amp;Shape, bool bRecordSeam=false, int32 StartPointIdx2D=-1, int32 EndPointIdx2D=-1)</td></tr>
+<tr class="separator:a41f80523ccb66e813431b84c11e3ed9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f655901c138a2739bfd5616b507fb23" id="r_a2f655901c138a2739bfd5616b507fb23"><td class="memItemLeft" align="right" valign="top"><a id="a2f655901c138a2739bfd5616b507fb23" name="a2f655901c138a2739bfd5616b507fb23"></a>
 FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>TransformPoint</b> (const FVector2D &amp;Point) const</td></tr>
 <tr class="separator:a2f655901c138a2739bfd5616b507fb23"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -335,6 +337,9 @@ int32&#160;</td><td class="memItemRight" valign="bottom"><b>SeamBEndIndex</b> = 
 <tr class="memitem:af68febbaa79d76192c47b6bae0b50065" id="r_af68febbaa79d76192c47b6bae0b50065"><td class="memItemLeft" align="right" valign="top"><a id="af68febbaa79d76192c47b6bae0b50065" name="af68febbaa79d76192c47b6bae0b50065"></a>
 <a class="el" href="structSClothDesignCanvas_1_1FClickTarget.html">FClickTarget</a>&#160;</td><td class="memItemRight" valign="bottom"><b>BEndTarget</b></td></tr>
 <tr class="separator:af68febbaa79d76192c47b6bae0b50065"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b037f78477e112cfe3c149d86354fd7" id="r_a8b037f78477e112cfe3c149d86354fd7"><td class="memItemLeft" align="right" valign="top"><a id="a8b037f78477e112cfe3c149d86354fd7" name="a8b037f78477e112cfe3c149d86354fd7"></a>
+TArray&lt; <a class="el" href="structSClothDesignCanvas_1_1FSeamDefinition.html">FSeamDefinition</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>AllSeams</b></td></tr>
+<tr class="separator:a8b037f78477e112cfe3c149d86354fd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>

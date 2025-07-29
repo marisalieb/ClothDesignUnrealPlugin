@@ -11,6 +11,7 @@
 // #include "Math/Vector2D.h"
 #include "DynamicMesh/DynamicMesh3.h"
 #include "DynamicMeshEditor.h"
+#include "MeshRegionBoundaryLoops.h"
 
 #include "PatternSewingConstraint.h"
 #include "AClothPatternMeshActor.h"
@@ -63,7 +64,7 @@ public:
 	TArray<int32> LastSeamVertexIDs;  // filled each time you build a mesh
 
 	void TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape, bool bRecordSeam = false,
-								 int32 AStartIdx = -1, int32 AEndIdx = -1);
+								 int32 StartPointIdx2D = -1, int32 EndPointIdx2D = -1);
 
 	
 	
@@ -212,6 +213,14 @@ public:
 	void MergeLastTwoMeshes();
 	void MergeAndWeldLastTwoMeshes();
 
+	// Represents one seam between two shapes
+	struct FSeamDefinition
+	{
+		int32 ShapeA, StartA, EndA;
+		int32 ShapeB, StartB, EndB;
+	};
+
+	TArray<FSeamDefinition> AllSeams;
 
 
 

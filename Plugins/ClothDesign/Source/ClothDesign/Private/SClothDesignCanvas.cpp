@@ -1179,43 +1179,84 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(
 	// 		PolyVerts.Add(FVector2f(Sample.X, Sample.Y));
 	// 	}
 	// }
-	
+
 
 	
+	// Before your loop, compute the integer sample‐range once:
+	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
+	int SampleCounter = 0;
+
+	// Default to an empty range
+	int MinSample = TotalSamples + 1;
+	int MaxSample = -1;
+
+	// Only compute if we really want to record a seam
+	if (bRecordSeam && StartPointIdx2D >= 0 && EndPointIdx2D >= 0)
+	{
+		int S0 = StartPointIdx2D * SamplesPerSegment;
+		int S1 = EndPointIdx2D   * SamplesPerSegment;
+		MinSample = FMath::Min(S0, S1);
+		MaxSample = FMath::Max(S0, S1);
+	}
+
 	LastSeamVertexIDs.Empty();
 	TArray<int32> VertexIDs;
 
-	int TotalSamples = (Shape.Points.Num()-1) * SamplesPerSegment;
-	int SampleCounter = 0;
-
-	for (int Seg=0; Seg<Shape.Points.Num()-1; ++Seg)
+	for (int Seg = 0; Seg < Shape.Points.Num() - 1; ++Seg)
 	{
 		float In0 = Shape.Points[Seg].InVal;
-		float In1 = Shape.Points[Seg+1].InVal;
+		float In1 = Shape.Points[Seg + 1].InVal;
 
-		for (int i=0; i<SamplesPerSegment; ++i, ++SampleCounter)
+		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter)
 		{
-			float tSeg = float(i) / SamplesPerSegment;
-			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, tSeg));
+			float Alpha = float(i) / SamplesPerSegment;
+			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, Alpha));
 			PolyVerts.Add(FVector2f(P2.X, P2.Y));
 
-			// store in mesh
 			int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
 			VertexIDs.Add(VID);
 
-			// record seam if in range
-			if (bRecordSeam)
+			// record seam if this sample falls in the integer [MinSample,MaxSample] range
+			if (bRecordSeam && SampleCounter >= MinSample && SampleCounter <= MaxSample)
 			{
-				float tCurve = float(SampleCounter) / float(TotalSamples-1);
-				float tMin = Shape.Points[StartPointIdx2D].InVal / Shape.Points.Last().InVal;
-				float tMax = Shape.Points[EndPointIdx2D].InVal   / Shape.Points.Last().InVal;
-				if (tCurve >= tMin && tCurve <= tMax)
-				{
-					LastSeamVertexIDs.Add(VID);
-				}
+				LastSeamVertexIDs.Add(VID);
 			}
 		}
 	}
+	// LastSeamVertexIDs.Empty();
+	// TArray<int32> VertexIDs;
+	//
+	// int TotalSamples = (Shape.Points.Num()-1) * SamplesPerSegment;
+	// int SampleCounter = 0;
+	//
+	// for (int Seg=0; Seg<Shape.Points.Num()-1; ++Seg)
+	// {
+	// 	float In0 = Shape.Points[Seg].InVal;
+	// 	float In1 = Shape.Points[Seg+1].InVal;
+	//
+	// 	for (int i=0; i<SamplesPerSegment; ++i, ++SampleCounter)
+	// 	{
+	// 		float tSeg = float(i) / SamplesPerSegment;
+	// 		FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, tSeg));
+	// 		PolyVerts.Add(FVector2f(P2.X, P2.Y));
+	//
+	// 		// store in mesh
+	// 		int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
+	// 		VertexIDs.Add(VID);
+	//
+	// 		// record seam if in range
+	// 		if (bRecordSeam)
+	// 		{
+	// 			float tCurve = float(SampleCounter) / float(TotalSamples-1);
+	// 			float tMin = Shape.Points[StartPointIdx2D].InVal / Shape.Points.Last().InVal;
+	// 			float tMax = Shape.Points[EndPointIdx2D].InVal   / Shape.Points.Last().InVal;
+	// 			if (tCurve >= tMin && tCurve <= tMax)
+	// 			{
+	// 				LastSeamVertexIDs.Add(VID);
+	// 			}
+	// 		}
+	// 	}
+	// }
 	
 	
 	// Step 2: Triangulate
@@ -1286,15 +1327,16 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(
 		Vertices.Add(FVector(Pos.X, Pos.Y, Pos.Z));
 	}
 	
-	bool bReverseWinding = (SignedArea < 0.f);
 	// for (int tid : Mesh.TriangleIndicesItr())
 	// {
 	// 	UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
-	// 	Indices.Add(Tri.A);
-	// 	Indices.Add(Tri.B);
 	// 	Indices.Add(Tri.C);
+	// 	Indices.Add(Tri.B);
+	// 	Indices.Add(Tri.A);
 	// }
 
+	// fix this later to always wind positive before triangluation but this is a temporary fix for now
+	bool bReverseWinding = (SignedArea < 0.f);
 	for (int tid : Mesh.TriangleIndicesItr())
 	{
 		UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
@@ -2021,36 +2063,80 @@ void SClothDesignCanvas::MergeLastTwoMeshes()
         return;
     }
     // Grab the last two
-    AClothPatternMeshActor* ActorA = SpawnedPatternActors[SpawnedPatternActors.Num() - 2].Get();
-    AClothPatternMeshActor* ActorB = SpawnedPatternActors[SpawnedPatternActors.Num() - 1].Get();
-    if (!ActorA || !ActorB)
+    AClothPatternMeshActor* A = SpawnedPatternActors[SpawnedPatternActors.Num() - 2].Get();
+    AClothPatternMeshActor* B = SpawnedPatternActors[SpawnedPatternActors.Num() - 1].Get();
+    if (!A || !B)
     {
         UE_LOG(LogTemp, Warning, TEXT("One of the two actors is invalid"));
         return;
     }
 
     // 2) Copy their dynamic meshes
-    UE::Geometry::FDynamicMesh3 MergedMesh = ActorA->DynamicMesh;
+    UE::Geometry::FDynamicMesh3 MergedMesh = A->DynamicMesh;
     int32 BaseVID = MergedMesh.VertexCount();
 
-    // Append B’s vertices
-    for (int32 VID : ActorB->DynamicMesh.VertexIndicesItr())
-    {
-        FVector3d P = ActorB->DynamicMesh.GetVertex(VID);
-        MergedMesh.AppendVertex(P);
-    }
+    // // Append B’s vertices
+    // for (int32 VID : ActorB->DynamicMesh.VertexIndicesItr())
+    // {
+    //     FVector3d P = ActorB->DynamicMesh.GetVertex(VID);
+    //     MergedMesh.AppendVertex(P);
+    // }
+    //
+    // // Append B’s triangles (offset indices by BaseVID)
+    // for (int32 TID : ActorB->DynamicMesh.TriangleIndicesItr())
+    // {
+    //     UE::Geometry::FIndex3i Tri = ActorB->DynamicMesh.GetTriangle(TID);
+    //     MergedMesh.AppendTriangle(
+    //         Tri.A + BaseVID,
+    //         Tri.B + BaseVID,
+    //         Tri.C + BaseVID
+    //     );
+    // }
+	const FTransform& TA = A->GetActorTransform();
+	TArray<int> MapA;
+	MapA.SetNum(A->DynamicMesh.VertexCount());
 
-    // Append B’s triangles (offset indices by BaseVID)
-    for (int32 TID : ActorB->DynamicMesh.TriangleIndicesItr())
-    {
-        UE::Geometry::FIndex3i Tri = ActorB->DynamicMesh.GetTriangle(TID);
-        MergedMesh.AppendTriangle(
-            Tri.A + BaseVID,
-            Tri.B + BaseVID,
-            Tri.C + BaseVID
-        );
-    }
+	// 1) Add all A’s vertices in world space
+	for (int vid : A->DynamicMesh.VertexIndicesItr())
+	{
+		FVector3d LocalP = A->DynamicMesh.GetVertex(vid);
+		FVector    WorldP = TA.TransformPosition((FVector)LocalP);
+		MapA[vid] = MergedMesh.AppendVertex(FVector3d(WorldP));
+	}
+	// 2) Add A’s triangles with remapped indices
+	for (int tid : A->DynamicMesh.TriangleIndicesItr())
+	{
+		auto T = A->DynamicMesh.GetTriangle(tid);
+		MergedMesh.AppendTriangle(
+			MapA[T.A], MapA[T.B], MapA[T.C]
+		);
+	}
+	
+	const FTransform& TB = B->GetActorTransform();
+	TArray<int> MapB;
+	MapB.SetNum(B->DynamicMesh.VertexCount());
 
+	for (int vid : B->DynamicMesh.VertexIndicesItr())
+	{
+		FVector3d LocalP = B->DynamicMesh.GetVertex(vid);
+		FVector    WorldP = TB.TransformPosition((FVector)LocalP);
+		MapB[vid] = MergedMesh.AppendVertex(FVector3d(WorldP));
+	}
+	for (int tid : B->DynamicMesh.TriangleIndicesItr())
+	{
+		auto T = B->DynamicMesh.GetTriangle(tid);
+		MergedMesh.AppendTriangle(
+			MapB[T.A], MapB[T.B], MapB[T.C]
+		);
+	}
+	
+	
+	if (!MergedMesh.HasAttributes())
+	{
+		MergedMesh.EnableAttributes();
+	}
+	
+	
     // 3) Extract to raw arrays for ProceduralMeshComponent
     TArray<FVector> Vertices;
     TArray<int32>   Indices;
@@ -2119,80 +2205,132 @@ void SClothDesignCanvas::MergeAndWeldLastTwoMeshes()
     // 2) Merge their DynamicMesh3’s
     UE::Geometry::FDynamicMesh3 Merged = A->DynamicMesh;
     int32 BaseVID = Merged.VertexCount();
+	
+    // for (int vid : B->DynamicMesh.VertexIndicesItr())
+    // {
+    //     Merged.AppendVertex(B->DynamicMesh.GetVertex(vid));
+    // }
+    // for (int tid : B->DynamicMesh.TriangleIndicesItr())
+    // {
+    //     auto T = B->DynamicMesh.GetTriangle(tid);
+    //     Merged.AppendTriangle(T.A + BaseVID, T.B + BaseVID, T.C + BaseVID);
+    // }
+	// -- (A) Append A’s world‑transformed vertices & triangles --
+	
+    const FTransform& TA = A->GetActorTransform();
+    TArray<int> MapA;
+    MapA.SetNum(A->DynamicMesh.VertexCount());
+
+    // 1) Add all A’s vertices in world space
+    for (int vid : A->DynamicMesh.VertexIndicesItr())
+    {
+    	FVector3d LocalP = A->DynamicMesh.GetVertex(vid);
+    	FVector    WorldP = TA.TransformPosition((FVector)LocalP);
+    	MapA[vid] = Merged.AppendVertex(FVector3d(WorldP));
+    }
+    // 2) Add A’s triangles with remapped indices
+    for (int tid : A->DynamicMesh.TriangleIndicesItr())
+    {
+    	auto T = A->DynamicMesh.GetTriangle(tid);
+    	Merged.AppendTriangle(
+			MapA[T.A], MapA[T.B], MapA[T.C]
+		);
+    }
+	
+
+	// -- (B) Append B’s world‑transformed vertices & triangles --
+	// int32 BaseVID = Merged.VertexCount();
+	
+    const FTransform& TB = B->GetActorTransform();
+    TArray<int> MapB;
+    MapB.SetNum(B->DynamicMesh.VertexCount());
+
     for (int vid : B->DynamicMesh.VertexIndicesItr())
     {
-        Merged.AppendVertex(B->DynamicMesh.GetVertex(vid));
+    	FVector3d LocalP = B->DynamicMesh.GetVertex(vid);
+    	FVector    WorldP = TB.TransformPosition((FVector)LocalP);
+    	MapB[vid] = Merged.AppendVertex(FVector3d(WorldP));
     }
     for (int tid : B->DynamicMesh.TriangleIndicesItr())
     {
-        auto T = B->DynamicMesh.GetTriangle(tid);
-        Merged.AppendTriangle(T.A + BaseVID, T.B + BaseVID, T.C + BaseVID);
+    	auto T = B->DynamicMesh.GetTriangle(tid);
+    	Merged.AppendTriangle(
+			MapB[T.A], MapB[T.B], MapB[T.C]
+		);
     }
 	
+
+
+
+
+	
+	
 	// 2) Build loops of exactly two vertices each, for each seam pair
-	TArray<TArray<int>> WeldLoops;
-	int32 Count = FMath::Min(A->LastSeamVertexIDs.Num(), B->LastSeamVertexIDs.Num());
-	WeldLoops.Reserve(Count);
-	for (int32 i = 0; i < Count; ++i)
-	{
-		int VA = A->LastSeamVertexIDs[i];
-		int VB = B->LastSeamVertexIDs[i] + BaseVID;
-		WeldLoops.Add( TArray<int>({ VA, VB }) );
-	}
+	//TArray<TArray<int>> WeldLoops;
+	// int32 Count = FMath::Min(A->LastSeamVertexIDs.Num(), B->LastSeamVertexIDs.Num());
+	// WeldLoops.Reserve(Count);
+	// for (int32 i = 0; i < Count; ++i)
+	// {
+	// 	int VA = A->LastSeamVertexIDs[i];
+	// 	int VB = B->LastSeamVertexIDs[i] + BaseVID;
+	// 	WeldLoops.Add( TArray<int>({ VA, VB }) );
+	// }
 
 	
 	if (!Merged.HasAttributes())
 	{
 		Merged.EnableAttributes();
 	}
-
-
+	
 	
     // 3) Weld each seam‐vertex pair
     UE::Geometry::FDynamicMeshEditor Editor(&Merged);
 	TArray<int32> LoopA;
 	TArray<int32> LoopB;
+	int32 Count = FMath::Min(A->LastSeamVertexIDs.Num(), B->LastSeamVertexIDs.Num());
+
+	// for (int32 i = 0; i < Count; ++i)
+	// {
+	// 	int VA = A->LastSeamVertexIDs[i];
+	// 	int VB = B->LastSeamVertexIDs[i] + BaseVID;
+	// 	LoopA.Add(VA);
+	// 	LoopB.Add(VB);
+	// 	
+	// 	// TArray<int32> Pair = { VA, VB };
+	// 	// TArray<int32> Removed;
+	// 	// Editor.WeldVertexLoops(Pair, Removed);
+	// }
+	
 	for (int32 i = 0; i < Count; ++i)
 	{
-		int VA = A->LastSeamVertexIDs[i];
-		int VB = B->LastSeamVertexIDs[i] + BaseVID;
-		LoopA.Add(VA);
-		LoopB.Add(VB);
-		
-		// TArray<int32> Pair = { VA, VB };
-		// TArray<int32> Removed;
-		// Editor.WeldVertexLoops(Pair, Removed);
+		// origVA is the index in A->DynamicMesh
+		int32 origVA = A->LastSeamVertexIDs[i];
+		// The new ID in Merged is:
+		int32 mergedVA = MapA[origVA];
+		LoopA.Add( mergedVA );
+
+		// origVB is the index in B->DynamicMesh
+		int32 origVB = B->LastSeamVertexIDs[i];
+		// The new ID in Merged is:
+		int32 mergedVB = MapB[origVB];
+		LoopB.Add( mergedVB );
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("LoopA has %d vertices:"), LoopA.Num());
-	// for (int i = 0; i < LoopA.Num(); ++i)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("A[%d] = %d"), i, LoopA[i]);
-	// }
-
-	UE_LOG(LogTemp, Warning, TEXT("LoopB has %d vertices:"), LoopB.Num());
-	// for (int i = 0; i < LoopB.Num(); ++i)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("B[%d] = %d"), i, LoopB[i]);
-	// }
-
-	// TArray<int32> Removed;
-	// Editor.WeldVertexLoops(LoopA, LoopB);
-	//
-	// if (!Editor.WeldVertexLoops(LoopA, LoopB))
-	// {
-	// 	UE_LOG(LogTemp, Error, TEXT("WeldVertexLoops failed! Loops may be mismatched or invalid."));
-	// 	return;
-	// }
-	//
+	UE_LOG(LogTemp, Warning, TEXT("LoopA has %d vertices"), LoopA.Num());
+	UE_LOG(LogTemp, Warning, TEXT("LoopB has %d vertices"), LoopB.Num());
 
 
+
+
+
+
+	
 	if (LoopA.Num() != LoopB.Num())
 	{
 		UE_LOG(LogTemp, Error, TEXT("Loop sizes don't match: A=%d, B=%d"), LoopA.Num(), LoopB.Num());
 		return;
 	}
-
+	
 	for (int32 i = 0; i < LoopA.Num(); ++i)
 	{
 		int32 VA = LoopA[i];
@@ -2245,6 +2383,7 @@ void SClothDesignCanvas::MergeAndWeldLastTwoMeshes()
 	if (!World) return;
 	AClothPatternMeshActor* MergedActor =
 		World->SpawnActor<AClothPatternMeshActor>();
+	
 #if WITH_EDITOR
 	MergedActor->SetActorLabel(TEXT("WeldedPatternMesh"));
 #endif
@@ -2264,6 +2403,21 @@ void SClothDesignCanvas::MergeAndWeldLastTwoMeshes()
 	UE_LOG(LogTemp, Log, TEXT("Merged & welded: %d verts, %d tris"),
 		   Verts.Num(), Inds.Num()/3);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //     // 4) Export welded mesh to new actor
 //     //   (similar to your previous spawn logic)

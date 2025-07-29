@@ -266,8 +266,8 @@ FReply FClothDesignModule::OnGenerateMeshClicked()
 		//CanvasWidget->TriangulateAndBuildMesh();
 		// CanvasWidget->TriangulateAndBuildAllMeshes();
 		//CanvasWidget->BuildAndAlignClickedSeam(); MergeLastTwoMeshes
-		// CanvasWidget->MergeLastTwoMeshes();
-		CanvasWidget->MergeAndWeldLastTwoMeshes();
+		CanvasWidget->MergeLastTwoMeshes();
+		// CanvasWidget->MergeAndWeldLastTwoMeshes();
 
 	}
 	return FReply::Handled();

@@ -196,6 +196,12 @@ TOptional&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>G
 <tr class="memitem:a043334f2e2c4fbf04d5e9130dc2756fa" id="r_a043334f2e2c4fbf04d5e9130dc2756fa"><td class="memItemLeft" align="right" valign="top"><a id="a043334f2e2c4fbf04d5e9130dc2756fa" name="a043334f2e2c4fbf04d5e9130dc2756fa"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>OnBackgroundImageScaleChanged</b> (float NewScale)</td></tr>
 <tr class="separator:a043334f2e2c4fbf04d5e9130dc2756fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59fb1ef6a8f109228bc26dc74603c849" id="r_a59fb1ef6a8f109228bc26dc74603c849"><td class="memItemLeft" align="right" valign="top"><a id="a59fb1ef6a8f109228bc26dc74603c849" name="a59fb1ef6a8f109228bc26dc74603c849"></a>
+virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnKeyUp</b> (const FGeometry &amp;MyGeometry, const FKeyEvent &amp;InKeyEvent) override</td></tr>
+<tr class="separator:a59fb1ef6a8f109228bc26dc74603c849"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e56df4fd79ad239d58b0e2adf31491b" id="r_a6e56df4fd79ad239d58b0e2adf31491b"><td class="memItemLeft" align="right" valign="top"><a id="a6e56df4fd79ad239d58b0e2adf31491b" name="a6e56df4fd79ad239d58b0e2adf31491b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>FocusViewportOnPoints</b> ()</td></tr>
+<tr class="separator:a6e56df4fd79ad239d58b0e2adf31491b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaac7efe30e1eafeda38a86fff0f651ae" id="r_aaac7efe30e1eafeda38a86fff0f651ae"><td class="memItemLeft" align="right" valign="top"><a id="aaac7efe30e1eafeda38a86fff0f651ae" name="aaac7efe30e1eafeda38a86fff0f651ae"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>TriangulateAndBuildAllMeshes</b> ()</td></tr>
 <tr class="separator:aaac7efe30e1eafeda38a86fff0f651ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -248,7 +254,7 @@ Public Attributes</h2></td></tr>
 TArray&lt; int32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>LastSeamVertexIDs</b></td></tr>
 <tr class="separator:a9ee68a6eaa06d1d58d4f5df51584820f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5d18928680ebfe5e589466092992b65" id="r_ab5d18928680ebfe5e589466092992b65"><td class="memItemLeft" align="right" valign="top"><a id="ab5d18928680ebfe5e589466092992b65" name="ab5d18928680ebfe5e589466092992b65"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>ZoomFactor</b> = 1.0f</td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>ZoomFactor</b> = 5.0f</td></tr>
 <tr class="separator:ab5d18928680ebfe5e589466092992b65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37c3f1edfa2fd456ae8b1d76b88b2040" id="r_a37c3f1edfa2fd456ae8b1d76b88b2040"><td class="memItemLeft" align="right" valign="top"><a id="a37c3f1edfa2fd456ae8b1d76b88b2040" name="a37c3f1edfa2fd456ae8b1d76b88b2040"></a>
 FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>PanOffset</b> = FVector2D::ZeroVector</td></tr>
@@ -283,6 +289,9 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>BackgroundImageScale
 <tr class="memitem:a89c8df277aed2f6a1d83ce5a4f55fbe7" id="r_a89c8df277aed2f6a1d83ce5a4f55fbe7"><td class="memItemLeft" align="right" valign="top"><a id="a89c8df277aed2f6a1d83ce5a4f55fbe7" name="a89c8df277aed2f6a1d83ce5a4f55fbe7"></a>
 FInterpCurve&lt; FVector2D &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CurvePoints</b></td></tr>
 <tr class="separator:a89c8df277aed2f6a1d83ce5a4f55fbe7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1431752aa9a9e3e2eeb0bf10c22b446d" id="r_a1431752aa9a9e3e2eeb0bf10c22b446d"><td class="memItemLeft" align="right" valign="top"><a id="a1431752aa9a9e3e2eeb0bf10c22b446d" name="a1431752aa9a9e3e2eeb0bf10c22b446d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>bSeparateTangents</b> = false</td></tr>
+<tr class="separator:a1431752aa9a9e3e2eeb0bf10c22b446d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac581344a87848ba382435958b3766f3b" id="r_ac581344a87848ba382435958b3766f3b"><td class="memItemLeft" align="right" valign="top"><a id="ac581344a87848ba382435958b3766f3b" name="ac581344a87848ba382435958b3766f3b"></a>
 TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CompletedShapes</b></td></tr>
 <tr class="separator:ac581344a87848ba382435958b3766f3b"><td class="memSeparator" colspan="2">&#160;</td></tr>

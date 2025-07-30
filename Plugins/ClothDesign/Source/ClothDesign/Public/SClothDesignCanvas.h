@@ -183,6 +183,7 @@ public:
 	// This holds your curve control points and interpolation mode
 	FInterpCurve<FVector2D> CurvePoints;
 	//FCurveWithFlags CurvePoints; // !!
+	TArray<bool> bUseBezierPerPoint; 
 
 
 	enum class ETangentHandle
@@ -200,6 +201,8 @@ public:
 	// for drawing multiple shapes
 	TArray<FInterpCurve<FVector2D>> CompletedShapes;
 	//TArray<FCurveWithFlags> CompletedShapes; // !!
+	TArray<TArray<bool>> CompletedBezierFlags;
+
 
 	mutable int32 SelectedShapeIndex = INDEX_NONE;
 	void TriangulateAndBuildAllMeshes();
@@ -299,7 +302,9 @@ public:
 
 
 
-
+	void RecalculateNTangents(
+		FInterpCurve<FVector2D>& Curve,
+		const TArray<bool>&      bBezierFlags);
 
 
 
@@ -337,5 +342,5 @@ private:
 	// Optional: store last geometry for sizing
 	FGeometry LastGeometry;
 
-	// bool bUseBezierPoints = true;
+	bool bUseBezierPoints = true;
 };

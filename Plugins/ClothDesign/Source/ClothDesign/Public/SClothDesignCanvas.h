@@ -1,5 +1,8 @@
 #pragma once
 
+#include <random>
+
+
 #include "Widgets/SCompoundWidget.h"
 #include "CompGeom/PolygonTriangulation.h"
 #include "ProceduralMeshComponent.h"
@@ -15,6 +18,64 @@
 
 #include "PatternSewingConstraint.h"
 #include "AClothPatternMeshActor.h"
+#include "DynamicMesh/DynamicMesh3.h"
+#include "DynamicMeshEditor.h"
+
+#include "CleaningOps/RemeshMeshOp.h"
+#include "MeshOpPreviewHelpers.h" 
+#include "DynamicMesh/DynamicMesh3.h"
+#include "DynamicMeshEditor.h"
+#include "DynamicMesh/DynamicMesh3.h"
+#include "MeshDescriptionAdapter.h"
+#include "Curve/DynamicGraph.h"
+#include "DynamicMesh/InfoTypes.h"
+#include "DynamicMesh/DynamicMesh3.h"         // for FDynamicMesh3, FEdgeSplitInfo, etc.
+#include "DynamicMeshEditor.h"
+#include "Curve/DynamicGraph.h"
+#include "DynamicMesh/DynamicMesh3.h"
+#include "ConstrainedDelaunay2.h"
+#include "DynamicMesh/DynamicMesh3.h"
+#include "Spatial/PointHashGrid2.h" // optional for poisson
+#include "Misc/ScopeLock.h"
+#include "GeomTools.h"
+
+
+// struct FCurvePoint
+// {
+// 	FInterpCurvePoint<FVector2D> Point;
+// 	bool bUseBezierHandle = true;  // default to Bezier
+//
+// 	// convenience
+// 	FVector2D& OutVal()        { return Point.OutVal; }
+// 	FVector2D& ArriveTangent() { return Point.ArriveTangent; }
+// 	FVector2D& LeaveTangent()  { return Point.LeaveTangent; }
+// };
+//
+// struct FCurve
+// {
+// 	TArray<FCurvePoint> Points;
+// 	float AutoSetTangentStrength = 0.5f;
+// 	void AutoSetTangents()
+// 	{
+// 		// your existing AutoSetTangents logic, but operate on FMyCurvePoint::Point
+// 	}
+// 	FVector2D Eval(float InVal) const
+// 	{
+// 		// replicate Shape.Eval(...) by building a temporary FInterpCurve from the .Point members
+// 	}
+// };
+//
+// struct FCurveWithFlags
+// {
+// 	FInterpCurve<FVector2D>   Curve;              // your existing curve
+// 	TArray<bool> bUseBezierHandle;   // same length as Curve.Points
+//
+// 	void AddPoint(const FInterpCurvePoint<FVector2D>& NewPt, bool bBezier)
+// 	{
+// 		Curve.Points.Add(NewPt);
+// 		bUseBezierHandle.Add(bBezier);
+// 	}
+// };
 
 // Canvas state struct
 struct FCanvasState
@@ -25,21 +86,23 @@ struct FCanvasState
 	// float ZoomFactor = 1.0f;
 	FInterpCurve<FVector2D> CurvePoints;  // Was: TArray<FVector2D> Points
 	TArray<FInterpCurve<FVector2D>> CompletedShapes;
+	// FCurveWithFlags CurvePoints;
+	// TArray<FCurveWithFlags> CompletedShapes; // !!
+
 
 	int32 SelectedPointIndex;
 	FVector2D PanOffset;
 	float ZoomFactor;
 
-	// Optional equality operator
+	// Optional equality operator 
 	bool operator==(const FCanvasState& Other) const
 	{
 		return CurvePoints == Other.CurvePoints &&
 			   SelectedPointIndex == Other.SelectedPointIndex &&
 			   PanOffset == Other.PanOffset &&
 			   FMath::IsNearlyEqual(ZoomFactor, Other.ZoomFactor);
-	}
+	} // !!
 };
-
 class SClothDesignCanvas : public SCompoundWidget
 {
 public:
@@ -68,7 +131,7 @@ public:
 
 	
 	
-	float ZoomFactor = 1.0f;
+	float ZoomFactor = 5.0f;
 	FVector2D PanOffset = FVector2D::ZeroVector;
 	
 	FVector2D TransformPoint(const FVector2D& Point) const;
@@ -119,6 +182,8 @@ public:
 
 	// This holds your curve control points and interpolation mode
 	FInterpCurve<FVector2D> CurvePoints;
+	//FCurveWithFlags CurvePoints; // !!
+
 
 	enum class ETangentHandle
 	{
@@ -127,8 +192,15 @@ public:
 		Leave
 	};
 
+	// for bezier handles, toggle
+	bool bSeparateTangents = false;
+	virtual FReply OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
+	void FocusViewportOnPoints();
+
 	// for drawing multiple shapes
 	TArray<FInterpCurve<FVector2D>> CompletedShapes;
+	//TArray<FCurveWithFlags> CompletedShapes; // !!
+
 	mutable int32 SelectedShapeIndex = INDEX_NONE;
 	void TriangulateAndBuildAllMeshes();
 
@@ -259,4 +331,11 @@ private:
 	ETangentHandle SelectedTangentHandle = ETangentHandle::None;
 	bool bIsDraggingTangent = false;
 	float TangentHandleRadius = 25.0f; // or whatever pixel radius
+
+	// Pan and zoom state for focus
+	// FVector2D ViewOffset = FVector2D::ZeroVector;
+	// Optional: store last geometry for sizing
+	FGeometry LastGeometry;
+
+	// bool bUseBezierPoints = true;
 };

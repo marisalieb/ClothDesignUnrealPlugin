@@ -99,6 +99,8 @@ int32 SClothDesignCanvas::OnPaint(
 	const FWidgetStyle& InWidgetStyle,
 	bool bParentEnabled) const
 {
+	const_cast<SClothDesignCanvas*>(this)->LastGeometry = AllottedGeometry;
+
 	// background image
 	if (BackgroundTexture.IsValid())
 	{
@@ -141,7 +143,8 @@ int32 SClothDesignCanvas::OnPaint(
 	
 	
 	// Grid color
-	const FLinearColor GridColor(0.1f, 0.1f, 0.1f, 0.4f);
+	const FLinearColor GridColor(0.215f, 0.215f, 0.215f, 0.6f);
+	const FLinearColor GridColorSmall(0.081f, 0.081f, 0.081f, 0.4f);
 	
 	// --- Draw Grid ---
 	const FVector2D Size = AllottedGeometry.GetLocalSize();
@@ -155,7 +158,7 @@ int32 SClothDesignCanvas::OnPaint(
 	// Convert those to “world” (canvas) coordinates
 	FVector2D WorldTopLeft     = InverseTransformPoint(TopLeftScreen);
 	FVector2D WorldBottomRight = InverseTransformPoint(BottomRightScreen);
-	const float WorldGridSpacing = 100.f;  // e.g. every 100 “canvas” units
+	const float WorldGridSpacing = 100.0f;  // e.g. every 100 “canvas” units
 
 	
 	float StartX = FMath::FloorToFloat(WorldTopLeft.X / WorldGridSpacing) * WorldGridSpacing;
@@ -180,7 +183,7 @@ int32 SClothDesignCanvas::OnPaint(
 			OutDrawElements, LayerId,
 			AllottedGeometry.ToPaintGeometry(),
 			{ FVector2D(Ax, 0), FVector2D(Bx, Size.Y) },
-			ESlateDrawEffect::None, GridColor, true, 1.0f
+			ESlateDrawEffect::None, GridColor, true, 2.0f
 		);
 	}
 
@@ -197,17 +200,73 @@ int32 SClothDesignCanvas::OnPaint(
 			OutDrawElements, LayerId,
 			AllottedGeometry.ToPaintGeometry(),
 			{ FVector2D(0, Ay), FVector2D(Size.X, By) },
-			ESlateDrawEffect::None, GridColor, true, 1.0f
+			ESlateDrawEffect::None, GridColor, true, 2.0f
+		);
+	}
+
+	
+	// --- Smaller Grid Lines ---
+	const int32 NumSubdivisions = 10;
+	const float SubGridSpacing = WorldGridSpacing / NumSubdivisions;
+
+	// Vertical small lines
+	for (float wx = StartX; wx <= EndX; wx += SubGridSpacing)
+	{
+		if (FMath::IsNearlyZero(FMath::Fmod(wx, WorldGridSpacing), 0.01f))
+			continue; // Skip major lines to avoid drawing twice
+
+		FVector2D A_world(wx, WorldTopLeft.Y);
+		FVector2D B_world(wx, WorldBottomRight.Y);
+
+		float Ax = TransformPoint(A_world).X;
+		float Bx = TransformPoint(B_world).X;
+
+		FSlateDrawElement::MakeLines(
+			OutDrawElements, LayerId,
+			AllottedGeometry.ToPaintGeometry(),
+			{ FVector2D(Ax, 0), FVector2D(Bx, Size.Y) },
+			ESlateDrawEffect::None, GridColorSmall, true, 1.0f
+		);
+	}
+
+	// Horizontal small lines
+	for (float wy = StartY; wy <= EndY; wy += SubGridSpacing)
+	{
+		if (FMath::IsNearlyZero(FMath::Fmod(wy, WorldGridSpacing), 0.01f))
+			continue; // Skip major lines
+
+		FVector2D A_world(WorldTopLeft.X, wy);
+		FVector2D B_world(WorldBottomRight.X, wy);
+
+		float Ay = TransformPoint(A_world).Y;
+		float By = TransformPoint(B_world).Y;
+
+		FSlateDrawElement::MakeLines(
+			OutDrawElements, LayerId,
+			AllottedGeometry.ToPaintGeometry(),
+			{ FVector2D(0, Ay), FVector2D(Size.X, By) },
+			ESlateDrawEffect::None, GridColorSmall, true, 1.0f
 		);
 	}
 
 	// --- Advance Layer for shapes ---
 	LayerId++;
 
-	
+
+
+	const FLinearColor LineColour(0.659f, 0.808f, 0.365f, 1.f);
+	const FLinearColor CompletedLineColour(0.4559f, 0.5508f, 0.165f, 1.f);
+	const FLinearColor PointColour(0.686f, 1.f, 0.0f, 1.f);
+	const FLinearColor PostCurrentPointColour(0.355f, .59f, 0.0f, 1.f);
+	const FLinearColor BezierHandleColour(0.229f, 0.342f, 0.0f, 1.f);
+
 	// Draw completed shapes first
+	// Sample each Bézier‐style segment into straight‐line chunks and draw them
+	// 	section 1: completed shapes, draw shape points and edge lines
 	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
 	{
+		if (Shape.Points.Num() < 2) continue;
+
 		if (Shape.Points.Num() >= 2)
 		{
 			const int SamplesPerSegment = 10;
@@ -230,45 +289,48 @@ int32 SClothDesignCanvas::OnPaint(
 						AllottedGeometry.ToPaintGeometry(),
 						{ P1, P2 },
 						ESlateDrawEffect::None,
-						FLinearColor::Blue,
+						CompletedLineColour,
 						true, 2.0f
 					);
 				}
 			}
-
-			// Optional: close the shape
-			if (Shape.Points.Num() > 2)
-			{
-				const FVector2D LastPt = TransformPoint(Shape.Points.Last().OutVal);
-				const FVector2D FirstPt = TransformPoint(Shape.Points[0].OutVal);
-
-				FSlateDrawElement::MakeLines(
-					OutDrawElements,
-					LayerId,
-					AllottedGeometry.ToPaintGeometry(),
-					{ LastPt, FirstPt },
-					ESlateDrawEffect::None,
-					FLinearColor::Black,
-					true,
-					2.0f
-				);
-			}
-
-			++LayerId;
 		}
+		
+		// Optional: close the shape
+		if (Shape.Points.Num() > 2)
+		{
+			const FVector2D LastPt = TransformPoint(Shape.Points.Last().OutVal);
+			const FVector2D FirstPt = TransformPoint(Shape.Points[0].OutVal);
+
+			FSlateDrawElement::MakeLines(
+				OutDrawElements,
+				LayerId,
+				AllottedGeometry.ToPaintGeometry(),
+				{ LastPt, FirstPt },
+				ESlateDrawEffect::None,
+				FLinearColor::Black,
+				true,
+				2.0f
+			);
+		}
+
+		++LayerId;
 	}
 	
 	// Draw interactive points and bezier handles for all completed shapes
+	// section 2: completed shapes, bezier handles and boxes
 	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
 	{
+		
 		for (int32 i = 0; i < Shape.Points.Num(); ++i)
 		{
+			
 			const auto& Pt = Shape.Points[i];
 			FVector2D DrawPos = TransformPoint(Pt.OutVal);
 			FVector2D ArriveHandle = TransformPoint(Pt.OutVal - Pt.ArriveTangent);
 			FVector2D LeaveHandle  = TransformPoint(Pt.OutVal + Pt.LeaveTangent);
 
-			FLinearColor BoxColor = FLinearColor::Gray; // Or color by selection if implemented
+			FLinearColor BoxColor = PostCurrentPointColour; // Or color by selection if implemented
 
 			// Draw point box
 			FSlateDrawElement::MakeBox(
@@ -282,26 +344,27 @@ int32 SClothDesignCanvas::OnPaint(
 
 			// Draw handle lines
 			FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-				{ DrawPos, ArriveHandle }, ESlateDrawEffect::None, FLinearColor::Gray, true, 1.0f);
+				{ DrawPos, ArriveHandle }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
 
 			FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-				{ DrawPos, LeaveHandle }, ESlateDrawEffect::None, FLinearColor::Gray, true, 1.0f);
+				{ DrawPos, LeaveHandle }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
 
 			// Draw handle boxes
 			FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
 				AllottedGeometry.ToPaintGeometry(ArriveHandle - FVector2D(3, 3), FVector2D(6, 6)),
 				FCoreStyle::Get().GetBrush("WhiteBrush"),
-				ESlateDrawEffect::None, FLinearColor::Yellow);
+				ESlateDrawEffect::None, PostCurrentPointColour);
 
 			FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
 				AllottedGeometry.ToPaintGeometry(LeaveHandle - FVector2D(3, 3), FVector2D(6, 6)),
 				FCoreStyle::Get().GetBrush("WhiteBrush"),
-				ESlateDrawEffect::None, FLinearColor::Yellow);
+				ESlateDrawEffect::None, PostCurrentPointColour);
 		}
 	}
 
 	
 	// curve points
+	// 	section 3: in progress shape, draw shape points and edge lines
 	if (CurvePoints.Points.Num() >= 2)
 	{
 		const int SamplesPerSegment = 10; // Smoothness
@@ -324,7 +387,7 @@ int32 SClothDesignCanvas::OnPaint(
 					AllottedGeometry.ToPaintGeometry(),
 					{ P1, P2 },
 					ESlateDrawEffect::None,
-					FLinearColor::Blue,
+					LineColour,
 					true, 2.0f
 				);
 			}
@@ -333,7 +396,7 @@ int32 SClothDesignCanvas::OnPaint(
 		++LayerId;
 	}
 
-	// close shape with straight line
+	// close in progress shape with straight line
 	if (CurvePoints.Points.Num() > 2)
 	{
 		const FVector2D LastPt = TransformPoint(CurvePoints.Points.Last().OutVal);
@@ -371,10 +434,11 @@ int32 SClothDesignCanvas::OnPaint(
 
 
 	// bezier points and lines
+	// section 4: in progress shape, bezier handles and boxes
 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
 	{
 		FVector2D DrawPos = TransformPoint(CurvePoints.Points[i].OutVal);
-		FLinearColor Color = (i == SelectedPointIndex) ? FLinearColor::Yellow : FLinearColor::White;
+		FLinearColor Color = (i == SelectedPointIndex) ? PointColour : PointColour;
 
 		FSlateDrawElement::MakeBox(
 			OutDrawElements,
@@ -395,20 +459,20 @@ int32 SClothDesignCanvas::OnPaint(
 
 		// Draw lines from point to each handle
 		FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-			{ Pos, ArriveHandle }, ESlateDrawEffect::None, FLinearColor::Blue, true, 1.0f);
+			{ Pos, ArriveHandle }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
 		FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-			{ Pos, LeaveHandle }, ESlateDrawEffect::None, FLinearColor::Blue, true, 1.0f);
+			{ Pos, LeaveHandle }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
 
 		// Draw the handles as small draggable boxes
 		FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
 			AllottedGeometry.ToPaintGeometry(ArriveHandle - FVector2D(3, 3), FVector2D(6, 6)),
 			FCoreStyle::Get().GetBrush("WhiteBrush"),
-			ESlateDrawEffect::None, FLinearColor::Yellow);
+			ESlateDrawEffect::None, PointColour);
 
 		FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
 			AllottedGeometry.ToPaintGeometry(LeaveHandle - FVector2D(3, 3), FVector2D(6, 6)),
 			FCoreStyle::Get().GetBrush("WhiteBrush"),
-			ESlateDrawEffect::None, FLinearColor::Yellow);
+			ESlateDrawEffect::None, PointColour);
 	}
 
 
@@ -496,6 +560,7 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 		{
 			SaveStateForUndo();
 
+			// 1) add new point on current shape
 			FInterpCurvePoint<FVector2D> NewPoint;
 			NewPoint.InVal = CurvePoints.Points.Num();
 			NewPoint.OutVal = CanvasClickPos;
@@ -503,7 +568,26 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 
 			CurvePoints.Points.Add(NewPoint);
 			CurvePoints.AutoSetTangents();
-
+			
+			// 2) ALSO initialize the first/last tangents on current shape
+			int32 NumPts = CurvePoints.Points.Num();
+			if (NumPts >= 2)
+			{
+				// first point
+				{
+					FVector2D Delta = CurvePoints.Points[1].OutVal - CurvePoints.Points[0].OutVal;
+					CurvePoints.Points[0].ArriveTangent = FVector2D::ZeroVector;
+					CurvePoints.Points[0].LeaveTangent  = Delta * 0.5f;
+				}
+				// last point
+				{
+					int32 LastIdx = NumPts - 1;
+					FVector2D Delta = CurvePoints.Points[LastIdx].OutVal - CurvePoints.Points[LastIdx - 1].OutVal;
+					CurvePoints.Points[LastIdx].ArriveTangent = Delta * 0.5f;
+					CurvePoints.Points[LastIdx].LeaveTangent  = FVector2D::ZeroVector;
+				}
+			}
+			
 			UE_LOG(LogTemp, Warning, TEXT("Draw mode: Added point at (%f, %f)"), CanvasClickPos.X, CanvasClickPos.Y);
 			return FReply::Handled();
 		}
@@ -652,7 +736,10 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 						SelectedTangentHandle = ETangentHandle::Arrive;
 						bIsDraggingTangent = true;
 
-						return FReply::Handled().CaptureMouse(SharedThis(this));
+						return FReply::Handled()
+									.CaptureMouse(SharedThis(this))
+						            .SetUserFocus(AsShared(), EFocusCause::Mouse);
+;
 					}
 					else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentHandleRadius / ZoomFactor)
 					{
@@ -662,7 +749,10 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 						SelectedTangentHandle = ETangentHandle::Leave;
 						bIsDraggingTangent = true;
 
-						return FReply::Handled().CaptureMouse(SharedThis(this));
+						return FReply::Handled()
+							.CaptureMouse(SharedThis(this))
+							.SetUserFocus(AsShared(), EFocusCause::Mouse);
+						;
 					}
 				}
 			}
@@ -683,7 +773,10 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 					SelectedTangentHandle = ETangentHandle::Arrive;
 					bIsDraggingTangent = true;
 
-					return FReply::Handled().CaptureMouse(SharedThis(this));
+					return FReply::Handled()
+							.CaptureMouse(SharedThis(this))
+							.SetUserFocus(AsShared(), EFocusCause::Mouse);
+					
 				}
 				else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentHandleRadius / ZoomFactor)
 				{
@@ -693,7 +786,9 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 					SelectedTangentHandle = ETangentHandle::Leave;
 					bIsDraggingTangent = true;
 
-					return FReply::Handled().CaptureMouse(SharedThis(this));
+					return FReply::Handled()
+							.CaptureMouse(SharedThis(this))
+							.SetUserFocus(AsShared(), EFocusCause::Mouse);
 				}
 			}
 
@@ -899,7 +994,49 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 
 		if (bIsDraggingTangent && SelectedPointIndex != INDEX_NONE)
 		{
+			// // Decide which shape's points to update
+			// if (SelectedShapeIndex == INDEX_NONE)
+			// {
+			// 	// Current shape
+			// 	FVector2D PointPos = CurvePoints.Points[SelectedPointIndex].OutVal;
+			// 	FVector2D Delta = CanvasMousePos - PointPos;
+			//
+			// 	if (SelectedTangentHandle == ETangentHandle::Arrive)
+			// 	{
+			// 		CurvePoints.Points[SelectedPointIndex].ArriveTangent = -Delta;
+			// 		CurvePoints.Points[SelectedPointIndex].LeaveTangent = -Delta;
+			//
+			// 	}
+			// 	else if (SelectedTangentHandle == ETangentHandle::Leave)
+			// 	{
+			// 		CurvePoints.Points[SelectedPointIndex].LeaveTangent = Delta;
+			// 		CurvePoints.Points[SelectedPointIndex].ArriveTangent = Delta;
+			//
+			// 	}
+			// }
+			// else
+			// {
+			// 	// Completed shape
+			// 	FInterpCurvePoint<FVector2D>& Pt = CompletedShapes[SelectedShapeIndex].Points[SelectedPointIndex];
+			// 	FVector2D PointPos = Pt.OutVal;
+			// 	FVector2D Delta = CanvasMousePos - PointPos;
+			//
+			// 	if (SelectedTangentHandle == ETangentHandle::Arrive)
+			// 	{
+			// 		Pt.ArriveTangent = -Delta;
+			// 		Pt.LeaveTangent = -Delta;
+			//
+			// 	}
+			// 	else if (SelectedTangentHandle == ETangentHandle::Leave)
+			// 	{
+			// 		Pt.LeaveTangent = Delta;
+			// 		Pt.ArriveTangent = Delta;
+			//
+			// 	}
+			// }
 			// Decide which shape's points to update
+
+			
 			if (SelectedShapeIndex == INDEX_NONE)
 			{
 				// Current shape
@@ -908,11 +1045,21 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 
 				if (SelectedTangentHandle == ETangentHandle::Arrive)
 				{
+					// If separate mode, only move the Arrive handle.
+					// Otherwise, move both simultaneously.
 					CurvePoints.Points[SelectedPointIndex].ArriveTangent = -Delta;
+					if (!bSeparateTangents)
+					{
+						CurvePoints.Points[SelectedPointIndex].LeaveTangent = -Delta;
+					}
 				}
-				else if (SelectedTangentHandle == ETangentHandle::Leave)
+				else // Leave handle
 				{
 					CurvePoints.Points[SelectedPointIndex].LeaveTangent = Delta;
+					if (!bSeparateTangents)
+					{
+						CurvePoints.Points[SelectedPointIndex].ArriveTangent = Delta;
+					}
 				}
 			}
 			else
@@ -925,17 +1072,28 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 				if (SelectedTangentHandle == ETangentHandle::Arrive)
 				{
 					Pt.ArriveTangent = -Delta;
+					
+					if (!bSeparateTangents)
+					{
+						Pt.LeaveTangent = -Delta;
+					}
 				}
-				else if (SelectedTangentHandle == ETangentHandle::Leave)
+				else
 				{
 					Pt.LeaveTangent = Delta;
+					
+					if (!bSeparateTangents)
+					{
+						Pt.ArriveTangent = Delta;
+					}
+
 				}
 			}
-
 			UE_LOG(LogTemp, Warning, TEXT("Dragging tangent for point %d in shape %d"), SelectedPointIndex, SelectedShapeIndex);
 			return FReply::Handled();
 		}
 
+		
 		if (bIsDraggingPoint && SelectedPointIndex != INDEX_NONE)
 		{
 			if (SelectedShapeIndex == INDEX_NONE)
@@ -1080,6 +1238,38 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 		Redo();
 		return FReply::Handled();
 	}
+
+	if (Key == EKeys::F)
+	{
+		FocusViewportOnPoints();
+		return FReply::Handled();
+	}
+
+	
+
+	if (CurrentMode == EClothEditorMode::Select)
+	{
+		if (Key == EKeys::T)
+		{
+			bSeparateTangents = true;
+			return FReply::Handled();
+		}
+	}
+	
+	if (CurrentMode == EClothEditorMode::Draw)
+	{
+		if (Key == EKeys::B)
+		{
+			//bUseBezierPoints = true;
+			return FReply::Handled();
+		}
+		if (Key == EKeys::N)
+		{
+			//bUseBezierPoints = false;
+			return FReply::Handled();
+		}
+	}
+	
 	
 	if (CurrentMode == EClothEditorMode::Draw)
 	{
@@ -1088,6 +1278,21 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 			if (CurvePoints.Points.Num() > 0)
 			{
 				SaveStateForUndo();
+
+				// add bezier tangents to the start and end points
+				if (CurvePoints.Points.Num() >= 2)
+				{
+					int32 LastIdx = CurvePoints.Points.Num() - 1;
+
+					FVector2D Delta0 = CurvePoints.Points[1].OutVal - CurvePoints.Points[0].OutVal;
+					CurvePoints.Points[0].ArriveTangent = FVector2D::ZeroVector;
+					CurvePoints.Points[0].LeaveTangent  = Delta0 * 0.5f;
+
+					FVector2D Delta1 = CurvePoints.Points[LastIdx].OutVal - CurvePoints.Points[LastIdx - 1].OutVal;
+					CurvePoints.Points[LastIdx].ArriveTangent = Delta1 * 0.5f;
+					CurvePoints.Points[LastIdx].LeaveTangent  = FVector2D::ZeroVector;
+				}
+				
 				CompletedShapes.Add(CurvePoints);
 				CurvePoints.Points.Empty();
 				UE_LOG(LogTemp, Warning, TEXT("Shape finalized. Ready to start a new one."));
@@ -1117,7 +1322,21 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 // }
 
 
-
+FReply SClothDesignCanvas::OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+{
+	const FKey Key = InKeyEvent.GetKey();
+	
+	if (CurrentMode == EClothEditorMode::Select)
+	{
+		if (Key == EKeys::T)
+		{
+			bSeparateTangents = false;
+			return FReply::Handled();
+		}
+	}
+	//return FReply::Unhandled();
+	return SCompoundWidget::OnKeyUp(MyGeometry, InKeyEvent);
+}
 
 
 FReply SClothDesignCanvas::OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent)
@@ -1127,6 +1346,66 @@ FReply SClothDesignCanvas::OnFocusReceived(const FGeometry& MyGeometry, const FF
 }
 
 
+void SClothDesignCanvas::FocusViewportOnPoints()
+{
+	TArray<FVector2D> AllPoints;
+
+	// Collect points from in-progress shape
+	for (const auto& Pt : CurvePoints.Points)
+	{
+		AllPoints.Add(Pt.OutVal);
+	}
+
+	// Collect points from completed shapes
+	for (const auto& Shape : CompletedShapes)
+	{
+		for (const auto& Pt : Shape.Points)
+		{
+			AllPoints.Add(Pt.OutVal);
+		}
+	}
+
+	if (AllPoints.Num() == 0)
+	{
+		return; // nothing to focus on
+	}
+
+	// Compute bounding box
+	FVector2D Min = AllPoints[0];
+	FVector2D Max = AllPoints[0];
+
+	for (const FVector2D& Pt : AllPoints)
+	{
+		Min.X = FMath::Min(Min.X, Pt.X);
+		Min.Y = FMath::Min(Min.Y, Pt.Y);
+		Max.X = FMath::Max(Max.X, Pt.X);
+		Max.Y = FMath::Max(Max.Y, Pt.Y);
+	}
+
+	FVector2D Center = (Min + Max) * 0.5f;
+	FVector2D BoundsSize = Max - Min;
+
+	// Optional: adjust zoom to fit bounds
+	const FVector2D ViewportSize = LastGeometry.GetLocalSize();
+	const float Margin = 1.2f; // add some margin around the bounds
+
+	float ZoomX = ViewportSize.X / (BoundsSize.X * Margin);
+	float ZoomY = ViewportSize.Y / (BoundsSize.Y * Margin);
+	ZoomFactor = FMath::Clamp(FMath::Min(ZoomX, ZoomY), 0.1f, 10.0f);
+
+	//float NewZoom = FMath::Min(ZoomX, ZoomY);
+
+	// Clamp zoom if needed
+	//ZoomFactor = FMath::Clamp(NewZoom, 0.05f, 10.0f);
+
+	// Set the offset so the center is at screen center
+	//PanOffset = Center - (ViewportSize * 0.5f) / ZoomFactor;
+	PanOffset = ViewportSize * 0.5f - Center * ZoomFactor;
+
+	
+}
+
+// second but shorter!!
 // void SClothDesignCanvas::TriangulateAndBuildMesh()
 // {
 // 	if (CurvePoints.Points.Num() < 3)
@@ -1138,7 +1417,731 @@ FReply SClothDesignCanvas::OnFocusReceived(const FGeometry& MyGeometry, const FF
 
 //void SClothDesignCanvas::TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape)
 
+//
+// void SClothDesignCanvas::TriangulateAndBuildMesh(
+// 	const FInterpCurve<FVector2D>& Shape,
+// 	bool bRecordSeam,
+// 	int32 StartPointIdx2D,
+// 	int32 EndPointIdx2D
+// )
+// {
+// 	if (Shape.Points.Num() < 3)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
+// 		return;
+// 	}
+//
+// 	TArray<FVector2f> PolyVerts;
+// 	const int SamplesPerSegment = 10;
+// 	// Step 3: Build DynamicMesh
+// 	UE::Geometry::FDynamicMesh3 Mesh;
+// 	// WORKING but not smooth at all so lots of different sized triangles
+// 	// Insert vertices
+// 	// TArray<int> VertexIDs;
+// 	//
+// 	// LastSeamVertexIDs.Empty();
+// 	// int TotalSamples = PolyVerts.Num();
+//
+//
+//
+//
+//
+// 	// for (int SegIndex = 0; SegIndex < Shape.Points.Num() - 1; ++SegIndex)
+// 	// {
+// 	// 	float StartInVal = Shape.Points[SegIndex].InVal;
+// 	// 	float EndInVal   = Shape.Points[SegIndex + 1].InVal;
+// 	//
+// 	// 	for (int i = 0; i < SamplesPerSegment; ++i)
+// 	// 	{
+// 	// 		float Alpha = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
+// 	// 		FVector2D Sample = Shape.Eval(Alpha);
+// 	// 		PolyVerts.Add(FVector2f(Sample.X, Sample.Y));
+// 	// 	}
+// 	// }
+//
+//
+// 	
+// 	// Before your loop, compute the integer sample‐range once:
+// 	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
+// 	int SampleCounter = 0;
+//
+// 	// Default to an empty range
+// 	int MinSample = TotalSamples + 1;
+// 	int MaxSample = -1;
+//
+// 	// Only compute if we really want to record a seam
+// 	if (bRecordSeam && StartPointIdx2D >= 0 && EndPointIdx2D >= 0)
+// 	{
+// 		int S0 = StartPointIdx2D * SamplesPerSegment;
+// 		int S1 = EndPointIdx2D   * SamplesPerSegment;
+// 		MinSample = FMath::Min(S0, S1);
+// 		MaxSample = FMath::Max(S0, S1);
+// 	}
+//
+// 	LastSeamVertexIDs.Empty();
+// 	TArray<int32> VertexIDs;
+//
+// 	for (int Seg = 0; Seg < Shape.Points.Num() - 1; ++Seg)
+// 	{
+// 		float In0 = Shape.Points[Seg].InVal;
+// 		float In1 = Shape.Points[Seg + 1].InVal;
+//
+// 		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter)
+// 		{
+// 			float Alpha = float(i) / SamplesPerSegment;
+// 			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, Alpha));
+// 			PolyVerts.Add(FVector2f(P2.X, P2.Y));
+//
+// 			int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
+// 			VertexIDs.Add(VID);
+//
+// 			// record seam if this sample falls in the integer [MinSample,MaxSample] range
+// 			if (bRecordSeam && SampleCounter >= MinSample && SampleCounter <= MaxSample)
+// 			{
+// 				LastSeamVertexIDs.Add(VID);
+// 			}
+// 		}
+// 	}
+// 	// LastSeamVertexIDs.Empty();
+// 	// TArray<int32> VertexIDs;
+// 	//
+// 	// int TotalSamples = (Shape.Points.Num()-1) * SamplesPerSegment;
+// 	// int SampleCounter = 0;
+// 	//
+// 	// for (int Seg=0; Seg<Shape.Points.Num()-1; ++Seg)
+// 	// {
+// 	// 	float In0 = Shape.Points[Seg].InVal;
+// 	// 	float In1 = Shape.Points[Seg+1].InVal;
+// 	//
+// 	// 	for (int i=0; i<SamplesPerSegment; ++i, ++SampleCounter)
+// 	// 	{
+// 	// 		float tSeg = float(i) / SamplesPerSegment;
+// 	// 		FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, tSeg));
+// 	// 		PolyVerts.Add(FVector2f(P2.X, P2.Y));
+// 	//
+// 	// 		// store in mesh
+// 	// 		int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
+// 	// 		VertexIDs.Add(VID);
+// 	//
+// 	// 		// record seam if in range
+// 	// 		if (bRecordSeam)
+// 	// 		{
+// 	// 			float tCurve = float(SampleCounter) / float(TotalSamples-1);
+// 	// 			float tMin = Shape.Points[StartPointIdx2D].InVal / Shape.Points.Last().InVal;
+// 	// 			float tMax = Shape.Points[EndPointIdx2D].InVal   / Shape.Points.Last().InVal;
+// 	// 			if (tCurve >= tMin && tCurve <= tMax)
+// 	// 			{
+// 	// 				LastSeamVertexIDs.Add(VID);
+// 	// 			}
+// 	// 		}
+// 	// 	}
+// 	// }
+// 	
+// 	
+// 	// Step 2: Triangulate
+// 	TArray<UE::Geometry::FIndex3i> Triangles;
+// 	PolygonTriangulation::TriangulateSimplePolygon<float>(PolyVerts, Triangles, false);
+//
+//
+//
+// 	if (Triangles.Num() == 0)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Triangulation failed"));
+// 		return;
+// 	}
+//
+//
+// 	for (const FVector2f& V : PolyVerts)
+// 	{
+// 		int VID = Mesh.AppendVertex(FVector3d(V.X, V.Y, 0)); // z = 0
+// 		VertexIDs.Add(VID);
+// 	}
+// 	// Assume PolyVerts is TArray<FVector2f> of your samples in order
+// 	float SignedArea = 0.f;
+// 	int N = PolyVerts.Num();
+// 	for (int i = 0; i < N; ++i)
+// 	{
+// 		const FVector2f& A = PolyVerts[i];
+// 		const FVector2f& B = PolyVerts[(i+1) % N];
+// 		SignedArea += (A.X * B.Y - B.X * A.Y);
+// 	}
+// 	SignedArea *= 0.5f;
+// 	
+// 	// for (int idx = 0; idx < TotalSamples; ++idx)
+// 	// {
+// 	// 	FVector2f V2 = PolyVerts[idx];
+// 	// 	int VID = Mesh.AppendVertex(FVector3d(V2.X, V2.Y, 0));
+// 	// 	VertexIDs.Add(VID);
+// 	//
+// 	// 	if (bRecordSeam)
+// 	// 	{
+// 	// 		// Decide whether idx falls into your seam index range
+// 	// 		// (you can map StartPointIdx2D→EndPointIdx2D into sample indices)
+// 	// 		if (idx >= SeamSampleStart && idx <= SeamSampleEnd)
+// 	// 		{
+// 	// 			LastSeamVertexIDs.Add(VID);
+// 	// 		}
+// 	// 	}
+// 	// }
+//
+//
+//
+//
+//
+// 	
+// 	// Insert triangles
+// 	for (const UE::Geometry::FIndex3i& Tri : Triangles)
+// 	{
+// 		Mesh.AppendTriangle(VertexIDs[Tri.A], VertexIDs[Tri.B], VertexIDs[Tri.C]);
+// 	}
+// 	
+// 	
+// 	// Step 4: Extract to UE arrays
+// 	TArray<FVector> Vertices;
+// 	TArray<int32> Indices;
+//
+// 	for (int vid : Mesh.VertexIndicesItr())
+// 	{
+// 		FVector3d Pos = Mesh.GetVertex(vid);
+// 		Vertices.Add(FVector(Pos.X, Pos.Y, Pos.Z));
+// 	}
+// 	
+// 	// for (int tid : Mesh.TriangleIndicesItr())
+// 	// {
+// 	// 	UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+// 	// 	Indices.Add(Tri.C);
+// 	// 	Indices.Add(Tri.B);
+// 	// 	Indices.Add(Tri.A);
+// 	// }
+//
+// 	// fix this later to always wind positive before triangluation but this is a temporary fix for now
+// 	bool bReverseWinding = (SignedArea < 0.f);
+// 	for (int tid : Mesh.TriangleIndicesItr())
+// 	{
+// 		UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+// 		if (bReverseWinding)
+// 		{
+// 			// flip each triangle
+// 			Indices.Add(Tri.A);
+// 			Indices.Add(Tri.B);
+// 			Indices.Add(Tri.C);
+// 		}
+// 		else
+// 		{
+// 			// keep normal winding, here c to a is noremal winding
+// 			Indices.Add(Tri.C);
+// 			Indices.Add(Tri.B);
+// 			Indices.Add(Tri.A);
+// 		}
+// 	}
+// 	
+// 	LastBuiltMesh           = MoveTemp(Mesh);
+// 	LastBuiltSeamVertexIDs  = MoveTemp(LastSeamVertexIDs);
+//
+// 	// Step 5: Build procedural mesh
+// 	CreateProceduralMesh(Vertices, Indices);
+// }
 
+
+// second version but shorter!!
+// void SClothDesignCanvas::TriangulateAndBuildMesh(
+// 	const FInterpCurve<FVector2D>& Shape,
+// 	bool bRecordSeam,
+// 	int32 StartPointIdx2D,
+// 	int32 EndPointIdx2D
+// )
+// {
+// 	if (Shape.Points.Num() < 3)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
+// 		return;
+// 	}
+//
+// 	TArray<FVector2f> PolyVerts;
+// 	const int SamplesPerSegment = 10;
+// 	// Step 3: Build DynamicMesh
+// 	UE::Geometry::FDynamicMesh3 Mesh;
+//
+// 	
+// 	// Before your loop, compute the integer sample‐range once:
+// 	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
+// 	int SampleCounter = 0;
+//
+// 	// Default to an empty range
+// 	int MinSample = TotalSamples + 1;
+// 	int MaxSample = -1;
+//
+// 	// Only compute if we really want to record a seam
+// 	if (bRecordSeam && StartPointIdx2D >= 0 && EndPointIdx2D >= 0)
+// 	{
+// 		int S0 = StartPointIdx2D * SamplesPerSegment;
+// 		int S1 = EndPointIdx2D   * SamplesPerSegment;
+// 		MinSample = FMath::Min(S0, S1);
+// 		MaxSample = FMath::Max(S0, S1);
+// 	}
+//
+// 	LastSeamVertexIDs.Empty();
+// 	TArray<int32> VertexIDs;
+//
+// 	for (int Seg = 0; Seg < Shape.Points.Num() - 1; ++Seg)
+// 	{
+// 		float In0 = Shape.Points[Seg].InVal;
+// 		float In1 = Shape.Points[Seg + 1].InVal;
+//
+// 		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter)
+// 		{
+// 			float Alpha = float(i) / SamplesPerSegment;
+// 			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, Alpha));
+// 			PolyVerts.Add(FVector2f(P2.X, P2.Y));
+//
+// 			int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
+// 			VertexIDs.Add(VID);
+//
+// 			// record seam if this sample falls in the integer [MinSample,MaxSample] range
+// 			if (bRecordSeam && SampleCounter >= MinSample && SampleCounter <= MaxSample)
+// 			{
+// 				LastSeamVertexIDs.Add(VID);
+// 			}
+// 		}
+// 	}
+//
+// 	
+// 	
+// 	// Step 2: Triangulate
+// 	TArray<UE::Geometry::FIndex3i> Triangles;
+// 	PolygonTriangulation::TriangulateSimplePolygon<float>(PolyVerts, Triangles, false);
+//
+//
+//
+// 	if (Triangles.Num() == 0)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Triangulation failed"));
+// 		return;
+// 	}
+//
+//
+// 	for (const FVector2f& V : PolyVerts)
+// 	{
+// 		int VID = Mesh.AppendVertex(FVector3d(V.X, V.Y, 0)); // z = 0
+// 		VertexIDs.Add(VID);
+// 	}
+// 	// Assume PolyVerts is TArray<FVector2f> of your samples in order
+// 	float SignedArea = 0.f;
+// 	int N = PolyVerts.Num();
+// 	for (int i = 0; i < N; ++i)
+// 	{
+// 		const FVector2f& A = PolyVerts[i];
+// 		const FVector2f& B = PolyVerts[(i+1) % N];
+// 		SignedArea += (A.X * B.Y - B.X * A.Y);
+// 	}
+// 	SignedArea *= 0.5f;
+//
+// 	
+// 	// Insert triangles
+// 	for (const UE::Geometry::FIndex3i& Tri : Triangles)
+// 	{
+// 		Mesh.AppendTriangle(VertexIDs[Tri.A], VertexIDs[Tri.B], VertexIDs[Tri.C]);
+// 	}
+// 	
+// 	
+// 	// Step 4: Extract to UE arrays
+// 	TArray<FVector> Vertices;
+// 	TArray<int32> Indices;
+//
+// 	for (int vid : Mesh.VertexIndicesItr())
+// 	{
+// 		FVector3d Pos = Mesh.GetVertex(vid);
+// 		Vertices.Add(FVector(Pos.X, Pos.Y, Pos.Z));
+// 	}
+// 	
+// 	// for (int tid : Mesh.TriangleIndicesItr())
+// 	// {
+// 	// 	UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+// 	// 	Indices.Add(Tri.C);
+// 	// 	Indices.Add(Tri.B);
+// 	// 	Indices.Add(Tri.A);
+// 	// }
+//
+// 	// fix this later to always wind positive before triangluation but this is a temporary fix for now
+// 	bool bReverseWinding = (SignedArea < 0.f);
+// 	for (int tid : Mesh.TriangleIndicesItr())
+// 	{
+// 		UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+// 		if (bReverseWinding)
+// 		{
+// 			// flip each triangle
+// 			Indices.Add(Tri.A);
+// 			Indices.Add(Tri.B);
+// 			Indices.Add(Tri.C);
+// 		}
+// 		else
+// 		{
+// 			// keep normal winding, here c to a is noremal winding
+// 			Indices.Add(Tri.C);
+// 			Indices.Add(Tri.B);
+// 			Indices.Add(Tri.A);
+// 		}
+// 	}
+// 	
+// 	LastBuiltMesh           = MoveTemp(Mesh);
+// 	LastBuiltSeamVertexIDs  = MoveTemp(LastSeamVertexIDs);
+//
+// 	// Step 5: Build procedural mesh
+// 	CreateProceduralMesh(Vertices, Indices);
+// }
+//
+// void SClothDesignCanvas::TriangulateAndBuildMesh(
+// 	const FInterpCurve<FVector2D>& Shape,
+// 	bool bRecordSeam,
+// 	int32 StartPointIdx2D,
+// 	int32 EndPointIdx2D
+// )
+// {
+// 	if (Shape.Points.Num() < 3)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
+// 		return;
+// 	}
+//
+//
+// 	// // !!
+// 	// // At the top of your function
+// 	// TArray<bool>    bIsBoundary;    // same length as LastBuiltMesh.MaxVertexID()+1
+// 	// TArray<double>  BoundaryT;      // stores the curve parameter for each boundary vertex
+// 	//
+//
+//
+//
+// 	
+// 	TArray<FVector2f> PolyVerts;
+// 	const int SamplesPerSegment = 10;
+// 	// Step 3: Build DynamicMesh
+// 	UE::Geometry::FDynamicMesh3 Mesh;
+//
+// 	
+// 	// Before your loop, compute the integer sample‐range once:
+// 	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
+// 	int SampleCounter = 0;
+//
+// 	// Default to an empty range
+// 	int MinSample = TotalSamples + 1;
+// 	int MaxSample = -1;
+//
+// 	// Only compute if we really want to record a seam
+// 	if (bRecordSeam && StartPointIdx2D >= 0 && EndPointIdx2D >= 0)
+// 	{
+// 		int S0 = StartPointIdx2D * SamplesPerSegment;
+// 		int S1 = EndPointIdx2D   * SamplesPerSegment;
+// 		MinSample = FMath::Min(S0, S1);
+// 		MaxSample = FMath::Max(S0, S1);
+// 	}
+//
+// 	LastSeamVertexIDs.Empty();
+// 	TArray<int32> VertexIDs;
+//
+// 	for (int Seg = 0; Seg < Shape.Points.Num() - 1; ++Seg)
+// 	{
+// 		float In0 = Shape.Points[Seg].InVal;
+// 		float In1 = Shape.Points[Seg + 1].InVal;
+//
+// 		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter)
+// 		{
+// 			float Alpha = float(i) / SamplesPerSegment;
+// 			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, Alpha));
+// 			PolyVerts.Add(FVector2f(P2.X, P2.Y));
+//
+// 			int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
+// 			VertexIDs.Add(VID);
+// 			
+// 			// record seam if this sample falls in the integer [MinSample,MaxSample] range
+// 			if (bRecordSeam && SampleCounter >= MinSample && SampleCounter <= MaxSample)
+// 			{
+// 				LastSeamVertexIDs.Add(VID);
+// 			}
+// 		}
+// 	}
+//
+//
+// 	
+//
+// 	TArray<FVector2d> CDT_Vertices;
+// 	TArray<UE::Geometry::FIndex2i> CDT_Edges;
+//
+// 	int NumVerts = PolyVerts.Num();
+// 	for (int32 i = 0; i < NumVerts; ++i)
+// 	{
+// 		CDT_Vertices.Add(FVector2d(PolyVerts[i]));
+// 		int32 Next = (i + 1) % NumVerts;
+// 		CDT_Edges.Add(UE::Geometry::FIndex2i(i, Next));
+// 	}
+//
+// 	UE::Geometry::FDelaunay2 CDT;
+// 	bool bSuccess = CDT.Triangulate(CDT_Vertices, CDT_Edges);
+// 	if (!bSuccess)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("CDT triangulation failed"));
+// 		return;
+// 	}
+// 	
+// 	// Step 4: Extract to UE arrays
+// 	TArray<FVector> Vertices;
+// 	TArray<int32> Indices;
+// 	TArray<UE::Geometry::FIndex3i> Triangles;
+//
+// 	
+// 	for (const FVector2d& V : CDT_Vertices)
+// 	{
+// 		int vid = Mesh.AppendVertex(FVector3d(V.X, V.Y, 0));
+// 		VertexIDs.Add(vid);
+// 	}
+//
+// 	for (const UE::Geometry::FIndex3i& Tri : CDT.GetTriangles())
+// 	{
+// 		Mesh.AppendTriangle(VertexIDs[Tri.A], VertexIDs[Tri.B], VertexIDs[Tri.C]);
+// 	}
+//
+//
+//
+//
+//
+// 	
+// 	//
+// 	// // Step 2: Triangulate
+// 	// TArray<UE::Geometry::FIndex3i> Triangles;
+// 	// PolygonTriangulation::TriangulateSimplePolygon<float>(PolyVerts, Triangles, false);
+// 	//
+// 	// FDynamicMesh3 Mesh;
+// 	// TArray<int32> VertexIDs; //? correct place?
+// 	//
+// 	// if (Triangles.Num() == 0)
+// 	// {
+// 	// 	UE_LOG(LogTemp, Error, TEXT("Triangulation failed"));
+// 	// 	return;
+// 	// }
+// 	//
+// 	//
+// 	// // for (const FVector2f& V : PolyVerts)
+// 	// // {
+// 	// // 	int VID = Mesh.AppendVertex(FVector3d(V.X, V.Y, 0)); // z = 0
+// 	// // 	VertexIDs.Add(VID);
+// 	// // }
+// 	//
+// 	//
+// 	// // Assume PolyVerts is TArray<FVector2f> of your samples in order
+// 	// float SignedArea = 0.f;
+// 	// int N = PolyVerts.Num();
+// 	// for (int i = 0; i < N; ++i)
+// 	// {
+// 	// 	const FVector2f& A = PolyVerts[i];
+// 	// 	const FVector2f& B = PolyVerts[(i+1) % N];
+// 	// 	SignedArea += (A.X * B.Y - B.X * A.Y);
+// 	// }
+// 	// SignedArea *= 0.5f;
+// 	//
+// 	//
+// 	// // Insert triangles
+// 	// for (const UE::Geometry::FIndex3i& Tri : Triangles)
+// 	// {
+// 	// 	Mesh.AppendTriangle(VertexIDs[Tri.A], VertexIDs[Tri.B], VertexIDs[Tri.C]);
+// 	// }
+//
+//
+//
+//
+// 	
+// 	// // 2. Remesher setup
+// 	// UE::Geometry::FRemesher Remesher(&Mesh);
+// 	// Remesher.SetTargetEdgeLength(1.50); // Set this to desired density
+// 	//
+// 	// Remesher.SmoothSpeedT = 0.0f; // Optional tweak
+// 	//
+// 	// for (int i = 0; i < 2; ++i)  // 1 not enough, 3-5 too much in terms of edge vertices changing
+// 	// {
+// 	// 	Remesher.BasicRemeshPass();
+// 	// }
+// 	//
+// 	// // // (Optional) Subdivide for more detail
+// 	// // // UE::Geometry::FDynamicMeshEditor Editor(&Mesh);
+// 	//
+// 	// int32 NumSubdivisions = 2;
+// 	// double MaxEdgeLength = 1.50;
+// 	//
+// 	// for (int32 Pass = 0; Pass < NumSubdivisions; ++Pass)
+// 	// {
+// 	// 	TArray<int32> EdgesToSplit;
+// 	// 	for (int32 eid : Mesh.EdgeIndicesItr())
+// 	// 	{
+// 	// 		UE::Geometry::FIndex2i EdgeVerts = Mesh.GetEdgeV(eid);
+// 	// 		FVector3d A = Mesh.GetVertex(EdgeVerts.A);
+// 	// 		FVector3d B = Mesh.GetVertex(EdgeVerts.B);
+// 	//
+// 	// 		if (FVector3d::Distance(A, B) > MaxEdgeLength)
+// 	// 		{
+// 	// 			EdgesToSplit.Add(eid);
+// 	// 		}
+// 	// 	}
+// 	//
+// 	// 	for (int32 eid : EdgesToSplit)
+// 	// 	{
+// 	// 		UE::Geometry::FDynamicMesh3::FEdgeSplitInfo SplitInfo;
+// 	// 		Mesh.SplitEdge(eid, SplitInfo);
+// 	// 	}
+// 	// }
+// 	
+//
+//
+// 	
+// 	// // Step 4: Extract to UE arrays
+// 	// TArray<FVector> Vertices;
+// 	// TArray<int32> Indices;
+//
+// 	for (int vid : Mesh.VertexIndicesItr())
+// 	{
+// 		FVector3d Pos = Mesh.GetVertex(vid);
+// 		Vertices.Add(FVector(Pos.X, Pos.Y, Pos.Z));
+// 	}
+//
+//
+//
+// 	for (int tid : Mesh.TriangleIndicesItr())
+// 	{
+// 		UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+// 		Indices.Add(Tri.C);
+// 		Indices.Add(Tri.B);
+// 		Indices.Add(Tri.A);
+// 	}
+//
+// 	// // fix this later to always wind positive before triangluation but this is a temporary fix for now
+// 	// bool bReverseWinding = (SignedArea < 0.f);
+// 	// for (int tid : Mesh.TriangleIndicesItr())
+// 	// {
+// 	// 	UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+// 	// 	if (bReverseWinding)
+// 	// 	{
+// 	// 		// flip each triangle
+// 	// 		Indices.Add(Tri.A);
+// 	// 		Indices.Add(Tri.B);
+// 	// 		Indices.Add(Tri.C);
+// 	// 	}
+// 	// 	else
+// 	// 	{
+// 	// 		// keep normal winding, here c to a is noremal winding
+// 	// 		Indices.Add(Tri.C);
+// 	// 		Indices.Add(Tri.B);
+// 	// 		Indices.Add(Tri.A);
+// 	// 	}
+// 	// }
+// 	
+// 	LastBuiltMesh           = MoveTemp(Mesh);
+// 	LastBuiltSeamVertexIDs  = MoveTemp(LastSeamVertexIDs);
+//
+//
+// 	//
+// 	// double DesiredEdgeLength = 10.0;  
+// 	// double TargetLen = DesiredEdgeLength;  // your max‐edge threshold
+// 	// int  MaxPasses  = 3;                   // loop a few times in case splits introduce new long edges
+// 	//
+// 	//
+// 	// // desired max edge length in the same units as your FVector2D X/Y
+// 	//
+// 	// // do multiple passes in case splitting creates new long edges
+// 	// for (int pass = 0; pass < 3; ++pass)
+// 	// {
+// 	// 	TArray<int> ToSplit;
+// 	// 	// collect edge IDs
+// 	// 	for (int eid : LastBuiltMesh.EdgeIndicesItr())
+// 	// 	{
+// 	// 		auto ev = LastBuiltMesh.GetEdgeV(eid);
+// 	// 		FVector3d A = LastBuiltMesh.GetVertex(ev.A);
+// 	// 		FVector3d B = LastBuiltMesh.GetVertex(ev.B);
+// 	// 		if ((A - B).Length() > TargetLen)
+// 	// 		{
+// 	// 			ToSplit.Add(eid);
+// 	// 		}
+// 	// 	}
+// 	// 	if (ToSplit.Num() == 0)
+// 	// 	{
+// 	// 		break;
+// 	// 	}
+// 	// 	// split them
+// 	// 	DynamicMeshInfo::FEdgeSplitInfo splitInfo;
+// 	// 	for (int eid : ToSplit)
+// 	// 	{
+// 	// 		auto ev = LastBuiltMesh.GetEdgeV(eid);
+// 	// 		LastBuiltMesh.SplitEdge(ev.A, ev.B, splitInfo);
+// 	// 	}
+// 	// }
+// 	// // 3a) Flip any edge where swapping improves the worst angle
+// 	// DynamicMeshInfo::FEdgeFlipInfo flipInfo;
+// 	// for (int eid : LastBuiltMesh.EdgeIndicesItr())
+// 	// {
+// 	// 	auto ev = LastBuiltMesh.GetEdgeV(eid);
+// 	// 	// you could check an “improvement” metric, but let’s just attempt flips
+// 	// 	LastBuiltMesh.FlipEdge(ev.A, ev.B, flipInfo);
+// 	// }
+// 	//
+// 	// // 3b) Quick Laplacian smooth (2 iterations)
+// 	// for (int iter = 0; iter < 2; ++iter)
+// 	// {
+// 	// 	TArray<FVector3d> NewPos; 
+// 	// 	NewPos.SetNum(LastBuiltMesh.MaxVertexID()+1);
+// 	// 	for (int vid : LastBuiltMesh.VertexIndicesItr())
+// 	// 	{
+// 	// 		FVector3d Sum(0,0,0);
+// 	// 		int Count = 0;
+// 	// 		for (int nbr : LastBuiltMesh.VtxVerticesItr(vid))
+// 	// 		{
+// 	// 			Sum += LastBuiltMesh.GetVertex(nbr);
+// 	// 			++Count;
+// 	// 		}
+// 	// 		if (Count > 0)
+// 	// 		{
+// 	// 			// blend 50% toward neighborhood centroid
+// 	// 			NewPos[vid] = LastBuiltMesh.GetVertex(vid) * 0.5 + (Sum / Count) * 0.5;
+// 	// 		}
+// 	// 		else
+// 	// 		{
+// 	// 			NewPos[vid] = LastBuiltMesh.GetVertex(vid);
+// 	// 		}
+// 	// 	}
+// 	// 	for (int vid : LastBuiltMesh.VertexIndicesItr())
+// 	// 	{
+// 	// 		LastBuiltMesh.SetVertex(vid, NewPos[vid]);
+// 	// 	}
+// 	// }
+// 	//
+// 	// Vertices.SetNum(LastBuiltMesh.VertexCount());
+// 	// for (int vid : LastBuiltMesh.VertexIndicesItr())
+// 	// {
+// 	// 	FVector3d P = LastBuiltMesh.GetVertex(vid);
+// 	// 	Vertices[vid] = FVector(P.X, P.Y, P.Z);
+// 	// }
+// 	//
+// 	// Indices.SetNum(LastBuiltMesh.TriangleCount() * 3);
+// 	// int idx = 0;
+// 	// for (int tid : LastBuiltMesh.TriangleIndicesItr())
+// 	// {
+// 	// 	UE::Geometry::FIndex3i T = LastBuiltMesh.GetTriangle(tid);
+// 	// 	Indices[idx++] = T.A;
+// 	// 	Indices[idx++] = T.B;
+// 	// 	Indices[idx++] = T.C;
+// 	// }
+// 	//
+//
+//
+//
+//
+// 	
+// 	// Step 5: Build procedural mesh
+// 	CreateProceduralMesh(Vertices, Indices);
+// }
+
+
+
+
+
+
+// third version with interior sampling
 void SClothDesignCanvas::TriangulateAndBuildMesh(
 	const FInterpCurve<FVector2D>& Shape,
 	bool bRecordSeam,
@@ -1152,34 +2155,10 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(
 		return;
 	}
 
-	TArray<FVector2f> PolyVerts;
+	TArray<FVector2f> PolyVerts; // boundarypts
 	const int SamplesPerSegment = 10;
 	// Step 3: Build DynamicMesh
 	UE::Geometry::FDynamicMesh3 Mesh;
-	// WORKING but not smooth at all so lots of different sized triangles
-	// Insert vertices
-	// TArray<int> VertexIDs;
-	//
-	// LastSeamVertexIDs.Empty();
-	// int TotalSamples = PolyVerts.Num();
-
-
-
-
-
-	// for (int SegIndex = 0; SegIndex < Shape.Points.Num() - 1; ++SegIndex)
-	// {
-	// 	float StartInVal = Shape.Points[SegIndex].InVal;
-	// 	float EndInVal   = Shape.Points[SegIndex + 1].InVal;
-	//
-	// 	for (int i = 0; i < SamplesPerSegment; ++i)
-	// 	{
-	// 		float Alpha = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
-	// 		FVector2D Sample = Shape.Eval(Alpha);
-	// 		PolyVerts.Add(FVector2f(Sample.X, Sample.Y));
-	// 	}
-	// }
-
 
 	
 	// Before your loop, compute the integer sample‐range once:
@@ -1223,45 +2202,60 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(
 			}
 		}
 	}
-	// LastSeamVertexIDs.Empty();
-	// TArray<int32> VertexIDs;
-	//
-	// int TotalSamples = (Shape.Points.Num()-1) * SamplesPerSegment;
-	// int SampleCounter = 0;
-	//
-	// for (int Seg=0; Seg<Shape.Points.Num()-1; ++Seg)
+	
+	auto IsInsideFloatPoly = [&](const FVector2f& Pf){
+		FVector2D Pd(Pf.X, Pf.Y);
+		// convert your array once:
+		static TArray<FVector2D> PolyVertsD;
+		if (PolyVertsD.Num() != PolyVerts.Num()) {
+			PolyVertsD.Reset(PolyVerts.Num());
+			for (auto& Vf : PolyVerts)
+				PolyVertsD.Add(FVector2D(Vf.X, Vf.Y));
+		}
+		return FGeomTools2D::IsPointInPolygon(Pd, PolyVertsD);
+	};
+	
+	TArray<FVector2D> PolyVerts2D;
+	PolyVerts2D.Reserve(PolyVerts.Num());
+	for (const FVector2f& Vf : PolyVerts)
+	{
+		PolyVerts2D.Add( FVector2D(Vf.X, Vf.Y) );
+	}
+	
+	// 2) Generate interior jittered grid points
+	double TargetLen = 1.5; 
+	// compute boundary bbox
+	FBox2D BB(EForceInit::ForceInit);
+	for (auto& P : PolyVerts) BB += FVector2D(P);
+	float Spacing = TargetLen * 0.9f;
+	int NX = FMath::CeilToInt(BB.GetSize().X / Spacing);
+	int NY = FMath::CeilToInt(BB.GetSize().Y / Spacing);
+	
+	TArray<FVector2f> InteriorPts;
+	std::mt19937_64 RNG(FPlatformTime::Cycles());
+	std::uniform_real_distribution<float> J(-0.5f,0.5f);
+	
+	// for (int ix = 0; ix < NX; ++ix)
 	// {
-	// 	float In0 = Shape.Points[Seg].InVal;
-	// 	float In1 = Shape.Points[Seg+1].InVal;
-	//
-	// 	for (int i=0; i<SamplesPerSegment; ++i, ++SampleCounter)
+	// 	for (int iy = 0; iy < NY; ++iy)
 	// 	{
-	// 		float tSeg = float(i) / SamplesPerSegment;
-	// 		FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, tSeg));
-	// 		PolyVerts.Add(FVector2f(P2.X, P2.Y));
+	// 		FVector2D Cent2D((float)Cent.X, (float)Cent.Y);  
 	//
-	// 		// store in mesh
-	// 		int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
-	// 		VertexIDs.Add(VID);
-	//
-	// 		// record seam if in range
-	// 		if (bRecordSeam)
+	// 		if (FGeomTools2D::IsPointInPolygon(FVector2d(P), PolyVerts))
 	// 		{
-	// 			float tCurve = float(SampleCounter) / float(TotalSamples-1);
-	// 			float tMin = Shape.Points[StartPointIdx2D].InVal / Shape.Points.Last().InVal;
-	// 			float tMax = Shape.Points[EndPointIdx2D].InVal   / Shape.Points.Last().InVal;
-	// 			if (tCurve >= tMin && tCurve <= tMax)
-	// 			{
-	// 				LastSeamVertexIDs.Add(VID);
-	// 			}
+	// 			InteriorPts.Add(FVector2f(P));
 	// 		}
 	// 	}
 	// }
 	
+	// 3) Combine boundary + interior
+	TArray<FVector2f> AllPts = PolyVerts;
+	AllPts.Append(InteriorPts);
+
 	
 	// Step 2: Triangulate
 	TArray<UE::Geometry::FIndex3i> Triangles;
-	PolygonTriangulation::TriangulateSimplePolygon<float>(PolyVerts, Triangles, false);
+	PolygonTriangulation::TriangulateSimplePolygon<float>(AllPts, Triangles, false);
 
 
 
@@ -1287,27 +2281,6 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(
 		SignedArea += (A.X * B.Y - B.X * A.Y);
 	}
 	SignedArea *= 0.5f;
-	
-	// for (int idx = 0; idx < TotalSamples; ++idx)
-	// {
-	// 	FVector2f V2 = PolyVerts[idx];
-	// 	int VID = Mesh.AppendVertex(FVector3d(V2.X, V2.Y, 0));
-	// 	VertexIDs.Add(VID);
-	//
-	// 	if (bRecordSeam)
-	// 	{
-	// 		// Decide whether idx falls into your seam index range
-	// 		// (you can map StartPointIdx2D→EndPointIdx2D into sample indices)
-	// 		if (idx >= SeamSampleStart && idx <= SeamSampleEnd)
-	// 		{
-	// 			LastSeamVertexIDs.Add(VID);
-	// 		}
-	// 	}
-	// }
-
-
-
-
 
 	
 	// Insert triangles
@@ -1315,7 +2288,8 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(
 	{
 		Mesh.AppendTriangle(VertexIDs[Tri.A], VertexIDs[Tri.B], VertexIDs[Tri.C]);
 	}
-	
+
+
 	
 	// Step 4: Extract to UE arrays
 	TArray<FVector> Vertices;
@@ -1364,6 +2338,8 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(
 }
 
 
+
+// original version
 // void SClothDesignCanvas::TriangulateAndBuildMesh(
 // 	const FInterpCurve<FVector2D>& Shape,
 // 	bool bRecordSeam,

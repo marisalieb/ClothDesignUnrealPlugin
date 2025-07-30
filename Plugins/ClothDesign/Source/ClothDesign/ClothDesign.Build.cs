@@ -75,8 +75,13 @@ public class ClothDesign : ModuleRules
 				"Core", "CoreUObject", "Engine",
 				"ClothingSystemRuntimeCommon",
 				"ClothingSystemRuntimeInterface",
-				"ChaosCloth"
-
+				"ChaosCloth",
+				"ModelingOperators",
+				"MeshConversion",
+				"GeometryCore",    
+				"DynamicMesh",   
+				
+				
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

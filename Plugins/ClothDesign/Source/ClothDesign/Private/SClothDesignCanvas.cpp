@@ -66,27 +66,16 @@ void SClothDesignCanvas::Construct(const FArguments& InArgs)
 
 }
 
-// FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
-// {
-// 	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
-// 	{
-// 		const FVector2D LocalClickPos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
-// 		Points.Add(LocalClickPos);
-// 		return FReply::Handled();
-// 	}
-// 	return FReply::Unhandled();
-// }
-
-
-
 FVector2D SClothDesignCanvas::TransformPoint(const FVector2D& Point) const
 {
 	return (Point * ZoomFactor) + PanOffset;
+	// return (Point - PanOffset) * ZoomFactor;
 }
 
 FVector2D SClothDesignCanvas::InverseTransformPoint(const FVector2D& ScreenPoint) const
 {
 	return (ScreenPoint - PanOffset) / ZoomFactor;
+	// return (ScreenPoint / ZoomFactor) + PanOffset;
 }
 
 
@@ -501,11 +490,11 @@ int32 SClothDesignCanvas::OnPaint(
 
 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
 	{
-		if (!bUseBezierPerPoint[i])
-		{
+		//if (!bUseBezierPerPoint[i])
+		//{
 			// Optionally skip drawing any handle visuals
-			continue;
-		}
+		//	continue;
+		// }
 		
 		const auto& Pt = CurvePoints.Points[i];
 		const FVector2D Pos = TransformPoint(Pt.OutVal);
@@ -641,6 +630,15 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnMouseButtonDown fired. Mode: %d"), (int32)CurrentMode);
 
+
+	if (MouseEvent.GetEffectingButton() == EKeys::MiddleMouseButton)
+	{
+		bIsPanning = true;
+		LastMousePos = MouseEvent.GetScreenSpacePosition();
+		return FReply::Handled().CaptureMouse(SharedThis(this));
+	}
+
+	
 	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
 		const FVector2D LocalClickPos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
@@ -715,7 +713,6 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 					CurvePoints.Points[LastIdx].LeaveTangent  = FVector2D::ZeroVector;
 				}
 			}
-			Invalidate(EInvalidateWidgetReason::Paint);
 			UE_LOG(LogTemp, Warning, TEXT("Draw mode: Added point at (%f, %f)"), CanvasClickPos.X, CanvasClickPos.Y);
 			return FReply::Handled();
 		}
@@ -869,14 +866,9 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 					FVector2D Leave = BezierFlags[i]
 						? (World + Pt.LeaveTangent)
 						: (World + (i<NumPts-1 ? Shape.Points[i+1].OutVal : World)) * 0.5f;
-					if (!BezierFlags[i])
-					{
-						continue; // N point → skip selecting tangents
-					}
-					if (!bUseBezierPerPoint[i])
-					{
-						continue; // Don't allow selecting N-point handles
-					}
+					
+
+					// if (!BezierFlags[i]){continue;}
 
 					if (FVector2D::Distance(CanvasClickPos, Arrive) < TangentHandleRadius / ZoomFactor)
 					{
@@ -1141,6 +1133,19 @@ void SClothDesignCanvas::FinalizeSeamDefinitionByIndex(
 
 FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
+	if (bIsPanning)
+	{
+		FVector2D CurrentMousePos = MouseEvent.GetScreenSpacePosition();
+		FVector2D Delta = (CurrentMousePos - LastMousePos) / ZoomFactor; // Normalize for zoom
+
+		PanOffset += Delta; // Subtract to move *with* mouse
+		LastMousePos = CurrentMousePos;
+
+		Invalidate(EInvalidateWidget::Paint); // Trigger repaint
+		return FReply::Handled();
+	}
+
+	
 	if ((CurrentMode == EClothEditorMode::Move || CurrentMode == EClothEditorMode::Select) && MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
 	{
 		FVector2D LocalMousePos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
@@ -1266,7 +1271,6 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 				//
 				// }
 			}
-			Invalidate(EInvalidateWidget::LayoutAndVolatility);
 
 			UE_LOG(LogTemp, Warning, TEXT("Dragging tangent for point %d in shape %d"), SelectedPointIndex, SelectedShapeIndex);
 			return FReply::Handled();
@@ -1291,14 +1295,11 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 						CompletedBezierFlags[SelectedShapeIndex]
 					);
 			}
-			Invalidate(EInvalidateWidget::LayoutAndVolatility);
 
 			UE_LOG(LogTemp, Warning, TEXT("Dragging point %d in shape %d"), SelectedPointIndex, SelectedShapeIndex);
 			return FReply::Handled();
 		}
 		
-		Invalidate(EInvalidateWidget::LayoutAndVolatility);
-
 	}
 
 	return FReply::Unhandled();
@@ -1307,6 +1308,12 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 
 FReply SClothDesignCanvas::OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
+	if (MouseEvent.GetEffectingButton() == EKeys::MiddleMouseButton)
+	{
+		bIsPanning = false;
+		return FReply::Handled().ReleaseMouseCapture();
+	}
+
 	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	// if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton && bIsDragging)
 	{

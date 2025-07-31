@@ -343,4 +343,10 @@ private:
 	FGeometry LastGeometry;
 
 	bool bUseBezierPoints = true;
+
+	FVector2D ViewOffset = FVector2D::ZeroVector;
+	bool bIsPanning = false;
+	FVector2D LastMousePos = FVector2D::ZeroVector;
+
+
 };

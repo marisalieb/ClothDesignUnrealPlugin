@@ -90,247 +90,312 @@ void FClothDesignModule::OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivation
 
 TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
 {
-	// TSharedRef<SClothDesignCanvas> CanvasWidgetCloth = SNew(SClothDesignCanvas);
-
 	SAssignNew(CanvasWidget, SClothDesignCanvas);
 	
 	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
 	// SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
-			SNew(SVerticalBox)
-
-			// Button
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.Padding(10)
-			.HAlign(HAlign_Left) // Optional: Align button to the left
-			[
-				SNew(SBox)
-				.WidthOverride(150.f) // Set desired fixed width here
-				[
-					SNew(SButton)
-					.Text(FText::FromString("Generate Mesh"))
-					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
-				]
-			]
-			
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.Padding(2)
+			SNew(SOverlay)
+			+ SOverlay::Slot()
 			[
 				SNew(SHorizontalBox)
-			
+				// — Left column: UI panel, fixed width
 				+ SHorizontalBox::Slot()
 				.AutoWidth()
-				.Padding(4)
 				[
-					SNew(STextBlock)
-					.Text(FText::FromString("Background Image:"))
-				]
-			
-				// + SHorizontalBox::Slot()
-				// .AutoWidth()
-				// .Padding(4)
-				// [
-				// 	SNew(SObjectPropertyEntryBox)
-				// 	.AllowedClass(UTexture2D::StaticClass())
-				// 	.ObjectPath(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::GetSelectedTexturePath)
-				// 	.OnObjectChanged(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::OnBackgroundTextureSelected)
-				// ]
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(4)
-				[
-					SNew(SObjectPropertyEntryBox)
-					.AllowedClass(UTexture2D::StaticClass())
-					.ObjectPath_Lambda([this]()
-					{
-						if (this->CanvasWidget.IsValid())
-						{
-							return this->CanvasWidget->GetSelectedTexturePath();
-						}
-						return FString();
-					})
-					.OnObjectChanged_Lambda([this](const FAssetData& AssetData)
-					{
-						if (this->CanvasWidget.IsValid())
-						{
-							this->CanvasWidget->OnBackgroundTextureSelected(AssetData);
-						}
-					})
-				]
+					SNew(SBox)
+					.WidthOverride(250)             // whatever width you like
+					[
+						SNew(SVerticalBox)
+						
+						// Button
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						.Padding(10)
+						.HAlign(HAlign_Left) // Optional: Align button to the left
+						[
+							SNew(SBox)
+							.WidthOverride(150.f) // Set desired fixed width here
+							[
+								SNew(SButton)
+								.Text(FText::FromString("Generate Mesh"))
+								.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
+							]
+						]
+						
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						.Padding(2)
+						[
+							SNew(SHorizontalBox)
+						
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(4)
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString("Background Image:"))
+							]
+							
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(4)
+							[
+								SNew(SObjectPropertyEntryBox)
+								.AllowedClass(UTexture2D::StaticClass())
+								.ObjectPath_Lambda([this]()
+								{
+									if (this->CanvasWidget.IsValid())
+									{
+										return this->CanvasWidget->GetSelectedTexturePath();
+									}
+									return FString();
+								})
+								.OnObjectChanged_Lambda([this](const FAssetData& AssetData)
+								{
+									if (this->CanvasWidget.IsValid())
+									{
+										this->CanvasWidget->OnBackgroundTextureSelected(AssetData);
+									}
+								})
+							]
 
-			]
-			
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.Padding(2)
-			[
-				SNew(SHorizontalBox)
-			
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(4)
-				[
-					SNew(STextBlock)
-					.Text(FText::FromString(TEXT("Background Image Scale:")))
-				]
-			
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(4)
-				[
-					SNew(SNumericEntryBox<float>)
-					
-					// .Value(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::GetBackgroundImageScale)
-					// .OnValueChanged(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::OnBackgroundImageScaleChanged)
-					// .Value_Lambda([this]() -> TOptional<float>
-					// {
-					// 	return CanvasWidget.IsValid() ? CanvasWidget->GetBackgroundImageScale() : 1.0f;
-					// })
-					// .OnValueChanged_Lambda([this](float NewValue)
-					// {
-					// 	if (CanvasWidget.IsValid())
-					// 	{
-					// 		CanvasWidget->OnBackgroundImageScaleChanged(NewValue);
-					// 	}
-					// })
-					.Value_Lambda([this]() -> TOptional<float>
-						{
-							if (CanvasWidget.IsValid())
-							{
-								return CanvasWidget->GetBackgroundImageScale();
-							}
-							return TOptional<float>();
-						})
-						.OnValueChanged_Lambda([this](float NewValue)
-						{
-							if (CanvasWidget.IsValid())
-							{
-								CanvasWidget->OnBackgroundImageScaleChanged(NewValue);
-							}
-						})
-					
-					.MinValue(0.1f)
-					.MaxValue(10.0f)
-					.MinSliderValue(0.1f)
-					.MaxSliderValue(10.0f)
-					.AllowSpin(true)
-					.LabelPadding(FMargin(0))
-				]
-			]
+						]
+						
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						.Padding(2)
+						[
+							SNew(SHorizontalBox)
+						
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(4)
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString(TEXT("Background Image Scale:")))
+							]
+						
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(4)
+							[
+								SNew(SNumericEntryBox<float>)
 
-			// sewing Button
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.Padding(10)
-			.HAlign(HAlign_Left) // Optional: Align button to the left
-			[
-				SNew(SBox)
-				.WidthOverride(150.f) // Set desired fixed width here
-				[
-					SNew(SButton)
-					.Text(FText::FromString("Sewing"))
-					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSewingClicked))
-				]
-			]
+								.Value_Lambda([this]() -> TOptional<float>
+									{
+										if (CanvasWidget.IsValid())
+										{
+											return CanvasWidget->GetBackgroundImageScale();
+										}
+										return TOptional<float>();
+									})
+									.OnValueChanged_Lambda([this](float NewValue)
+									{
+										if (CanvasWidget.IsValid())
+										{
+											CanvasWidget->OnBackgroundImageScaleChanged(NewValue);
+										}
+									})
+								
+								.MinValue(0.1f)
+								.MaxValue(10.0f)
+								.MinSliderValue(0.1f)
+								.MaxSliderValue(10.0f)
+								.AllowSpin(true)
+								.LabelPadding(FMargin(0))
+							]
+						]
 
-			// Mode Buttons
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.Padding(10)
-			[
-				SNew(SHorizontalBox)
+						// sewing Button
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						.Padding(10)
+						.HAlign(HAlign_Left) // Optional: Align button to the left
+						[
+							SNew(SBox)
+							.WidthOverride(150.f) // Set desired fixed width here
+							[
+								SNew(SButton)
+								.Text(FText::FromString("Sewing"))
+								.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSewingClicked))
+							]
+						]
 
-				// Draw Mode Button
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(2)
-				[
-					SNew(SButton)
-					.Text(FText::FromString("Draw"))
-					.ButtonColorAndOpacity(
-						TAttribute<FSlateColor>::CreateLambda([this]()
-						{
-							return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Draw);
-						})
-					)
-					.OnClicked_Lambda([this]()
-					{
-						if (CanvasWidget.IsValid())
-						{
-							CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Draw);
-						}
-						return FReply::Handled();
-					})
-				]
-
-				// Edit Mode Button
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(2)
-				[
-					SNew(SButton)
-					.Text(FText::FromString("Edit"))
-					.ButtonColorAndOpacity(
-						TAttribute<FSlateColor>::CreateLambda([this]()
-						{
-							return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Select);
-						})
-					)					.OnClicked_Lambda([this]()
-					{
-						if (CanvasWidget.IsValid())
-						{
-							CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Select);
-						}
-						return FReply::Handled();
-					})
+						// // Mode Buttons
+						// + SVerticalBox::Slot()
+						// .AutoHeight()
+						// .Padding(10)
+						// [
+						// 	SNew(SHorizontalBox)
+						//
+						// 	// Draw Mode Button
+						// 	+ SHorizontalBox::Slot()
+						// 	.AutoWidth()
+						// 	.Padding(2)
+						// 	[
+						// 		SNew(SButton)
+						// 		.Text(FText::FromString("Draw"))
+						// 		.ButtonColorAndOpacity(
+						// 			TAttribute<FSlateColor>::CreateLambda([this]()
+						// 			{
+						// 				return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Draw);
+						// 			})
+						// 		)
+						// 		.OnClicked_Lambda([this]()
+						// 		{
+						// 			if (CanvasWidget.IsValid())
+						// 			{
+						// 				CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Draw);
+						// 			}
+						// 			return FReply::Handled();
+						// 		})
+						// 	]
+						//
+						// 	// Edit Mode Button
+						// 	+ SHorizontalBox::Slot()
+						// 	.AutoWidth()
+						// 	.Padding(2)
+						// 	[
+						// 		SNew(SButton)
+						// 		.Text(FText::FromString("Edit"))
+						// 		.ButtonColorAndOpacity(
+						// 			TAttribute<FSlateColor>::CreateLambda([this]()
+						// 			{
+						// 				return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Select);
+						// 			})
+						// 		)					.OnClicked_Lambda([this]()
+						// 		{
+						// 			if (CanvasWidget.IsValid())
+						// 			{
+						// 				CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Select);
+						// 			}
+						// 			return FReply::Handled();
+						// 		})
+						// 	]
+						// 	
+						// 	// Sew Mode Button
+						// 	+ SHorizontalBox::Slot()
+						// 	.AutoWidth()
+						// 	.Padding(2)
+						// 	[
+						// 		SNew(SButton)
+						// 		.Text(FText::FromString("Sew"))
+						// 		.ButtonColorAndOpacity(
+						// 			TAttribute<FSlateColor>::CreateLambda([this]()
+						// 			{
+						// 				return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Sew);
+						// 			})
+						// 		)					.OnClicked_Lambda([this]()
+						// 		{
+						// 			if (CanvasWidget.IsValid())
+						// 			{
+						// 				CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Sew);
+						// 			}
+						// 			return FReply::Handled();
+						// 		})
+						// 	]
+						// ]
+					]
 				]
 				
-				// Sew Mode Button
+				// Canvas
+				// + SVerticalBox::Slot().FillHeight(1.0f)
+				// — Right column: the Canvas, filling remaining space
 				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(2)
+				.FillWidth(1.0f)
 				[
-					SNew(SButton)
-					.Text(FText::FromString("Sew"))
-					.ButtonColorAndOpacity(
-						TAttribute<FSlateColor>::CreateLambda([this]()
-						{
-							return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Sew);
-						})
-					)					.OnClicked_Lambda([this]()
-					{
-						if (CanvasWidget.IsValid())
-						{
-							CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Sew);
-						}
-						return FReply::Handled();
-					})
+					CanvasWidget.ToSharedRef()  // Use the already-created CanvasWidget
 				]
-			]
+				]
+		+ SOverlay::Slot()
+		.VAlign(VAlign_Top)
+		.HAlign(HAlign_Right)
+		.Padding(10)
+		[
+		    SNew(SHorizontalBox)
 
-			
-			// // Canvas
-			// + SVerticalBox::Slot()
-			// .FillHeight(1.0f)
-			// [
-			// 	SAssignNew(CanvasWidget, SClothDesignCanvas)
-			// ]
-			//
-			
-			// Canvas
-			+ SVerticalBox::Slot().FillHeight(1.0f)
-			[
-				CanvasWidget.ToSharedRef()  // Use the already-created CanvasWidget
-			]
-			
+		    // Draw Button
+		    + SHorizontalBox::Slot()
+		    .AutoWidth()
+		    .Padding(5)
+		    [
+		        SNew(SButton)
+		        // .Text(FText::FromString("Draw"))
+		        .ButtonColorAndOpacity(
+		            TAttribute<FSlateColor>::CreateLambda([this]() {
+		                return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Draw);
+		            }))
+		        .OnClicked_Lambda([this]() {
+		            if (CanvasWidget.IsValid()) {
+		                CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Draw);
+		            }
+		            return FReply::Handled();
+		        })
+		        .ContentPadding(FMargin(10, 5)) // makes it bigger
+		    	[
+					SNew(STextBlock)
+					.Text(FText::FromString("Draw"))
+					.Font(FCoreStyle::GetDefaultFontStyle("Roboto", 11)) 
+				]
+		    ]
 
-		];
+		    // Edit Button
+		    + SHorizontalBox::Slot()
+		    .AutoWidth()
+		    .Padding(5)
+		    [
+		        SNew(SButton)
+		        //.Text(FText::FromString("Edit"))
+		        .ButtonColorAndOpacity(
+		            TAttribute<FSlateColor>::CreateLambda([this]() {
+		                return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Select);
+		            }))
+		        .OnClicked_Lambda([this]() {
+		            if (CanvasWidget.IsValid()) {
+		                CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Select);
+		            }
+		            return FReply::Handled();
+		        })
+		        .ContentPadding(FMargin(10, 5))
+		    	[
+					SNew(STextBlock)
+					.Text(FText::FromString("Edit"))
+					.Font(FCoreStyle::GetDefaultFontStyle("Roboto", 11)) 
+				]
+		    ]
+
+		    // Sew Button
+		    + SHorizontalBox::Slot()
+		    .AutoWidth()
+		    .Padding(5)
+		    [
+		        SNew(SButton)
+		        //.Text(FText::FromString("Sew"))
+		        .ButtonColorAndOpacity(
+		            TAttribute<FSlateColor>::CreateLambda([this]() {
+		                return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Sew);
+		            }))
+		        .OnClicked_Lambda([this]() {
+		            if (CanvasWidget.IsValid()) {
+		                CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Sew);
+		            }
+		            return FReply::Handled();
+		        })
+		        .ContentPadding(FMargin(10, 5))
+			    [
+			    	SNew(STextBlock)
+					.Text(FText::FromString("Sew"))
+					.Font(FCoreStyle::GetDefaultFontStyle("Roboto", 11)) 
+			    ]
+		    ]
+		]
+	];
 	
 	// Delay focus until next tick/frame to ensure UI is ready
-	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this, NewTab](float DeltaTime)
+	//FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this, NewTab](float DeltaTime)
+	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this](float)
 	{
 		if (CanvasWidget.IsValid())
 		{

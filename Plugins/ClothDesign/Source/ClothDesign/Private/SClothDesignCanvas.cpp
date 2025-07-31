@@ -89,7 +89,15 @@ int32 SClothDesignCanvas::OnPaint(
 	bool bParentEnabled) const
 {
 	const_cast<SClothDesignCanvas*>(this)->LastGeometry = AllottedGeometry;
+	
+	// Respect parent clipping
+	const bool bEnabled = ShouldBeEnabled(bParentEnabled);
+	ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
 
+
+	FSlateClippingZone ClippingZone(AllottedGeometry);
+	OutDrawElements.PushClip(ClippingZone);
+	
 	// background image
 	if (BackgroundTexture.IsValid())
 	{
@@ -580,7 +588,7 @@ int32 SClothDesignCanvas::OnPaint(
 	
 
 
-	
+	OutDrawElements.PopClip(); // end clipping
 	return LayerId;
 }
 // Onpaint end

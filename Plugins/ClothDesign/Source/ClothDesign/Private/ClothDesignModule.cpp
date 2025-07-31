@@ -90,6 +90,10 @@ void FClothDesignModule::OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivation
 
 TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
 {
+	// TSharedRef<SClothDesignCanvas> CanvasWidgetCloth = SNew(SClothDesignCanvas);
+
+	SAssignNew(CanvasWidget, SClothDesignCanvas);
+	
 	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
 	// SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
@@ -232,13 +236,94 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 				]
 			]
 
+			// Mode Buttons
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(10)
+			[
+				SNew(SHorizontalBox)
+
+				// Draw Mode Button
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(2)
+				[
+					SNew(SButton)
+					.Text(FText::FromString("Draw"))
+					.ButtonColorAndOpacity(
+						TAttribute<FSlateColor>::CreateLambda([this]()
+						{
+							return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Draw);
+						})
+					)
+					.OnClicked_Lambda([this]()
+					{
+						if (CanvasWidget.IsValid())
+						{
+							CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Draw);
+						}
+						return FReply::Handled();
+					})
+				]
+
+				// Edit Mode Button
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(2)
+				[
+					SNew(SButton)
+					.Text(FText::FromString("Edit"))
+					.ButtonColorAndOpacity(
+						TAttribute<FSlateColor>::CreateLambda([this]()
+						{
+							return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Select);
+						})
+					)					.OnClicked_Lambda([this]()
+					{
+						if (CanvasWidget.IsValid())
+						{
+							CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Select);
+						}
+						return FReply::Handled();
+					})
+				]
+				
+				// Sew Mode Button
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(2)
+				[
+					SNew(SButton)
+					.Text(FText::FromString("Sew"))
+					.ButtonColorAndOpacity(
+						TAttribute<FSlateColor>::CreateLambda([this]()
+						{
+							return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Sew);
+						})
+					)					.OnClicked_Lambda([this]()
+					{
+						if (CanvasWidget.IsValid())
+						{
+							CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Sew);
+						}
+						return FReply::Handled();
+					})
+				]
+			]
 
 			
+			// // Canvas
+			// + SVerticalBox::Slot()
+			// .FillHeight(1.0f)
+			// [
+			// 	SAssignNew(CanvasWidget, SClothDesignCanvas)
+			// ]
+			//
+			
 			// Canvas
-			+ SVerticalBox::Slot()
-			.FillHeight(1.0f)
+			+ SVerticalBox::Slot().FillHeight(1.0f)
 			[
-				SAssignNew(CanvasWidget, SClothDesignCanvas)
+				CanvasWidget.ToSharedRef()  // Use the already-created CanvasWidget
 			]
 			
 
@@ -256,6 +341,15 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 	
 	return NewTab;
 	
+}
+
+FSlateColor FClothDesignModule::GetModeButtonColor(SClothDesignCanvas::EClothEditorMode Mode) const
+{
+	if (CanvasWidget.IsValid() && CanvasWidget->GetCurrentMode() == Mode)
+	{
+		return FSlateColor(FLinearColor(0.686f, 1.f, 0.0f, 1.f)); // Highlighted
+	}
+	return FSlateColor(FLinearColor::White); // Default color
 }
 
 

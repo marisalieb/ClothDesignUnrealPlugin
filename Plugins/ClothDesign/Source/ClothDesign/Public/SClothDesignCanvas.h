@@ -93,15 +93,22 @@ struct FCanvasState
 	int32 SelectedPointIndex;
 	FVector2D PanOffset;
 	float ZoomFactor;
+	
+	TArray<bool> bUseBezierPerPoint; // For the current curve
+	TArray<TArray<bool>> CompletedBezierFlags; // for completed shapes
 
+	
 	// Optional equality operator 
 	bool operator==(const FCanvasState& Other) const
 	{
-		return CurvePoints == Other.CurvePoints &&
-			   SelectedPointIndex == Other.SelectedPointIndex &&
-			   PanOffset == Other.PanOffset &&
-			   FMath::IsNearlyEqual(ZoomFactor, Other.ZoomFactor);
-	} // !!
+		return	CurvePoints == Other.CurvePoints &&
+				bUseBezierPerPoint == Other.bUseBezierPerPoint && 
+				CompletedShapes == Other.CompletedShapes &&
+				CompletedBezierFlags == Other.CompletedBezierFlags &&
+			    SelectedPointIndex == Other.SelectedPointIndex &&
+			    PanOffset == Other.PanOffset &&
+			    FMath::IsNearlyEqual(ZoomFactor, Other.ZoomFactor);
+	} 
 };
 class SClothDesignCanvas : public SCompoundWidget
 {
@@ -306,6 +313,8 @@ public:
 		FInterpCurve<FVector2D>& Curve,
 		const TArray<bool>&      bBezierFlags);
 
+	FReply OnModeButtonClicked(EClothEditorMode NewMode);
+	EClothEditorMode GetCurrentMode() const { return CurrentMode; }
 
 
 	

@@ -4,6 +4,7 @@
 
 #include "Modules/ModuleManager.h"
 #include "Widgets/Input/SNumericEntryBox.h"
+#include "SClothDesignCanvas.h"
 
 /*
  This is the module definition for the editor mode. You can implement custom functionality
@@ -31,6 +32,8 @@ private:
 	FReply OnGenerateMeshClicked();  // Declare the handler
 
 	FReply OnSewingClicked();  // Declare the handler
+	
+	FSlateColor GetModeButtonColor(SClothDesignCanvas::EClothEditorMode Mode) const;
 
 		
 };

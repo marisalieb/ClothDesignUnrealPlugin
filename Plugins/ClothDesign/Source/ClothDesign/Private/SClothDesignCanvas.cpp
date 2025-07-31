@@ -313,43 +313,38 @@ int32 SClothDesignCanvas::OnPaint(
 	}
 	
 	// Draw interactive points and bezier handles for all completed shapes
-	// section 2: completed shapes, bezier handles and boxes
+	// section 2: completed shapes, bezier handles and 
 	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
 	{
 		const auto& Shape = CompletedShapes[ShapeIdx];
-		const auto& BezierFlags = CompletedBezierFlags[ShapeIdx];
-		int32 NumPts = Shape.Points.Num();
-		if (NumPts < 2) continue;
-		
 		for (int32 i = 0; i < Shape.Points.Num(); ++i)
 		{
-			
-			const auto& Pt = Shape.Points[i];
-			FVector2D DrawPos = TransformPoint(Pt.OutVal);
-			// FVector2D ArriveHandle = TransformPoint(Pt.OutVal - Pt.ArriveTangent);
-			// FVector2D LeaveHandle  = TransformPoint(Pt.OutVal + Pt.LeaveTangent);
-
-			FVector2D World  = Pt.OutVal;
-			FVector2D DrawPt = TransformPoint(World);
-			
-			FLinearColor BoxColor = PostCurrentPointColour; // Or color by selection if implemented
-
-			// Draw point box
+			FVector2D DrawPos = TransformPoint(Shape.Points[i].OutVal);
 			FSlateDrawElement::MakeBox(
-				OutDrawElements,
-				LayerId,
-				AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3, 3), FVector2D(6, 6)),
+				OutDrawElements, LayerId,
+				AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3,3), FVector2D(6,6)),
 				FCoreStyle::Get().GetBrush("WhiteBrush"),
 				ESlateDrawEffect::None,
-				BoxColor
+				PostCurrentPointColour
 			);
-			
-		
-			// your existing Bezier‐handle code:
-			FVector2D H1 = TransformPoint(World - Pt.ArriveTangent);
-			FVector2D H2 = TransformPoint(World + Pt.LeaveTangent);
-			
-			// Draw handle lines
+		}
+		++LayerId;
+	}
+	// Completed shapes handles
+	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
+	{
+		const auto& Shape       = CompletedShapes[ShapeIdx];
+		const auto& BezierFlags = CompletedBezierFlags[ShapeIdx];
+		for (int32 i = 0; i < Shape.Points.Num(); ++i)
+		{
+			if (!BezierFlags[i]) continue;  // skip N-points entirely
+        
+			const auto& Pt    = Shape.Points[i];
+			FVector2D World   = Pt.OutVal;
+			FVector2D DrawPt = TransformPoint(World);
+			FVector2D H1      = TransformPoint(World - Pt.ArriveTangent);
+			FVector2D H2      = TransformPoint(World + Pt.LeaveTangent);
+
 			FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
 				{ DrawPt, H1 }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
 
@@ -366,6 +361,68 @@ int32 SClothDesignCanvas::OnPaint(
 				AllottedGeometry.ToPaintGeometry(H2 - FVector2D(3, 3), FVector2D(6, 6)),
 				FCoreStyle::Get().GetBrush("WhiteBrush"),
 				ESlateDrawEffect::None, PostCurrentPointColour);
+		}
+		++LayerId;
+	}
+	// for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
+	// {
+	// 	const auto& Shape = CompletedShapes[ShapeIdx];
+	// 	const auto& BezierFlags = CompletedBezierFlags[ShapeIdx];
+	// 	int32 NumPts = Shape.Points.Num();
+	// 	if (NumPts < 2) continue;
+	// 	
+	// 	for (int32 i = 0; i < Shape.Points.Num(); ++i)
+	// 	{
+	// 		if (!BezierFlags[i])  // <-- use the completed-shape flags
+	// 		{
+	// 			continue;
+	// 		}
+	// 		
+	// 		const auto& Pt = Shape.Points[i];
+	// 		FVector2D DrawPos = TransformPoint(Pt.OutVal);
+	// 		// FVector2D ArriveHandle = TransformPoint(Pt.OutVal - Pt.ArriveTangent);
+	// 		// FVector2D LeaveHandle  = TransformPoint(Pt.OutVal + Pt.LeaveTangent);
+	//
+	// 		FVector2D World  = Pt.OutVal;
+	// 		FVector2D DrawPt = TransformPoint(World);
+	// 		
+	// 		//FLinearColor BoxColor = PostCurrentPointColour; // Or color by selection if implemented
+	//
+	// 		// Draw point box
+	// 		FSlateDrawElement::MakeBox(
+	// 			OutDrawElements,
+	// 			LayerId,
+	// 			AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3, 3), FVector2D(6, 6)),
+	// 			FCoreStyle::Get().GetBrush("WhiteBrush"),
+	// 			ESlateDrawEffect::None,
+	// 			PostCurrentPointColour
+	// 		);
+	// 		
+	// 	
+	// 		// your existing Bezier‐handle code:
+	// 		FVector2D H1 = TransformPoint(World - Pt.ArriveTangent);
+	// 		FVector2D H2 = TransformPoint(World + Pt.LeaveTangent);
+	// 		
+	// 		// Draw handle lines
+	// 		FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
+	// 			{ DrawPt, H1 }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
+	//
+	// 		FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
+	// 			{ DrawPt, H2 }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
+	//
+	// 		// Draw handle boxes
+	// 		FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
+	// 			AllottedGeometry.ToPaintGeometry(H1 - FVector2D(3, 3), FVector2D(6, 6)),
+	// 			FCoreStyle::Get().GetBrush("WhiteBrush"),
+	// 			ESlateDrawEffect::None, PostCurrentPointColour);
+	//
+	// 		FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
+	// 			AllottedGeometry.ToPaintGeometry(H2 - FVector2D(3, 3), FVector2D(6, 6)),
+	// 			FCoreStyle::Get().GetBrush("WhiteBrush"),
+	// 			ESlateDrawEffect::None, PostCurrentPointColour);
+	//
+	// 	}
+	// }
 			
 			// else
 			// {
@@ -396,9 +453,6 @@ int32 SClothDesignCanvas::OnPaint(
 			// 		ESlateDrawEffect::None, PostCurrentPointColour);
 			// }
 			
-
-		}
-	}
 
 	
 	// curve points
@@ -476,25 +530,25 @@ int32 SClothDesignCanvas::OnPaint(
 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
 	{
 		FVector2D DrawPos = TransformPoint(CurvePoints.Points[i].OutVal);
-		FLinearColor Color = PointColour;
+		//FLinearColor Color = PointColour;
 		FSlateDrawElement::MakeBox(
 			OutDrawElements,
 			LayerId,
 			AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3, 3), FVector2D(6, 6)),
 			FCoreStyle::Get().GetBrush("WhiteBrush"),
 			ESlateDrawEffect::None,
-			Color
+			PointColour
 		);
 	}
 	
 
 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
 	{
-		//if (!bUseBezierPerPoint[i])
-		//{
+		if (!bUseBezierPerPoint[i])
+		{
 			// Optionally skip drawing any handle visuals
-		//	continue;
-		// }
+			continue;
+		 }
 		
 		const auto& Pt = CurvePoints.Points[i];
 		const FVector2D Pos = TransformPoint(Pt.OutVal);
@@ -519,7 +573,7 @@ int32 SClothDesignCanvas::OnPaint(
 			ESlateDrawEffect::None, PointColour);
 	}
 	
-	ensureAlways(CurvePoints.Points.Num() == bUseBezierPerPoint.Num());
+	// ensureAlways(CurvePoints.Points.Num() == bUseBezierPerPoint.Num());
 
 
 
@@ -662,7 +716,15 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 
 			CurvePoints.Points.Add(NewPoint);
 			bUseBezierPerPoint.Add(bUseBezierPoints);
-			Invalidate(EInvalidateWidgetReason::Paint);
+			if (!bUseBezierPoints)
+			{
+				RecalculateNTangents(CurvePoints, bUseBezierPerPoint);
+			}
+			else if (bUseBezierPoints)
+			{
+				CurvePoints.AutoSetTangents();
+
+			}
 			// int32 LastIdx = CurvePoints.Points.Num() - 1;
 			// if (!bUseBezierPoints && LastIdx >= 1)
 			// {
@@ -685,14 +747,6 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 			// 	CurvePoints.AutoSetTangents();
 			// }
 			// If it’s an N‑point, recalc the whole curve’s N‑tangents:
-			if (!bUseBezierPoints)
-			{
-				RecalculateNTangents(CurvePoints, bUseBezierPerPoint);
-			}
-			else if (bUseBezierPoints)
-			{
-				CurvePoints.AutoSetTangents();
-			}
 
 			
 			// 2) ALSO initialize the first/last tangents on current shape
@@ -713,6 +767,8 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 					CurvePoints.Points[LastIdx].LeaveTangent  = FVector2D::ZeroVector;
 				}
 			}
+			
+			// Invalidate(EInvalidateWidgetReason::Paint); //!!
 			UE_LOG(LogTemp, Warning, TEXT("Draw mode: Added point at (%f, %f)"), CanvasClickPos.X, CanvasClickPos.Y);
 			return FReply::Handled();
 		}
@@ -868,7 +924,7 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 						: (World + (i<NumPts-1 ? Shape.Points[i+1].OutVal : World)) * 0.5f;
 					
 
-					// if (!BezierFlags[i]){continue;}
+					if (!BezierFlags[i]){continue;}
 
 					if (FVector2D::Distance(CanvasClickPos, Arrive) < TangentHandleRadius / ZoomFactor)
 					{
@@ -1138,7 +1194,8 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 		FVector2D CurrentMousePos = MouseEvent.GetScreenSpacePosition();
 		FVector2D Delta = (CurrentMousePos - LastMousePos) / ZoomFactor; // Normalize for zoom
 
-		PanOffset += Delta; // Subtract to move *with* mouse
+		float PanSpeedMultiplier = 2.f; // faster panning 
+		PanOffset += Delta * PanSpeedMultiplier;
 		LastMousePos = CurrentMousePos;
 
 		Invalidate(EInvalidateWidget::Paint); // Trigger repaint
@@ -1192,10 +1249,10 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 					Pt.ArriveTangent = -Delta;
 					if (bLinkTangents)
 					{
-						Pt.LeaveTangent = Pt.ArriveTangent;
-						// float LeaveLen = Pt.LeaveTangent.Size();
-						// FVector2D OppositeDir = -Delta.GetSafeNormal();
-						// Pt.LeaveTangent = OppositeDir * LeaveLen;
+						// Pt.LeaveTangent = Pt.ArriveTangent;
+						float LeaveLen = Pt.LeaveTangent.Size();
+						FVector2D OppositeDir = -Delta.GetSafeNormal();
+						Pt.LeaveTangent = OppositeDir * LeaveLen;
 					}
 				}
 				else // Leave
@@ -1203,10 +1260,10 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 					Pt.LeaveTangent = Delta;
 					if (bLinkTangents)
 					{
-						Pt.ArriveTangent = Pt.LeaveTangent;
-						// float ArriveLen = Pt.ArriveTangent.Size();  // preserve original length
-						// FVector2D OppositeDir = Delta.GetSafeNormal();
-						// Pt.ArriveTangent = OppositeDir * ArriveLen;
+						// Pt.ArriveTangent = Pt.LeaveTangent;
+						float ArriveLen = Pt.ArriveTangent.Size();  // preserve original length
+						FVector2D OppositeDir = Delta.GetSafeNormal();
+						Pt.ArriveTangent = OppositeDir * ArriveLen;
 					}
 				}
 
@@ -1233,10 +1290,10 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 					// Link it to the leave tangent only if we decided to link
 					if (bLinkTangents)
 					{
-						Pt.LeaveTangent = Pt.ArriveTangent;
-						// float LeaveLen = Pt.LeaveTangent.Size();
-						// FVector2D OppositeDir = -Delta.GetSafeNormal();
-						// Pt.LeaveTangent = OppositeDir * LeaveLen;
+						// Pt.LeaveTangent = Pt.ArriveTangent;
+						float LeaveLen = Pt.LeaveTangent.Size();
+						FVector2D OppositeDir = -Delta.GetSafeNormal();
+						Pt.LeaveTangent = OppositeDir * LeaveLen;
 					}
 				}
 				else // ETangentHandle::Leave
@@ -1244,10 +1301,10 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 					Pt.LeaveTangent = Delta;
 					if (bLinkTangents)
 					{
-						Pt.ArriveTangent = Pt.LeaveTangent;
-						// float ArriveLen = Pt.ArriveTangent.Size();  // preserve original length
-						// FVector2D OppositeDir = Delta.GetSafeNormal();
-						// Pt.ArriveTangent = OppositeDir * ArriveLen;
+						// Pt.ArriveTangent = Pt.LeaveTangent;
+						float ArriveLen = Pt.ArriveTangent.Size();  // preserve original length
+						FVector2D OppositeDir = Delta.GetSafeNormal();
+						Pt.ArriveTangent = OppositeDir * ArriveLen;
 					}
 				}
 
@@ -1346,19 +1403,7 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 	if (Key == EKeys::Delete || Key == EKeys::BackSpace)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Trying to deelete point: %d"), SelectedPointIndex);
-
-		// if (SelectedPointIndex != INDEX_NONE && SelectedPointIndex < CurvePoints.Points.Num())
-		// {
-		// 	UE_LOG(LogTemp, Warning, TEXT("Trying to delete point: %d"), SelectedPointIndex);
-		// 	SaveStateForUndo();
-		// 	CurvePoints.Points.RemoveAt(SelectedPointIndex);
-		// 	CurvePoints.AutoSetTangents(); // Rebuild curve after deleting
-		//
-		// 	SelectedPointIndex = INDEX_NONE;
-		// 	Invalidate(EInvalidateWidgetReason::Paint | EInvalidateWidgetReason::Layout);
-		//
-		// 	return FReply::Handled();
-		// }
+		
 		if (SelectedPointIndex != INDEX_NONE)
 		{
 			SaveStateForUndo();
@@ -1369,6 +1414,7 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 				if (SelectedPointIndex < CurvePoints.Points.Num())
 				{
 					CurvePoints.Points.RemoveAt(SelectedPointIndex);
+					bUseBezierPerPoint.RemoveAt(SelectedPointIndex);
 					CurvePoints.AutoSetTangents();
 				}
 			}
@@ -1378,6 +1424,7 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 				if (SelectedPointIndex < CompletedShapes[SelectedShapeIndex].Points.Num())
 				{
 					CompletedShapes[SelectedShapeIndex].Points.RemoveAt(SelectedPointIndex);
+					CompletedBezierFlags[SelectedShapeIndex].RemoveAt(SelectedPointIndex);
 					CompletedShapes[SelectedShapeIndex].AutoSetTangents();
 				}
 			}
@@ -1508,6 +1555,12 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 
 }
 
+FReply SClothDesignCanvas::OnModeButtonClicked(EClothEditorMode NewMode)
+{
+	CurrentMode = NewMode;
+	Invalidate(EInvalidateWidget::Paint);
+	return FReply::Handled();
+}
 
 // bool SClothDesignCanvas::IsPointNearLine(const FVector2D& P, const FVector2D& A, const FVector2D& B, float Threshold) const
 // {
@@ -2955,30 +3008,33 @@ FCanvasState SClothDesignCanvas::GetCurrentCanvasState() const
 	FCanvasState State;
 	State.CurvePoints = CurvePoints; // Full copy, includes tangents and interp mode
 	State.CompletedShapes = CompletedShapes;
-
+	
+	State.bUseBezierPerPoint = bUseBezierPerPoint;
+	State.CompletedBezierFlags = CompletedBezierFlags;
+	
 	State.SelectedPointIndex = SelectedPointIndex;
 	State.PanOffset = PanOffset;
 	State.ZoomFactor = ZoomFactor;
 	return State;
 }
 
-// void SClothDesignCanvas::RestoreCanvasState(const FCanvasState& State)
-// {
-// 	Points = State.Points;
-// 	SelectedPointIndex = State.SelectedPointIndex;
-// 	PanOffset = State.PanOffset;
-// 	ZoomFactor = State.ZoomFactor;
-//
-// 	Invalidate(EInvalidateWidgetReason::Paint | EInvalidateWidgetReason::Layout);
-// }
+
 void SClothDesignCanvas::RestoreCanvasState(const FCanvasState& State)
 {
+	// to avoid the redo/undo crashes
+	ensure(State.CurvePoints.Points.Num() == State.bUseBezierPerPoint.Num());
+	ensure(State.CompletedShapes.Num() == State.CompletedBezierFlags.Num());
+	
 	CurvePoints = State.CurvePoints;
 	CompletedShapes = State.CompletedShapes;
-
+	
+	bUseBezierPerPoint = State.bUseBezierPerPoint;
+	CompletedBezierFlags = State.CompletedBezierFlags;
+	
 	SelectedPointIndex = State.SelectedPointIndex;
 	PanOffset = State.PanOffset;
 	ZoomFactor = State.ZoomFactor;
+	
 	SelectedPointIndex = INDEX_NONE;
 	SelectedShapeIndex = INDEX_NONE;
 	

@@ -5,6 +5,10 @@
 #include "Modules/ModuleManager.h"
 #include "Widgets/Input/SNumericEntryBox.h"
 #include "SClothDesignCanvas.h"
+#include "UClothShapeAsset.h"
+#include "AssetToolsModule.h"
+#include "IAssetTools.h"
+
 
 /*
  This is the module definition for the editor mode. You can implement custom functionality
@@ -34,6 +38,13 @@ private:
 	FReply OnSewingClicked();  // Declare the handler
 	
 	FSlateColor GetModeButtonColor(SClothDesignCanvas::EClothEditorMode Mode) const;
+
+	void SaveCurrentShapesToAsset();
+
+	
+	FReply OnSaveClicked();  // Declare the handler
+	FReply OnSaveAsClicked();  // Declare the handler
+	FReply OnClearClicked();  // Declare the handler
 
 		
 };

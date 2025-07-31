@@ -80,6 +80,7 @@ public class ClothDesign : ModuleRules
 				"MeshConversion",
 				"GeometryCore",    
 				"DynamicMesh",   
+				"EditorScriptingUtilities",
 				
 				
 				// ... add private dependencies that you statically link with here ...	

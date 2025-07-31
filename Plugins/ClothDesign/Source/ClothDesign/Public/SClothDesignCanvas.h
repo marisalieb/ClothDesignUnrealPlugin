@@ -39,6 +39,17 @@
 #include "Misc/ScopeLock.h"
 #include "GeomTools.h"
 
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "PackageTools.h"
+#include "ObjectTools.h"
+#include "EditorAssetLibrary.h"
+
+#include "UClothShapeAsset.h"
+#include "UObject/Package.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "UObject/SavePackage.h"
+#include "Misc/PackageName.h"
+#include "ObjectTools.h"
 
 // struct FCurvePoint
 // {
@@ -317,6 +328,19 @@ public:
 	EClothEditorMode GetCurrentMode() const { return CurrentMode; }
 
 
+	bool SaveShapeAsset(const FString& AssetPath, const FString& AssetName);
+
+	FString GetSelectedShapeAssetPath() const;
+	void OnShapeAssetSelected(const FAssetData& AssetData);
+	TWeakObjectPtr<UClothShapeAsset> ClothAsset;
+	void LoadShapeAssetData();
+	void AddPointToCanvas(const FCurvePointData& Point);
+	void ClearCurrentShapeData();
+	void ClearCurvePointArrays();
+
+
+
+	
 	
 protected:
 	void CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices);

@@ -223,80 +223,87 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 							]
 						]
 
-						// // Mode Buttons
+						// save Button
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						.Padding(10)
+						.HAlign(HAlign_Left) // Optional: Align button to the left
+						[
+							SNew(SBox)
+							.WidthOverride(150.f) // Set desired fixed width here
+							[
+								SNew(SButton)
+								.Text(FText::FromString("Save"))
+								.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSaveClicked))
+							]
+						]
+						// 		
 						// + SVerticalBox::Slot()
 						// .AutoHeight()
 						// .Padding(10)
+						// .HAlign(HAlign_Left) // Optional: Align button to the left
 						// [
-						// 	SNew(SHorizontalBox)
-						//
-						// 	// Draw Mode Button
-						// 	+ SHorizontalBox::Slot()
-						// 	.AutoWidth()
-						// 	.Padding(2)
+						// 	SNew(SBox)
+						// 	.WidthOverride(150.f) // Set desired fixed width here
 						// 	[
 						// 		SNew(SButton)
-						// 		.Text(FText::FromString("Draw"))
-						// 		.ButtonColorAndOpacity(
-						// 			TAttribute<FSlateColor>::CreateLambda([this]()
-						// 			{
-						// 				return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Draw);
-						// 			})
-						// 		)
-						// 		.OnClicked_Lambda([this]()
-						// 		{
-						// 			if (CanvasWidget.IsValid())
-						// 			{
-						// 				CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Draw);
-						// 			}
-						// 			return FReply::Handled();
-						// 		})
-						// 	]
-						//
-						// 	// Edit Mode Button
-						// 	+ SHorizontalBox::Slot()
-						// 	.AutoWidth()
-						// 	.Padding(2)
-						// 	[
-						// 		SNew(SButton)
-						// 		.Text(FText::FromString("Edit"))
-						// 		.ButtonColorAndOpacity(
-						// 			TAttribute<FSlateColor>::CreateLambda([this]()
-						// 			{
-						// 				return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Select);
-						// 			})
-						// 		)					.OnClicked_Lambda([this]()
-						// 		{
-						// 			if (CanvasWidget.IsValid())
-						// 			{
-						// 				CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Select);
-						// 			}
-						// 			return FReply::Handled();
-						// 		})
-						// 	]
-						// 	
-						// 	// Sew Mode Button
-						// 	+ SHorizontalBox::Slot()
-						// 	.AutoWidth()
-						// 	.Padding(2)
-						// 	[
-						// 		SNew(SButton)
-						// 		.Text(FText::FromString("Sew"))
-						// 		.ButtonColorAndOpacity(
-						// 			TAttribute<FSlateColor>::CreateLambda([this]()
-						// 			{
-						// 				return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Sew);
-						// 			})
-						// 		)					.OnClicked_Lambda([this]()
-						// 		{
-						// 			if (CanvasWidget.IsValid())
-						// 			{
-						// 				CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Sew);
-						// 			}
-						// 			return FReply::Handled();
-						// 		})
+						// 		.Text(FText::FromString("Save As"))
+						// 		.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSaveAsClicked))
 						// 	]
 						// ]
+						
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						.Padding(2)
+						[
+							SNew(SHorizontalBox)
+						
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(4)
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString("Load:"))
+							]
+							
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(4)
+							[
+								SNew(SObjectPropertyEntryBox)
+								.AllowedClass(UClothShapeAsset::StaticClass())
+								.ObjectPath_Lambda([this]()
+								{
+									if (this->CanvasWidget.IsValid())
+									{
+										return this->CanvasWidget->GetSelectedShapeAssetPath();
+									}
+									return FString();
+								})
+								.OnObjectChanged_Lambda([this](const FAssetData& AssetData)
+								{
+									if (this->CanvasWidget.IsValid())
+									{
+										this->CanvasWidget->OnShapeAssetSelected(AssetData);
+									}
+								})
+							]
+
+						]
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						.Padding(10)
+						.HAlign(HAlign_Left) // Optional: Align button to the left
+						[
+							SNew(SBox)
+							.WidthOverride(150.f) // Set desired fixed width here
+							[
+								SNew(SButton)
+								.Text(FText::FromString("Clear All"))
+								.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnClearClicked))
+							]
+						]
+												
 					]
 				]
 				
@@ -308,7 +315,9 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 				[
 					CanvasWidget.ToSharedRef()  // Use the already-created CanvasWidget
 				]
-				]
+			]
+
+			
 		+ SOverlay::Slot()
 		.VAlign(VAlign_Top)
 		.HAlign(HAlign_Right)
@@ -445,22 +454,68 @@ FReply FClothDesignModule::OnSewingClicked()
 }
 
 
+FReply FClothDesignModule::OnSaveClicked()
+{
+	if (CanvasWidget.IsValid())
+	{
+		bool bSuccess = CanvasWidget->SaveShapeAsset(TEXT("SavedClothMeshes"), TEXT("Mesh_001"));
+		if (bSuccess)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Saved mesh asset successfully!"));
+		}
+	}
+	return FReply::Handled();
 
 
-// TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
-// {
-// 	return SNew(SDockTab)
-// 	  .TabRole(ETabRole::NomadTab)
-// 	  [
-// 		SNew(SBox)
-// 		.HAlign(HAlign_Center)
-// 		.VAlign(VAlign_Center)
-// 		[
-// 		  SNew(STextBlock)
-// 		  .Text(LOCTEXT("TwoDWindowText", "This is the 2D pattern editor window"))
-// 		]
-// 	  ];
-// }
+}
+
+
+FReply FClothDesignModule::OnSaveAsClicked()
+{
+	if (CanvasWidget.IsValid())
+	{
+		bool bSuccess = CanvasWidget->SaveShapeAsset(TEXT("MySavedMeshes"), TEXT("MyMesh_001"));
+		if (bSuccess)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Saved mesh asset successfully!"));
+		}
+	}
+	return FReply::Handled();
+
+
+}
+
+FReply FClothDesignModule::OnClearClicked()
+{
+	// ClearCurrentShapeData
+	if (CanvasWidget.IsValid())
+	{
+		CanvasWidget->ClearCurrentShapeData();
+
+	}
+	return FReply::Handled();
+
+
+}
+
+void FClothDesignModule::SaveCurrentShapesToAsset()
+{
+	UClothShapeAsset* NewAsset = NewObject<UClothShapeAsset>(GetTransientPackage(), UClothShapeAsset::StaticClass(), NAME_None, RF_Public | RF_Standalone);
+
+	// Fill NewAsset->Shapes with your data
+	// ...
+
+	FString PackageName = TEXT("/Game/Cloth/GeneratedShapeAsset");
+	FString AssetName = TEXT("GeneratedShapeAsset");
+
+	FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+	UObject* FinalAsset = AssetToolsModule.Get().CreateAsset(AssetName, FPackageName::GetLongPackagePath(PackageName), UClothShapeAsset::StaticClass(), nullptr);
+    
+	// Copy data into FinalAsset if needed (or use a custom factory)
+}
+
+
+
 
 #undef LOCTEXT_NAMESPACE
 

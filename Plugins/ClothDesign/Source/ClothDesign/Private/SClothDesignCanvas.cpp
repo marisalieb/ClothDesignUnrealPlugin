@@ -3668,27 +3668,45 @@ bool SClothDesignCanvas::SaveShapeAsset(const FString& AssetPath, const FString&
 	// Clear and copy your canvas data to the asset
 	TargetAsset->ClothShapes.Empty();
 	TargetAsset->ClothCurvePoints.Empty();
-	// Copy all completed shapes into asset
-	for (const auto& ShapeCurve : CompletedShapes)
-	{
-		FShapeData SavedShape;
 
-		int32 i = 0;
-		for (const auto& Point : ShapeCurve.Points)
+
+
+	
+	// Copy all completed shapes into asset
+	// for (const auto& ShapeCurve : CompletedShapes)
+	// {
+	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
+	{
+		const auto& ShapeCurve = CompletedShapes[ShapeIdx];
+		const auto& ShapeFlags = CompletedBezierFlags[ShapeIdx];
+		
+		FShapeData SavedShape;
+		
+
+		// int32 i = 0;
+		// for (const auto& Point : ShapeCurve.Points)
+		// {
+		for (int32 i = 0; i < ShapeCurve.Points.Num(); ++i)
 		{
+			const auto& Point = ShapeCurve.Points[i];
+
 			FCurvePointData NewPoint;
 			NewPoint.InputKey = Point.InVal;
 			NewPoint.Position = Point.OutVal;
 			NewPoint.ArriveTangent = Point.ArriveTangent;
 			NewPoint.LeaveTangent = Point.LeaveTangent;
-			NewPoint.bUseBezier = bUseBezierPerPoint.IsValidIndex(i) ? bUseBezierPerPoint[i] : false;
-
+			NewPoint.bUseBezier   = ShapeFlags.IsValidIndex(i) 
+									  ? ShapeFlags[i] 
+									  : true;
 			SavedShape.CompletedClothShape.Add(NewPoint);
-			++i;
+			// ++i;
 		}
 
 		TargetAsset->ClothShapes.Add(SavedShape);
 	}
+
+
+
 	
 	// Iterate over your FInterpCurve keys (points)
 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
@@ -3700,7 +3718,7 @@ bool SClothDesignCanvas::SaveShapeAsset(const FString& AssetPath, const FString&
 		NewPoint.Position = Point.OutVal;
 		NewPoint.ArriveTangent = Point.ArriveTangent;
 		NewPoint.LeaveTangent = Point.LeaveTangent;
-		NewPoint.bUseBezier = bUseBezierPerPoint.IsValidIndex(i) ? bUseBezierPerPoint[i] : false;
+		NewPoint.bUseBezier = bUseBezierPerPoint.IsValidIndex(i) ? bUseBezierPerPoint[i] : true;
 
 
 		// Add to the array
@@ -3738,7 +3756,18 @@ void SClothDesignCanvas::LoadShapeAssetData()
 	}
 
 	// Clear existing data first
-	ClearCurrentShapeData();
+	// ClearCurrentShapeData();
+	CompletedShapes.Empty();
+	CompletedBezierFlags.Empty();
+
+	CurvePoints.Points.Empty();
+	bUseBezierPerPoint.Empty();
+	
+	// Reset selection and indices
+	SelectedPointIndex = INDEX_NONE;
+	SelectedShapeIndex = INDEX_NONE;
+	
+	Invalidate(EInvalidateWidgetReason::Paint);
 	
 	for (const auto& SavedShape : ClothAsset->ClothShapes)
 	{
@@ -3776,17 +3805,26 @@ void SClothDesignCanvas::LoadShapeAssetData()
 
 		}
 
+		// UE_LOG(LogTemp, Log, TEXT("Loaded shape %d has %d points, flags: [%s]"),
+		// 	CompletedShapes.Num(),
+		// 	CompletedBezierFlags.Last().Num(),
+		// 	*FString::JoinBy(CompletedBezierFlags.Last(), TEXT(","), [](bool b){ return b ? TEXT("B") : TEXT("N"); })
+		// );
 		
-		// // Clear CurvePoints for next shape load (optional)
-		// CurvePoints.Points.Empty();
-		// bUseBezierPerPoint.Empty();
+
 	}
 	
 	// Now load active (incomplete) working shape
 	// CurvePoints.Points.Empty();
 	// bUseBezierPerPoint.Empty();
 	// ClearCurrentShapeData();
-	ClearCurvePointArrays();
+	//ClearCurvePointArrays();
+	SelectedPointIndex = INDEX_NONE;
+	SelectedShapeIndex = INDEX_NONE;
+	
+
+	CurvePoints.Points.Empty();
+	bUseBezierPerPoint.Empty();
 
 	
 	// Example: Suppose your UMyShapeAsset has a TArray<FCurvePointData> called SavedPoints

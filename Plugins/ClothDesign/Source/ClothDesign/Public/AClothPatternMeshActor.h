@@ -16,7 +16,7 @@ class AClothPatternMeshActor : public AActor
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Cloth Mesh")
 	UProceduralMeshComponent* MeshComponent;
 
 	AClothPatternMeshActor();

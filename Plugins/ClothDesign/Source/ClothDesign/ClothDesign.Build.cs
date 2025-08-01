@@ -31,7 +31,11 @@ public class ClothDesign : ModuleRules
 				"StaticMeshDescription",
 				"ProceduralMeshComponent",
 				"GeometryCore",
-				"ChaosCloth"
+				"ChaosCloth",
+				"ChaosCloth",
+				"MeshModelingTools",
+				"ModelingOperators",
+				"EditorScriptingUtilities"
 
 				// ... add other public dependencies that you statically link with here ...
 			}

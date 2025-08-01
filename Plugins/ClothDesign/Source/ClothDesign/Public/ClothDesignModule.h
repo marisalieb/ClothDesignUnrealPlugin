@@ -43,8 +43,9 @@ private:
 
 	
 	FReply OnSaveClicked();  // Declare the handler
-	FReply OnSaveAsClicked();  // Declare the handler
+	// FReply OnSaveAsClicked();  // Declare the handler
 	FReply OnClearClicked();  // Declare the handler
 
-		
+	FString CurrentSaveName = TEXT("ShapeName");
+	
 };

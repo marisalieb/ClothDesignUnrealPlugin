@@ -254,12 +254,25 @@ int32 SClothDesignCanvas::OnPaint(
 
 	// ---- POINTS AND LINES -----
 	
-	const FLinearColor LineColour(0.659f, 0.808f, 0.365f, 1.f);
-	const FLinearColor CompletedLineColour(0.4559f, 0.5508f, 0.165f, 1.f);
-	const FLinearColor PointColour(0.686f, 1.f, 0.0f, 1.f);
-	const FLinearColor PostCurrentPointColour(0.355f, .59f, 0.0f, 1.f);
-	const FLinearColor BezierHandleColour(0.229f, 0.342f, 0.0f, 1.f);
+	// const FLinearColor LineColour(0.659f, 0.808f, 0.365f, 1.f);
+	// const FLinearColor CompletedLineColour(0.4559f, 0.5508f, 0.165f, 1.f);
+	//
+	// const FLinearColor PointColour(0.686f, 1.f, 0.0f, 1.f);
+	// const FLinearColor PostCurrentPointColour(0.355f, .59f, 0.0f, 1.f);
+	//
+	// const FLinearColor BezierHandleColour(0.229f, 0.342f, 0.0f, 1.f);
 
+	// const FLinearColor LineColour(0.659f, 0.808f, 0.365f, 1.f);
+	const FLinearColor LineColour(0.6059f, 1.f, 0.0f, 1.f);
+	const FLinearColor CompletedLineColour(0.26304559f, 0.3405508f, 0.05165f, 1.f);
+
+	const FLinearColor PointColour(0.831, .0f, 1.f, 1.f);
+	const FLinearColor PostCurrentPointColour(0.263463f, .15208f, 0.5659f, 1.f);
+
+	const FLinearColor BezierHandleColour(0.43229f, 0.54342f, 0.0f, 1.f);
+	const FLinearColor CompletedBezierHandleColour(0.1025f, 0.1288f, 0.0f, 1.f);
+
+	
 	// Draw completed shapes first
 	// Sample each Bézier‐style segment into straight‐line chunks and draw them
 	// 	section 1: completed shapes, draw shape points and edge lines
@@ -354,10 +367,10 @@ int32 SClothDesignCanvas::OnPaint(
 			FVector2D H2      = TransformPoint(World + Pt.LeaveTangent);
 
 			FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-				{ DrawPt, H1 }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
+				{ DrawPt, H1 }, ESlateDrawEffect::None, CompletedBezierHandleColour, true, 1.0f);
 
 			FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-				{ DrawPt, H2 }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
+				{ DrawPt, H2 }, ESlateDrawEffect::None, CompletedBezierHandleColour, true, 1.0f);
 
 			// Draw handle boxes
 			FSlateDrawElement::MakeBox(OutDrawElements, LayerId,

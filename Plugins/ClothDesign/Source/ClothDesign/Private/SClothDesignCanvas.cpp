@@ -1897,7 +1897,582 @@ void SClothDesignCanvas::FocusViewportOnPoints()
 // }
 
 
-// second version but shorter!!
+
+// 1) Helper: even–odd rule point-in-polygon test
+bool SClothDesignCanvas::IsPointInPolygon(
+	const FVector2f& Test, 
+	const TArray<FVector2f>& Poly
+) {
+	bool bInside = false;
+	int N = Poly.Num();
+	for (int i = 0, j = N - 1; i < N; j = i++) {
+		const FVector2f& A = Poly[i];
+		const FVector2f& B = Poly[j];
+		bool bYCross = ((A.Y > Test.Y) != (B.Y > Test.Y));
+		if (bYCross) {
+			float XatY = (B.X - A.X) * (Test.Y - A.Y) / (B.Y - A.Y) + A.X;
+			if (Test.X < XatY) {
+				bInside = !bInside;
+			}
+		}
+	}
+	return bInside;
+}
+
+
+// second version but with steiner points, trying delaunay
+void SClothDesignCanvas::TriangulateAndBuildMesh(
+	const FInterpCurve<FVector2D>& Shape,
+	bool bRecordSeam,
+	int32 StartPointIdx2D,
+	int32 EndPointIdx2D
+)
+{
+	if (Shape.Points.Num() < 3)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
+		return;
+	}
+
+	TArray<FVector2f> PolyVerts;
+	const int SamplesPerSegment = 10;
+	// Step 3: Build DynamicMesh
+	FDynamicMesh3 Mesh;
+
+	
+	// Before your loop, compute the integer sample‐range once:
+	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
+	int SampleCounter = 0;
+
+	// Default to an empty range
+	int MinSample = TotalSamples + 1;
+	int MaxSample = -1;
+
+	// Only compute if we really want to record a seam
+	if (bRecordSeam && StartPointIdx2D >= 0 && EndPointIdx2D >= 0)
+	{
+		int S0 = StartPointIdx2D * SamplesPerSegment;
+		int S1 = EndPointIdx2D   * SamplesPerSegment;
+		MinSample = FMath::Min(S0, S1);
+		MaxSample = FMath::Max(S0, S1);
+	}
+
+	LastSeamVertexIDs.Empty();
+	TArray<int32> VertexIDs;
+
+	for (int Seg = 0; Seg < Shape.Points.Num() - 1; ++Seg)
+	{
+		float In0 = Shape.Points[Seg].InVal;
+		float In1 = Shape.Points[Seg + 1].InVal;
+
+		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter)
+		{
+			float Alpha = float(i) / SamplesPerSegment;
+			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, Alpha));
+			PolyVerts.Add(FVector2f(P2.X, P2.Y));
+
+			int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
+			VertexIDs.Add(VID);
+
+			// record seam if this sample falls in the integer [MinSample,MaxSample] range
+			if (bRecordSeam && SampleCounter >= MinSample && SampleCounter <= MaxSample)
+			{
+				LastSeamVertexIDs.Add(VID);
+			}
+		}
+	}
+
+	// RIGHT HERE: remember how many boundary points you have
+	int32 OriginalBoundaryCount = PolyVerts.Num();
+	
+	// Copy out just the boundary verts for your in‐polygon test:
+	TArray<FVector2f> BoundaryOnly;
+	BoundaryOnly.Append( PolyVerts.GetData(), OriginalBoundaryCount );
+
+	// --- compute 2D bounding‐box of your sampled polyline
+	float MinX = FLT_MAX, MinY = FLT_MAX, MaxX = -FLT_MAX, MaxY = -FLT_MAX;
+	for (int32 i = 0; i < OriginalBoundaryCount; ++i)
+	{
+		const FVector2f& V = PolyVerts[i];
+		MinX = FMath::Min(MinX, V.X);
+		MinY = FMath::Min(MinY, V.Y);
+		MaxX = FMath::Max(MaxX, V.X);
+		MaxY = FMath::Max(MaxY, V.Y);
+	}
+
+	// --- grid parameters
+	const int32 GridRes = 20;    // 10×10 grid → up to 100 interior seeds
+	int32 Added = 0;
+
+	// --- sample on a regular grid, keep only centers inside the original polygon
+	for (int32 iy = 0; iy < GridRes; ++iy)
+	{
+		float fy = (iy + 0.5f) / float(GridRes);
+		float Y  = FMath::Lerp(MinY, MaxY, fy);
+
+		for (int32 ix = 0; ix < GridRes; ++ix)
+		{
+			float fx = (ix + 0.5f) / float(GridRes);
+			float X  = FMath::Lerp(MinX, MaxX, fx);
+
+			FVector2f Cand(X, Y);
+			if ( IsPointInPolygon(Cand, BoundaryOnly) )
+			{
+				// add to the full list
+				PolyVerts.Add(Cand);
+
+				// let your Delaunay/CDT see it:
+				int32 VID = Mesh.AppendVertex(FVector3d(Cand.X, Cand.Y, 0));
+				VertexIDs.Add(VID);
+
+				++Added;
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Placed %d grid‐based interior samples"), Added);
+
+	// Build the list of constrained edges on the original boundary:
+	TArray<UE::Geometry::FIndex2i> BoundaryEdges;
+	BoundaryEdges.Reserve(OriginalBoundaryCount);
+	for (int32 i = 0; i < OriginalBoundaryCount; ++i)
+	{
+		BoundaryEdges.Add(
+			UE::Geometry::FIndex2i(i, (i + 1) % OriginalBoundaryCount)
+		);
+	}
+	
+
+	// --- 2) Set up and run the Constrained Delaunay ---
+	UE::Geometry::TConstrainedDelaunay2<float> CDT;
+	
+	
+	CDT.Vertices      = PolyVerts;          // TArray<TVector2<float>>
+	CDT.Edges         = BoundaryEdges;      // TArray<FIndex2i>
+	CDT.bOrientedEdges = true;              // enforce input edge orientation
+	CDT.FillRule = UE::Geometry::TConstrainedDelaunay2<float>::EFillRule::Odd;  
+
+	// CDT.FillRule      = EFillRule::EvenOdd;  
+	CDT.bOutputCCW    = true;               // get CCW‐wound triangles
+
+	// If you want to cut out hole‐loops, you can fill CDT.HoleEdges similarly.
+
+	// Run the triangulation:
+	bool bOK = CDT.Triangulate();
+	if (!bOK || CDT.Triangles.Num() == 0)
+	{
+	    UE_LOG(LogTemp, Error, TEXT("CDT failed to triangulate shape"));
+	    return;
+	}
+
+	// --- 3) Move it into an FDynamicMesh3 ---
+	UE::Geometry::FDynamicMesh3 MeshOut;
+	MeshOut.EnableTriangleGroups();
+	// MeshOut.SetAllowBowties(true);  // if you expect split‐bowties
+
+	// Append all vertices:
+	for (const UE::Geometry::TVector2<float>& V2 : CDT.Vertices)
+	{
+	    MeshOut.AppendVertex(FVector3d(V2.X, V2.Y, 0));
+	}
+
+	// Append all triangles:
+	for (const UE::Geometry::FIndex3i& Tri : CDT.Triangles)
+	{
+	    // Tri is CCW if bOutputCCW==true
+	    MeshOut.AppendTriangle(Tri.A, Tri.B, Tri.C);
+	}
+
+	// --- 4) Extract to your ProceduralMeshComponent as before ---
+	TArray<FVector> Vertices;
+	TArray<int32>   Indices;
+	Vertices.Reserve(MeshOut.VertexCount());
+	for (int vid : MeshOut.VertexIndicesItr())
+	{
+	    FVector3d P = MeshOut.GetVertex(vid);
+	    Vertices.Add(FVector(P.X, P.Y, P.Z));
+	}
+	for (int tid : MeshOut.TriangleIndicesItr())
+	{
+	    auto T = MeshOut.GetTriangle(tid);
+	    // already CCW, so push A→B→C
+	    Indices.Add(T.C);
+	    Indices.Add(T.B);
+	    Indices.Add(T.A);
+	}
+
+	CreateProceduralMesh(Vertices, Indices);
+	
+}
+
+
+// // second version but with steiner points, working random delaunay
+// void SClothDesignCanvas::TriangulateAndBuildMesh(
+// 	const FInterpCurve<FVector2D>& Shape,
+// 	bool bRecordSeam,
+// 	int32 StartPointIdx2D,
+// 	int32 EndPointIdx2D
+// )
+// {
+// 	if (Shape.Points.Num() < 3)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
+// 		return;
+// 	}
+//
+// 	TArray<FVector2f> PolyVerts;
+// 	const int SamplesPerSegment = 10;
+// 	// Step 3: Build DynamicMesh
+// 	FDynamicMesh3 Mesh;
+//
+// 	
+// 	// Before your loop, compute the integer sample‐range once:
+// 	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
+// 	int SampleCounter = 0;
+//
+// 	// Default to an empty range
+// 	int MinSample = TotalSamples + 1;
+// 	int MaxSample = -1;
+//
+// 	// Only compute if we really want to record a seam
+// 	if (bRecordSeam && StartPointIdx2D >= 0 && EndPointIdx2D >= 0)
+// 	{
+// 		int S0 = StartPointIdx2D * SamplesPerSegment;
+// 		int S1 = EndPointIdx2D   * SamplesPerSegment;
+// 		MinSample = FMath::Min(S0, S1);
+// 		MaxSample = FMath::Max(S0, S1);
+// 	}
+//
+// 	LastSeamVertexIDs.Empty();
+// 	TArray<int32> VertexIDs;
+//
+// 	for (int Seg = 0; Seg < Shape.Points.Num() - 1; ++Seg)
+// 	{
+// 		float In0 = Shape.Points[Seg].InVal;
+// 		float In1 = Shape.Points[Seg + 1].InVal;
+//
+// 		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter)
+// 		{
+// 			float Alpha = float(i) / SamplesPerSegment;
+// 			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, Alpha));
+// 			PolyVerts.Add(FVector2f(P2.X, P2.Y));
+//
+// 			int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
+// 			VertexIDs.Add(VID);
+//
+// 			// record seam if this sample falls in the integer [MinSample,MaxSample] range
+// 			if (bRecordSeam && SampleCounter >= MinSample && SampleCounter <= MaxSample)
+// 			{
+// 				LastSeamVertexIDs.Add(VID);
+// 			}
+// 		}
+// 	}
+//
+// 	// RIGHT HERE: remember how many boundary points you have
+// 	int32 OriginalBoundaryCount = PolyVerts.Num();
+//
+// 	// Build the list of constrained edges on the original boundary:
+// 	TArray<UE::Geometry::FIndex2i> BoundaryEdges;
+// 	BoundaryEdges.Reserve(OriginalBoundaryCount);
+// 	for (int32 i = 0; i < OriginalBoundaryCount; ++i)
+// 	{
+// 		BoundaryEdges.Add(
+// 			UE::Geometry::FIndex2i(i, (i + 1) % OriginalBoundaryCount)
+// 		);
+// 	}
+// 	
+// 	
+// 	// --- compute 2D bounding‐box of your sampled polyline
+// 	float MinX = FLT_MAX, MinY = FLT_MAX, MaxX = -FLT_MAX, MaxY = -FLT_MAX;
+// 	for (const FVector2f& V : PolyVerts)
+// 	{
+// 		MinX = FMath::Min(MinX, V.X);
+// 		MinY = FMath::Min(MinY, V.Y);
+// 		MaxX = FMath::Max(MaxX, V.X);
+// 		MaxY = FMath::Max(MaxY, V.Y);
+// 	}
+//
+// 	// --- random stream (optional: seed for reproducible meshes)
+// 	FRandomStream RandStream(FPlatformTime::Cycles());
+//
+// 	const int32 NumInteriorSamples = 200;
+// 	int32 Added = 0, Attempts = 0;
+// 	while (Added < NumInteriorSamples && Attempts < NumInteriorSamples * 5)
+// 	{
+// 		++Attempts;
+// 		// uniform in [Min,Max]
+// 		float RX = RandStream.FRandRange(MinX, MaxX);
+// 		float RY = RandStream.FRandRange(MinY, MaxY);
+// 		FVector2f Cand(RX, RY);
+//
+// 		if (IsPointInPolygon(Cand, PolyVerts))
+// 		{
+// 			// keep it
+// 			PolyVerts.Add(Cand);
+//
+// 			// also append to DynamicMesh so the triangulator can see it
+// 			int32 VID = Mesh.AppendVertex(FVector3d(Cand.X, Cand.Y, 0));
+// 			VertexIDs.Add(VID);
+//
+// 			++Added;
+// 		}
+// 	
+// 	UE_LOG(LogTemp, Log, TEXT("Placed %d interior samples after %d tries"), Added, Attempts);
+// 	}
+//
+//
+//
+// 	// --- 2) Set up and run the Constrained Delaunay ---
+// 	UE::Geometry::TConstrainedDelaunay2<float> CDT;
+// 	
+// 	
+// 	CDT.Vertices      = PolyVerts;          // TArray<TVector2<float>>
+// 	CDT.Edges         = BoundaryEdges;      // TArray<FIndex2i>
+// 	CDT.bOrientedEdges = true;              // enforce input edge orientation
+// 	CDT.FillRule = UE::Geometry::TConstrainedDelaunay2<float>::EFillRule::Odd;  
+//
+// 	// CDT.FillRule      = EFillRule::EvenOdd;  
+// 	CDT.bOutputCCW    = true;               // get CCW‐wound triangles
+//
+// 	// If you want to cut out hole‐loops, you can fill CDT.HoleEdges similarly.
+//
+// 	// Run the triangulation:
+// 	bool bOK = CDT.Triangulate();
+// 	if (!bOK || CDT.Triangles.Num() == 0)
+// 	{
+// 	    UE_LOG(LogTemp, Error, TEXT("CDT failed to triangulate shape"));
+// 	    return;
+// 	}
+//
+// 	// --- 3) Move it into an FDynamicMesh3 ---
+// 	UE::Geometry::FDynamicMesh3 MeshOut;
+// 	MeshOut.EnableTriangleGroups();
+// 	// MeshOut.SetAllowBowties(true);  // if you expect split‐bowties
+//
+// 	// Append all vertices:
+// 	for (const UE::Geometry::TVector2<float>& V2 : CDT.Vertices)
+// 	{
+// 	    MeshOut.AppendVertex(FVector3d(V2.X, V2.Y, 0));
+// 	}
+//
+// 	// Append all triangles:
+// 	for (const UE::Geometry::FIndex3i& Tri : CDT.Triangles)
+// 	{
+// 	    // Tri is CCW if bOutputCCW==true
+// 	    MeshOut.AppendTriangle(Tri.A, Tri.B, Tri.C);
+// 	}
+//
+// 	// --- 4) Extract to your ProceduralMeshComponent as before ---
+// 	TArray<FVector> Vertices;
+// 	TArray<int32>   Indices;
+// 	Vertices.Reserve(MeshOut.VertexCount());
+// 	for (int vid : MeshOut.VertexIndicesItr())
+// 	{
+// 	    FVector3d P = MeshOut.GetVertex(vid);
+// 	    Vertices.Add(FVector(P.X, P.Y, P.Z));
+// 	}
+// 	for (int tid : MeshOut.TriangleIndicesItr())
+// 	{
+// 	    auto T = MeshOut.GetTriangle(tid);
+// 	    // already CCW, so push A→B→C
+// 	    Indices.Add(T.C);
+// 	    Indices.Add(T.B);
+// 	    Indices.Add(T.A);
+// 	}
+//
+// 	CreateProceduralMesh(Vertices, Indices);
+// 	
+// }
+
+
+
+// // second version but shorter and with steiner points
+// void SClothDesignCanvas::TriangulateAndBuildMesh(
+// 	const FInterpCurve<FVector2D>& Shape,
+// 	bool bRecordSeam,
+// 	int32 StartPointIdx2D,
+// 	int32 EndPointIdx2D
+// )
+// {
+// 	if (Shape.Points.Num() < 3)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
+// 		return;
+// 	}
+//
+// 	TArray<FVector2f> PolyVerts;
+// 	const int SamplesPerSegment = 10;
+// 	// Step 3: Build DynamicMesh
+// 	UE::Geometry::FDynamicMesh3 Mesh;
+//
+// 	
+// 	// Before your loop, compute the integer sample‐range once:
+// 	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
+// 	int SampleCounter = 0;
+//
+// 	// Default to an empty range
+// 	int MinSample = TotalSamples + 1;
+// 	int MaxSample = -1;
+//
+// 	// Only compute if we really want to record a seam
+// 	if (bRecordSeam && StartPointIdx2D >= 0 && EndPointIdx2D >= 0)
+// 	{
+// 		int S0 = StartPointIdx2D * SamplesPerSegment;
+// 		int S1 = EndPointIdx2D   * SamplesPerSegment;
+// 		MinSample = FMath::Min(S0, S1);
+// 		MaxSample = FMath::Max(S0, S1);
+// 	}
+//
+// 	LastSeamVertexIDs.Empty();
+// 	TArray<int32> VertexIDs;
+//
+// 	for (int Seg = 0; Seg < Shape.Points.Num() - 1; ++Seg)
+// 	{
+// 		float In0 = Shape.Points[Seg].InVal;
+// 		float In1 = Shape.Points[Seg + 1].InVal;
+//
+// 		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter)
+// 		{
+// 			float Alpha = float(i) / SamplesPerSegment;
+// 			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, Alpha));
+// 			PolyVerts.Add(FVector2f(P2.X, P2.Y));
+//
+// 			int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
+// 			VertexIDs.Add(VID);
+//
+// 			// record seam if this sample falls in the integer [MinSample,MaxSample] range
+// 			if (bRecordSeam && SampleCounter >= MinSample && SampleCounter <= MaxSample)
+// 			{
+// 				LastSeamVertexIDs.Add(VID);
+// 			}
+// 		}
+// 	}
+//
+// 	
+// 	// --- compute 2D bounding‐box of your sampled polyline
+// 	float MinX = FLT_MAX, MinY = FLT_MAX, MaxX = -FLT_MAX, MaxY = -FLT_MAX;
+// 	for (const FVector2f& V : PolyVerts)
+// 	{
+// 		MinX = FMath::Min(MinX, V.X);
+// 		MinY = FMath::Min(MinY, V.Y);
+// 		MaxX = FMath::Max(MaxX, V.X);
+// 		MaxY = FMath::Max(MaxY, V.Y);
+// 	}
+//
+// 	// --- random stream (optional: seed for reproducible meshes)
+// 	FRandomStream RandStream(FPlatformTime::Cycles());
+//
+// 	const int32 NumInteriorSamples = 20;
+// 	int32 Added = 0, Attempts = 0;
+// 	while (Added < NumInteriorSamples && Attempts < NumInteriorSamples * 5)
+// 	{
+// 		++Attempts;
+// 		// uniform in [Min,Max]
+// 		float RX = RandStream.FRandRange(MinX, MaxX);
+// 		float RY = RandStream.FRandRange(MinY, MaxY);
+// 		FVector2f Cand(RX, RY);
+//
+// 		if (IsPointInPolygon(Cand, PolyVerts))
+// 		{
+// 			// keep it
+// 			PolyVerts.Add(Cand);
+//
+// 			// also append to DynamicMesh so the triangulator can see it
+// 			int32 VID = Mesh.AppendVertex(FVector3d(Cand.X, Cand.Y, 0));
+// 			VertexIDs.Add(VID);
+//
+// 			++Added;
+// 		}
+// 	
+// 	UE_LOG(LogTemp, Log, TEXT("Placed %d interior samples after %d tries"), Added, Attempts);
+// 	}
+// 	
+// 	
+// 	// Step 2: Triangulate
+// 	TArray<UE::Geometry::FIndex3i> Triangles;
+// 	PolygonTriangulation::TriangulateSimplePolygon<float>(PolyVerts, Triangles, false);
+//
+//
+//
+// 	if (Triangles.Num() == 0)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Triangulation failed"));
+// 		return;
+// 	}
+//
+//
+// 	for (const FVector2f& V : PolyVerts)
+// 	{
+// 		int VID = Mesh.AppendVertex(FVector3d(V.X, V.Y, 0)); // z = 0
+// 		VertexIDs.Add(VID);
+// 	}
+// 	// Assume PolyVerts is TArray<FVector2f> of your samples in order
+// 	float SignedArea = 0.f;
+// 	int N = PolyVerts.Num();
+// 	for (int i = 0; i < N; ++i)
+// 	{
+// 		const FVector2f& A = PolyVerts[i];
+// 		const FVector2f& B = PolyVerts[(i+1) % N];
+// 		SignedArea += (A.X * B.Y - B.X * A.Y);
+// 	}
+// 	SignedArea *= 0.5f;
+//
+// 	
+// 	// Insert triangles
+// 	for (const UE::Geometry::FIndex3i& Tri : Triangles)
+// 	{
+// 		Mesh.AppendTriangle(VertexIDs[Tri.A], VertexIDs[Tri.B], VertexIDs[Tri.C]);
+// 	}
+// 	
+// 	
+// 	// Step 4: Extract to UE arrays
+// 	TArray<FVector> Vertices;
+// 	TArray<int32> Indices;
+//
+// 	for (int vid : Mesh.VertexIndicesItr())
+// 	{
+// 		FVector3d Pos = Mesh.GetVertex(vid);
+// 		Vertices.Add(FVector(Pos.X, Pos.Y, Pos.Z));
+// 	}
+// 	
+// 	// for (int tid : Mesh.TriangleIndicesItr())
+// 	// {
+// 	// 	UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+// 	// 	Indices.Add(Tri.C);
+// 	// 	Indices.Add(Tri.B);
+// 	// 	Indices.Add(Tri.A);
+// 	// }
+//
+// 	// fix this later to always wind positive before triangluation but this is a temporary fix for now
+// 	bool bReverseWinding = (SignedArea < 0.f);
+// 	for (int tid : Mesh.TriangleIndicesItr())
+// 	{
+// 		UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+// 		if (bReverseWinding)
+// 		{
+// 			// flip each triangle
+// 			Indices.Add(Tri.A);
+// 			Indices.Add(Tri.B);
+// 			Indices.Add(Tri.C);
+// 		}
+// 		else
+// 		{
+// 			// keep normal winding, here c to a is noremal winding
+// 			Indices.Add(Tri.C);
+// 			Indices.Add(Tri.B);
+// 			Indices.Add(Tri.A);
+// 		}
+// 	}
+// 	
+// 	LastBuiltMesh           = MoveTemp(Mesh);
+// 	LastBuiltSeamVertexIDs  = MoveTemp(LastSeamVertexIDs);
+//
+// 	// Step 5: Build procedural mesh
+// 	CreateProceduralMesh(Vertices, Indices);
+// }
+
+
+// // second version but shorter!!
 // void SClothDesignCanvas::TriangulateAndBuildMesh(
 // 	const FInterpCurve<FVector2D>& Shape,
 // 	bool bRecordSeam,
@@ -2043,6 +2618,9 @@ void SClothDesignCanvas::FocusViewportOnPoints()
 // 	// Step 5: Build procedural mesh
 // 	CreateProceduralMesh(Vertices, Indices);
 // }
+//
+
+
 //
 // void SClothDesignCanvas::TriangulateAndBuildMesh(
 // 	const FInterpCurve<FVector2D>& Shape,
@@ -2394,202 +2972,202 @@ void SClothDesignCanvas::FocusViewportOnPoints()
 
 
 
-
-// third version with interior sampling
-void SClothDesignCanvas::TriangulateAndBuildMesh(
-	const FInterpCurve<FVector2D>& Shape,
-	bool bRecordSeam,
-	int32 StartPointIdx2D,
-	int32 EndPointIdx2D
-)
-{
-	if (Shape.Points.Num() < 3)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
-		return;
-	}
-
-	TArray<FVector2f> PolyVerts; // boundarypts
-	const int SamplesPerSegment = 10;
-	// Step 3: Build DynamicMesh
-	UE::Geometry::FDynamicMesh3 Mesh;
-
-	
-	// Before your loop, compute the integer sample‐range once:
-	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
-	int SampleCounter = 0;
-
-	// Default to an empty range
-	int MinSample = TotalSamples + 1;
-	int MaxSample = -1;
-
-	// Only compute if we really want to record a seam
-	if (bRecordSeam && StartPointIdx2D >= 0 && EndPointIdx2D >= 0)
-	{
-		int S0 = StartPointIdx2D * SamplesPerSegment;
-		int S1 = EndPointIdx2D   * SamplesPerSegment;
-		MinSample = FMath::Min(S0, S1);
-		MaxSample = FMath::Max(S0, S1);
-	}
-
-	LastSeamVertexIDs.Empty();
-	TArray<int32> VertexIDs;
-
-	for (int Seg = 0; Seg < Shape.Points.Num() - 1; ++Seg)
-	{
-		float In0 = Shape.Points[Seg].InVal;
-		float In1 = Shape.Points[Seg + 1].InVal;
-
-		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter)
-		{
-			float Alpha = float(i) / SamplesPerSegment;
-			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, Alpha));
-			PolyVerts.Add(FVector2f(P2.X, P2.Y));
-
-			int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
-			VertexIDs.Add(VID);
-
-			// record seam if this sample falls in the integer [MinSample,MaxSample] range
-			if (bRecordSeam && SampleCounter >= MinSample && SampleCounter <= MaxSample)
-			{
-				LastSeamVertexIDs.Add(VID);
-			}
-		}
-	}
-	
-	auto IsInsideFloatPoly = [&](const FVector2f& Pf){
-		FVector2D Pd(Pf.X, Pf.Y);
-		// convert your array once:
-		static TArray<FVector2D> PolyVertsD;
-		if (PolyVertsD.Num() != PolyVerts.Num()) {
-			PolyVertsD.Reset(PolyVerts.Num());
-			for (auto& Vf : PolyVerts)
-				PolyVertsD.Add(FVector2D(Vf.X, Vf.Y));
-		}
-		return FGeomTools2D::IsPointInPolygon(Pd, PolyVertsD);
-	};
-	
-	TArray<FVector2D> PolyVerts2D;
-	PolyVerts2D.Reserve(PolyVerts.Num());
-	for (const FVector2f& Vf : PolyVerts)
-	{
-		PolyVerts2D.Add( FVector2D(Vf.X, Vf.Y) );
-	}
-	
-	// 2) Generate interior jittered grid points
-	double TargetLen = 1.5; 
-	// compute boundary bbox
-	FBox2D BB(EForceInit::ForceInit);
-	for (auto& P : PolyVerts) BB += FVector2D(P);
-	float Spacing = TargetLen * 0.9f;
-	int NX = FMath::CeilToInt(BB.GetSize().X / Spacing);
-	int NY = FMath::CeilToInt(BB.GetSize().Y / Spacing);
-	
-	TArray<FVector2f> InteriorPts;
-	std::mt19937_64 RNG(FPlatformTime::Cycles());
-	std::uniform_real_distribution<float> J(-0.5f,0.5f);
-	
-	// for (int ix = 0; ix < NX; ++ix)
-	// {
-	// 	for (int iy = 0; iy < NY; ++iy)
-	// 	{
-	// 		FVector2D Cent2D((float)Cent.X, (float)Cent.Y);  
-	//
-	// 		if (FGeomTools2D::IsPointInPolygon(FVector2d(P), PolyVerts))
-	// 		{
-	// 			InteriorPts.Add(FVector2f(P));
-	// 		}
-	// 	}
-	// }
-	
-	// 3) Combine boundary + interior
-	TArray<FVector2f> AllPts = PolyVerts;
-	AllPts.Append(InteriorPts);
-
-	
-	// Step 2: Triangulate
-	TArray<UE::Geometry::FIndex3i> Triangles;
-	PolygonTriangulation::TriangulateSimplePolygon<float>(AllPts, Triangles, false);
-
-
-
-	if (Triangles.Num() == 0)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Triangulation failed"));
-		return;
-	}
-
-
-	for (const FVector2f& V : PolyVerts)
-	{
-		int VID = Mesh.AppendVertex(FVector3d(V.X, V.Y, 0)); // z = 0
-		VertexIDs.Add(VID);
-	}
-	// Assume PolyVerts is TArray<FVector2f> of your samples in order
-	float SignedArea = 0.f;
-	int N = PolyVerts.Num();
-	for (int i = 0; i < N; ++i)
-	{
-		const FVector2f& A = PolyVerts[i];
-		const FVector2f& B = PolyVerts[(i+1) % N];
-		SignedArea += (A.X * B.Y - B.X * A.Y);
-	}
-	SignedArea *= 0.5f;
-
-	
-	// Insert triangles
-	for (const UE::Geometry::FIndex3i& Tri : Triangles)
-	{
-		Mesh.AppendTriangle(VertexIDs[Tri.A], VertexIDs[Tri.B], VertexIDs[Tri.C]);
-	}
-
-
-	
-	// Step 4: Extract to UE arrays
-	TArray<FVector> Vertices;
-	TArray<int32> Indices;
-
-	for (int vid : Mesh.VertexIndicesItr())
-	{
-		FVector3d Pos = Mesh.GetVertex(vid);
-		Vertices.Add(FVector(Pos.X, Pos.Y, Pos.Z));
-	}
-	
-	// for (int tid : Mesh.TriangleIndicesItr())
-	// {
-	// 	UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
-	// 	Indices.Add(Tri.C);
-	// 	Indices.Add(Tri.B);
-	// 	Indices.Add(Tri.A);
-	// }
-
-	// fix this later to always wind positive before triangluation but this is a temporary fix for now
-	bool bReverseWinding = (SignedArea < 0.f);
-	for (int tid : Mesh.TriangleIndicesItr())
-	{
-		UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
-		if (bReverseWinding)
-		{
-			// flip each triangle
-			Indices.Add(Tri.A);
-			Indices.Add(Tri.B);
-			Indices.Add(Tri.C);
-		}
-		else
-		{
-			// keep normal winding, here c to a is noremal winding
-			Indices.Add(Tri.C);
-			Indices.Add(Tri.B);
-			Indices.Add(Tri.A);
-		}
-	}
-	
-	LastBuiltMesh           = MoveTemp(Mesh);
-	LastBuiltSeamVertexIDs  = MoveTemp(LastSeamVertexIDs);
-
-	// Step 5: Build procedural mesh
-	CreateProceduralMesh(Vertices, Indices);
-}
+//
+// // third version with interior sampling
+// void SClothDesignCanvas::TriangulateAndBuildMesh(
+// 	const FInterpCurve<FVector2D>& Shape,
+// 	bool bRecordSeam,
+// 	int32 StartPointIdx2D,
+// 	int32 EndPointIdx2D
+// )
+// {
+// 	if (Shape.Points.Num() < 3)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
+// 		return;
+// 	}
+//
+// 	TArray<FVector2f> PolyVerts; // boundarypts
+// 	const int SamplesPerSegment = 10;
+// 	// Step 3: Build DynamicMesh
+// 	UE::Geometry::FDynamicMesh3 Mesh;
+//
+// 	
+// 	// Before your loop, compute the integer sample‐range once:
+// 	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
+// 	int SampleCounter = 0;
+//
+// 	// Default to an empty range
+// 	int MinSample = TotalSamples + 1;
+// 	int MaxSample = -1;
+//
+// 	// Only compute if we really want to record a seam
+// 	if (bRecordSeam && StartPointIdx2D >= 0 && EndPointIdx2D >= 0)
+// 	{
+// 		int S0 = StartPointIdx2D * SamplesPerSegment;
+// 		int S1 = EndPointIdx2D   * SamplesPerSegment;
+// 		MinSample = FMath::Min(S0, S1);
+// 		MaxSample = FMath::Max(S0, S1);
+// 	}
+//
+// 	LastSeamVertexIDs.Empty();
+// 	TArray<int32> VertexIDs;
+//
+// 	for (int Seg = 0; Seg < Shape.Points.Num() - 1; ++Seg)
+// 	{
+// 		float In0 = Shape.Points[Seg].InVal;
+// 		float In1 = Shape.Points[Seg + 1].InVal;
+//
+// 		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter)
+// 		{
+// 			float Alpha = float(i) / SamplesPerSegment;
+// 			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, Alpha));
+// 			PolyVerts.Add(FVector2f(P2.X, P2.Y));
+//
+// 			int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
+// 			VertexIDs.Add(VID);
+//
+// 			// record seam if this sample falls in the integer [MinSample,MaxSample] range
+// 			if (bRecordSeam && SampleCounter >= MinSample && SampleCounter <= MaxSample)
+// 			{
+// 				LastSeamVertexIDs.Add(VID);
+// 			}
+// 		}
+// 	}
+// 	
+// 	auto IsInsideFloatPoly = [&](const FVector2f& Pf){
+// 		FVector2D Pd(Pf.X, Pf.Y);
+// 		// convert your array once:
+// 		static TArray<FVector2D> PolyVertsD;
+// 		if (PolyVertsD.Num() != PolyVerts.Num()) {
+// 			PolyVertsD.Reset(PolyVerts.Num());
+// 			for (auto& Vf : PolyVerts)
+// 				PolyVertsD.Add(FVector2D(Vf.X, Vf.Y));
+// 		}
+// 		return FGeomTools2D::IsPointInPolygon(Pd, PolyVertsD);
+// 	};
+// 	
+// 	TArray<FVector2D> PolyVerts2D;
+// 	PolyVerts2D.Reserve(PolyVerts.Num());
+// 	for (const FVector2f& Vf : PolyVerts)
+// 	{
+// 		PolyVerts2D.Add( FVector2D(Vf.X, Vf.Y) );
+// 	}
+// 	
+// 	// 2) Generate interior jittered grid points
+// 	double TargetLen = 1.5; 
+// 	// compute boundary bbox
+// 	FBox2D BB(EForceInit::ForceInit);
+// 	for (auto& P : PolyVerts) BB += FVector2D(P);
+// 	float Spacing = TargetLen * 0.9f;
+// 	int NX = FMath::CeilToInt(BB.GetSize().X / Spacing);
+// 	int NY = FMath::CeilToInt(BB.GetSize().Y / Spacing);
+// 	
+// 	TArray<FVector2f> InteriorPts;
+// 	std::mt19937_64 RNG(FPlatformTime::Cycles());
+// 	std::uniform_real_distribution<float> J(-0.5f,0.5f);
+// 	
+// 	// for (int ix = 0; ix < NX; ++ix)
+// 	// {
+// 	// 	for (int iy = 0; iy < NY; ++iy)
+// 	// 	{
+// 	// 		FVector2D Cent2D((float)Cent.X, (float)Cent.Y);  
+// 	//
+// 	// 		if (FGeomTools2D::IsPointInPolygon(FVector2d(P), PolyVerts))
+// 	// 		{
+// 	// 			InteriorPts.Add(FVector2f(P));
+// 	// 		}
+// 	// 	}
+// 	// }
+// 	
+// 	// 3) Combine boundary + interior
+// 	TArray<FVector2f> AllPts = PolyVerts;
+// 	AllPts.Append(InteriorPts);
+//
+// 	
+// 	// Step 2: Triangulate
+// 	TArray<UE::Geometry::FIndex3i> Triangles;
+// 	PolygonTriangulation::TriangulateSimplePolygon<float>(AllPts, Triangles, false);
+//
+//
+//
+// 	if (Triangles.Num() == 0)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Triangulation failed"));
+// 		return;
+// 	}
+//
+//
+// 	for (const FVector2f& V : PolyVerts)
+// 	{
+// 		int VID = Mesh.AppendVertex(FVector3d(V.X, V.Y, 0)); // z = 0
+// 		VertexIDs.Add(VID);
+// 	}
+// 	// Assume PolyVerts is TArray<FVector2f> of your samples in order
+// 	float SignedArea = 0.f;
+// 	int N = PolyVerts.Num();
+// 	for (int i = 0; i < N; ++i)
+// 	{
+// 		const FVector2f& A = PolyVerts[i];
+// 		const FVector2f& B = PolyVerts[(i+1) % N];
+// 		SignedArea += (A.X * B.Y - B.X * A.Y);
+// 	}
+// 	SignedArea *= 0.5f;
+//
+// 	
+// 	// Insert triangles
+// 	for (const UE::Geometry::FIndex3i& Tri : Triangles)
+// 	{
+// 		Mesh.AppendTriangle(VertexIDs[Tri.A], VertexIDs[Tri.B], VertexIDs[Tri.C]);
+// 	}
+//
+//
+// 	
+// 	// Step 4: Extract to UE arrays
+// 	TArray<FVector> Vertices;
+// 	TArray<int32> Indices;
+//
+// 	for (int vid : Mesh.VertexIndicesItr())
+// 	{
+// 		FVector3d Pos = Mesh.GetVertex(vid);
+// 		Vertices.Add(FVector(Pos.X, Pos.Y, Pos.Z));
+// 	}
+// 	
+// 	// for (int tid : Mesh.TriangleIndicesItr())
+// 	// {
+// 	// 	UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+// 	// 	Indices.Add(Tri.C);
+// 	// 	Indices.Add(Tri.B);
+// 	// 	Indices.Add(Tri.A);
+// 	// }
+//
+// 	// fix this later to always wind positive before triangluation but this is a temporary fix for now
+// 	bool bReverseWinding = (SignedArea < 0.f);
+// 	for (int tid : Mesh.TriangleIndicesItr())
+// 	{
+// 		UE::Geometry::FIndex3i Tri = Mesh.GetTriangle(tid);
+// 		if (bReverseWinding)
+// 		{
+// 			// flip each triangle
+// 			Indices.Add(Tri.A);
+// 			Indices.Add(Tri.B);
+// 			Indices.Add(Tri.C);
+// 		}
+// 		else
+// 		{
+// 			// keep normal winding, here c to a is noremal winding
+// 			Indices.Add(Tri.C);
+// 			Indices.Add(Tri.B);
+// 			Indices.Add(Tri.A);
+// 		}
+// 	}
+// 	
+// 	LastBuiltMesh           = MoveTemp(Mesh);
+// 	LastBuiltSeamVertexIDs  = MoveTemp(LastSeamVertexIDs);
+//
+// 	// Step 5: Build procedural mesh
+// 	CreateProceduralMesh(Vertices, Indices);
+// }
 
 
 

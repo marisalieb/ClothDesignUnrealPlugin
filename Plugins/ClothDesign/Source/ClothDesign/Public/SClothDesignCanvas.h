@@ -50,6 +50,7 @@
 #include "UObject/SavePackage.h"
 #include "Misc/PackageName.h"
 #include "ObjectTools.h"
+#include "Polygon2.h"           // for TPolygon2
 
 // struct FCurvePoint
 // {
@@ -381,5 +382,9 @@ private:
 	bool bIsPanning = false;
 	FVector2D LastMousePos = FVector2D::ZeroVector;
 
+
+	static bool IsPointInPolygon(
+	const FVector2f& Test, 
+	const TArray<FVector2f>& Poly);
 
 };

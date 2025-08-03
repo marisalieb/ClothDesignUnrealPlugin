@@ -2101,11 +2101,14 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(
 	    Indices.Add(T.A);
 	}
 
+	LastBuiltMesh           = MoveTemp(Mesh);
+	LastBuiltSeamVertexIDs  = MoveTemp(LastSeamVertexIDs);
+	
 	CreateProceduralMesh(Vertices, Indices);
 	
 }
 
-
+//
 // // second version but with steiner points, working random delaunay
 // void SClothDesignCanvas::TriangulateAndBuildMesh(
 // 	const FInterpCurve<FVector2D>& Shape,
@@ -2618,7 +2621,7 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(
 // 	// Step 5: Build procedural mesh
 // 	CreateProceduralMesh(Vertices, Indices);
 // }
-//
+
 
 
 //

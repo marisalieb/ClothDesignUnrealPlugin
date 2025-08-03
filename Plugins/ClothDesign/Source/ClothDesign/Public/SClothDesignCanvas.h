@@ -1,105 +1,24 @@
 #pragma once
 
-#include <random>
-
-
 #include "Widgets/SCompoundWidget.h"
-#include "CompGeom/PolygonTriangulation.h"
-#include "ProceduralMeshComponent.h"
-// #include "Math/InterpCurve.h"
-
-// using namespace UE::Geometry;
-#include "VectorTypes.h"
 #include "Math/InterpCurve.h"
-// #include "Math/Vector2D.h"
 #include "DynamicMesh/DynamicMesh3.h"
-#include "DynamicMeshEditor.h"
-#include "MeshRegionBoundaryLoops.h"
-
 #include "PatternSewingConstraint.h"
 #include "AClothPatternMeshActor.h"
-#include "DynamicMesh/DynamicMesh3.h"
-#include "DynamicMeshEditor.h"
-
-#include "CleaningOps/RemeshMeshOp.h"
-#include "MeshOpPreviewHelpers.h" 
-#include "DynamicMesh/DynamicMesh3.h"
-#include "DynamicMeshEditor.h"
-#include "DynamicMesh/DynamicMesh3.h"
-#include "MeshDescriptionAdapter.h"
-#include "Curve/DynamicGraph.h"
-#include "DynamicMesh/InfoTypes.h"
-#include "DynamicMesh/DynamicMesh3.h"         // for FDynamicMesh3, FEdgeSplitInfo, etc.
-#include "DynamicMeshEditor.h"
-#include "Curve/DynamicGraph.h"
-#include "DynamicMesh/DynamicMesh3.h"
-#include "ConstrainedDelaunay2.h"
-#include "DynamicMesh/DynamicMesh3.h"
-#include "Spatial/PointHashGrid2.h" // optional for poisson
 #include "Misc/ScopeLock.h"
-#include "GeomTools.h"
-
-#include "AssetRegistry/AssetRegistryModule.h"
-#include "PackageTools.h"
-#include "ObjectTools.h"
-#include "EditorAssetLibrary.h"
-
 #include "UClothShapeAsset.h"
 #include "UObject/Package.h"
-#include "AssetRegistry/AssetRegistryModule.h"
-#include "UObject/SavePackage.h"
 #include "Misc/PackageName.h"
-#include "ObjectTools.h"
-#include "Polygon2.h"           // for TPolygon2
+#include "MeshOpPreviewHelpers.h" 
 
-// struct FCurvePoint
-// {
-// 	FInterpCurvePoint<FVector2D> Point;
-// 	bool bUseBezierHandle = true;  // default to Bezier
-//
-// 	// convenience
-// 	FVector2D& OutVal()        { return Point.OutVal; }
-// 	FVector2D& ArriveTangent() { return Point.ArriveTangent; }
-// 	FVector2D& LeaveTangent()  { return Point.LeaveTangent; }
-// };
-//
-// struct FCurve
-// {
-// 	TArray<FCurvePoint> Points;
-// 	float AutoSetTangentStrength = 0.5f;
-// 	void AutoSetTangents()
-// 	{
-// 		// your existing AutoSetTangents logic, but operate on FMyCurvePoint::Point
-// 	}
-// 	FVector2D Eval(float InVal) const
-// 	{
-// 		// replicate Shape.Eval(...) by building a temporary FInterpCurve from the .Point members
-// 	}
-// };
-//
-// struct FCurveWithFlags
-// {
-// 	FInterpCurve<FVector2D>   Curve;              // your existing curve
-// 	TArray<bool> bUseBezierHandle;   // same length as Curve.Points
-//
-// 	void AddPoint(const FInterpCurvePoint<FVector2D>& NewPt, bool bBezier)
-// 	{
-// 		Curve.Points.Add(NewPt);
-// 		bUseBezierHandle.Add(bBezier);
-// 	}
-// };
 
 // Canvas state struct
 struct FCanvasState
 {
-	// TArray<FVector2D> Points;
-	// int32 SelectedPointIndex = INDEX_NONE;
-	// FVector2D PanOffset = FVector2D::ZeroVector;
-	// float ZoomFactor = 1.0f;
+
 	FInterpCurve<FVector2D> CurvePoints;  // Was: TArray<FVector2D> Points
 	TArray<FInterpCurve<FVector2D>> CompletedShapes;
-	// FCurveWithFlags CurvePoints;
-	// TArray<FCurveWithFlags> CompletedShapes; // !!
+
 
 
 	int32 SelectedPointIndex;

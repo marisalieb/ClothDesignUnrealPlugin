@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UClothShapeAsset.generated.h"
+#include "ClothShapeAsset.generated.h"
 
 USTRUCT(BlueprintType)
 struct FCurvePointData

@@ -1,4 +1,4 @@
-#include "AClothPatternMeshActor.h"
+#include "ClothPatternMeshActor.h"
 
 
 AClothPatternMeshActor::AClothPatternMeshActor()

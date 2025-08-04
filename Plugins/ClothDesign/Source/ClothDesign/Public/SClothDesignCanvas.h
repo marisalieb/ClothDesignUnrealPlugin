@@ -4,43 +4,16 @@
 #include "Math/InterpCurve.h"
 #include "DynamicMesh/DynamicMesh3.h"
 #include "PatternSewingConstraint.h"
-#include "AClothPatternMeshActor.h"
+#include "ClothPatternMeshActor.h"
 #include "Misc/ScopeLock.h"
-#include "UClothShapeAsset.h"
+#include "ClothShapeAsset.h"
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
 #include "MeshOpPreviewHelpers.h" 
+#include "CanvasUtils.h"
+#include "CanvasAssets.h"
 
 
-// Canvas state struct
-struct FCanvasState
-{
-
-	FInterpCurve<FVector2D> CurvePoints;  // Was: TArray<FVector2D> Points
-	TArray<FInterpCurve<FVector2D>> CompletedShapes;
-
-
-
-	int32 SelectedPointIndex;
-	FVector2D PanOffset;
-	float ZoomFactor;
-	
-	TArray<bool> bUseBezierPerPoint; // For the current curve
-	TArray<TArray<bool>> CompletedBezierFlags; // for completed shapes
-
-	
-	// Optional equality operator 
-	bool operator==(const FCanvasState& Other) const
-	{
-		return	CurvePoints == Other.CurvePoints &&
-				bUseBezierPerPoint == Other.bUseBezierPerPoint && 
-				CompletedShapes == Other.CompletedShapes &&
-				CompletedBezierFlags == Other.CompletedBezierFlags &&
-			    SelectedPointIndex == Other.SelectedPointIndex &&
-			    PanOffset == Other.PanOffset &&
-			    FMath::IsNearlyEqual(ZoomFactor, Other.ZoomFactor);
-	} 
-};
 class SClothDesignCanvas : public SCompoundWidget
 {
 public:
@@ -59,15 +32,18 @@ public:
 						  const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements,
 						  int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
 
-	// Trigger mesh generation from drawn shape
-	//void TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape);
+
 
 	TArray<int32> LastSeamVertexIDs;  // filled each time you build a mesh
 
 	void TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape, bool bRecordSeam = false,
 								 int32 StartPointIdx2D = -1, int32 EndPointIdx2D = -1);
 
-	
+	void CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices);
+
+	void TriangulateAndBuildAllMeshes();
+
+
 	
 	float ZoomFactor = 5.0f;
 	FVector2D PanOffset = FVector2D::ZeroVector;
@@ -143,7 +119,7 @@ public:
 
 
 	mutable int32 SelectedShapeIndex = INDEX_NONE;
-	void TriangulateAndBuildAllMeshes();
+
 
 
 	// sewing
@@ -258,24 +234,27 @@ public:
 	void ClearCurrentShapeData();
 	void ClearCurvePointArrays();
 
+	const TArray<FInterpCurve<FVector2D>>& GetCompletedShapes() const { return CompletedShapes; }
+	const TArray<TArray<bool>>& GetCompletedBezierFlags() const { return CompletedBezierFlags; }
+	const FInterpCurve<FVector2D>& GetCurrentCurvePoints() const { return CurvePoints; }
+	const TArray<bool>& GetCurrentBezierFlags() const { return bUseBezierPerPoint; }
 
 
 	
 	
 protected:
-	void CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices);
 
 	// Undo/Redo stacks
 	TArray<FCanvasState> UndoStack;
 	TArray<FCanvasState> RedoStack;
 
 	// State management
-	void SaveStateForUndo();
+	// void SaveStateForUndo();
 	FCanvasState GetCurrentCanvasState() const;
 	void RestoreCanvasState(const FCanvasState& State);
 
-	void Undo();
-	void Redo();
+	// void Undo();
+	// void Redo();
 
 	
 	/** All the procedural mesh actors we’ve spawned for patterns */

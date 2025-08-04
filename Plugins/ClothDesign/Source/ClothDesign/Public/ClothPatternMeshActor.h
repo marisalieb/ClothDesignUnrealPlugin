@@ -7,7 +7,7 @@
 #include "DynamicMesh/DynamicMesh3.h"
 
 // Required for UCLASS to work:
-#include "AClothPatternMeshActor.generated.h" // necessary because UE's UCLASS relies on the UHT
+#include "ClothPatternMeshActor.generated.h"
 
 
 UCLASS()

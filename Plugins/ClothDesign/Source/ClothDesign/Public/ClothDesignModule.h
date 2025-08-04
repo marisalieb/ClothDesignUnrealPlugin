@@ -1,11 +1,10 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
 #include "Modules/ModuleManager.h"
 #include "Widgets/Input/SNumericEntryBox.h"
 #include "SClothDesignCanvas.h"
-#include "UClothShapeAsset.h"
+#include "ClothShapeAsset.h"
 #include "AssetToolsModule.h"
 #include "IAssetTools.h"
 

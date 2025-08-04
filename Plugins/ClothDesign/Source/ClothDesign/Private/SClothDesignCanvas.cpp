@@ -1,5 +1,5 @@
 #include "SClothDesignCanvas.h"
-#include "AClothPatternMeshActor.h"
+#include "ClothPatternMeshActor.h"
 #include "CompGeom/Delaunay2.h"
 #include "DynamicMesh/DynamicMesh3.h"
 #include "DynamicMeshEditor.h"
@@ -26,7 +26,7 @@
 #include "Misc/ScopeLock.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "PackageTools.h"
-#include "UClothShapeAsset.h"
+#include "ClothShapeAsset.h"
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
 
@@ -600,7 +600,7 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 		
 		if (CurrentMode == EClothEditorMode::Draw)
 		{
-			SaveStateForUndo();
+			FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
 
 			// 1) add new point on current shape
 			FInterpCurvePoint<FVector2D> NewPoint;
@@ -765,7 +765,7 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 
 					if (FVector2D::Distance(CanvasClickPos, Arrive) < TangentHandleRadius / ZoomFactor)
 					{
-						SaveStateForUndo();
+						FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
 						SelectedShapeIndex = ShapeIndex;
 						SelectedPointIndex = i;
 						SelectedTangentHandle = ETangentHandle::Arrive;
@@ -778,7 +778,8 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 					}
 					else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentHandleRadius / ZoomFactor)
 					{
-						SaveStateForUndo();
+						FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
+
 						SelectedShapeIndex = ShapeIndex;
 						SelectedPointIndex = i;
 						SelectedTangentHandle = ETangentHandle::Leave;
@@ -807,7 +808,9 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 				
 				if (FVector2D::Distance(CanvasClickPos, Arrive) < TangentHandleRadius / ZoomFactor)
 				{
-					SaveStateForUndo();
+					//SaveStateForUndo();
+					FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
+
 					SelectedShapeIndex = INDEX_NONE; // current shape
 					SelectedPointIndex = i;
 					SelectedTangentHandle = ETangentHandle::Arrive;
@@ -820,7 +823,8 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 				}
 				else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentHandleRadius / ZoomFactor)
 				{
-					SaveStateForUndo();
+					FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
+
 					SelectedShapeIndex = INDEX_NONE;
 					SelectedPointIndex = i;
 					SelectedTangentHandle = ETangentHandle::Leave;
@@ -844,7 +848,8 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 					FVector2D WorldPoint = Shape.Points[i].OutVal;
 					if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
 					{
-						SaveStateForUndo();
+						FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
+
 						SelectedShapeIndex = ShapeIndex;
 						SelectedPointIndex = i;
 						bIsShapeSelected = true;
@@ -865,7 +870,8 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 				FVector2D WorldPoint = CurvePoints.Points[i].OutVal;
 				if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
 				{
-					SaveStateForUndo();
+					FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
+
 					SelectedShapeIndex = INDEX_NONE;  // current shape
 					SelectedPointIndex = i;
 					bIsShapeSelected = true;
@@ -1166,7 +1172,8 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 		
 		if (SelectedPointIndex != INDEX_NONE)
 		{
-			SaveStateForUndo();
+			FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
+
 
 			if (SelectedShapeIndex == INDEX_NONE)
 			{
@@ -1227,16 +1234,30 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 	// Check for Undo (Ctrl+Z)
 	if (Key == EKeys::Z && InKeyEvent.IsControlDown())
 	{
-		Undo();
-		return FReply::Handled();
+		FCanvasState CurrentState = GetCurrentCanvasState();
+		if (FCanvasUtils::Undo(UndoStack, RedoStack, CurrentState))
+		{
+			RestoreCanvasState(CurrentState);
+			return FReply::Handled();
+		}
 	}
 
-	// Check for Redo (Ctrl+Y)
 	if (Key == EKeys::Y && InKeyEvent.IsControlDown())
 	{
-		Redo();
-		return FReply::Handled();
+		FCanvasState CurrentState = GetCurrentCanvasState();
+		if (FCanvasUtils::Redo(UndoStack, RedoStack, CurrentState))
+		{
+			RestoreCanvasState(CurrentState);
+			return FReply::Handled();
+		}
 	}
+
+	// // Check for Redo (Ctrl+Y)
+	// if (Key == EKeys::Y && InKeyEvent.IsControlDown())
+	// {
+	// 	Redo();
+	// 	return FReply::Handled();
+	// }
 
 	if (Key == EKeys::F)
 	{
@@ -1276,7 +1297,8 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 		{
 			if (CurvePoints.Points.Num() > 0)
 			{
-				SaveStateForUndo();
+				FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
+
 
 				// add bezier tangents to the start and end points
 				if (CurvePoints.Points.Num() >= 2)
@@ -1426,7 +1448,7 @@ bool SClothDesignCanvas::IsPointInPolygon(
 }
 
 
-// second version but with steiner points, trying delaunay
+// second version but with steiner points, grid spaced constrained delaunay
 void SClothDesignCanvas::TriangulateAndBuildMesh(
 	const FInterpCurve<FVector2D>& Shape,
 	bool bRecordSeam,
@@ -1607,6 +1629,9 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(
 	    Indices.Add(T.A);
 	}
 
+	LastBuiltMesh           = MoveTemp(Mesh);
+	LastBuiltSeamVertexIDs  = MoveTemp(LastSeamVertexIDs);
+
 	CreateProceduralMesh(Vertices, Indices);
 	
 }
@@ -1667,21 +1692,21 @@ void SClothDesignCanvas::CreateProceduralMesh(const TArray<FVector>& Vertices, c
 
 
 
-void SClothDesignCanvas::TriangulateAndBuildAllMeshes()
-{
-
-	// Loop over all completed shapes
-	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
-	{
-		TriangulateAndBuildMesh(Shape);
-	}
-
-	// Optionally, include current shape (if it's closed/finalized)
-	if (CurvePoints.Points.Num() >= 3)
-	{
-		TriangulateAndBuildMesh(CurvePoints);
-	}
-}
+// void SClothDesignCanvas::TriangulateAndBuildAllMeshes()
+// {
+//
+// 	// Loop over all completed shapes
+// 	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
+// 	{
+// 		TriangulateAndBuildMesh(Shape);
+// 	}
+//
+// 	// Optionally, include current shape (if it's closed/finalized)
+// 	if (CurvePoints.Points.Num() >= 3)
+// 	{
+// 		TriangulateAndBuildMesh(CurvePoints);
+// 	}
+// }
 
 
 
@@ -1822,12 +1847,6 @@ void SClothDesignCanvas::BuildAndAlignClickedSeam()
 }
 
 
-void SClothDesignCanvas::SaveStateForUndo()
-{
-	UndoStack.Add(GetCurrentCanvasState());
-	RedoStack.Empty(); // Clear redo on new action
-}
-
 FCanvasState SClothDesignCanvas::GetCurrentCanvasState() const
 {
 	FCanvasState State;
@@ -1866,26 +1885,6 @@ void SClothDesignCanvas::RestoreCanvasState(const FCanvasState& State)
 	Invalidate(EInvalidateWidgetReason::Paint | EInvalidateWidgetReason::Layout);
 }
 
-
-void SClothDesignCanvas::Undo()
-{
-	if (UndoStack.Num() > 0)
-	{
-		RedoStack.Add(GetCurrentCanvasState());
-		const FCanvasState PreviousState = UndoStack.Pop();
-		RestoreCanvasState(PreviousState);
-	}
-}
-
-void SClothDesignCanvas::Redo()
-{
-	if (RedoStack.Num() > 0)
-	{
-		UndoStack.Add(GetCurrentCanvasState());
-		const FCanvasState NextState = RedoStack.Pop();
-		RestoreCanvasState(NextState);
-	}
-}
 
 void SClothDesignCanvas::AddSewingConstraints(
 	AActor* PatternPiece1,
@@ -2400,124 +2399,126 @@ void SClothDesignCanvas::MergeAndWeldLastTwoMeshes()
 
 
 
-bool SClothDesignCanvas::SaveShapeAsset(const FString& AssetPath, const FString& AssetName)
-{
-	// Create package path - e.g. /Game/YourFolder/AssetName
-	FString PackageName = FString::Printf(TEXT("/Game/%s/%s"), *AssetPath, *AssetName);
-	FString SanitizedPackageName = PackageTools::SanitizePackageName(PackageName);
+// bool SClothDesignCanvas::SaveShapeAsset(const FString& AssetPath, const FString& AssetName)
+// {
+// 	// Create package path - e.g. /Game/YourFolder/AssetName
+// 	FString PackageName = FString::Printf(TEXT("/Game/%s/%s"), *AssetPath, *AssetName);
+// 	FString SanitizedPackageName = PackageTools::SanitizePackageName(PackageName);
+//
+// 	UPackage* Package = LoadPackage(nullptr, *SanitizedPackageName, LOAD_None);
+// 	if (!Package)
+// 	{
+// 		// If the package doesn't exist, create it
+// 		Package = CreatePackage(*SanitizedPackageName);
+// 	}
+// 	if (!Package)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Failed to create package for saving asset"));
+// 		return false;
+// 	}
+//
+// 	// Force full load of the package (if not already)
+// 	Package->FullyLoad();
+//
+// 	
+// 	// Try to find existing asset
+// 	UClothShapeAsset* ExistingAsset = FindObject<UClothShapeAsset>(Package, *AssetName);
+// 	UClothShapeAsset* TargetAsset = ExistingAsset;
+//
+// 	if (!TargetAsset)
+// 	{
+// 		// If it doesn't exist, create a new one
+// 		TargetAsset = NewObject<UClothShapeAsset>(Package, *AssetName, RF_Public | RF_Standalone);
+// 		if (!TargetAsset)
+// 		{
+// 			UE_LOG(LogTemp, Error, TEXT("Failed to create new UClothShapeAsset"));
+// 			return false;
+// 		}
+// 	}
+//
+// 	// Clear and copy your canvas data to the asset
+// 	TargetAsset->ClothShapes.Empty();
+// 	TargetAsset->ClothCurvePoints.Empty();
+//
+//
+//
+// 	
+// 	// Copy all completed shapes into asset
+// 	// for (const auto& ShapeCurve : CompletedShapes)
+// 	// {
+// 	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
+// 	{
+// 		const auto& ShapeCurve = CompletedShapes[ShapeIdx];
+// 		const auto& ShapeFlags = CompletedBezierFlags[ShapeIdx];
+// 		
+// 		FShapeData SavedShape;
+// 		
+//
+// 		// int32 i = 0;
+// 		// for (const auto& Point : ShapeCurve.Points)
+// 		// {
+// 		for (int32 i = 0; i < ShapeCurve.Points.Num(); ++i)
+// 		{
+// 			const auto& Point = ShapeCurve.Points[i];
+//
+// 			FCurvePointData NewPoint;
+// 			NewPoint.InputKey = Point.InVal;
+// 			NewPoint.Position = Point.OutVal;
+// 			NewPoint.ArriveTangent = Point.ArriveTangent;
+// 			NewPoint.LeaveTangent = Point.LeaveTangent;
+// 			NewPoint.bUseBezier   = ShapeFlags.IsValidIndex(i) 
+// 									  ? ShapeFlags[i] 
+// 									  : true;
+// 			SavedShape.CompletedClothShape.Add(NewPoint);
+// 			// ++i;
+// 		}
+//
+// 		TargetAsset->ClothShapes.Add(SavedShape);
+// 	}
+//
+//
+//
+// 	
+// 	// Iterate over your FInterpCurve keys (points)
+// 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
+// 	{
+// 		const FInterpCurvePoint<FVector2D>& Point = CurvePoints.Points[i];
+//
+// 		FCurvePointData NewPoint;
+// 		NewPoint.InputKey = Point.InVal;
+// 		NewPoint.Position = Point.OutVal;
+// 		NewPoint.ArriveTangent = Point.ArriveTangent;
+// 		NewPoint.LeaveTangent = Point.LeaveTangent;
+// 		NewPoint.bUseBezier = bUseBezierPerPoint.IsValidIndex(i) ? bUseBezierPerPoint[i] : true;
+//
+//
+// 		// Add to the array
+// 		TargetAsset->ClothCurvePoints.Add(NewPoint);
+// 	}
+//
+// 	
+// 	// Mark dirty and notify asset registry only once
+// 	TargetAsset->MarkPackageDirty();
+// 	FAssetRegistryModule::AssetCreated(TargetAsset);
+// 	
+//
+// 	// Save package to disk
+// 	FString PackageFileName = FPackageName::LongPackageNameToFilename(SanitizedPackageName, FPackageName::GetAssetPackageExtension());
+// 	bool bSaved = UPackage::SavePackage(Package, TargetAsset, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName);
+//
+// 	if (bSaved)
+// 	{
+// 		UE_LOG(LogTemp, Log, TEXT("Asset saved successfully: %s"), *PackageFileName);
+// 		return true;
+// 	}
+// 	else
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Failed to save asset: %s"), *PackageFileName);
+// 		return false;
+// 	}
+// }
 
-	UPackage* Package = LoadPackage(nullptr, *SanitizedPackageName, LOAD_None);
-	if (!Package)
-	{
-		// If the package doesn't exist, create it
-		Package = CreatePackage(*SanitizedPackageName);
-	}
-	if (!Package)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to create package for saving asset"));
-		return false;
-	}
 
-	// Force full load of the package (if not already)
-	Package->FullyLoad();
-
-	
-	// Try to find existing asset
-	UClothShapeAsset* ExistingAsset = FindObject<UClothShapeAsset>(Package, *AssetName);
-	UClothShapeAsset* TargetAsset = ExistingAsset;
-
-	if (!TargetAsset)
-	{
-		// If it doesn't exist, create a new one
-		TargetAsset = NewObject<UClothShapeAsset>(Package, *AssetName, RF_Public | RF_Standalone);
-		if (!TargetAsset)
-		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to create new UClothShapeAsset"));
-			return false;
-		}
-	}
-
-	// Clear and copy your canvas data to the asset
-	TargetAsset->ClothShapes.Empty();
-	TargetAsset->ClothCurvePoints.Empty();
-
-
-
-	
-	// Copy all completed shapes into asset
-	// for (const auto& ShapeCurve : CompletedShapes)
-	// {
-	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
-	{
-		const auto& ShapeCurve = CompletedShapes[ShapeIdx];
-		const auto& ShapeFlags = CompletedBezierFlags[ShapeIdx];
-		
-		FShapeData SavedShape;
-		
-
-		// int32 i = 0;
-		// for (const auto& Point : ShapeCurve.Points)
-		// {
-		for (int32 i = 0; i < ShapeCurve.Points.Num(); ++i)
-		{
-			const auto& Point = ShapeCurve.Points[i];
-
-			FCurvePointData NewPoint;
-			NewPoint.InputKey = Point.InVal;
-			NewPoint.Position = Point.OutVal;
-			NewPoint.ArriveTangent = Point.ArriveTangent;
-			NewPoint.LeaveTangent = Point.LeaveTangent;
-			NewPoint.bUseBezier   = ShapeFlags.IsValidIndex(i) 
-									  ? ShapeFlags[i] 
-									  : true;
-			SavedShape.CompletedClothShape.Add(NewPoint);
-			// ++i;
-		}
-
-		TargetAsset->ClothShapes.Add(SavedShape);
-	}
-
-
-
-	
-	// Iterate over your FInterpCurve keys (points)
-	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-	{
-		const FInterpCurvePoint<FVector2D>& Point = CurvePoints.Points[i];
-
-		FCurvePointData NewPoint;
-		NewPoint.InputKey = Point.InVal;
-		NewPoint.Position = Point.OutVal;
-		NewPoint.ArriveTangent = Point.ArriveTangent;
-		NewPoint.LeaveTangent = Point.LeaveTangent;
-		NewPoint.bUseBezier = bUseBezierPerPoint.IsValidIndex(i) ? bUseBezierPerPoint[i] : true;
-
-
-		// Add to the array
-		TargetAsset->ClothCurvePoints.Add(NewPoint);
-	}
-
-	
-	// Mark dirty and notify asset registry only once
-	TargetAsset->MarkPackageDirty();
-	FAssetRegistryModule::AssetCreated(TargetAsset);
-	
-
-	// Save package to disk
-	FString PackageFileName = FPackageName::LongPackageNameToFilename(SanitizedPackageName, FPackageName::GetAssetPackageExtension());
-	bool bSaved = UPackage::SavePackage(Package, TargetAsset, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName);
-
-	if (bSaved)
-	{
-		UE_LOG(LogTemp, Log, TEXT("Asset saved successfully: %s"), *PackageFileName);
-		return true;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to save asset: %s"), *PackageFileName);
-		return false;
-	}
-}
 
 void SClothDesignCanvas::LoadShapeAssetData()
 {
@@ -2527,107 +2528,79 @@ void SClothDesignCanvas::LoadShapeAssetData()
 		return;
 	}
 
-	// Clear existing data first
-	// ClearCurrentShapeData();
-	CompletedShapes.Empty();
-	CompletedBezierFlags.Empty();
+	FCanvasState LoadedState;
+	if (FCanvasAssets::LoadCanvasState(ClothAsset.Get(), LoadedState))
+	{
+		// Clear any current UI data & then restore in one go
+		ClearCurrentShapeData();
+		RestoreCanvasState(LoadedState);
+	}
 
-	CurvePoints.Points.Empty();
-	bUseBezierPerPoint.Empty();
-	
-	// Reset selection and indices
-	SelectedPointIndex = INDEX_NONE;
-	SelectedShapeIndex = INDEX_NONE;
-	
+	// Force a repaint
 	Invalidate(EInvalidateWidgetReason::Paint);
-	
-	for (const auto& SavedShape : ClothAsset->ClothShapes)
-	{
-		//FInterpCurve<FVector2D> LoadedCurve;
-		//
-		CurvePoints.Points.Empty();
-		bUseBezierPerPoint.Empty();
-		UE_LOG(LogTemp, Log, TEXT("Trying to load shapes!"));
-
-		for (const auto& SavedPoint : SavedShape.CompletedClothShape)
-		{
-			AddPointToCanvas(SavedPoint);
-		}
-		
-		
-		if (CurvePoints.Points.Num() != bUseBezierPerPoint.Num())
-		{
-			UE_LOG(LogTemp, Error, TEXT("Mismatch between points and Bezier flags!"));
-			// Handle error, maybe fix array sizes here
-		}
-		
-		if (bUseBezierPerPoint.Num() == 0)
-		{
-			// Avoid accessing Last()
-			return;
-		}
-		
-		FInterpCurve<FVector2D> CopiedCurve = CurvePoints;
-		
-		// 3. Only add if something was loaded
-		if (CurvePoints.Points.Num() > 0)
-		{
-			CompletedShapes.Add(CopiedCurve);
-			CompletedBezierFlags.Add(bUseBezierPerPoint);
-
-		}
-
-		// UE_LOG(LogTemp, Log, TEXT("Loaded shape %d has %d points, flags: [%s]"),
-		// 	CompletedShapes.Num(),
-		// 	CompletedBezierFlags.Last().Num(),
-		// 	*FString::JoinBy(CompletedBezierFlags.Last(), TEXT(","), [](bool b){ return b ? TEXT("B") : TEXT("N"); })
-		// );
-		
-
-	}
-	
-	
-	SelectedPointIndex = INDEX_NONE;
-	SelectedShapeIndex = INDEX_NONE;
-	
-
-	CurvePoints.Points.Empty();
-	bUseBezierPerPoint.Empty();
-
-	
-	// Example: Suppose your UMyShapeAsset has a TArray<FCurvePointData> called SavedPoints
-	for (const FCurvePointData& Point : ClothAsset->ClothCurvePoints)
-	{
-		UE_LOG(LogTemp, Log, TEXT("Loaded Point: %s"), *Point.Position.ToString());
-		AddPointToCanvas(Point);
-	}
-
-
-	// Refresh the canvas/UI to display loaded data
-	Invalidate(EInvalidateWidgetReason::Paint);
-
 }
 
-
-FString SClothDesignCanvas::GetSelectedShapeAssetPath() const
-{
-	return ClothAsset.IsValid() ? ClothAsset->GetPathName() : FString();
-}
-
-void SClothDesignCanvas::OnShapeAssetSelected(const FAssetData& AssetData)
-{
-	ClothAsset = Cast<UClothShapeAsset>(AssetData.GetAsset());
-
-	if (ClothAsset.IsValid())
-	{
-		UE_LOG(LogTemp, Log, TEXT("Selected shape: %s"), *ClothAsset->GetName());
-
-		LoadShapeAssetData();
-	}
-}
-
-
-
+//
+// void SClothDesignCanvas::LoadShapeAssetData()
+// {
+// 	if (!ClothAsset.IsValid())
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("No valid shape asset to load."));
+// 		return;
+// 	}
+//
+// 	// Clear existing data first
+// 	ClearCurrentShapeData();
+// 	
+// 	Invalidate(EInvalidateWidgetReason::Paint);
+// 	
+// 	for (const auto& SavedShape : ClothAsset->ClothShapes)
+// 	{
+// 		//FInterpCurve<FVector2D> LoadedCurve;
+// 		//
+// 		CurvePoints.Points.Empty();
+// 		bUseBezierPerPoint.Empty();
+// 		UE_LOG(LogTemp, Log, TEXT("Trying to load shapes!"));
+//
+// 		for (const auto& SavedPoint : SavedShape.CompletedClothShape)
+// 		{
+// 			AddPointToCanvas(SavedPoint);
+// 		}
+// 		
+// 		if (CurvePoints.Points.Num() != bUseBezierPerPoint.Num())
+// 		{
+// 			UE_LOG(LogTemp, Error, TEXT("Mismatch between points and Bezier flags!"));
+// 			// Handle error, maybe fix array sizes here
+// 		}
+// 		
+// 		if (bUseBezierPerPoint.Num() == 0)
+// 		{
+// 			// Avoid accessing Last()
+// 			return;
+// 		}
+// 		
+// 		FInterpCurve<FVector2D> CopiedCurve = CurvePoints;
+// 		
+// 		// 3. Only add if something was loaded
+// 		if (CurvePoints.Points.Num() > 0)
+// 		{
+// 			CompletedShapes.Add(CopiedCurve);
+// 			CompletedBezierFlags.Add(bUseBezierPerPoint);
+// 		}
+// 	}
+// 	
+// 	ClearCurvePointArrays();
+// 	
+// 	// Example: Suppose your UMyShapeAsset has a TArray<FCurvePointData> called SavedPoints
+// 	for (const FCurvePointData& Point : ClothAsset->ClothCurvePoints)
+// 	{
+// 		UE_LOG(LogTemp, Log, TEXT("Loaded Point: %s"), *Point.Position.ToString());
+// 		AddPointToCanvas(Point);
+// 	}
+// 	
+// 	// Refresh the canvas/UI to display loaded data
+// 	Invalidate(EInvalidateWidgetReason::Paint);
+// }
 
 
 void SClothDesignCanvas::AddPointToCanvas(const FCurvePointData& Point)
@@ -2690,6 +2663,7 @@ void SClothDesignCanvas::ClearCurrentShapeData()
 	Invalidate(EInvalidateWidgetReason::Paint);
 }
 
+
 void SClothDesignCanvas::ClearCurvePointArrays()
 {
 	// Reset selection and indices
@@ -2707,4 +2681,19 @@ void SClothDesignCanvas::ClearCurvePointArrays()
 
 
 
+FString SClothDesignCanvas::GetSelectedShapeAssetPath() const
+{
+	return ClothAsset.IsValid() ? ClothAsset->GetPathName() : FString();
+}
 
+void SClothDesignCanvas::OnShapeAssetSelected(const FAssetData& AssetData)
+{
+	ClothAsset = Cast<UClothShapeAsset>(AssetData.GetAsset());
+
+	if (ClothAsset.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Selected shape: %s"), *ClothAsset->GetName());
+
+		LoadShapeAssetData();
+	}
+}

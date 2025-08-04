@@ -1,4 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ClothDesignModule.h"
 #include "ClothDesignEditorModeCommands.h"
@@ -14,6 +13,8 @@
 #include "PropertyCustomizationHelpers.h"
 #include "ContentBrowserModule.h"
 #include "IContentBrowserSingleton.h"
+#include "CanvasAssets.h"
+
 
 #define LOCTEXT_NAMESPACE "ClothDesignModule"
 
@@ -43,7 +44,7 @@ void FClothDesignModule::StartupModule()
 	// static const FName TwoDTabName("TwoDWindowTab");
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(TwoDTabName,
 	  FOnSpawnTab::CreateRaw(this, &FClothDesignModule::OnSpawn2DWindowTab))
-	  .SetDisplayName(LOCTEXT("TwoDTabTitle", "2D Editor"))
+	  .SetDisplayName(LOCTEXT("TwoDTabTitle", "ClothDesign 2D Editor"))
 	  .SetMenuType(ETabSpawnerMenuType::Hidden);
 
 
@@ -70,14 +71,6 @@ void FClothDesignModule::Spawn2DWindow()
 }
 
 
-// TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
-// {
-// 	return SNew(SDockTab)
-// 		.TabRole(ETabRole::NomadTab)
-// 		[
-// 			SNew(SClothDesignCanvas) 
-// 		];
-// }
 
 
 void FClothDesignModule::OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivationCause ActivationCause)
@@ -208,90 +201,7 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 							SNew(SSeparator)
 							.Thickness(1.5f)
 						]
-						// 						
-						// + SVerticalBox::Slot()
-						// .AutoHeight()
-						// .Padding(2)
-						// [
-						// 	SNew(SHorizontalBox)
-						//
-						// 	+ SHorizontalBox::Slot()
-						// 	.AutoWidth()
-						// 	.Padding(4)
-						// 	[
-						// 		SNew(STextBlock)
-						// 		.Text(FText::FromString("Load:"))
-						// 	]
-						// 	
-						// 	+ SHorizontalBox::Slot()
-						// 	.AutoWidth()
-						// 	.Padding(4)
-						// 	[
-						// 		SNew(SObjectPropertyEntryBox)
-						// 		.AllowedClass(UClothShapeAsset::StaticClass())
-						// 		.ObjectPath_Lambda([this]()
-						// 		{
-						// 			if (this->CanvasWidget.IsValid())
-						// 			{
-						// 				return this->CanvasWidget->GetSelectedShapeAssetPath();
-						// 			}
-						// 			return FString();
-						// 		})
-						// 		.OnObjectChanged_Lambda([this](const FAssetData& AssetData)
-						// 		{
-						// 			if (this->CanvasWidget.IsValid())
-						// 			{
-						// 				this->CanvasWidget->OnShapeAssetSelected(AssetData);
-						// 			}
-						// 		})
-						// 	]
-						//
-						// ]
-						//
-						// // Text field for the save name
-						// + SVerticalBox::Slot()
-						// .AutoHeight()
-						// .Padding(4)
-						// [
-						// 	SNew(SHorizontalBox)
-						//
-						// 	+ SHorizontalBox::Slot()
-						// 	  .AutoWidth()
-						// 	  .VAlign(VAlign_Center)
-						// 	[
-						// 		SNew(STextBlock)
-						// 		.Text(FText::FromString("Save As:"))
-						// 	]
-						//
-						// 	+ SHorizontalBox::Slot()
-						// 	  .FillWidth(1.f)
-						// 	  .Padding(4,0)
-						// 	[
-						// 		SNew(SEditableTextBox)
-						// 		// Initialize with whatever was in CurrentSaveName
-						// 		.Text_Lambda([this]() { return FText::FromString(CurrentSaveName); })
-						// 		.OnTextCommitted_Lambda([this](const FText& NewText, ETextCommit::Type)
-						// 		{
-						// 			CurrentSaveName = NewText.ToString();
-						// 		})
-						// 	]
-						// ]
-						//
-						//
-						// // save Button
-						// + SVerticalBox::Slot()
-						// .AutoHeight()
-						// .Padding(10)
-						// .HAlign(HAlign_Left) // Optional: Align button to the left
-						// [
-						// 	SNew(SBox)
-						// 	.WidthOverride(240.f) // Set desired fixed width here
-						// 	[
-						// 		SNew(SButton)
-						// 		.Text(FText::FromString("Save"))
-						// 		.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSaveClicked))
-						// 	]
-						// ]
+					
 						+ SVerticalBox::Slot()
 						.AutoHeight()
 						.Padding(6)
@@ -387,20 +297,7 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 							]
 						]
 
-						// 		
-						// + SVerticalBox::Slot()
-						// .AutoHeight()
-						// .Padding(10)
-						// .HAlign(HAlign_Left) // Optional: Align button to the left
-						// [
-						// 	SNew(SBox)
-						// 	.WidthOverride(150.f) // Set desired fixed width here
-						// 	[
-						// 		SNew(SButton)
-						// 		.Text(FText::FromString("Save As"))
-						// 		.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSaveAsClicked))
-						// 	]
-						// ]
+
 						
 						
 						
@@ -442,46 +339,7 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 								.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSewingClicked))
 							]
 						]
-						// + SVerticalBox::Slot()
-						// .AutoHeight()
-						// .Padding(6)
-						// [
-						// 	SNew(SBorder)
-						// 	.BorderImage(FAppStyle::Get().GetBrush("ToolPanel.GroupBorder"))
-						// 	[
-						// 		SNew(SVerticalBox)
-						//
-						// 		// Generate Mesh Button
-						// 		+ SVerticalBox::Slot()
-						// 		.AutoHeight()
-						// 		.Padding(10)
-						// 		.HAlign(HAlign_Left)
-						// 		[
-						// 			SNew(SBox)
-						// 			.WidthOverride(150.f)
-						// 			[
-						// 				SNew(SButton)
-						// 				.Text(FText::FromString("Generate Mesh"))
-						// 				.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
-						// 			]
-						// 		]
-						//
-						// 		// Sewing Button
-						// 		+ SVerticalBox::Slot()
-						// 		.AutoHeight()
-						// 		.Padding(10)
-						// 		.HAlign(HAlign_Left)
-						// 		[
-						// 			SNew(SBox)
-						// 			.WidthOverride(150.f)
-						// 			[
-						// 				SNew(SButton)
-						// 				.Text(FText::FromString("Sewing"))
-						// 				.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSewingClicked))
-						// 			]
-						// 		]
-						// 	]
-						// ]
+						
 
 						
 						+ SVerticalBox::Slot()
@@ -665,40 +523,58 @@ FReply FClothDesignModule::OnSewingClicked()
 }
 
 
-FReply FClothDesignModule::OnSaveClicked()
-{
-	if (CanvasWidget.IsValid())
-	{
-		if (CurrentSaveName.IsEmpty())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Please enter a name before saving."));
-		}
-		else
-		{
-			bool bOK = CanvasWidget->SaveShapeAsset(TEXT("SavedClothMeshes"), CurrentSaveName);
-			UE_LOG(LogTemp, Log, TEXT("Save %s: %s"), *CurrentSaveName, bOK ? TEXT("Success") : TEXT("FAILED"));
-		}
-	}
-	return FReply::Handled();
-
-
-}
-
-
-// FReply FClothDesignModule::OnSaveAsClicked()
+// FReply FClothDesignModule::OnSaveClicked()
 // {
 // 	if (CanvasWidget.IsValid())
 // 	{
-// 		bool bSuccess = CanvasWidget->SaveShapeAsset(TEXT("MySavedMeshes"), TEXT("MyMesh_001"));
-// 		if (bSuccess)
+// 		if (CurrentSaveName.IsEmpty())
 // 		{
-// 			UE_LOG(LogTemp, Log, TEXT("Saved mesh asset successfully!"));
+// 			UE_LOG(LogTemp, Warning, TEXT("Please enter a name before saving."));
+// 		}
+// 		else
+// 		{
+// 			bool bOK = CanvasWidget->SaveShapeAsset(TEXT("SavedClothMeshes"), CurrentSaveName);
+// 			UE_LOG(LogTemp, Log, TEXT("Save %s: %s"), *CurrentSaveName, bOK ? TEXT("Success") : TEXT("FAILED"));
 // 		}
 // 	}
 // 	return FReply::Handled();
-//
-//
 // }
+
+FReply FClothDesignModule::OnSaveClicked()
+{
+	if (!CanvasWidget.IsValid())
+	{
+		return FReply::Handled();
+	}
+
+	if (CurrentSaveName.IsEmpty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Please enter a name before saving."));
+		return FReply::Handled();
+	}
+
+	// Extract required data from the canvas
+	TArray<FInterpCurve<FVector2D>> CompletedShapes = CanvasWidget->GetCompletedShapes();
+	TArray<TArray<bool>> CompletedBezierFlags = CanvasWidget->GetCompletedBezierFlags();
+	FInterpCurve<FVector2D> CurvePoints = CanvasWidget->GetCurrentCurvePoints();
+	TArray<bool> bUseBezierPerPoint = CanvasWidget->GetCurrentBezierFlags();
+
+	// Save
+	bool bOK = FCanvasAssets::SaveShapeAsset(
+		TEXT("SavedClothMeshes"),
+		CurrentSaveName,
+		CompletedShapes,
+		CompletedBezierFlags,
+		CurvePoints,
+		bUseBezierPerPoint
+	);
+
+	UE_LOG(LogTemp, Log, TEXT("Save %s: %s"), *CurrentSaveName, bOK ? TEXT("Success") : TEXT("FAILED"));
+
+	return FReply::Handled();
+}
+
+
 
 FReply FClothDesignModule::OnClearClicked()
 {
@@ -709,9 +585,9 @@ FReply FClothDesignModule::OnClearClicked()
 
 	}
 	return FReply::Handled();
-
-
 }
+
+
 
 void FClothDesignModule::SaveCurrentShapesToAsset()
 {

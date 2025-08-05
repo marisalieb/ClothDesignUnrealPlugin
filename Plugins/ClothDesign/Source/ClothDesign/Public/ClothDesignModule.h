@@ -22,8 +22,13 @@ public:
 	virtual void ShutdownModule() override;
 	
 	void Spawn2DWindow();
-	TSharedRef<class SDockTab> OnSpawn2DWindowTab(const class FSpawnTabArgs& SpawnTabArgs);
+	//TSharedRef<class SDockTab> OnSpawn2DWindowTab(const class FSpawnTabArgs& SpawnTabArgs);
+	TSharedRef<SDockTab> OnSpawn2DWindowTab(const FSpawnTabArgs& Args);
+	TSharedRef<SWidget> MakeBackgroundControls();
+	TSharedRef<SWidget> MakeLoadSavePanel();
 
+
+	
 	static const FName TwoDTabName;
 	void OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivationCause ActivationCause);
 
@@ -46,5 +51,19 @@ private:
 	FReply OnClearClicked();  // Declare the handler
 
 	FString CurrentSaveName = TEXT("ShapeName");
+
 	
+	TSharedRef<SWidget> MakeObjectPicker(
+	const FText& LabelText,
+	UClass* AllowedClass,
+	TFunction<FString()> GetPath,
+	TFunction<void(const FAssetData&)> OnChanged);
+
+	TSharedRef<SWidget> MakeActionButtons();
+	TSharedRef<SWidget> MakeClearAllButton();
+	TSharedRef<SWidget> MakeModeToolbar();
+	TSharedRef<SWidget> MakeModeButton(
+						SClothDesignCanvas::EClothEditorMode InMode,
+						const FText& InLabel);
+
 };

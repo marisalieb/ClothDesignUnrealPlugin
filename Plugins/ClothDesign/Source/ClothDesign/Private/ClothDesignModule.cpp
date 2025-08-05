@@ -39,29 +39,21 @@ void FClothDesignModule::StartupModule()
 		UE_LOG(LogTemp, Error, TEXT("Open2DWindow command NOT valid after Register()!"));
 	}
 	
-	// UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FYourEditorModeModule::RegisterMenus));
-
 	// static const FName TwoDTabName("TwoDWindowTab");
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(TwoDTabName,
 	  FOnSpawnTab::CreateRaw(this, &FClothDesignModule::OnSpawn2DWindowTab))
 	  .SetDisplayName(LOCTEXT("TwoDTabTitle", "ClothDesign 2D Editor"))
 	  .SetMenuType(ETabSpawnerMenuType::Hidden);
-
-
 }
 
 void FClothDesignModule::ShutdownModule()
 {
-
-	
 	// This function may be called during shutdown to clean up module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
-
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(TwoDTabName);
 	UToolMenus::UnregisterOwner(this);
 
 	FClothDesignEditorModeCommands::Unregister();
-	
 }
 
 
@@ -69,9 +61,6 @@ void FClothDesignModule::Spawn2DWindow()
 {
 	FGlobalTabmanager::Get()->TryInvokeTab(FName("TwoDWindowTab"));
 }
-
-
-
 
 void FClothDesignModule::OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivationCause ActivationCause)
 {
@@ -81,396 +70,303 @@ void FClothDesignModule::OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivation
 	}
 }
 
+TSharedRef<SWidget> FClothDesignModule::MakeObjectPicker(
+	const FText& LabelText,
+	UClass* AllowedClass,
+	TFunction<FString()> GetPath,
+	TFunction<void(const FAssetData&)> OnChanged)
+{
+	return SNew(SHorizontalBox)
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
+		.Padding(4)
+		[
+			SNew(STextBlock).Text(LabelText)
+		]
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
+		.Padding(4)
+		[
+			SNew(SObjectPropertyEntryBox)
+			.AllowedClass(AllowedClass)
+			.ObjectPath_Lambda(MoveTemp(GetPath))
+			.OnObjectChanged_Lambda([this, OnChanged](const FAssetData& Asset)
+			{
+				OnChanged(Asset);
+			})
+		];
+}
+
+
+TSharedRef<SWidget> FClothDesignModule::MakeBackgroundControls()
+{
+	return SNew(SVerticalBox)
+
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(2)
+		[
+			SNew(SHorizontalBox)
+            
+			+ SHorizontalBox::Slot().AutoWidth().Padding(4)
+			[
+				SNew(STextBlock).Text(LOCTEXT("BGImageLabel","Background Image:"))
+			]
+			+ SHorizontalBox::Slot().AutoWidth().Padding(4)
+			[
+				SNew(SObjectPropertyEntryBox)
+				.AllowedClass(UTexture2D::StaticClass())
+				.ObjectPath_Lambda([this]() {
+					return CanvasWidget.IsValid()
+						? CanvasWidget->GetSelectedTexturePath()
+						: FString();
+				})
+				.OnObjectChanged_Lambda([this](const FAssetData& Asset){
+					if (CanvasWidget.IsValid())
+						CanvasWidget->OnBackgroundTextureSelected(Asset);
+				})
+			]
+
+		]   
+
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(2)
+		[
+			SNew(SHorizontalBox)
+            
+			+ SHorizontalBox::Slot().AutoWidth().Padding(4)
+			[
+				SNew(STextBlock).Text(LOCTEXT("BGScaleLabel","Background Image Scale:"))
+			]
+			+ SHorizontalBox::Slot().AutoWidth().Padding(4)
+			[
+				SNew(SNumericEntryBox<float>)
+				.Value_Lambda([this]() {
+					return CanvasWidget.IsValid()
+						? CanvasWidget->GetBackgroundImageScale()
+						: TOptional<float>();
+				})
+				.OnValueChanged_Lambda([this](float NewVal){
+					if (CanvasWidget.IsValid())
+						CanvasWidget->OnBackgroundImageScaleChanged(NewVal);
+				})
+				.MinValue(0.1f).MaxValue(10.0f)
+				.AllowSpin(true)
+			]
+		];
+}
+
+TSharedRef<SWidget> FClothDesignModule::MakeLoadSavePanel()
+{ 
+	return SNew(SBorder)
+		.BorderImage(FAppStyle::Get().GetBrush("ToolPanel.GroupBorder"))
+		.Padding(8)
+		[
+			SNew(SVerticalBox)
+
+			+ SVerticalBox::Slot().AutoHeight().Padding(2)
+			[
+				MakeObjectPicker(
+					LOCTEXT("LoadLabel","Load:"),
+					UClothShapeAsset::StaticClass(),
+					[this](){ return CanvasWidget->GetSelectedShapeAssetPath(); },
+					[this](auto Asset){ CanvasWidget->OnShapeAssetSelected(Asset); }
+				)
+			]
+			
+			+ SVerticalBox::Slot().AutoHeight().Padding(4)
+			[
+				SNew(SHorizontalBox)
+				+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
+				  [ SNew(STextBlock).Text(LOCTEXT("SaveAsLabel","Save As:")) ]
+				+ SHorizontalBox::Slot().FillWidth(1.f).Padding(4,0)
+				  [ SNew(SEditableTextBox)
+					.Text_Lambda([this](){ return FText::FromString(CurrentSaveName); })
+					.OnTextCommitted_Lambda([this](auto NewText, ETextCommit::Type){
+						CurrentSaveName = NewText.ToString();
+					})
+				  ]
+			]
+			+ SVerticalBox::Slot().AutoHeight().Padding(10).HAlign(HAlign_Left)
+			[
+				SNew(SBox).WidthOverride(240.f)
+				[
+					SNew(SButton)
+					.Text(LOCTEXT("SaveBtn","Save"))
+					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSaveClicked))
+				]
+			]
+		];
+}
+
+TSharedRef<SWidget> FClothDesignModule::MakeActionButtons()
+{
+	return SNew(SVerticalBox)
+
+		// Generate Mesh
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(10)
+		.HAlign(HAlign_Left)
+		[
+			SNew(SBox)
+			.WidthOverride(150.f)
+			[
+				SNew(SButton)
+				.Text(LOCTEXT("GenerateMeshBtn", "Generate Mesh"))
+				.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
+			]
+		]
+
+		// Sewing
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(10)
+		.HAlign(HAlign_Left)
+		[
+			SNew(SBox)
+			.WidthOverride(150.f)
+			[
+				SNew(SButton)
+				.Text(LOCTEXT("SewingBtn", "Sewing"))
+				.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSewingClicked))
+			]
+		];
+}
+
+TSharedRef<SWidget> FClothDesignModule::MakeClearAllButton()
+{
+	return SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(6)
+		[
+			SNew(SBorder)
+			.BorderImage(FAppStyle::Get().GetBrush("ToolPanel.GroupBorder"))
+			.Padding(8)
+			[
+				SNew(SVerticalBox)
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(10)
+				.HAlign(HAlign_Left) // Optional: Align button to the left
+				[
+					SNew(SBox)
+					.WidthOverride(150.f) // Set desired fixed width here
+					[
+						SNew(SButton)
+						.Text(FText::FromString("Clear All"))
+						.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnClearClicked))
+					]
+				]
+			]
+		];
+}
+
+TSharedRef<SWidget> FClothDesignModule::MakeModeButton(
+		SClothDesignCanvas::EClothEditorMode InMode,
+		const FText& InLabel)
+{
+	return SNew(SButton)
+		.ButtonColorAndOpacity(
+			TAttribute<FSlateColor>::CreateLambda([this, InMode]() {
+				return GetModeButtonColor(InMode);
+			}))
+		.OnClicked_Lambda([this, InMode]() {
+			if (CanvasWidget.IsValid())
+			{
+				CanvasWidget->OnModeButtonClicked(InMode);
+			}
+			return FReply::Handled();
+		})
+		.ContentPadding(FMargin(10, 5))
+		[
+			SNew(STextBlock)
+			.Text(InLabel)
+			.Font(FCoreStyle::GetDefaultFontStyle("Roboto", 11))
+		];
+}
+
+
+TSharedRef<SWidget> FClothDesignModule::MakeModeToolbar()
+{
+	return SNew(SHorizontalBox)
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth().Padding(5)
+		[
+			MakeModeButton(
+				SClothDesignCanvas::EClothEditorMode::Draw,
+				LOCTEXT("Mode_Draw", "Draw")
+			)
+		]
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth().Padding(5)
+		[
+			MakeModeButton(
+				SClothDesignCanvas::EClothEditorMode::Select,
+				LOCTEXT("Mode_Edit", "Edit")
+			)
+		]
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth().Padding(5)
+		[
+			MakeModeButton(
+				SClothDesignCanvas::EClothEditorMode::Sew,
+				LOCTEXT("Mode_Sew", "Sew")
+			)
+		];
+}
+
+
 TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
 {
 	SAssignNew(CanvasWidget, SClothDesignCanvas);
-	
+
 	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
-	// SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
 			SNew(SOverlay)
-			+ SOverlay::Slot()
+
+			+ SOverlay::Slot()  // main layout
 			[
 				SNew(SHorizontalBox)
-				// — Left column: UI panel, fixed width
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
+
+				+ SHorizontalBox::Slot().AutoWidth()
 				[
-					SNew(SBox)
-					.WidthOverride(250)             // whatever width you like
+					SNew(SBox).WidthOverride(250.f)
 					[
 						SNew(SVerticalBox)
-						
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						.Padding(4)
-						[
-							SNew(SSeparator)
-							.Thickness(1.5f)
-						]
 
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						.Padding(2)
-						[
-							SNew(SHorizontalBox)
-						
-							+ SHorizontalBox::Slot()
-							.AutoWidth()
-							.Padding(4)
-							[
-								SNew(STextBlock)
-								.Text(FText::FromString("Background Image:"))
-							]
-							
-							+ SHorizontalBox::Slot()
-							.AutoWidth()
-							.Padding(4)
-							[
-								SNew(SObjectPropertyEntryBox)
-								.AllowedClass(UTexture2D::StaticClass())
-								.ObjectPath_Lambda([this]()
-								{
-									if (this->CanvasWidget.IsValid())
-									{
-										return this->CanvasWidget->GetSelectedTexturePath();
-									}
-									return FString();
-								})
-								.OnObjectChanged_Lambda([this](const FAssetData& AssetData)
-								{
-									if (this->CanvasWidget.IsValid())
-									{
-										this->CanvasWidget->OnBackgroundTextureSelected(AssetData);
-									}
-								})
-							]
-
-						]
-						
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						.Padding(2)
-						[
-							SNew(SHorizontalBox)
-						
-							+ SHorizontalBox::Slot()
-							.AutoWidth()
-							.Padding(4)
-							[
-								SNew(STextBlock)
-								.Text(FText::FromString(TEXT("Background Image Scale:")))
-							]
-						
-							+ SHorizontalBox::Slot()
-							.AutoWidth()
-							.Padding(4)
-							[
-								SNew(SNumericEntryBox<float>)
-
-								.Value_Lambda([this]() -> TOptional<float>
-									{
-										if (CanvasWidget.IsValid())
-										{
-											return CanvasWidget->GetBackgroundImageScale();
-										}
-										return TOptional<float>();
-									})
-									.OnValueChanged_Lambda([this](float NewValue)
-									{
-										if (CanvasWidget.IsValid())
-										{
-											CanvasWidget->OnBackgroundImageScaleChanged(NewValue);
-										}
-									})
-								
-								.MinValue(0.1f)
-								.MaxValue(10.0f)
-								.MinSliderValue(0.1f)
-								.MaxSliderValue(10.0f)
-								.AllowSpin(true)
-								.LabelPadding(FMargin(0))
-							]
-						]
-						
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						.Padding(4)
-						[
-							SNew(SSeparator)
-							.Thickness(1.5f)
-						]
-					
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						.Padding(6)
-						[
-							SNew(SBorder)
-							.BorderImage(FAppStyle::Get().GetBrush("ToolPanel.GroupBorder"))
-							.Padding(8)
-							[
-								SNew(SVerticalBox)
-								
-
-								// Load Asset
-								+ SVerticalBox::Slot()
-								.AutoHeight()
-								.Padding(2)
-								[
-									SNew(SHorizontalBox)
-
-									+ SHorizontalBox::Slot()
-									.AutoWidth()
-									.Padding(4)
-									[
-										SNew(STextBlock)
-										.Text(FText::FromString("Load:"))
-									]
-
-									+ SHorizontalBox::Slot()
-									.AutoWidth()
-									.Padding(4)
-									[
-										SNew(SObjectPropertyEntryBox)
-										.AllowedClass(UClothShapeAsset::StaticClass())
-										.ObjectPath_Lambda([this]()
-										{
-											if (this->CanvasWidget.IsValid())
-											{
-												return this->CanvasWidget->GetSelectedShapeAssetPath();
-											}
-											return FString();
-										})
-										.OnObjectChanged_Lambda([this](const FAssetData& AssetData)
-										{
-											if (this->CanvasWidget.IsValid())
-											{
-												this->CanvasWidget->OnShapeAssetSelected(AssetData);
-											}
-										})
-									]
-								]
-
-								// Save As Text Field
-								+ SVerticalBox::Slot()
-								.AutoHeight()
-								.Padding(4)
-								[
-									SNew(SHorizontalBox)
-
-									+ SHorizontalBox::Slot()
-									.AutoWidth()
-									.VAlign(VAlign_Center)
-									[
-										SNew(STextBlock)
-										.Text(FText::FromString("Save As:"))
-									]
-
-									+ SHorizontalBox::Slot()
-									.FillWidth(1.f)
-									.Padding(4, 0)
-									[
-										SNew(SEditableTextBox)
-										.Text_Lambda([this]() { return FText::FromString(CurrentSaveName); })
-										.OnTextCommitted_Lambda([this](const FText& NewText, ETextCommit::Type)
-										{
-											CurrentSaveName = NewText.ToString();
-										})
-									]
-								]
-
-								// Save Button
-								+ SVerticalBox::Slot()
-								.AutoHeight()
-								.Padding(10)
-								.HAlign(HAlign_Left)
-								[
-									SNew(SBox)
-									.WidthOverride(240.f)
-									[
-										SNew(SButton)
-										.Text(FText::FromString("Save"))
-										.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSaveClicked))
-									]
-								]
-							]
-						]
-
-
-						
-						
-						
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						.Padding(4)
-						[
-							SNew(SSeparator)
-							.Thickness(1.5f)
-						]
-
-
-						
-						// generate mesh Button
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						.Padding(10)
-						.HAlign(HAlign_Left) // Optional: Align button to the left
-						[
-							SNew(SBox)
-							.WidthOverride(150.f) // Set desired fixed width here
-							[
-								SNew(SButton)
-								.Text(FText::FromString("Generate Mesh"))
-								.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
-							]
-						]
-						// sewing Button
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						.Padding(10)
-						.HAlign(HAlign_Left) // Optional: Align button to the left
-						[
-							SNew(SBox)
-							.WidthOverride(150.f) // Set desired fixed width here
-							[
-								SNew(SButton)
-								.Text(FText::FromString("Sewing"))
-								.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSewingClicked))
-							]
-						]
-						
-
-						
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						.Padding(4)
-						[
-							SNew(SSeparator)
-							.Thickness(1.5f)
-						]
-						+ SVerticalBox::Slot()
-						.AutoHeight()
-						.Padding(6)
-						[
-							SNew(SBorder)
-							.BorderImage(FAppStyle::Get().GetBrush("ToolPanel.GroupBorder"))
-							.Padding(8)
-							[
-								SNew(SVerticalBox)
-								+ SVerticalBox::Slot()
-								.AutoHeight()
-								.Padding(10)
-								.HAlign(HAlign_Left) // Optional: Align button to the left
-								[
-									SNew(SBox)
-									.WidthOverride(150.f) // Set desired fixed width here
-									[
-										SNew(SButton)
-										.Text(FText::FromString("Clear All"))
-										.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnClearClicked))
-									]
-								]
-							]
-						]
+						+ SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(2) [ MakeBackgroundControls() ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(6) [ MakeLoadSavePanel() ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(10)[ MakeActionButtons() ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(6) [ MakeClearAllButton() ]
 					]
 				]
-				
-				// Canvas
-				// + SVerticalBox::Slot().FillHeight(1.0f)
-				// — Right column: the Canvas, filling remaining space
-				+ SHorizontalBox::Slot()
-				.FillWidth(1.0f)
+
+				+ SHorizontalBox::Slot().FillWidth(1.0f)
 				[
-					CanvasWidget.ToSharedRef()  // Use the already-created CanvasWidget
+					CanvasWidget.ToSharedRef()
 				]
 			]
 
-			
-		+ SOverlay::Slot()
-		.VAlign(VAlign_Top)
-		.HAlign(HAlign_Right)
-		.Padding(10)
-		[
-		    SNew(SHorizontalBox)
+			+ SOverlay::Slot()  // top-right toolbar
+			.VAlign(VAlign_Top).HAlign(HAlign_Right).Padding(10)
+			[
+				MakeModeToolbar()
+			]
+		];
 
-		    // Draw Button
-		    + SHorizontalBox::Slot()
-		    .AutoWidth()
-		    .Padding(5)
-		    [
-		        SNew(SButton)
-		        // .Text(FText::FromString("Draw"))
-		        .ButtonColorAndOpacity(
-		            TAttribute<FSlateColor>::CreateLambda([this]() {
-		                return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Draw);
-		            }))
-		        .OnClicked_Lambda([this]() {
-		            if (CanvasWidget.IsValid()) {
-		                CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Draw);
-		            }
-		            return FReply::Handled();
-		        })
-		        .ContentPadding(FMargin(10, 5)) // makes it bigger
-		    	[
-					SNew(STextBlock)
-					.Text(FText::FromString("Draw"))
-					.Font(FCoreStyle::GetDefaultFontStyle("Roboto", 11)) 
-				]
-		    ]
-
-		    // Edit Button
-		    + SHorizontalBox::Slot()
-		    .AutoWidth()
-		    .Padding(5)
-		    [
-		        SNew(SButton)
-		        //.Text(FText::FromString("Edit"))
-		        .ButtonColorAndOpacity(
-		            TAttribute<FSlateColor>::CreateLambda([this]() {
-		                return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Select);
-		            }))
-		        .OnClicked_Lambda([this]() {
-		            if (CanvasWidget.IsValid()) {
-		                CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Select);
-		            }
-		            return FReply::Handled();
-		        })
-		        .ContentPadding(FMargin(10, 5))
-		    	[
-					SNew(STextBlock)
-					.Text(FText::FromString("Edit"))
-					.Font(FCoreStyle::GetDefaultFontStyle("Roboto", 11)) 
-				]
-		    ]
-
-		    // Sew Button
-		    + SHorizontalBox::Slot()
-		    .AutoWidth()
-		    .Padding(5)
-		    [
-		        SNew(SButton)
-		        //.Text(FText::FromString("Sew"))
-		        .ButtonColorAndOpacity(
-		            TAttribute<FSlateColor>::CreateLambda([this]() {
-		                return GetModeButtonColor(SClothDesignCanvas::EClothEditorMode::Sew);
-		            }))
-		        .OnClicked_Lambda([this]() {
-		            if (CanvasWidget.IsValid()) {
-		                CanvasWidget->OnModeButtonClicked(SClothDesignCanvas::EClothEditorMode::Sew);
-		            }
-		            return FReply::Handled();
-		        })
-		        .ContentPadding(FMargin(10, 5))
-			    [
-			    	SNew(STextBlock)
-					.Text(FText::FromString("Sew"))
-					.Font(FCoreStyle::GetDefaultFontStyle("Roboto", 11)) 
-			    ]
-		    ]
-		]
-	];
-	
 	// Delay focus until next tick/frame to ensure UI is ready
 	//FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this, NewTab](float DeltaTime)
 	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this](float)
@@ -483,8 +379,8 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 	}));
 	
 	return NewTab;
-	
 }
+
 
 FSlateColor FClothDesignModule::GetModeButtonColor(SClothDesignCanvas::EClothEditorMode Mode) const
 {
@@ -523,23 +419,6 @@ FReply FClothDesignModule::OnSewingClicked()
 }
 
 
-// FReply FClothDesignModule::OnSaveClicked()
-// {
-// 	if (CanvasWidget.IsValid())
-// 	{
-// 		if (CurrentSaveName.IsEmpty())
-// 		{
-// 			UE_LOG(LogTemp, Warning, TEXT("Please enter a name before saving."));
-// 		}
-// 		else
-// 		{
-// 			bool bOK = CanvasWidget->SaveShapeAsset(TEXT("SavedClothMeshes"), CurrentSaveName);
-// 			UE_LOG(LogTemp, Log, TEXT("Save %s: %s"), *CurrentSaveName, bOK ? TEXT("Success") : TEXT("FAILED"));
-// 		}
-// 	}
-// 	return FReply::Handled();
-// }
-
 FReply FClothDesignModule::OnSaveClicked()
 {
 	if (!CanvasWidget.IsValid())
@@ -575,37 +454,28 @@ FReply FClothDesignModule::OnSaveClicked()
 }
 
 
-
 FReply FClothDesignModule::OnClearClicked()
 {
 	// ClearCurrentShapeData
 	if (CanvasWidget.IsValid())
 	{
 		CanvasWidget->ClearCurrentShapeData();
-
 	}
 	return FReply::Handled();
 }
 
 
-
 void FClothDesignModule::SaveCurrentShapesToAsset()
 {
 	UClothShapeAsset* NewAsset = NewObject<UClothShapeAsset>(GetTransientPackage(), UClothShapeAsset::StaticClass(), NAME_None, RF_Public | RF_Standalone);
-
-	// Fill NewAsset->Shapes with your data
-	// ...
-
+	
 	FString PackageName = TEXT("/Game/Cloth/GeneratedShapeAsset");
 	FString AssetName = TEXT("GeneratedShapeAsset");
 
 	FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
 	UObject* FinalAsset = AssetToolsModule.Get().CreateAsset(AssetName, FPackageName::GetLongPackagePath(PackageName), UClothShapeAsset::StaticClass(), nullptr);
     
-	// Copy data into FinalAsset if needed (or use a custom factory)
 }
-
-
 
 
 #undef LOCTEXT_NAMESPACE

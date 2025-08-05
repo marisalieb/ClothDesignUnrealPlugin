@@ -32,11 +32,6 @@ public:
 	
 	UClothDesignEditorMode();
 	virtual ~UClothDesignEditorMode() override;
-	
-	// const static FEditorModeID EM_ClothDesignEditorModeId;
-	//
-	// UClothDesignEditorMode();
-	// virtual ~UClothDesignEditorMode() override;
 
 	/** UEdMode interface */
 	virtual void Enter() override;
@@ -46,15 +41,5 @@ public:
 
 
 	virtual bool UsesTransformWidget() const { return true;}
-	// virtual bool UsesTransformWidget(UE::Widget::EWidgetMode InWidgetMode) const
-	// {
-	// 	return true; // You can also check InWidgetMode to conditionally enable move/rotate/scale
-	// }
-
- 	
- // private:
- // 	class UInteractiveTool* ActiveTool;
-
-
  	
 };

@@ -36,16 +36,12 @@ UClothDesignEditorMode::UClothDesignEditorMode()
 		UClothDesignEditorMode::EM_ClothDesignEditorModeId,
 		LOCTEXT("ModeName", "ClothDesign"),
 		FSlateIcon(),
-		// FSlateIcon(FClothDesignStyle::GetStyleSetName(), "ClothDesignEditorMode.Icon40"),
-
 		true);
 }
-
 
 UClothDesignEditorMode::~UClothDesignEditorMode()
 {
 }
-
 
 void UClothDesignEditorMode::ActorSelectionChangeNotify()
 {
@@ -54,13 +50,10 @@ void UClothDesignEditorMode::ActorSelectionChangeNotify()
 void UClothDesignEditorMode::Enter()
 {
 	UEdMode::Enter();
-
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
+	
 	// AddYourTool Step 2 - register the ToolBuilders for your Tools here.
 	// The string name you pass to the ToolManager is used to select/activate your ToolBuilder later.
-	//////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////// 
+	
 	const FClothDesignEditorModeCommands& SampleToolCommands = FClothDesignEditorModeCommands::Get();
 
 	RegisterTool(SampleToolCommands.SimpleTool, SimpleToolName, NewObject<UClothDesignSimpleToolBuilder>(this));

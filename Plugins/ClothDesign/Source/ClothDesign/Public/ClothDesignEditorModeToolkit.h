@@ -30,11 +30,13 @@ public:
 
 	FReply OnOpen2DWindowClicked();
 
+	TSharedRef<SWidget> MakeOpen2DButton();
+	TSharedRef<SWidget> MakeObjectPicker(
+		const FText& LabelText,
+		UClass* AllowedClass,
+		TFunction<FString()> GetPath,
+		TFunction<void(const FAssetData&)> OnChanged);
 	
-	// void OnClothObjectPicked(const FAssetData& AssetData);
-	// TWeakObjectPtr<AActor> ClothActor;
-	// TWeakObjectPtr<UObject> SelectedClothObject;
-
 	// objects for pickers: collision body mesh, cloth, object, material for fabric
 	TWeakObjectPtr<USkeletalMesh> SelectedSkeletalMesh;
 	TWeakObjectPtr<USkeletalMesh> SelectedClothMesh;

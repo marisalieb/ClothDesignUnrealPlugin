@@ -15,133 +15,214 @@ FClothDesignEditorModeToolkit::FClothDesignEditorModeToolkit()
 {
 }
 
+
+// helper functions to imrpove readability of the main ui init function
+TSharedRef<SWidget> FClothDesignEditorModeToolkit::MakeOpen2DButton()
+{
+	return SNew(SButton)
+		.Text(FText::FromString("Open 2D Window"))
+		.OnClicked(FOnClicked::CreateSP(this, &FClothDesignEditorModeToolkit::OnOpen2DWindowClicked));
+}
+
+TSharedRef<SWidget> FClothDesignEditorModeToolkit::MakeObjectPicker(
+	const FText& LabelText,
+	UClass* AllowedClass,
+	TFunction<FString()> GetPath,
+	TFunction<void(const FAssetData&)> OnChanged)
+{
+	return SNew(SHorizontalBox)
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
+		.Padding(4)
+		[
+			SNew(STextBlock).Text(LabelText)
+		]
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
+		.Padding(4)
+		[
+			SNew(SObjectPropertyEntryBox)
+			.AllowedClass(AllowedClass)
+			.ObjectPath_Lambda(MoveTemp(GetPath))
+			.OnObjectChanged_Lambda([this, OnChanged](const FAssetData& Asset)
+			{
+				OnChanged(Asset);
+			})
+		];
+}
+
 void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, TWeakObjectPtr<UEdMode> InOwningMode)
 {
 	FModeToolkit::Init(InitToolkitHost, InOwningMode);
 
 	// custom UI
 	ToolkitWidget = SNew(SVerticalBox)
+		
+		// open 2d button
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(4)
+		[
+			MakeOpen2DButton()
+		]
 
+		// object pickers
+		+ SVerticalBox::Slot()
+	    .AutoHeight()
+	    .Padding(4)
+		[
+		   MakeObjectPicker(
+			   FText::FromString("Body Object:"),
+			   USkeletalMesh::StaticClass(),
+			   [this]() { return GetSelectedSkeletalMeshPath(); },
+			   [this](const FAssetData& A) { OnSkeletalMeshSelected(A); }
+		   )
+		]
+		
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(4)
+		[
+			MakeObjectPicker(
+				FText::FromString("Cloth Object:"),
+				USkeletalMesh::StaticClass(),
+				[this]() { return GetSelectedClothMeshPath(); },
+				[this](const FAssetData& A) { OnClothMeshSelected(A); }
+			)
+		]
 
-	// // title of the editor mode
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(4)
+		[
+			MakeObjectPicker(
+				FText::FromString("Cloth Material:"),
+				UMaterialInterface::StaticClass(),
+				[this]() { return GetSelectedTextileMaterialPath(); },
+				[this](const FAssetData& A) { OnTextileMaterialSelected(A); }
+			)
+		]
+
+		// save button
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(4)
+		[
+			SNew(SButton)
+			.Text(FText::FromString("Save Pattern"))
+			// .OnClicked(...) // hook up when ready
+		];
 	// + SVerticalBox::Slot()
 	// .AutoHeight()
 	// .Padding(4)
 	// [
-	// 	SNew(STextBlock)
-	// 	.Text(FText::FromString("Cloth Design Editor"))
+	// 	SNew(SVerticalBox)
+	// 	+ SVerticalBox::Slot()
+	// 	// .AutoHeight()
+	// 	.FillHeight(1.0f)
+	// 	[
+	// 		SNew(SButton)
+	// 		.Text(FText::FromString("Open 2D Window"))
+	// 		.OnClicked(FOnClicked::CreateSP(this, &FClothDesignEditorModeToolkit::OnOpen2DWindowClicked))
+	//
+	// 	]
+	// ]
+
+	// // collision body picker
+	// + SVerticalBox::Slot()
+	// .AutoHeight()
+	// .Padding(4)
+	// [
+	// 	SNew(SHorizontalBox)
+	//
+	// 	+ SHorizontalBox::Slot()
+	// 	.AutoWidth()
+	// 	.Padding(4)
+	// 	[
+	// 		SNew(STextBlock)
+	// 		.Text(FText::FromString("Body Object:"))
+	// 	]
+	//
+	// 	+ SHorizontalBox::Slot()
+	// 	.AutoWidth()
+	// 	.Padding(4)
+	// 	[
+	// 		SNew(SObjectPropertyEntryBox)
+	// 		.AllowedClass(USkeletalMesh::StaticClass()) // or AActor::StaticClass()
+	// 		.ObjectPath(this, &FClothDesignEditorModeToolkit::GetSelectedSkeletalMeshPath)
+	// 		.OnObjectChanged(this, &FClothDesignEditorModeToolkit::OnSkeletalMeshSelected)
+	// 	]
 	// ]
 	//
-	// open 2d button
-	+ SVerticalBox::Slot()
-	.AutoHeight()
-	.Padding(4)
-	[
-		SNew(SVerticalBox)
-		+ SVerticalBox::Slot()
-		// .AutoHeight()
-		.FillHeight(1.0f)
-		[
-			SNew(SButton)
-			.Text(FText::FromString("Open 2D Window"))
-			.OnClicked(FOnClicked::CreateSP(this, &FClothDesignEditorModeToolkit::OnOpen2DWindowClicked))
+	// // cloth object picker
+	// + SVerticalBox::Slot()
+	// .AutoHeight()
+	// .Padding(4)
+	// [
+	// 	SNew(SHorizontalBox)
+	//
+	// 	+ SHorizontalBox::Slot()
+	// 	.AutoWidth()
+	// 	.Padding(4)
+	// 	[
+	// 		SNew(STextBlock)
+	// 		.Text(FText::FromString("Cloth Object:"))
+	// 	]
+	//
+	// 	+ SHorizontalBox::Slot()
+	// 	.AutoWidth()
+	// 	.Padding(4)
+	// 	[
+	// 		SNew(SObjectPropertyEntryBox)
+	// 		.AllowedClass(USkeletalMesh::StaticClass()) // or AActor::StaticClass()
+	// 		.ObjectPath(this, &FClothDesignEditorModeToolkit::GetSelectedClothMeshPath)
+	// 		.OnObjectChanged(this, &FClothDesignEditorModeToolkit::OnClothMeshSelected)
+	// 	]
+	// ]
+	//
+	// // cloth material picker
+	// + SVerticalBox::Slot()
+	// .AutoHeight()
+	// .Padding(2)
+	// [
+	// 	SNew(SHorizontalBox)
+	//
+	// 	+ SHorizontalBox::Slot()
+	// 	.AutoWidth()
+	// 	.Padding(4)
+	// 	[
+	// 		SNew(STextBlock)
+	// 		.Text(FText::FromString("Cloth Material:"))
+	// 	]
+	//
+	// 	+ SHorizontalBox::Slot()
+	// 	.AutoWidth()
+	// 	.Padding(4)
+	// 	[
+	// 		SNew(SObjectPropertyEntryBox)
+	// 		.AllowedClass(UMaterialInterface::StaticClass())
+	// 		.ObjectPath(this, &FClothDesignEditorModeToolkit::GetSelectedTextileMaterialPath)
+	// 		.OnObjectChanged(this, &FClothDesignEditorModeToolkit::OnTextileMaterialSelected)
+	// 	]
+	// ]
 
-		]
-	]
-
-	// collision body picker
-	+ SVerticalBox::Slot()
-	.AutoHeight()
-	.Padding(4)
-	[
-		SNew(SHorizontalBox)
-
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(4)
-		[
-			SNew(STextBlock)
-			.Text(FText::FromString("Body Object:"))
-		]
-
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(4)
-		[
-			SNew(SObjectPropertyEntryBox)
-			.AllowedClass(USkeletalMesh::StaticClass()) // or AActor::StaticClass()
-			.ObjectPath(this, &FClothDesignEditorModeToolkit::GetSelectedSkeletalMeshPath)
-			.OnObjectChanged(this, &FClothDesignEditorModeToolkit::OnSkeletalMeshSelected)
-		]
-	]
-	
-	// cloth object picker
-	+ SVerticalBox::Slot()
-	.AutoHeight()
-	.Padding(4)
-	[
-		SNew(SHorizontalBox)
-
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(4)
-		[
-			SNew(STextBlock)
-			.Text(FText::FromString("Cloth Object:"))
-		]
-
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(4)
-		[
-			SNew(SObjectPropertyEntryBox)
-			.AllowedClass(USkeletalMesh::StaticClass()) // or AActor::StaticClass()
-			.ObjectPath(this, &FClothDesignEditorModeToolkit::GetSelectedClothMeshPath)
-			.OnObjectChanged(this, &FClothDesignEditorModeToolkit::OnClothMeshSelected)
-		]
-	]
-
-	// cloth material picker
-	+ SVerticalBox::Slot()
-	.AutoHeight()
-	.Padding(2)
-	[
-		SNew(SHorizontalBox)
-
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(4)
-		[
-			SNew(STextBlock)
-			.Text(FText::FromString("Cloth Material:"))
-		]
-
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(4)
-		[
-			SNew(SObjectPropertyEntryBox)
-			.AllowedClass(UMaterialInterface::StaticClass())
-			.ObjectPath(this, &FClothDesignEditorModeToolkit::GetSelectedTextileMaterialPath)
-			.OnObjectChanged(this, &FClothDesignEditorModeToolkit::OnTextileMaterialSelected)
-		]
-	]
-
-	// save button
-	+ SVerticalBox::Slot()
-	.AutoHeight()
-	.Padding(4)
-	[
-		SNew(SVerticalBox)
-		+ SVerticalBox::Slot()
-		// .AutoHeight()
-		.FillHeight(1.0f)
-		[
-			SNew(SButton)
-			.Text(FText::FromString("Save Pattern")) // needs additional functionality
-		]
-	]
-		;
+	// // save button
+	// + SVerticalBox::Slot()
+	// .AutoHeight()
+	// .Padding(4)
+	// [
+	// 	SNew(SVerticalBox)
+	// 	+ SVerticalBox::Slot()
+	// 	// .AutoHeight()
+	// 	.FillHeight(1.0f)
+	// 	[
+	// 		SNew(SButton)
+	// 		.Text(FText::FromString("Save Pattern")) // needs additional functionality
+	// 	]
+	// ]
+	// 	;
 	
 }
 

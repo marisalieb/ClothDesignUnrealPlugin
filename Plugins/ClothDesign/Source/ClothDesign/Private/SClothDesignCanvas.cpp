@@ -29,20 +29,18 @@
 #include "ClothShapeAsset.h"
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
+#include "CanvasPaint.h"
 
 
 
 
 void SClothDesignCanvas::Construct(const FArguments& InArgs)
 {
-	// Optional: set focusable, mouse events, etc.
-	// Example: just an empty canvas with custom drawing
 	ChildSlot
 	[
 		SNew(SOverlay)
 		+ SOverlay::Slot()
 		[
-			// You could add child widgets here, if needed
 			SNullWidget::NullWidget
 		]
 	];
@@ -52,28 +50,22 @@ void SClothDesignCanvas::Construct(const FArguments& InArgs)
 	
 
 	FSlateApplication::Get().SetKeyboardFocus(SharedThis(this));
-
-	// CurvePoints.Points.Empty();
-
 }
 
 FVector2D SClothDesignCanvas::TransformPoint(const FVector2D& Point) const
 {
 	return (Point * ZoomFactor) + PanOffset;
-	// return (Point - PanOffset) * ZoomFactor;
 }
 
 FVector2D SClothDesignCanvas::InverseTransformPoint(const FVector2D& ScreenPoint) const
 {
 	return (ScreenPoint - PanOffset) / ZoomFactor;
-	// return (ScreenPoint / ZoomFactor) + PanOffset;
 }
-
 
 int32 SClothDesignCanvas::OnPaint(
 	const FPaintArgs& Args,
 	const FGeometry& AllottedGeometry,
-	const FSlateRect& MyCullingRect,
+	const FSlateRect& CullingRect,
 	FSlateWindowElementList& OutDrawElements,
 	int32 LayerId,
 	const FWidgetStyle& InWidgetStyle,
@@ -88,394 +80,441 @@ int32 SClothDesignCanvas::OnPaint(
 
 	FSlateClippingZone ClippingZone(AllottedGeometry);
 	OutDrawElements.PushClip(ClippingZone);
+	// OutDrawElements.PushClip(FSlateClippingZone(AllottedGeometry));
 	
-	// background image
-	if (BackgroundTexture.IsValid())
-	{
-		FVector2D NativeImageSize(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY());
-
-		// Apply user scale to the world size of the background image
-		FVector2D WorldImageSize = NativeImageSize * BackgroundImageScale;
-
-		// Define top-left in world space (0,0 or any other logic if needed)
-		FVector2D WorldTopLeft = FVector2D(0.f, 0.f);
-
-		// Convert world size and position to screen space
-		FVector2D ScreenTopLeft = TransformPoint(WorldTopLeft);
-		FVector2D ScreenSize     = WorldImageSize * ZoomFactor;
-		
-		FSlateBrush Brush;
-		Brush.SetResourceObject(BackgroundTexture.Get());
-		
-		// // Brush.ImageSize = FVector2D(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY());GetSizeY
-
-		// FVector2D ImageSize = FVector2D(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY()) * BackgroundImageScale;
-		// Brush.ImageSize = ImageSize;
-		Brush.ImageSize = NativeImageSize; // Keep the native size here, scaling happens in the draw element
-
-
-		Brush.TintColor = FSlateColor(FLinearColor(1.f, 1.f, 1.f, 0.35f)); // opacity
-		
-		FSlateDrawElement::MakeBox(
-			OutDrawElements,
-			LayerId,
-		    // AllottedGeometry.ToPaintGeometry(FVector2D(0, 0), ImageSize),
-		    AllottedGeometry.ToPaintGeometry(ScreenTopLeft, ScreenSize),
-		    &Brush,
-			ESlateDrawEffect::None,
-			Brush.GetTint(InWidgetStyle)
-		);
+	int32 Layer = LayerId + 1;  // Instead of 0
+	FCanvasPaint Drawer(const_cast<SClothDesignCanvas*>(this));
 	
-		++LayerId;
-	}
-	
-	
-	// Grid color
-	const FLinearColor GridColor(0.215f, 0.215f, 0.215f, 0.6f);
-	const FLinearColor GridColorSmall(0.081f, 0.081f, 0.081f, 0.4f);
-	
-	// --- Draw Grid ---
-	const FVector2D Size = AllottedGeometry.GetLocalSize();
-	// const float NonScaledGridSpacing = 100.f; // spacing in pixels
-
-	// const float GridSpacing = NonScaledGridSpacing* ZoomFactor; // spacing in pixels
-
-	const FVector2D TopLeftScreen     = FVector2D(0, 0);
-	const FVector2D BottomRightScreen = Size;
-
-	// Convert those to “world” (canvas) coordinates
-	FVector2D WorldTopLeft     = InverseTransformPoint(TopLeftScreen);
-	FVector2D WorldBottomRight = InverseTransformPoint(BottomRightScreen);
-	const float WorldGridSpacing = 100.0f;  // e.g. every 100 “canvas” units
+	Layer = Drawer.DrawBackground(AllottedGeometry, OutDrawElements, Layer);
+	Layer = Drawer.DrawGrid(AllottedGeometry, OutDrawElements, Layer);
+	Layer = Drawer.DrawCompletedShapes(AllottedGeometry, OutDrawElements, Layer);
+	Layer = Drawer.DrawCurrentCurve(AllottedGeometry, OutDrawElements, Layer);
 
 	
-	float StartX = FMath::FloorToFloat(WorldTopLeft.X / WorldGridSpacing) * WorldGridSpacing;
-	float EndX   = WorldBottomRight.X;
-
-	float StartY = FMath::FloorToFloat(WorldTopLeft.Y / WorldGridSpacing) * WorldGridSpacing;
-	float EndY   = WorldBottomRight.Y;
-
-	
-	// Vertical lines
-	for (float wx = StartX; wx <= EndX; wx += WorldGridSpacing)
-	{
-		// world‑space endpoints
-		FVector2D A_world(wx, WorldTopLeft.Y);
-		FVector2D B_world(wx, WorldBottomRight.Y);
-
-		// to screen
-		float Ax = TransformPoint(A_world).X;
-		float Bx = TransformPoint(B_world).X;
-
-		FSlateDrawElement::MakeLines(
-			OutDrawElements, LayerId,
-			AllottedGeometry.ToPaintGeometry(),
-			{ FVector2D(Ax, 0), FVector2D(Bx, Size.Y) },
-			ESlateDrawEffect::None, GridColor, true, 2.0f
-		);
-	}
-
-	// Horizontal lines
-	for (float wy = StartY; wy <= EndY; wy += WorldGridSpacing)
-	{
-		FVector2D A_world(WorldTopLeft.X, wy);
-		FVector2D B_world(WorldBottomRight.X, wy);
-
-		float Ay = TransformPoint(A_world).Y;
-		float By = TransformPoint(B_world).Y;
-
-		FSlateDrawElement::MakeLines(
-			OutDrawElements, LayerId,
-			AllottedGeometry.ToPaintGeometry(),
-			{ FVector2D(0, Ay), FVector2D(Size.X, By) },
-			ESlateDrawEffect::None, GridColor, true, 2.0f
-		);
-	}
-
-	
-	// --- Smaller Grid Lines ---
-	const int32 NumSubdivisions = 10;
-	const float SubGridSpacing = WorldGridSpacing / NumSubdivisions;
-
-	// Vertical small lines
-	for (float wx = StartX; wx <= EndX; wx += SubGridSpacing)
-	{
-		if (FMath::IsNearlyZero(FMath::Fmod(wx, WorldGridSpacing), 0.01f))
-			continue; // Skip major lines to avoid drawing twice
-
-		FVector2D A_world(wx, WorldTopLeft.Y);
-		FVector2D B_world(wx, WorldBottomRight.Y);
-
-		float Ax = TransformPoint(A_world).X;
-		float Bx = TransformPoint(B_world).X;
-
-		FSlateDrawElement::MakeLines(
-			OutDrawElements, LayerId,
-			AllottedGeometry.ToPaintGeometry(),
-			{ FVector2D(Ax, 0), FVector2D(Bx, Size.Y) },
-			ESlateDrawEffect::None, GridColorSmall, true, 1.0f
-		);
-	}
-
-	// Horizontal small lines
-	for (float wy = StartY; wy <= EndY; wy += SubGridSpacing)
-	{
-		if (FMath::IsNearlyZero(FMath::Fmod(wy, WorldGridSpacing), 0.01f))
-			continue; // Skip major lines
-
-		FVector2D A_world(WorldTopLeft.X, wy);
-		FVector2D B_world(WorldBottomRight.X, wy);
-
-		float Ay = TransformPoint(A_world).Y;
-		float By = TransformPoint(B_world).Y;
-
-		FSlateDrawElement::MakeLines(
-			OutDrawElements, LayerId,
-			AllottedGeometry.ToPaintGeometry(),
-			{ FVector2D(0, Ay), FVector2D(Size.X, By) },
-			ESlateDrawEffect::None, GridColorSmall, true, 1.0f
-		);
-	}
-
-	// --- Advance Layer for shapes ---
-	LayerId++;
-
-
-
-
-	// ---- POINTS AND LINES -----
-	const FLinearColor LineColour(0.6059f, 1.f, 0.0f, 1.f);
-	const FLinearColor CompletedLineColour(0.26304559f, 0.3405508f, 0.05165f, 1.f);
-
-	const FLinearColor PointColour(0.831, .0f, 1.f, 1.f);
-	const FLinearColor PostCurrentPointColour(0.263463f, .15208f, 0.5659f, 1.f);
-
-	const FLinearColor BezierHandleColour(0.43229f, 0.54342f, 0.0f, 1.f);
-	const FLinearColor CompletedBezierHandleColour(0.1025f, 0.1288f, 0.0f, 1.f);
-
-	
-	// Draw completed shapes first
-	// Sample each Bézier‐style segment into straight‐line chunks and draw them
-	// 	section 1: completed shapes, draw shape points and edge lines
-	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
-	{
-		const auto& Shape = CompletedShapes[ShapeIdx];
-		const auto& BezierFlags = CompletedBezierFlags[ShapeIdx];
-		int32 NumPts = Shape.Points.Num();
-		if (NumPts < 2) continue;
-
-		if (Shape.Points.Num() >= 2)
-		{
-			const int SamplesPerSegment = 10;
-
-			for (int SegIndex = 0; SegIndex < Shape.Points.Num() - 1; ++SegIndex)
-			{
-				float StartInVal = Shape.Points[SegIndex].InVal;
-				float EndInVal = Shape.Points[SegIndex + 1].InVal;
-
-				for (int i = 0; i < SamplesPerSegment; ++i)
-				{
-					float AlphaStart = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
-					float AlphaEnd   = FMath::Lerp(StartInVal, EndInVal, float(i + 1) / SamplesPerSegment);
-
-					FVector2D P1 = TransformPoint(Shape.Eval(AlphaStart));
-					FVector2D P2 = TransformPoint(Shape.Eval(AlphaEnd));
-
-					FSlateDrawElement::MakeLines(
-						OutDrawElements, LayerId,
-						AllottedGeometry.ToPaintGeometry(),
-						{ P1, P2 },
-						ESlateDrawEffect::None,
-						CompletedLineColour,
-						true, 2.0f
-					);
-				}
-			}
-		}
-		
-		// Optional: close the shape
-		if (Shape.Points.Num() > 2)
-		{
-			const FVector2D LastPt = TransformPoint(Shape.Points.Last().OutVal);
-			const FVector2D FirstPt = TransformPoint(Shape.Points[0].OutVal);
-
-			FSlateDrawElement::MakeLines(
-				OutDrawElements,
-				LayerId,
-				AllottedGeometry.ToPaintGeometry(),
-				{ LastPt, FirstPt },
-				ESlateDrawEffect::None,
-				FLinearColor::Black,
-				true,
-				2.0f
-			);
-		}
-
-		++LayerId;
-	}
-	
-	// Draw interactive points and bezier handles for all completed shapes
-	// section 2: completed shapes, bezier handles and 
-	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
-	{
-		const auto& Shape = CompletedShapes[ShapeIdx];
-		for (int32 i = 0; i < Shape.Points.Num(); ++i)
-		{
-			FVector2D DrawPos = TransformPoint(Shape.Points[i].OutVal);
-			FSlateDrawElement::MakeBox(
-				OutDrawElements, LayerId,
-				AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3,3), FVector2D(6,6)),
-				FCoreStyle::Get().GetBrush("WhiteBrush"),
-				ESlateDrawEffect::None,
-				PostCurrentPointColour
-			);
-		}
-		++LayerId;
-	}
-	// Completed shapes handles
-	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
-	{
-		const auto& Shape       = CompletedShapes[ShapeIdx];
-		const auto& BezierFlags = CompletedBezierFlags[ShapeIdx];
-		for (int32 i = 0; i < Shape.Points.Num(); ++i)
-		{
-			if (!BezierFlags[i]) continue;  // skip N-points entirely
-        
-			const auto& Pt    = Shape.Points[i];
-			FVector2D World   = Pt.OutVal;
-			FVector2D DrawPt = TransformPoint(World);
-			FVector2D H1      = TransformPoint(World - Pt.ArriveTangent);
-			FVector2D H2      = TransformPoint(World + Pt.LeaveTangent);
-
-			FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-				{ DrawPt, H1 }, ESlateDrawEffect::None, CompletedBezierHandleColour, true, 1.0f);
-
-			FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-				{ DrawPt, H2 }, ESlateDrawEffect::None, CompletedBezierHandleColour, true, 1.0f);
-
-			// Draw handle boxes
-			FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
-				AllottedGeometry.ToPaintGeometry(H1 - FVector2D(3, 3), FVector2D(6, 6)),
-				FCoreStyle::Get().GetBrush("WhiteBrush"),
-				ESlateDrawEffect::None, PostCurrentPointColour);
-
-			FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
-				AllottedGeometry.ToPaintGeometry(H2 - FVector2D(3, 3), FVector2D(6, 6)),
-				FCoreStyle::Get().GetBrush("WhiteBrush"),
-				ESlateDrawEffect::None, PostCurrentPointColour);
-		}
-		++LayerId;
-	}
-
-	
-	// curve points
-	// 	section 3: in progress shape, draw shape points and edge lines
-	if (CurvePoints.Points.Num() >= 2)
-	{
-		const int SamplesPerSegment = 10; // Smoothness
-
-		for (int SegIndex = 0; SegIndex < CurvePoints.Points.Num() - 1; ++SegIndex)
-		{
-			float StartInVal = CurvePoints.Points[SegIndex].InVal;
-			float EndInVal   = CurvePoints.Points[SegIndex + 1].InVal;
-
-			for (int i = 0; i < SamplesPerSegment; ++i)
-			{
-				float AlphaStart = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
-				float AlphaEnd   = FMath::Lerp(StartInVal, EndInVal, float(i + 1) / SamplesPerSegment);
-
-				FVector2D P1 = TransformPoint(CurvePoints.Eval(AlphaStart));
-				FVector2D P2 = TransformPoint(CurvePoints.Eval(AlphaEnd));
-
-				FSlateDrawElement::MakeLines(
-					OutDrawElements, LayerId,
-					AllottedGeometry.ToPaintGeometry(),
-					{ P1, P2 },
-					ESlateDrawEffect::None,
-					LineColour,
-					true, 2.0f
-				);
-			}
-		}
-
-		++LayerId;
-	}
-
-	// close in progress shape with straight line
-	if (CurvePoints.Points.Num() > 2)
-	{
-		const FVector2D LastPt = TransformPoint(CurvePoints.Points.Last().OutVal);
-		const FVector2D FirstPt = TransformPoint(CurvePoints.Points[0].OutVal);
-	
-		FSlateDrawElement::MakeLines(
-			OutDrawElements,
-			LayerId,
-			AllottedGeometry.ToPaintGeometry(),
-			{ LastPt, FirstPt },
-			ESlateDrawEffect::None,
-			FLinearColor::Black,
-			true,
-			2.0f
-		);
-		++LayerId;
-	}
-	
-
-	// bezier points and lines
-	// section 4: in progress shape, bezier handles and boxes
-	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-	{
-		FVector2D DrawPos = TransformPoint(CurvePoints.Points[i].OutVal);
-		//FLinearColor Color = PointColour;
-		FSlateDrawElement::MakeBox(
-			OutDrawElements,
-			LayerId,
-			AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3, 3), FVector2D(6, 6)),
-			FCoreStyle::Get().GetBrush("WhiteBrush"),
-			ESlateDrawEffect::None,
-			PointColour
-		);
-	}
-	
-
-	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-	{
-		if (!bUseBezierPerPoint[i])
-		{
-			// Optionally skip drawing any handle visuals
-			continue;
-		 }
-		
-		const auto& Pt = CurvePoints.Points[i];
-		const FVector2D Pos = TransformPoint(Pt.OutVal);
-		const FVector2D ArriveHandle = TransformPoint(Pt.OutVal - Pt.ArriveTangent);
-		const FVector2D LeaveHandle  = TransformPoint(Pt.OutVal + Pt.LeaveTangent);
-
-		// Draw lines from point to each handle
-		FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-			{ Pos, ArriveHandle }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
-		FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-			{ Pos, LeaveHandle }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
-
-		// Draw the handles as small draggable boxes
-		FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
-			AllottedGeometry.ToPaintGeometry(ArriveHandle - FVector2D(3, 3), FVector2D(6, 6)),
-			FCoreStyle::Get().GetBrush("WhiteBrush"),
-			ESlateDrawEffect::None, PointColour);
-
-		FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
-			AllottedGeometry.ToPaintGeometry(LeaveHandle - FVector2D(3, 3), FVector2D(6, 6)),
-			FCoreStyle::Get().GetBrush("WhiteBrush"),
-			ESlateDrawEffect::None, PointColour);
-	}
-	
-	// ensureAlways(CurvePoints.Points.Num() == bUseBezierPerPoint.Num());
-	
-
 	OutDrawElements.PopClip(); // end clipping
-	return LayerId;
+	return Layer;
 }
-// Onpaint end
+
+
+
+// int32 SClothDesignCanvas::OnPaint(
+// 	const FPaintArgs& Args,
+// 	const FGeometry& AllottedGeometry,
+// 	const FSlateRect& MyCullingRect,
+// 	FSlateWindowElementList& OutDrawElements,
+// 	int32 LayerId,
+// 	const FWidgetStyle& InWidgetStyle,
+// 	bool bParentEnabled) const
+// {
+// 	const_cast<SClothDesignCanvas*>(this)->LastGeometry = AllottedGeometry;
+// 	
+// 	// Respect parent clipping
+// 	const bool bEnabled = ShouldBeEnabled(bParentEnabled);
+// 	ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
+//
+//
+// 	FSlateClippingZone ClippingZone(AllottedGeometry);
+// 	OutDrawElements.PushClip(ClippingZone);
+// 	
+// 	// background image
+// 	if (BackgroundTexture.IsValid())
+// 	{
+// 		FVector2D NativeImageSize(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY());
+//
+// 		// Apply user scale to the world size of the background image
+// 		FVector2D WorldImageSize = NativeImageSize * BackgroundImageScale;
+//
+// 		// Define top-left in world space (0,0 or any other logic if needed)
+// 		FVector2D WorldTopLeft = FVector2D(0.f, 0.f);
+//
+// 		// Convert world size and position to screen space
+// 		FVector2D ScreenTopLeft = TransformPoint(WorldTopLeft);
+// 		FVector2D ScreenSize     = WorldImageSize * ZoomFactor;
+// 		
+// 		FSlateBrush Brush;
+// 		Brush.SetResourceObject(BackgroundTexture.Get());
+// 		
+// 		// // Brush.ImageSize = FVector2D(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY());GetSizeY
+//
+// 		// FVector2D ImageSize = FVector2D(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY()) * BackgroundImageScale;
+// 		// Brush.ImageSize = ImageSize;
+// 		Brush.ImageSize = NativeImageSize; // Keep the native size here, scaling happens in the draw element
+//
+//
+// 		Brush.TintColor = FSlateColor(FLinearColor(1.f, 1.f, 1.f, 0.35f)); // opacity
+// 		
+// 		FSlateDrawElement::MakeBox(
+// 			OutDrawElements,
+// 			LayerId,
+// 		    // AllottedGeometry.ToPaintGeometry(FVector2D(0, 0), ImageSize),
+// 		    AllottedGeometry.ToPaintGeometry(ScreenTopLeft, ScreenSize),
+// 		    &Brush,
+// 			ESlateDrawEffect::None,
+// 			Brush.GetTint(InWidgetStyle)
+// 		);
+// 	
+// 		++LayerId;
+// 	}
+// 	
+// 	
+// 	// Grid color
+// 	const FLinearColor GridColor(0.215f, 0.215f, 0.215f, 0.6f);
+// 	const FLinearColor GridColorSmall(0.081f, 0.081f, 0.081f, 0.4f);
+// 	
+// 	// --- Draw Grid ---
+// 	const FVector2D Size = AllottedGeometry.GetLocalSize();
+// 	// const float NonScaledGridSpacing = 100.f; // spacing in pixels
+//
+// 	// const float GridSpacing = NonScaledGridSpacing* ZoomFactor; // spacing in pixels
+//
+// 	const FVector2D TopLeftScreen     = FVector2D(0, 0);
+// 	const FVector2D BottomRightScreen = Size;
+//
+// 	// Convert those to “world” (canvas) coordinates
+// 	FVector2D WorldTopLeft     = InverseTransformPoint(TopLeftScreen);
+// 	FVector2D WorldBottomRight = InverseTransformPoint(BottomRightScreen);
+// 	const float WorldGridSpacing = 100.0f;  // e.g. every 100 “canvas” units
+//
+// 	
+// 	float StartX = FMath::FloorToFloat(WorldTopLeft.X / WorldGridSpacing) * WorldGridSpacing;
+// 	float EndX   = WorldBottomRight.X;
+//
+// 	float StartY = FMath::FloorToFloat(WorldTopLeft.Y / WorldGridSpacing) * WorldGridSpacing;
+// 	float EndY   = WorldBottomRight.Y;
+//
+// 	
+// 	// Vertical lines
+// 	for (float wx = StartX; wx <= EndX; wx += WorldGridSpacing)
+// 	{
+// 		// world‑space endpoints
+// 		FVector2D A_world(wx, WorldTopLeft.Y);
+// 		FVector2D B_world(wx, WorldBottomRight.Y);
+//
+// 		// to screen
+// 		float Ax = TransformPoint(A_world).X;
+// 		float Bx = TransformPoint(B_world).X;
+//
+// 		FSlateDrawElement::MakeLines(
+// 			OutDrawElements, LayerId,
+// 			AllottedGeometry.ToPaintGeometry(),
+// 			{ FVector2D(Ax, 0), FVector2D(Bx, Size.Y) },
+// 			ESlateDrawEffect::None, GridColor, true, 2.0f
+// 		);
+// 	}
+//
+// 	// Horizontal lines
+// 	for (float wy = StartY; wy <= EndY; wy += WorldGridSpacing)
+// 	{
+// 		FVector2D A_world(WorldTopLeft.X, wy);
+// 		FVector2D B_world(WorldBottomRight.X, wy);
+//
+// 		float Ay = TransformPoint(A_world).Y;
+// 		float By = TransformPoint(B_world).Y;
+//
+// 		FSlateDrawElement::MakeLines(
+// 			OutDrawElements, LayerId,
+// 			AllottedGeometry.ToPaintGeometry(),
+// 			{ FVector2D(0, Ay), FVector2D(Size.X, By) },
+// 			ESlateDrawEffect::None, GridColor, true, 2.0f
+// 		);
+// 	}
+//
+// 	
+// 	// --- Smaller Grid Lines ---
+// 	const int32 NumSubdivisions = 10;
+// 	const float SubGridSpacing = WorldGridSpacing / NumSubdivisions;
+//
+// 	// Vertical small lines
+// 	for (float wx = StartX; wx <= EndX; wx += SubGridSpacing)
+// 	{
+// 		if (FMath::IsNearlyZero(FMath::Fmod(wx, WorldGridSpacing), 0.01f))
+// 			continue; // Skip major lines to avoid drawing twice
+//
+// 		FVector2D A_world(wx, WorldTopLeft.Y);
+// 		FVector2D B_world(wx, WorldBottomRight.Y);
+//
+// 		float Ax = TransformPoint(A_world).X;
+// 		float Bx = TransformPoint(B_world).X;
+//
+// 		FSlateDrawElement::MakeLines(
+// 			OutDrawElements, LayerId,
+// 			AllottedGeometry.ToPaintGeometry(),
+// 			{ FVector2D(Ax, 0), FVector2D(Bx, Size.Y) },
+// 			ESlateDrawEffect::None, GridColorSmall, true, 1.0f
+// 		);
+// 	}
+//
+// 	// Horizontal small lines
+// 	for (float wy = StartY; wy <= EndY; wy += SubGridSpacing)
+// 	{
+// 		if (FMath::IsNearlyZero(FMath::Fmod(wy, WorldGridSpacing), 0.01f))
+// 			continue; // Skip major lines
+//
+// 		FVector2D A_world(WorldTopLeft.X, wy);
+// 		FVector2D B_world(WorldBottomRight.X, wy);
+//
+// 		float Ay = TransformPoint(A_world).Y;
+// 		float By = TransformPoint(B_world).Y;
+//
+// 		FSlateDrawElement::MakeLines(
+// 			OutDrawElements, LayerId,
+// 			AllottedGeometry.ToPaintGeometry(),
+// 			{ FVector2D(0, Ay), FVector2D(Size.X, By) },
+// 			ESlateDrawEffect::None, GridColorSmall, true, 1.0f
+// 		);
+// 	}
+//
+// 	// --- Advance Layer for shapes ---
+// 	LayerId++;
+//
+//
+//
+//
+// 	// ---- POINTS AND LINES -----
+// 	const FLinearColor LineColour(0.6059f, 1.f, 0.0f, 1.f);
+// 	const FLinearColor CompletedLineColour(0.26304559f, 0.3405508f, 0.05165f, 1.f);
+//
+// 	const FLinearColor PointColour(0.831, .0f, 1.f, 1.f);
+// 	const FLinearColor PostCurrentPointColour(0.263463f, .15208f, 0.5659f, 1.f);
+//
+// 	const FLinearColor BezierHandleColour(0.43229f, 0.54342f, 0.0f, 1.f);
+// 	const FLinearColor CompletedBezierHandleColour(0.1025f, 0.1288f, 0.0f, 1.f);
+//
+// 	
+// 	// Draw completed shapes first
+// 	// Sample each Bézier‐style segment into straight‐line chunks and draw them
+// 	// 	section 1: completed shapes, draw shape points and edge lines
+// 	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
+// 	{
+// 		const auto& Shape = CompletedShapes[ShapeIdx];
+// 		const auto& BezierFlags = CompletedBezierFlags[ShapeIdx];
+// 		int32 NumPts = Shape.Points.Num();
+// 		if (NumPts < 2) continue;
+//
+// 		if (Shape.Points.Num() >= 2)
+// 		{
+// 			const int SamplesPerSegment = 10;
+//
+// 			for (int SegIndex = 0; SegIndex < Shape.Points.Num() - 1; ++SegIndex)
+// 			{
+// 				float StartInVal = Shape.Points[SegIndex].InVal;
+// 				float EndInVal = Shape.Points[SegIndex + 1].InVal;
+//
+// 				for (int i = 0; i < SamplesPerSegment; ++i)
+// 				{
+// 					float AlphaStart = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
+// 					float AlphaEnd   = FMath::Lerp(StartInVal, EndInVal, float(i + 1) / SamplesPerSegment);
+//
+// 					FVector2D P1 = TransformPoint(Shape.Eval(AlphaStart));
+// 					FVector2D P2 = TransformPoint(Shape.Eval(AlphaEnd));
+//
+// 					FSlateDrawElement::MakeLines(
+// 						OutDrawElements, LayerId,
+// 						AllottedGeometry.ToPaintGeometry(),
+// 						{ P1, P2 },
+// 						ESlateDrawEffect::None,
+// 						CompletedLineColour,
+// 						true, 2.0f
+// 					);
+// 				}
+// 			}
+// 		}
+// 		
+// 		// Optional: close the shape
+// 		if (Shape.Points.Num() > 2)
+// 		{
+// 			const FVector2D LastPt = TransformPoint(Shape.Points.Last().OutVal);
+// 			const FVector2D FirstPt = TransformPoint(Shape.Points[0].OutVal);
+//
+// 			FSlateDrawElement::MakeLines(
+// 				OutDrawElements,
+// 				LayerId,
+// 				AllottedGeometry.ToPaintGeometry(),
+// 				{ LastPt, FirstPt },
+// 				ESlateDrawEffect::None,
+// 				FLinearColor::Black,
+// 				true,
+// 				2.0f
+// 			);
+// 		}
+//
+// 		++LayerId;
+// 	}
+// 	
+// 	// Draw interactive points and bezier handles for all completed shapes
+// 	// section 2: completed shapes, bezier handles and 
+// 	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
+// 	{
+// 		const auto& Shape = CompletedShapes[ShapeIdx];
+// 		for (int32 i = 0; i < Shape.Points.Num(); ++i)
+// 		{
+// 			FVector2D DrawPos = TransformPoint(Shape.Points[i].OutVal);
+// 			FSlateDrawElement::MakeBox(
+// 				OutDrawElements, LayerId,
+// 				AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3,3), FVector2D(6,6)),
+// 				FCoreStyle::Get().GetBrush("WhiteBrush"),
+// 				ESlateDrawEffect::None,
+// 				PostCurrentPointColour
+// 			);
+// 		}
+// 		++LayerId;
+// 	}
+// 	// Completed shapes handles
+// 	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
+// 	{
+// 		const auto& Shape       = CompletedShapes[ShapeIdx];
+// 		const auto& BezierFlags = CompletedBezierFlags[ShapeIdx];
+// 		for (int32 i = 0; i < Shape.Points.Num(); ++i)
+// 		{
+// 			if (!BezierFlags[i]) continue;  // skip N-points entirely
+//         
+// 			const auto& Pt    = Shape.Points[i];
+// 			FVector2D World   = Pt.OutVal;
+// 			FVector2D DrawPt = TransformPoint(World);
+// 			FVector2D H1      = TransformPoint(World - Pt.ArriveTangent);
+// 			FVector2D H2      = TransformPoint(World + Pt.LeaveTangent);
+//
+// 			FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
+// 				{ DrawPt, H1 }, ESlateDrawEffect::None, CompletedBezierHandleColour, true, 1.0f);
+//
+// 			FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
+// 				{ DrawPt, H2 }, ESlateDrawEffect::None, CompletedBezierHandleColour, true, 1.0f);
+//
+// 			// Draw handle boxes
+// 			FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
+// 				AllottedGeometry.ToPaintGeometry(H1 - FVector2D(3, 3), FVector2D(6, 6)),
+// 				FCoreStyle::Get().GetBrush("WhiteBrush"),
+// 				ESlateDrawEffect::None, PostCurrentPointColour);
+//
+// 			FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
+// 				AllottedGeometry.ToPaintGeometry(H2 - FVector2D(3, 3), FVector2D(6, 6)),
+// 				FCoreStyle::Get().GetBrush("WhiteBrush"),
+// 				ESlateDrawEffect::None, PostCurrentPointColour);
+// 		}
+// 		++LayerId;
+// 	}
+//
+//
+
+
+
+
+
+
+// 	// curve points
+// 	// 	section 3: in progress shape, draw shape points and edge lines
+// 	if (CurvePoints.Points.Num() >= 2)
+// 	{
+// 		const int SamplesPerSegment = 10; // Smoothness
+//
+// 		for (int SegIndex = 0; SegIndex < CurvePoints.Points.Num() - 1; ++SegIndex)
+// 		{
+// 			float StartInVal = CurvePoints.Points[SegIndex].InVal;
+// 			float EndInVal   = CurvePoints.Points[SegIndex + 1].InVal;
+//
+// 			for (int i = 0; i < SamplesPerSegment; ++i)
+// 			{
+// 				float AlphaStart = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
+// 				float AlphaEnd   = FMath::Lerp(StartInVal, EndInVal, float(i + 1) / SamplesPerSegment);
+//
+// 				FVector2D P1 = TransformPoint(CurvePoints.Eval(AlphaStart));
+// 				FVector2D P2 = TransformPoint(CurvePoints.Eval(AlphaEnd));
+//
+// 				FSlateDrawElement::MakeLines(
+// 					OutDrawElements, LayerId,
+// 					AllottedGeometry.ToPaintGeometry(),
+// 					{ P1, P2 },
+// 					ESlateDrawEffect::None,
+// 					LineColour,
+// 					true, 2.0f
+// 				);
+// 			}
+// 		}
+//
+// 		++LayerId;
+// 	}
+//
+// 	// close in progress shape with straight line
+// 	if (CurvePoints.Points.Num() > 2)
+// 	{
+// 		const FVector2D LastPt = TransformPoint(CurvePoints.Points.Last().OutVal);
+// 		const FVector2D FirstPt = TransformPoint(CurvePoints.Points[0].OutVal);
+// 	
+// 		FSlateDrawElement::MakeLines(
+// 			OutDrawElements,
+// 			LayerId,
+// 			AllottedGeometry.ToPaintGeometry(),
+// 			{ LastPt, FirstPt },
+// 			ESlateDrawEffect::None,
+// 			FLinearColor::Black,
+// 			true,
+// 			2.0f
+// 		);
+// 		++LayerId;
+// 	}
+// 	
+//
+// 	// bezier points and lines
+// 	// section 4: in progress shape, bezier handles and boxes
+// 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
+// 	{
+// 		FVector2D DrawPos = TransformPoint(CurvePoints.Points[i].OutVal);
+// 		//FLinearColor Color = PointColour;
+// 		FSlateDrawElement::MakeBox(
+// 			OutDrawElements,
+// 			LayerId,
+// 			AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3, 3), FVector2D(6, 6)),
+// 			FCoreStyle::Get().GetBrush("WhiteBrush"),
+// 			ESlateDrawEffect::None,
+// 			PointColour
+// 		);
+// 	}
+// 	
+//
+// 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
+// 	{
+// 		if (!bUseBezierPerPoint[i])
+// 		{
+// 			// Optionally skip drawing any handle visuals
+// 			continue;
+// 		 }
+// 		
+// 		const auto& Pt = CurvePoints.Points[i];
+// 		const FVector2D Pos = TransformPoint(Pt.OutVal);
+// 		const FVector2D ArriveHandle = TransformPoint(Pt.OutVal - Pt.ArriveTangent);
+// 		const FVector2D LeaveHandle  = TransformPoint(Pt.OutVal + Pt.LeaveTangent);
+//
+// 		// Draw lines from point to each handle
+// 		FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
+// 			{ Pos, ArriveHandle }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
+// 		FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
+// 			{ Pos, LeaveHandle }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
+//
+// 		// Draw the handles as small draggable boxes
+// 		FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
+// 			AllottedGeometry.ToPaintGeometry(ArriveHandle - FVector2D(3, 3), FVector2D(6, 6)),
+// 			FCoreStyle::Get().GetBrush("WhiteBrush"),
+// 			ESlateDrawEffect::None, PointColour);
+//
+// 		FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
+// 			AllottedGeometry.ToPaintGeometry(LeaveHandle - FVector2D(3, 3), FVector2D(6, 6)),
+// 			FCoreStyle::Get().GetBrush("WhiteBrush"),
+// 			ESlateDrawEffect::None, PointColour);
+// 	}
+// 	
+// 	// ensureAlways(CurvePoints.Points.Num() == bUseBezierPerPoint.Num());
+// 	
+//
+// 	OutDrawElements.PopClip(); // end clipping
+// 	return LayerId;
+// }
+// // Onpaint end
+
+
+
+
+
+
 
 
 void SClothDesignCanvas::RecalculateNTangents(

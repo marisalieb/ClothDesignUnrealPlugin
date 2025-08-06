@@ -27,12 +27,10 @@ public:
 	// --- Mouse handling ---
 	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
 
-	// --- Drawing logic ---
+	// // --- Drawing logic ---
 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
-						  const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements,
-						  int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
-
-
+							  const FSlateRect& CullingRect, FSlateWindowElementList& OutDrawElements,
+							  int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
 
 	TArray<int32> LastSeamVertexIDs;  // filled each time you build a mesh
 

@@ -1,4 +1,4 @@
-#include "CanvasPaint.h"
+#include "Canvas/CanvasPaint.h"
 #include "SClothDesignCanvas.h"
 #include "Rendering/DrawElements.h"
 
@@ -33,23 +33,28 @@ int32 FCanvasPaint::DrawBackground(
         Canvas->BackgroundTexture->GetSizeY());
     
     FVector2D WorldSize = NativeImageSize * Canvas->BackgroundImageScale;
+    
     FVector2D WorldTopLeft   = FVector2D::ZeroVector;
 
-    FVector2D ScreenTopLeft = Canvas->TransformPoint(WorldTopLeft); //* Canvas->ZoomFactor;
-    FVector2D ScreenSize = WorldSize * Canvas->ZoomFactor;
+    FVector2D ScreenTopLeft = Canvas->TransformPoint(WorldTopLeft) ;// * Canvas->ZoomFactor;
+    const FVector2D ScreenBottomRight = Canvas->TransformPoint(WorldTopLeft + WorldSize);
+    // FVector2D ScreenSize = WorldSize * Canvas->ZoomFactor;
+    const FVector2D ScreenSize = ScreenBottomRight - ScreenTopLeft;
 
     FSlateBrush Brush;
     Brush.SetResourceObject(Canvas->BackgroundTexture.Get());
     Brush.ImageSize = NativeImageSize;
     Brush.TintColor = FSlateColor(FLinearColor(1,1,1,.35f)); // opacity
+
+    FPaintGeometry ImageGeo = Geo.ToPaintGeometry(
+            FVector2f(ScreenSize),
+            FSlateLayoutTransform(FVector2f(ScreenTopLeft)));
     
     FSlateDrawElement::MakeBox(
-        OutDraw, Layer,
-        FPaintGeometry(
-            FVector2f(ScreenTopLeft),
-            FVector2f(ScreenSize),
-            1.0f
-        ),        &Brush);
+        OutDraw,
+        Layer,
+        ImageGeo,
+        &Brush);
     
     return Layer + 1;
 }
@@ -129,7 +134,7 @@ int32 FCanvasPaint::DrawCompletedShapes(
     for (int32 ShapeIdx = 0; ShapeIdx < NumShapes; ++ShapeIdx)
     {
         const auto& Shape = Shapes[ShapeIdx];
-        const auto& Flags = BezierFlags[ShapeIdx];
+        //const auto& Flags = BezierFlags[ShapeIdx];
         const int32 NumPts = Shape.Points.Num();
         if (NumPts < 2) continue;
 
@@ -345,7 +350,7 @@ int32 FCanvasPaint::DrawCurrentCurve(
         FVector2D H1      = Canvas->TransformPoint(World - Pt.ArriveTangent);
         FVector2D H2      = Canvas->TransformPoint(World + Pt.LeaveTangent);
 	    
-	    FVector2D Pos = Canvas->TransformPoint(CurvePoints.Points[i].OutVal);
+	    // FVector2D Pos = Canvas->TransformPoint(CurvePoints.Points[i].OutVal);
 
 	   FPaintGeometry HandleLineGeo = Geo.ToPaintGeometry();
 
@@ -411,115 +416,4 @@ int32 FCanvasPaint::DrawCurrentCurve(
     }
     return Layer + 1;
 }
-
-
-
-
-
-// int32 FCanvasPaint::DrawGrid(
-//     const FGeometry& Geo,
-//     FSlateWindowElementList& OutDraw,
-//     int32 Layer)
-// {
-//     // Grid colour
-//     const FLinearColor GridColour(0.215f, 0.215f, 0.215f, 0.6f);
-//     const FLinearColor GridColourSmall(0.081f, 0.081f, 0.081f, 0.4f);
-// 	
-//     const FVector2D Size = Geo.GetLocalSize();
-//     const float WorldGridSpacing = 100.f;
-//     
-//     // const FVector2D TopLeftScreen     = FVector2D(0, 0);
-//     // const FVector2D BottomRightScreen = Size;
-//     FVector2D WorldTopLeft = Canvas->InverseTransformPoint(FVector2D::ZeroVector);
-//     FVector2D WorldBottomRight = Canvas->InverseTransformPoint(Size);
-//
-//     float StartX = FMath::FloorToFloat(WorldTopLeft.X / WorldGridSpacing)*WorldGridSpacing;
-//     float EndX   = WorldBottomRight.X;
-//     float StartY = FMath::FloorToFloat(WorldTopLeft.Y / WorldGridSpacing) * WorldGridSpacing;
-//     float EndY   = WorldBottomRight.Y;
-//     
-//
-//     // Vertical lines
-//     for (float wx = StartX; wx <= EndX; wx += WorldGridSpacing)
-//     {
-//         // world‑space endpoints
-//         FVector2D A_world(wx, WorldTopLeft.Y);
-//         FVector2D B_world(wx, WorldBottomRight.Y);
-// 	
-//         // to screen
-//         float Ax = Canvas->TransformPoint(A_world).X;
-//         float Bx = Canvas->TransformPoint(B_world).X;
-// 	
-//         FSlateDrawElement::MakeLines(
-//             OutDraw, Layer,
-//             Geo.ToPaintGeometry(),
-//             { FVector2D(Ax, 0), FVector2D(Bx, Size.Y) },
-//             ESlateDrawEffect::None, GridColour, true, 2.0f
-//         );
-//     }
-// 	
-//     // Horizontal lines
-//     for (float wy = StartY; wy <= EndY; wy += WorldGridSpacing)
-//     {
-//         FVector2D A_world(WorldTopLeft.X, wy);
-//         FVector2D B_world(WorldBottomRight.X, wy);
-// 	
-//         float Ay = Canvas->TransformPoint(A_world).Y;
-//         float By = Canvas->TransformPoint(B_world).Y;
-//         
-//         FSlateDrawElement::MakeLines(
-//             OutDraw, Layer,
-//             Geo.ToPaintGeometry(),
-//             { FVector2D(0, Ay), FVector2D(Size.X, By) },
-//             ESlateDrawEffect::None, GridColour, true, 2.0f
-//         );
-//     }
-//     
-//     // --- Smaller Grid Lines ---
-//     const int32 NumSubdivisions = 10;
-//     const float SubGridSpacing = WorldGridSpacing / NumSubdivisions;
-// 	   
-//     // Vertical small lines
-//     for (float wx = StartX; wx <= EndX; wx += SubGridSpacing)
-//     {
-//         if (FMath::IsNearlyZero(FMath::Fmod(wx, WorldGridSpacing), 0.01f))
-//             continue; // Skip major lines to avoid drawing twice
-// 	   
-//         FVector2D A_world(wx, WorldTopLeft.Y);
-//         FVector2D B_world(wx, WorldBottomRight.Y);
-// 	   
-//         float Ax = Canvas->TransformPoint(A_world).X;
-//         float Bx = Canvas->TransformPoint(B_world).X;
-//         
-//         FSlateDrawElement::MakeLines(
-//             OutDraw, Layer,
-//             Geo.ToPaintGeometry(),
-//             { FVector2D(Ax, 0), FVector2D(Bx, Size.Y) },
-//             ESlateDrawEffect::None, GridColourSmall, true, 2.0f
-//         );
-//     }
-// 	   
-//     // Horizontal small lines
-//     for (float wy = StartY; wy <= EndY; wy += SubGridSpacing)
-//     {
-//         if (FMath::IsNearlyZero(FMath::Fmod(wy, WorldGridSpacing), 0.01f))
-//             continue; // Skip major lines
-// 	   
-//         FVector2D A_world(WorldTopLeft.X, wy);
-//         FVector2D B_world(WorldBottomRight.X, wy);
-// 	   
-//         float Ay = Canvas->TransformPoint(A_world).Y;
-//         float By = Canvas->TransformPoint(B_world).Y;
-// 	   
-//         FSlateDrawElement::MakeLines(
-//             OutDraw, Layer,
-//             Geo.ToPaintGeometry(),
-//             { FVector2D(0, Ay), FVector2D(Size.X, By) },
-//             ESlateDrawEffect::None, GridColourSmall, true, 2.0f
-//         );
-//     }
-//     
-//     return Layer + 1;
-// }
-
 

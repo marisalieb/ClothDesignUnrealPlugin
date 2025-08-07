@@ -29,7 +29,9 @@
 #include "ClothShapeAsset.h"
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
-#include "CanvasPaint.h"
+#include "Canvas/CanvasPaint.h"
+#include "Canvas/CanvasUtils.h"
+#include "Canvas/CanvasInputHandler.h"
 
 
 
@@ -75,7 +77,7 @@ int32 SClothDesignCanvas::OnPaint(
 	
 	// Respect parent clipping
 	const bool bEnabled = ShouldBeEnabled(bParentEnabled);
-	ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
+	// ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
 
 
 	FSlateClippingZone ClippingZone(AllottedGeometry);
@@ -97,503 +99,11 @@ int32 SClothDesignCanvas::OnPaint(
 
 
 
-// int32 SClothDesignCanvas::OnPaint(
-// 	const FPaintArgs& Args,
-// 	const FGeometry& AllottedGeometry,
-// 	const FSlateRect& MyCullingRect,
-// 	FSlateWindowElementList& OutDrawElements,
-// 	int32 LayerId,
-// 	const FWidgetStyle& InWidgetStyle,
-// 	bool bParentEnabled) const
-// {
-// 	const_cast<SClothDesignCanvas*>(this)->LastGeometry = AllottedGeometry;
-// 	
-// 	// Respect parent clipping
-// 	const bool bEnabled = ShouldBeEnabled(bParentEnabled);
-// 	ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
-//
-//
-// 	FSlateClippingZone ClippingZone(AllottedGeometry);
-// 	OutDrawElements.PushClip(ClippingZone);
-// 	
-// 	// background image
-// 	if (BackgroundTexture.IsValid())
-// 	{
-// 		FVector2D NativeImageSize(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY());
-//
-// 		// Apply user scale to the world size of the background image
-// 		FVector2D WorldImageSize = NativeImageSize * BackgroundImageScale;
-//
-// 		// Define top-left in world space (0,0 or any other logic if needed)
-// 		FVector2D WorldTopLeft = FVector2D(0.f, 0.f);
-//
-// 		// Convert world size and position to screen space
-// 		FVector2D ScreenTopLeft = TransformPoint(WorldTopLeft);
-// 		FVector2D ScreenSize     = WorldImageSize * ZoomFactor;
-// 		
-// 		FSlateBrush Brush;
-// 		Brush.SetResourceObject(BackgroundTexture.Get());
-// 		
-// 		// // Brush.ImageSize = FVector2D(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY());GetSizeY
-//
-// 		// FVector2D ImageSize = FVector2D(BackgroundTexture->GetSizeX(), BackgroundTexture->GetSizeY()) * BackgroundImageScale;
-// 		// Brush.ImageSize = ImageSize;
-// 		Brush.ImageSize = NativeImageSize; // Keep the native size here, scaling happens in the draw element
-//
-//
-// 		Brush.TintColor = FSlateColor(FLinearColor(1.f, 1.f, 1.f, 0.35f)); // opacity
-// 		
-// 		FSlateDrawElement::MakeBox(
-// 			OutDrawElements,
-// 			LayerId,
-// 		    // AllottedGeometry.ToPaintGeometry(FVector2D(0, 0), ImageSize),
-// 		    AllottedGeometry.ToPaintGeometry(ScreenTopLeft, ScreenSize),
-// 		    &Brush,
-// 			ESlateDrawEffect::None,
-// 			Brush.GetTint(InWidgetStyle)
-// 		);
-// 	
-// 		++LayerId;
-// 	}
-// 	
-// 	
-// 	// Grid color
-// 	const FLinearColor GridColor(0.215f, 0.215f, 0.215f, 0.6f);
-// 	const FLinearColor GridColorSmall(0.081f, 0.081f, 0.081f, 0.4f);
-// 	
-// 	// --- Draw Grid ---
-// 	const FVector2D Size = AllottedGeometry.GetLocalSize();
-// 	// const float NonScaledGridSpacing = 100.f; // spacing in pixels
-//
-// 	// const float GridSpacing = NonScaledGridSpacing* ZoomFactor; // spacing in pixels
-//
-// 	const FVector2D TopLeftScreen     = FVector2D(0, 0);
-// 	const FVector2D BottomRightScreen = Size;
-//
-// 	// Convert those to “world” (canvas) coordinates
-// 	FVector2D WorldTopLeft     = InverseTransformPoint(TopLeftScreen);
-// 	FVector2D WorldBottomRight = InverseTransformPoint(BottomRightScreen);
-// 	const float WorldGridSpacing = 100.0f;  // e.g. every 100 “canvas” units
-//
-// 	
-// 	float StartX = FMath::FloorToFloat(WorldTopLeft.X / WorldGridSpacing) * WorldGridSpacing;
-// 	float EndX   = WorldBottomRight.X;
-//
-// 	float StartY = FMath::FloorToFloat(WorldTopLeft.Y / WorldGridSpacing) * WorldGridSpacing;
-// 	float EndY   = WorldBottomRight.Y;
-//
-// 	
-// 	// Vertical lines
-// 	for (float wx = StartX; wx <= EndX; wx += WorldGridSpacing)
-// 	{
-// 		// world‑space endpoints
-// 		FVector2D A_world(wx, WorldTopLeft.Y);
-// 		FVector2D B_world(wx, WorldBottomRight.Y);
-//
-// 		// to screen
-// 		float Ax = TransformPoint(A_world).X;
-// 		float Bx = TransformPoint(B_world).X;
-//
-// 		FSlateDrawElement::MakeLines(
-// 			OutDrawElements, LayerId,
-// 			AllottedGeometry.ToPaintGeometry(),
-// 			{ FVector2D(Ax, 0), FVector2D(Bx, Size.Y) },
-// 			ESlateDrawEffect::None, GridColor, true, 2.0f
-// 		);
-// 	}
-//
-// 	// Horizontal lines
-// 	for (float wy = StartY; wy <= EndY; wy += WorldGridSpacing)
-// 	{
-// 		FVector2D A_world(WorldTopLeft.X, wy);
-// 		FVector2D B_world(WorldBottomRight.X, wy);
-//
-// 		float Ay = TransformPoint(A_world).Y;
-// 		float By = TransformPoint(B_world).Y;
-//
-// 		FSlateDrawElement::MakeLines(
-// 			OutDrawElements, LayerId,
-// 			AllottedGeometry.ToPaintGeometry(),
-// 			{ FVector2D(0, Ay), FVector2D(Size.X, By) },
-// 			ESlateDrawEffect::None, GridColor, true, 2.0f
-// 		);
-// 	}
-//
-// 	
-// 	// --- Smaller Grid Lines ---
-// 	const int32 NumSubdivisions = 10;
-// 	const float SubGridSpacing = WorldGridSpacing / NumSubdivisions;
-//
-// 	// Vertical small lines
-// 	for (float wx = StartX; wx <= EndX; wx += SubGridSpacing)
-// 	{
-// 		if (FMath::IsNearlyZero(FMath::Fmod(wx, WorldGridSpacing), 0.01f))
-// 			continue; // Skip major lines to avoid drawing twice
-//
-// 		FVector2D A_world(wx, WorldTopLeft.Y);
-// 		FVector2D B_world(wx, WorldBottomRight.Y);
-//
-// 		float Ax = TransformPoint(A_world).X;
-// 		float Bx = TransformPoint(B_world).X;
-//
-// 		FSlateDrawElement::MakeLines(
-// 			OutDrawElements, LayerId,
-// 			AllottedGeometry.ToPaintGeometry(),
-// 			{ FVector2D(Ax, 0), FVector2D(Bx, Size.Y) },
-// 			ESlateDrawEffect::None, GridColorSmall, true, 1.0f
-// 		);
-// 	}
-//
-// 	// Horizontal small lines
-// 	for (float wy = StartY; wy <= EndY; wy += SubGridSpacing)
-// 	{
-// 		if (FMath::IsNearlyZero(FMath::Fmod(wy, WorldGridSpacing), 0.01f))
-// 			continue; // Skip major lines
-//
-// 		FVector2D A_world(WorldTopLeft.X, wy);
-// 		FVector2D B_world(WorldBottomRight.X, wy);
-//
-// 		float Ay = TransformPoint(A_world).Y;
-// 		float By = TransformPoint(B_world).Y;
-//
-// 		FSlateDrawElement::MakeLines(
-// 			OutDrawElements, LayerId,
-// 			AllottedGeometry.ToPaintGeometry(),
-// 			{ FVector2D(0, Ay), FVector2D(Size.X, By) },
-// 			ESlateDrawEffect::None, GridColorSmall, true, 1.0f
-// 		);
-// 	}
-//
-// 	// --- Advance Layer for shapes ---
-// 	LayerId++;
-//
-//
-//
-//
-// 	// ---- POINTS AND LINES -----
-// 	const FLinearColor LineColour(0.6059f, 1.f, 0.0f, 1.f);
-// 	const FLinearColor CompletedLineColour(0.26304559f, 0.3405508f, 0.05165f, 1.f);
-//
-// 	const FLinearColor PointColour(0.831, .0f, 1.f, 1.f);
-// 	const FLinearColor PostCurrentPointColour(0.263463f, .15208f, 0.5659f, 1.f);
-//
-// 	const FLinearColor BezierHandleColour(0.43229f, 0.54342f, 0.0f, 1.f);
-// 	const FLinearColor CompletedBezierHandleColour(0.1025f, 0.1288f, 0.0f, 1.f);
-//
-// 	
-// 	// Draw completed shapes first
-// 	// Sample each Bézier‐style segment into straight‐line chunks and draw them
-// 	// 	section 1: completed shapes, draw shape points and edge lines
-// 	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
-// 	{
-// 		const auto& Shape = CompletedShapes[ShapeIdx];
-// 		const auto& BezierFlags = CompletedBezierFlags[ShapeIdx];
-// 		int32 NumPts = Shape.Points.Num();
-// 		if (NumPts < 2) continue;
-//
-// 		if (Shape.Points.Num() >= 2)
-// 		{
-// 			const int SamplesPerSegment = 10;
-//
-// 			for (int SegIndex = 0; SegIndex < Shape.Points.Num() - 1; ++SegIndex)
-// 			{
-// 				float StartInVal = Shape.Points[SegIndex].InVal;
-// 				float EndInVal = Shape.Points[SegIndex + 1].InVal;
-//
-// 				for (int i = 0; i < SamplesPerSegment; ++i)
-// 				{
-// 					float AlphaStart = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
-// 					float AlphaEnd   = FMath::Lerp(StartInVal, EndInVal, float(i + 1) / SamplesPerSegment);
-//
-// 					FVector2D P1 = TransformPoint(Shape.Eval(AlphaStart));
-// 					FVector2D P2 = TransformPoint(Shape.Eval(AlphaEnd));
-//
-// 					FSlateDrawElement::MakeLines(
-// 						OutDrawElements, LayerId,
-// 						AllottedGeometry.ToPaintGeometry(),
-// 						{ P1, P2 },
-// 						ESlateDrawEffect::None,
-// 						CompletedLineColour,
-// 						true, 2.0f
-// 					);
-// 				}
-// 			}
-// 		}
-// 		
-// 		// Optional: close the shape
-// 		if (Shape.Points.Num() > 2)
-// 		{
-// 			const FVector2D LastPt = TransformPoint(Shape.Points.Last().OutVal);
-// 			const FVector2D FirstPt = TransformPoint(Shape.Points[0].OutVal);
-//
-// 			FSlateDrawElement::MakeLines(
-// 				OutDrawElements,
-// 				LayerId,
-// 				AllottedGeometry.ToPaintGeometry(),
-// 				{ LastPt, FirstPt },
-// 				ESlateDrawEffect::None,
-// 				FLinearColor::Black,
-// 				true,
-// 				2.0f
-// 			);
-// 		}
-//
-// 		++LayerId;
-// 	}
-// 	
-// 	// Draw interactive points and bezier handles for all completed shapes
-// 	// section 2: completed shapes, bezier handles and 
-// 	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
-// 	{
-// 		const auto& Shape = CompletedShapes[ShapeIdx];
-// 		for (int32 i = 0; i < Shape.Points.Num(); ++i)
-// 		{
-// 			FVector2D DrawPos = TransformPoint(Shape.Points[i].OutVal);
-// 			FSlateDrawElement::MakeBox(
-// 				OutDrawElements, LayerId,
-// 				AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3,3), FVector2D(6,6)),
-// 				FCoreStyle::Get().GetBrush("WhiteBrush"),
-// 				ESlateDrawEffect::None,
-// 				PostCurrentPointColour
-// 			);
-// 		}
-// 		++LayerId;
-// 	}
-// 	// Completed shapes handles
-// 	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
-// 	{
-// 		const auto& Shape       = CompletedShapes[ShapeIdx];
-// 		const auto& BezierFlags = CompletedBezierFlags[ShapeIdx];
-// 		for (int32 i = 0; i < Shape.Points.Num(); ++i)
-// 		{
-// 			if (!BezierFlags[i]) continue;  // skip N-points entirely
-//         
-// 			const auto& Pt    = Shape.Points[i];
-// 			FVector2D World   = Pt.OutVal;
-// 			FVector2D DrawPt = TransformPoint(World);
-// 			FVector2D H1      = TransformPoint(World - Pt.ArriveTangent);
-// 			FVector2D H2      = TransformPoint(World + Pt.LeaveTangent);
-//
-// 			FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-// 				{ DrawPt, H1 }, ESlateDrawEffect::None, CompletedBezierHandleColour, true, 1.0f);
-//
-// 			FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-// 				{ DrawPt, H2 }, ESlateDrawEffect::None, CompletedBezierHandleColour, true, 1.0f);
-//
-// 			// Draw handle boxes
-// 			FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
-// 				AllottedGeometry.ToPaintGeometry(H1 - FVector2D(3, 3), FVector2D(6, 6)),
-// 				FCoreStyle::Get().GetBrush("WhiteBrush"),
-// 				ESlateDrawEffect::None, PostCurrentPointColour);
-//
-// 			FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
-// 				AllottedGeometry.ToPaintGeometry(H2 - FVector2D(3, 3), FVector2D(6, 6)),
-// 				FCoreStyle::Get().GetBrush("WhiteBrush"),
-// 				ESlateDrawEffect::None, PostCurrentPointColour);
-// 		}
-// 		++LayerId;
-// 	}
-//
-//
-
-
-
-
-
-
-// 	// curve points
-// 	// 	section 3: in progress shape, draw shape points and edge lines
-// 	if (CurvePoints.Points.Num() >= 2)
-// 	{
-// 		const int SamplesPerSegment = 10; // Smoothness
-//
-// 		for (int SegIndex = 0; SegIndex < CurvePoints.Points.Num() - 1; ++SegIndex)
-// 		{
-// 			float StartInVal = CurvePoints.Points[SegIndex].InVal;
-// 			float EndInVal   = CurvePoints.Points[SegIndex + 1].InVal;
-//
-// 			for (int i = 0; i < SamplesPerSegment; ++i)
-// 			{
-// 				float AlphaStart = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
-// 				float AlphaEnd   = FMath::Lerp(StartInVal, EndInVal, float(i + 1) / SamplesPerSegment);
-//
-// 				FVector2D P1 = TransformPoint(CurvePoints.Eval(AlphaStart));
-// 				FVector2D P2 = TransformPoint(CurvePoints.Eval(AlphaEnd));
-//
-// 				FSlateDrawElement::MakeLines(
-// 					OutDrawElements, LayerId,
-// 					AllottedGeometry.ToPaintGeometry(),
-// 					{ P1, P2 },
-// 					ESlateDrawEffect::None,
-// 					LineColour,
-// 					true, 2.0f
-// 				);
-// 			}
-// 		}
-//
-// 		++LayerId;
-// 	}
-//
-// 	// close in progress shape with straight line
-// 	if (CurvePoints.Points.Num() > 2)
-// 	{
-// 		const FVector2D LastPt = TransformPoint(CurvePoints.Points.Last().OutVal);
-// 		const FVector2D FirstPt = TransformPoint(CurvePoints.Points[0].OutVal);
-// 	
-// 		FSlateDrawElement::MakeLines(
-// 			OutDrawElements,
-// 			LayerId,
-// 			AllottedGeometry.ToPaintGeometry(),
-// 			{ LastPt, FirstPt },
-// 			ESlateDrawEffect::None,
-// 			FLinearColor::Black,
-// 			true,
-// 			2.0f
-// 		);
-// 		++LayerId;
-// 	}
-// 	
-//
-// 	// bezier points and lines
-// 	// section 4: in progress shape, bezier handles and boxes
-// 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-// 	{
-// 		FVector2D DrawPos = TransformPoint(CurvePoints.Points[i].OutVal);
-// 		//FLinearColor Color = PointColour;
-// 		FSlateDrawElement::MakeBox(
-// 			OutDrawElements,
-// 			LayerId,
-// 			AllottedGeometry.ToPaintGeometry(DrawPos - FVector2D(3, 3), FVector2D(6, 6)),
-// 			FCoreStyle::Get().GetBrush("WhiteBrush"),
-// 			ESlateDrawEffect::None,
-// 			PointColour
-// 		);
-// 	}
-// 	
-//
-// 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-// 	{
-// 		if (!bUseBezierPerPoint[i])
-// 		{
-// 			// Optionally skip drawing any handle visuals
-// 			continue;
-// 		 }
-// 		
-// 		const auto& Pt = CurvePoints.Points[i];
-// 		const FVector2D Pos = TransformPoint(Pt.OutVal);
-// 		const FVector2D ArriveHandle = TransformPoint(Pt.OutVal - Pt.ArriveTangent);
-// 		const FVector2D LeaveHandle  = TransformPoint(Pt.OutVal + Pt.LeaveTangent);
-//
-// 		// Draw lines from point to each handle
-// 		FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-// 			{ Pos, ArriveHandle }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
-// 		FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(),
-// 			{ Pos, LeaveHandle }, ESlateDrawEffect::None, BezierHandleColour, true, 1.0f);
-//
-// 		// Draw the handles as small draggable boxes
-// 		FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
-// 			AllottedGeometry.ToPaintGeometry(ArriveHandle - FVector2D(3, 3), FVector2D(6, 6)),
-// 			FCoreStyle::Get().GetBrush("WhiteBrush"),
-// 			ESlateDrawEffect::None, PointColour);
-//
-// 		FSlateDrawElement::MakeBox(OutDrawElements, LayerId,
-// 			AllottedGeometry.ToPaintGeometry(LeaveHandle - FVector2D(3, 3), FVector2D(6, 6)),
-// 			FCoreStyle::Get().GetBrush("WhiteBrush"),
-// 			ESlateDrawEffect::None, PointColour);
-// 	}
-// 	
-// 	// ensureAlways(CurvePoints.Points.Num() == bUseBezierPerPoint.Num());
-// 	
-//
-// 	OutDrawElements.PopClip(); // end clipping
-// 	return LayerId;
-// }
-// // Onpaint end
-
-
-
-
-
-
-
-
-void SClothDesignCanvas::RecalculateNTangents(
-	FInterpCurve<FVector2D>& Curve,
-	const TArray<bool>&      bBezierFlags)
-{
-	int32 Num = Curve.Points.Num();
-	if (Num < 2) return;
-
-	for (int32 i = 0; i < Num; ++i)
-	{
-		// Only operate on N‑points
-		if (bBezierFlags[i]) continue;
-
-		// Prev Δ
-		if (i > 0)
-		{
-			FVector2D Prev = Curve.Points[i-1].OutVal;
-			FVector2D Curr = Curve.Points[i  ].OutVal;
-			Curve.Points[i].ArriveTangent = (Curr - Prev) * 0.5f;
-		}
-		else
-		{
-			Curve.Points[i].ArriveTangent = FVector2D::ZeroVector;
-		}
-
-		// Next Δ
-		if (i < Num - 1)
-		{
-			FVector2D Curr = Curve.Points[i  ].OutVal;
-			FVector2D Next = Curve.Points[i+1].OutVal;
-			Curve.Points[i].LeaveTangent = (Next - Curr) * 0.5f;
-		}
-		else
-		{
-			Curve.Points[i].LeaveTangent = FVector2D::ZeroVector;
-		}
-	}
-}
-
-
-
-TOptional<float> SClothDesignCanvas::GetBackgroundImageScale() const
-{
-	return BackgroundImageScale;
-}
-
-void SClothDesignCanvas::OnBackgroundImageScaleChanged(float NewScale)
-{
-	BackgroundImageScale = NewScale;
-	// Force redraw after scale change
-	this->Invalidate(EInvalidateWidget::LayoutAndVolatility);
-
-}
-
-FString SClothDesignCanvas::GetSelectedTexturePath() const
-{
-	return BackgroundTexture.IsValid() ? BackgroundTexture->GetPathName() : FString();
-}
-
-void SClothDesignCanvas::OnBackgroundTextureSelected(const FAssetData& AssetData)
-{
-	BackgroundTexture = Cast<UTexture2D>(AssetData.GetAsset());
-
-	if (BackgroundTexture.IsValid())
-	{
-		UE_LOG(LogTemp, Log, TEXT("Selected texture: %s"), *BackgroundTexture->GetName());
-	}
-}
-
-
-
-
 FReply SClothDesignCanvas::OnMouseWheel(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	const float ScrollDelta = MouseEvent.GetWheelDelta();
 	const float ZoomDelta = 0.1f; // How fast to zoom
 
-	// Get mouse position relative to the widget
 	const FVector2D MousePos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
 
 	// Compute the world position under the mouse before zoom
@@ -617,322 +127,40 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnMouseButtonDown fired. Mode: %d"), (int32)CurrentMode);
 
+	FCanvasInputHandler Handler(this);
 
 	if (MouseEvent.GetEffectingButton() == EKeys::MiddleMouseButton)
 	{
-		bIsPanning = true;
-		LastMousePos = MouseEvent.GetScreenSpacePosition();
-		return FReply::Handled().CaptureMouse(SharedThis(this));
+		return Handler.HandlePan(MouseEvent).CaptureMouse(SharedThis(this));
 	}
-
+	
+	if (MouseEvent.GetEffectingButton() != EKeys::LeftMouseButton)
+		return FReply::Unhandled();
+	
 	
 	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
 		const FVector2D LocalClickPos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
 		const FVector2D CanvasClickPos = InverseTransformPoint(LocalClickPos);
-
-		
-		// /*
-		// When the user hits Enter, push CurvePoints to CompletedShapes and clear it to start a new one.
-		// In rendering and triangulation, loop over both CompletedShapes and CurvePoints.
-		//  */
 		
 		if (CurrentMode == EClothEditorMode::Draw)
 		{
-			FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
-
-			// 1) add new point on current shape
-			FInterpCurvePoint<FVector2D> NewPoint;
-			NewPoint.InVal = CurvePoints.Points.Num();
-			NewPoint.OutVal = CanvasClickPos;
-			NewPoint.InterpMode = CIM_CurveAuto;
-
-			CurvePoints.Points.Add(NewPoint);
-			bUseBezierPerPoint.Add(bUseBezierPoints);
-			if (!bUseBezierPoints)
-			{
-				RecalculateNTangents(CurvePoints, bUseBezierPerPoint);
-			}
-			else if (bUseBezierPoints)
-			{
-				CurvePoints.AutoSetTangents();
-
-			}
-			
-			// 2) ALSO initialize the first/last tangents on current shape
-			int32 NumPts = CurvePoints.Points.Num();
-			if (NumPts >= 2)
-			{
-				// first point
-				{
-					FVector2D Delta = CurvePoints.Points[1].OutVal - CurvePoints.Points[0].OutVal;
-					CurvePoints.Points[0].ArriveTangent = FVector2D::ZeroVector;
-					CurvePoints.Points[0].LeaveTangent  = Delta * 0.5f;
-				}
-				// last point
-				{
-					int32 LastIdx = NumPts - 1;
-					FVector2D Delta = CurvePoints.Points[LastIdx].OutVal - CurvePoints.Points[LastIdx - 1].OutVal;
-					CurvePoints.Points[LastIdx].ArriveTangent = Delta * 0.5f;
-					CurvePoints.Points[LastIdx].LeaveTangent  = FVector2D::ZeroVector;
-				}
-			}
-			
-			// Invalidate(EInvalidateWidgetReason::Paint); //!!
-			UE_LOG(LogTemp, Warning, TEXT("Draw mode: Added point at (%f, %f)"), CanvasClickPos.X, CanvasClickPos.Y);
-			return FReply::Handled();
+			return Handler.HandleDraw(MyGeometry, MouseEvent);
 		}
-		
-
 		
 		else if (CurrentMode == EClothEditorMode::Sew)
 		{
-		    // 1) Find nearest control point across all shapes + current
-		    const float SelRadius = 10.0f / ZoomFactor;
-		    const float BestRadiusSq = SelRadius * SelRadius;
-
-		    int32  BestShape   = INDEX_NONE;
-		    int32  BestPoint   = INDEX_NONE;
-		    float  BestDistSq  = BestRadiusSq;
-
-		    // -- Check current in-progress shape first --
-		    for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-		    {
-		        FVector2D Pt = CurvePoints.Points[i].OutVal;   //TransformPoint(CurvePoints.Points[i].OutVal);
-		        float D2 = FVector2D::DistSquared(Pt, CanvasClickPos);
-		    	
-		        if (D2 < BestDistSq)
-		        {
-		            BestDistSq = D2;
-		            BestShape  = INDEX_NONE;
-		            BestPoint  = i;
-		        }
-		    }
-
-		    // -- Then each completed shape --
-		    for (int32 s = 0; s < CompletedShapes.Num(); ++s)
-		    {
-		        for (int32 i = 0; i < CompletedShapes[s].Points.Num(); ++i)
-		        {
-		            FVector2D Pt = CompletedShapes[s].Points[i].OutVal;   //TransformPoint(CompletedShapes[s].Points[i].OutVal);
-		            float D2 = FVector2D::DistSquared(Pt, CanvasClickPos);
-		        	
-		            if (D2 < BestDistSq)
-		            {
-		                BestDistSq = D2;
-		                BestShape  = s;
-		                BestPoint  = i;
-		            }
-		        }
-		    }
-
-		    // If we didn't hit anything, just consume the click and exit
-		    if (BestPoint == INDEX_NONE)
-		    {
-		        UE_LOG(LogTemp, Verbose, TEXT("Sew click missed all control points."));
-		        return FReply::Handled();
-		    }
-
-		    // 2) Advance our 4-click state, storing shape+point each time
-		    switch (SeamClickState)
-		    {
-		    case ESeamClickState::None:
-		        AStartTarget = { BestShape, BestPoint };
-		        SeamClickState = ESeamClickState::ClickedAStart;
-		        UE_LOG(LogTemp, Log, TEXT("Sew: AStart = [%d,%d]"), BestShape, BestPoint);
-		        break;
-
-		    case ESeamClickState::ClickedAStart:
-		        AEndTarget = { BestShape, BestPoint };
-		        SeamClickState = ESeamClickState::ClickedAEnd;
-		        UE_LOG(LogTemp, Log, TEXT("Sew: AEnd   = [%d,%d]"), BestShape, BestPoint);
-		        break;
-
-		    case ESeamClickState::ClickedAEnd:
-		        BStartTarget = { BestShape, BestPoint };
-		        SeamClickState = ESeamClickState::ClickedBStart;
-		        UE_LOG(LogTemp, Log, TEXT("Sew: BStart = [%d,%d]"), BestShape, BestPoint);
-		        break;
-
-		    case ESeamClickState::ClickedBStart:
-		        BEndTarget = { BestShape, BestPoint };
-		        SeamClickState = ESeamClickState::ClickedBEnd;
-		        bIsSeamReady = true;
-		        UE_LOG(LogTemp, Log, TEXT("Sew: BEnd   = [%d,%d]"), BestShape, BestPoint);
-
-		        // 3) Finalize: now you have (shape,index) for all four clicks
-		        FinalizeSeamDefinitionByTargets(AStartTarget, AEndTarget, BStartTarget, BEndTarget);
-
-		        // Reset for next seam
-		        SeamClickState = ESeamClickState::None;
-		        break;
-		    }
-
-		    return FReply::Handled();
+			return Handler.HandleSew(CanvasClickPos);
 		}
 
 		else if (CurrentMode == EClothEditorMode::Select)
 		{
-			// Check completed shapes first
-			for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
-			{
-				const auto& Shape = CompletedShapes[ShapeIndex];
-
-				for (int32 i = 0; i < Shape.Points.Num(); ++i)
-				{
-					const auto& Pt = Shape.Points[i];
-					// const FVector2D PointPos = Pt.OutVal;
-					// FVector2D Arrive = PointPos - Pt.ArriveTangent;
-					// FVector2D Leave = PointPos + Pt.LeaveTangent;
-					FVector2D World = Pt.OutVal;
-					//const auto& Shape = CompletedShapes[i];
-					const auto& BezierFlags = CompletedBezierFlags[ShapeIndex];
-					int32 NumPts = Shape.Points.Num();
-					
-					// arrive handle:
-					FVector2D Arrive = BezierFlags[i]
-						? (World - Pt.ArriveTangent)
-						: (World + (i>0 ? Shape.Points[i-1].OutVal : World)) * 0.5f;
-
-					// leave handle:
-					FVector2D Leave = BezierFlags[i]
-						? (World + Pt.LeaveTangent)
-						: (World + (i<NumPts-1 ? Shape.Points[i+1].OutVal : World)) * 0.5f;
-					
-
-					if (!BezierFlags[i]){continue;}
-
-					if (FVector2D::Distance(CanvasClickPos, Arrive) < TangentHandleRadius / ZoomFactor)
-					{
-						FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
-						SelectedShapeIndex = ShapeIndex;
-						SelectedPointIndex = i;
-						SelectedTangentHandle = ETangentHandle::Arrive;
-						bIsDraggingTangent = true;
-
-						return FReply::Handled()
-									.CaptureMouse(SharedThis(this))
-						            .SetUserFocus(AsShared(), EFocusCause::Mouse);
-;
-					}
-					else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentHandleRadius / ZoomFactor)
-					{
-						FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
-
-						SelectedShapeIndex = ShapeIndex;
-						SelectedPointIndex = i;
-						SelectedTangentHandle = ETangentHandle::Leave;
-						bIsDraggingTangent = true;
-
-						return FReply::Handled()
-							.CaptureMouse(SharedThis(this))
-							.SetUserFocus(AsShared(), EFocusCause::Mouse);
-						;
-					}
-				}
-			}
-
-			// Also check current in-progress shape (if needed)
-			for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-			{
-				const auto& Pt = CurvePoints.Points[i];
-				const FVector2D PointPos = Pt.OutVal;
-				FVector2D Arrive = PointPos - Pt.ArriveTangent;
-				FVector2D Leave = PointPos + Pt.LeaveTangent;
-	
-				if (!bUseBezierPerPoint[i])
-				{
-					continue; // Don't allow selecting N-point handles
-				}
-				
-				if (FVector2D::Distance(CanvasClickPos, Arrive) < TangentHandleRadius / ZoomFactor)
-				{
-					//SaveStateForUndo();
-					FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
-
-					SelectedShapeIndex = INDEX_NONE; // current shape
-					SelectedPointIndex = i;
-					SelectedTangentHandle = ETangentHandle::Arrive;
-					bIsDraggingTangent = true;
-
-					return FReply::Handled()
-							.CaptureMouse(SharedThis(this))
-							.SetUserFocus(AsShared(), EFocusCause::Mouse);
-					
-				}
-				else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentHandleRadius / ZoomFactor)
-				{
-					FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
-
-					SelectedShapeIndex = INDEX_NONE;
-					SelectedPointIndex = i;
-					SelectedTangentHandle = ETangentHandle::Leave;
-					bIsDraggingTangent = true;
-
-					return FReply::Handled()
-							.CaptureMouse(SharedThis(this))
-							.SetUserFocus(AsShared(), EFocusCause::Mouse);
-				}
-			}
-
-			const float SelectionRadius = 10.0f;
-
-			// Check completed shapes
-			for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
-			{
-				const auto& Shape = CompletedShapes[ShapeIndex];
-
-				for (int32 i = 0; i < Shape.Points.Num(); ++i)
-				{
-					FVector2D WorldPoint = Shape.Points[i].OutVal;
-					if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
-					{
-						FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
-
-						SelectedShapeIndex = ShapeIndex;
-						SelectedPointIndex = i;
-						bIsShapeSelected = true;
-						bIsDraggingPoint = true;
-
-						UE_LOG(LogTemp, Warning, TEXT("Selected point %d in shape %d"), i, ShapeIndex);
-
-						return FReply::Handled()
-							.CaptureMouse(SharedThis(this))
-							.SetUserFocus(SharedThis(this), EFocusCause::SetDirectly);
-					}
-				}
-			}
-
-			// Check current in-progress shape
-			for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-			{
-				FVector2D WorldPoint = CurvePoints.Points[i].OutVal;
-				if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
-				{
-					FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
-
-					SelectedShapeIndex = INDEX_NONE;  // current shape
-					SelectedPointIndex = i;
-					bIsShapeSelected = true;
-					bIsDraggingPoint = true;
-
-					UE_LOG(LogTemp, Warning, TEXT("Selected point %d in current shape"), i);
-
-					return FReply::Handled()
-						.CaptureMouse(SharedThis(this))
-						.SetUserFocus(SharedThis(this), EFocusCause::SetDirectly);
-				}
-			}
-			return FReply::Handled();
+			return Handler.HandleSelect(CanvasClickPos);
 		}
 		
-		
-
-
-		if (Points.Num() < 2)
+		if (CurvePoints.Points.Num() < 2)
 			return FReply::Handled(); // not enough points
-
-			
+		
 		// Clicked on empty space; DESELECT
 		SelectedPointIndex = INDEX_NONE;
 		bIsDraggingPoint = false;
@@ -940,93 +168,10 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 		UE_LOG(LogTemp, Warning, TEXT("Deselected all"));
 		return FReply::Handled()
 			.SetUserFocus(SharedThis(this), EFocusCause::SetDirectly);
-		
 	}
-
 	return FReply::Unhandled();
 }
 
-
-void SClothDesignCanvas::FinalizeSeamDefinitionByTargets(
-	const FClickTarget& AStart,
-	const FClickTarget& AEnd,
-	const FClickTarget& BStart,
-	const FClickTarget& BEnd)
-{
-	const int32 NumSeamPoints = 10;
-	TArray<FVector2D> PointsA, PointsB;
-
-	auto GetPt = [&](const FClickTarget& T) {
-		if (T.ShapeIndex == INDEX_NONE)
-			return CurvePoints.Points[T.PointIndex].OutVal;
-		else
-			return CompletedShapes[T.ShapeIndex].Points[T.PointIndex].OutVal;
-	};
-
-	FVector2D A1 = GetPt(AStart), A2 = GetPt(AEnd);
-	FVector2D B1 = GetPt(BStart), B2 = GetPt(BEnd);
-
-	for (int32 i = 0; i < NumSeamPoints; ++i)
-	{
-		float Alpha = float(i) / (NumSeamPoints - 1);
-		PointsA.Add(FMath::Lerp(A1, A2, Alpha));
-		PointsB.Add(FMath::Lerp(B1, B2, Alpha));
-	}
-
-	FPatternSewingConstraint NewSeam;
-	NewSeam.ScreenPointsA = PointsA;
-	NewSeam.ScreenPointsB = PointsB;
-	AllDefinedSeams.Add(NewSeam);
-
-	UE_LOG(LogTemp, Log, TEXT("Seam finalized between [%d,%d] and [%d,%d]"),
-		AStart.ShapeIndex, AStart.PointIndex,
-		BStart.ShapeIndex, BStart.PointIndex);
-}
-
-
-
-
-
-FVector2D SClothDesignCanvas::GetPointFromShape(int32 ShapeIndex, int32 PointIndex)
-{
-	if (ShapeIndex == INDEX_NONE)
-	{
-		return CurvePoints.Points[PointIndex].OutVal;
-	}
-	else
-	{
-		return CompletedShapes[ShapeIndex].Points[PointIndex].OutVal;
-	}
-}
-
-void SClothDesignCanvas::FinalizeSeamDefinitionByIndex(
-	FClickTarget AStart, FClickTarget AEnd,
-	FClickTarget BStart, FClickTarget BEnd)
-{
-	const int32 NumSeamPoints = 10;
-	TArray<FVector2D> PointsA, PointsB;
-
-	FVector2D A1 = GetPointFromShape(AStart.ShapeIndex, AStart.PointIndex);
-	FVector2D A2 = GetPointFromShape(AEnd.ShapeIndex, AEnd.PointIndex);
-	FVector2D B1 = GetPointFromShape(BStart.ShapeIndex, BStart.PointIndex);
-	FVector2D B2 = GetPointFromShape(BEnd.ShapeIndex, BEnd.PointIndex);
-
-	for (int32 i = 0; i < NumSeamPoints; ++i)
-	{
-		float Alpha = float(i) / (NumSeamPoints - 1);
-		PointsA.Add(FMath::Lerp(A1, A2, Alpha));
-		PointsB.Add(FMath::Lerp(B1, B2, Alpha));
-	}
-
-	FPatternSewingConstraint NewSeam;
-	NewSeam.ScreenPointsA = PointsA;
-	NewSeam.ScreenPointsB = PointsB;
-	AllDefinedSeams.Add(NewSeam);
-
-	UE_LOG(LogTemp, Log, TEXT("Seam defined with %d points per side."), NumSeamPoints);
-	UE_LOG(LogTemp, Log, TEXT("AStart: (%f, %f), AEnd: (%f, %f)"), A1.X, A1.Y, A2.X, A2.Y);
-	UE_LOG(LogTemp, Log, TEXT("BStart: (%f, %f), BEnd: (%f, %f)"), B1.X, B1.Y, B2.X, B2.Y);
-}
 
 
 
@@ -1047,7 +192,7 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 	}
 
 	
-	if ((CurrentMode == EClothEditorMode::Move || CurrentMode == EClothEditorMode::Select) && MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
+	if (CurrentMode == EClothEditorMode::Select && MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
 	{
 		FVector2D LocalMousePos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
 		const FVector2D CanvasMousePos = InverseTransformPoint(LocalMousePos);
@@ -1130,8 +275,7 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 						Pt.ArriveTangent = OppositeDir * ArriveLen;
 					}
 				}
-
-
+				
 			}
 
 			UE_LOG(LogTemp, Warning, TEXT("Dragging tangent for point %d in shape %d"), SelectedPointIndex, SelectedShapeIndex);
@@ -1290,22 +434,13 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 			return FReply::Handled();
 		}
 	}
-
-	// // Check for Redo (Ctrl+Y)
-	// if (Key == EKeys::Y && InKeyEvent.IsControlDown())
-	// {
-	// 	Redo();
-	// 	return FReply::Handled();
-	// }
-
+	
 	if (Key == EKeys::F)
 	{
 		FocusViewportOnPoints();
 		return FReply::Handled();
 	}
-
 	
-
 	if (CurrentMode == EClothEditorMode::Select)
 	{
 		if (Key == EKeys::T)
@@ -1328,7 +463,6 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 			return FReply::Handled();
 		}
 	}
-	
 	
 	if (CurrentMode == EClothEditorMode::Draw)
 	{
@@ -1363,18 +497,10 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 			return FReply::Handled();
 		}
 	}
-
 	
 	//return FReply::Unhandled();
 	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
 
-}
-
-FReply SClothDesignCanvas::OnModeButtonClicked(EClothEditorMode NewMode)
-{
-	CurrentMode = NewMode;
-	Invalidate(EInvalidateWidget::Paint);
-	return FReply::Handled();
 }
 
 
@@ -1449,18 +575,137 @@ void SClothDesignCanvas::FocusViewportOnPoints()
 	float ZoomX = ViewportSize.X / (BoundsSize.X * Margin);
 	float ZoomY = ViewportSize.Y / (BoundsSize.Y * Margin);
 	ZoomFactor = FMath::Clamp(FMath::Min(ZoomX, ZoomY), 0.1f, 10.0f);
-
-	//float NewZoom = FMath::Min(ZoomX, ZoomY);
-
-	// Clamp zoom if needed
-	//ZoomFactor = FMath::Clamp(NewZoom, 0.05f, 10.0f);
-
-	// Set the offset so the center is at screen center
-	//PanOffset = Center - (ViewportSize * 0.5f) / ZoomFactor;
-	PanOffset = ViewportSize * 0.5f - Center * ZoomFactor;
-
 	
+	PanOffset = ViewportSize * 0.5f - Center * ZoomFactor;
 }
+
+FReply SClothDesignCanvas::OnModeButtonClicked(EClothEditorMode NewMode)
+{
+	CurrentMode = NewMode;
+	Invalidate(EInvalidateWidget::Paint);
+	return FReply::Handled();
+}
+
+
+
+FCanvasState SClothDesignCanvas::GetCurrentCanvasState() const
+{
+	FCanvasState State;
+	State.CurvePoints = CurvePoints; // Full copy, includes tangents and interp mode
+	State.CompletedShapes = CompletedShapes;
+	
+	State.bUseBezierPerPoint = bUseBezierPerPoint;
+	State.CompletedBezierFlags = CompletedBezierFlags;
+	
+	State.SelectedPointIndex = SelectedPointIndex;
+	State.PanOffset = PanOffset;
+	State.ZoomFactor = ZoomFactor;
+	return State;
+}
+
+
+void SClothDesignCanvas::RestoreCanvasState(const FCanvasState& State)
+{
+	// to avoid the redo/undo crashes
+	ensure(State.CurvePoints.Points.Num() == State.bUseBezierPerPoint.Num());
+	ensure(State.CompletedShapes.Num() == State.CompletedBezierFlags.Num());
+	
+	CurvePoints = State.CurvePoints;
+	CompletedShapes = State.CompletedShapes;
+	
+	bUseBezierPerPoint = State.bUseBezierPerPoint;
+	CompletedBezierFlags = State.CompletedBezierFlags;
+	
+	SelectedPointIndex = State.SelectedPointIndex;
+	PanOffset = State.PanOffset;
+	ZoomFactor = State.ZoomFactor;
+	
+	SelectedPointIndex = INDEX_NONE;
+	SelectedShapeIndex = INDEX_NONE;
+	
+	Invalidate(EInvalidateWidgetReason::Paint | EInvalidateWidgetReason::Layout);
+}
+
+
+
+
+FString SClothDesignCanvas::GetSelectedTexturePath() const
+{
+	return BackgroundTexture.IsValid() ? BackgroundTexture->GetPathName() : FString();
+}
+
+void SClothDesignCanvas::OnBackgroundTextureSelected(const FAssetData& AssetData)
+{
+	BackgroundTexture = Cast<UTexture2D>(AssetData.GetAsset());
+
+	if (BackgroundTexture.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Selected texture: %s"), *BackgroundTexture->GetName());
+	}
+}
+TOptional<float> SClothDesignCanvas::GetBackgroundImageScale() const
+{
+	return BackgroundImageScale;
+}
+
+void SClothDesignCanvas::OnBackgroundImageScaleChanged(float NewScale)
+{
+	BackgroundImageScale = NewScale;
+	// Force redraw after scale change
+	this->Invalidate(EInvalidateWidget::LayoutAndVolatility);
+
+}
+
+
+void SClothDesignCanvas::RecalculateNTangents(
+	FInterpCurve<FVector2D>& Curve,
+	const TArray<bool>&      bBezierFlags)
+{
+	int32 Num = Curve.Points.Num();
+	if (Num < 2) return;
+
+	for (int32 i = 0; i < Num; ++i)
+	{
+		// Only operate on N‑points
+		if (bBezierFlags[i]) continue;
+
+		// Prev Δ
+		if (i > 0)
+		{
+			FVector2D Prev = Curve.Points[i-1].OutVal;
+			FVector2D Curr = Curve.Points[i  ].OutVal;
+			Curve.Points[i].ArriveTangent = (Curr - Prev) * 0.5f;
+		}
+		else
+		{
+			Curve.Points[i].ArriveTangent = FVector2D::ZeroVector;
+		}
+
+		// Next Δ
+		if (i < Num - 1)
+		{
+			FVector2D Curr = Curve.Points[i  ].OutVal;
+			FVector2D Next = Curve.Points[i+1].OutVal;
+			Curve.Points[i].LeaveTangent = (Next - Curr) * 0.5f;
+		}
+		else
+		{
+			Curve.Points[i].LeaveTangent = FVector2D::ZeroVector;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1676,8 +921,6 @@ void SClothDesignCanvas::TriangulateAndBuildMesh(
 }
 
 
-
-
 void SClothDesignCanvas::CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices)
 {
 	UWorld* World = GEditor->GetEditorWorldContext().World();
@@ -1731,80 +974,78 @@ void SClothDesignCanvas::CreateProceduralMesh(const TArray<FVector>& Vertices, c
 
 
 
-// void SClothDesignCanvas::TriangulateAndBuildAllMeshes()
-// {
-//
-// 	// Loop over all completed shapes
-// 	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
-// 	{
-// 		TriangulateAndBuildMesh(Shape);
-// 	}
-//
-// 	// Optionally, include current shape (if it's closed/finalized)
-// 	if (CurvePoints.Points.Num() >= 3)
-// 	{
-// 		TriangulateAndBuildMesh(CurvePoints);
-// 	}
-// }
+void SClothDesignCanvas::TriangulateAndBuildAllMeshes()
+{
 
+	// Loop over all completed shapes
+	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
+	{
+		TriangulateAndBuildMesh(Shape);
+	}
+
+	// Optionally, include current shape (if it's closed/finalized)
+	if (CurvePoints.Points.Num() >= 3)
+	{
+		TriangulateAndBuildMesh(CurvePoints);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+void SClothDesignCanvas::FinalizeSeamDefinitionByTargets(
+	const FClickTarget& AStart,
+	const FClickTarget& AEnd,
+	const FClickTarget& BStart,
+	const FClickTarget& BEnd)
+{
+	const int32 NumSeamPoints = 10;
+	TArray<FVector2D> PointsA, PointsB;
+
+	auto GetPt = [&](const FClickTarget& T) {
+		if (T.ShapeIndex == INDEX_NONE)
+			return CurvePoints.Points[T.PointIndex].OutVal;
+		else
+			return CompletedShapes[T.ShapeIndex].Points[T.PointIndex].OutVal;
+	};
+
+	FVector2D A1 = GetPt(AStart), A2 = GetPt(AEnd);
+	FVector2D B1 = GetPt(BStart), B2 = GetPt(BEnd);
+
+	for (int32 i = 0; i < NumSeamPoints; ++i)
+	{
+		float Alpha = float(i) / (NumSeamPoints - 1);
+		PointsA.Add(FMath::Lerp(A1, A2, Alpha));
+		PointsB.Add(FMath::Lerp(B1, B2, Alpha));
+	}
+
+	FPatternSewingConstraint NewSeam;
+	NewSeam.ScreenPointsA = PointsA;
+	NewSeam.ScreenPointsB = PointsB;
+	AllDefinedSeams.Add(NewSeam);
+
+	UE_LOG(LogTemp, Log, TEXT("Seam finalized between [%d,%d] and [%d,%d]"),
+		AStart.ShapeIndex, AStart.PointIndex,
+		BStart.ShapeIndex, BStart.PointIndex);
+}
 
 
 void SClothDesignCanvas::AlignSeamMeshes(
 	AClothPatternMeshActor* MeshActorA,
 	AClothPatternMeshActor* MeshActorB)
 {
-	// // 2) Fetch world positions
-	// TArray<FVector> WorldA, WorldB;
-	//
-	// for (int VID : MeshActorA->LastSeamVertexIDs)
-	// {
-	// 	FVector Loc = MeshActorA->DynamicMesh.GetVertex(VID);
-	// 	WorldA.Add(MeshActorA->GetActorTransform().TransformPosition(Loc));
-	// }
-	// for (int VID : MeshActorB->LastSeamVertexIDs)
-	// {
-	// 	FVector Loc = MeshActorB->DynamicMesh.GetVertex(VID);
-	// 	WorldB.Add(MeshActorB->GetActorTransform().TransformPosition(Loc));
-	// }
-
 	// Access the stored vertex IDs and dynamic meshes:
 	const TArray<int32>& IDsA = MeshActorA->LastSeamVertexIDs;
 	const TArray<int32>& IDsB = MeshActorB->LastSeamVertexIDs;
-
-	// // Query world-space positions from each actor’s DynamicMesh:
-	// TArray<FVector> WorldA, WorldB;
-	//
-	// for (int VID : IDsA)
-	// {
-	// 	FVector Local = (FVector)MeshActorA->DynamicMesh.GetVertex(VID);
-	// 	WorldA.Add(MeshActorA->GetActorTransform().TransformPosition(Local));
-	// }
-	// for (int VID : IDsB)
-	// {
-	// 	FVector Local = (FVector)MeshActorB->DynamicMesh.GetVertex(VID);
-	// 	WorldB.Add(MeshActorB->GetActorTransform().TransformPosition(Local));
-	// }
-	//
-	// // Compute average offset, apply it...
-	//
-	//
-	// // 3) Compute & apply offset
-	// FVector TotalOff = FVector::ZeroVector;
-	// const int Count = WorldA.Num();
-	// for (int i = 0; i < Count; ++i)
-	// {
-	// 	TotalOff += (WorldA[i] - WorldB[i]);
-	// }
-	// FVector AvgOff = TotalOff / Count;
-	//
-	// FTransform T = MeshActorB->GetActorTransform();
-	// T.AddToTranslation(AvgOff);
-	// MeshActorB->SetActorTransform(T);
-	//
-	// UE_LOG(LogTemp, Log, TEXT("Aligned MeshB by %s"), *AvgOff.ToString());
-
-
-
 	
 	// 1) Guard against empty or mismatched arrays
 	int32 NumA = IDsA.Num();
@@ -1886,253 +1127,6 @@ void SClothDesignCanvas::BuildAndAlignClickedSeam()
 }
 
 
-FCanvasState SClothDesignCanvas::GetCurrentCanvasState() const
-{
-	FCanvasState State;
-	State.CurvePoints = CurvePoints; // Full copy, includes tangents and interp mode
-	State.CompletedShapes = CompletedShapes;
-	
-	State.bUseBezierPerPoint = bUseBezierPerPoint;
-	State.CompletedBezierFlags = CompletedBezierFlags;
-	
-	State.SelectedPointIndex = SelectedPointIndex;
-	State.PanOffset = PanOffset;
-	State.ZoomFactor = ZoomFactor;
-	return State;
-}
-
-
-void SClothDesignCanvas::RestoreCanvasState(const FCanvasState& State)
-{
-	// to avoid the redo/undo crashes
-	ensure(State.CurvePoints.Points.Num() == State.bUseBezierPerPoint.Num());
-	ensure(State.CompletedShapes.Num() == State.CompletedBezierFlags.Num());
-	
-	CurvePoints = State.CurvePoints;
-	CompletedShapes = State.CompletedShapes;
-	
-	bUseBezierPerPoint = State.bUseBezierPerPoint;
-	CompletedBezierFlags = State.CompletedBezierFlags;
-	
-	SelectedPointIndex = State.SelectedPointIndex;
-	PanOffset = State.PanOffset;
-	ZoomFactor = State.ZoomFactor;
-	
-	SelectedPointIndex = INDEX_NONE;
-	SelectedShapeIndex = INDEX_NONE;
-	
-	Invalidate(EInvalidateWidgetReason::Paint | EInvalidateWidgetReason::Layout);
-}
-
-
-void SClothDesignCanvas::AddSewingConstraints(
-	AActor* PatternPiece1,
-	const TArray<int32>& Vertices1,
-	AActor* PatternPiece2,
-	const TArray<int32>& Vertices2,
-	float Stiffness,
-	TArray<FPatternSewingConstraint>& OutConstraints
-)
-{
-	if (!PatternPiece1 || !PatternPiece2) return;
-	if (Vertices1.Num() != Vertices2.Num()) return;
-
-	USkeletalMeshComponent* Mesh1 = PatternPiece1->FindComponentByClass<USkeletalMeshComponent>();
-	USkeletalMeshComponent* Mesh2 = PatternPiece2->FindComponentByClass<USkeletalMeshComponent>();
-
-
-	if (!Mesh1 || !Mesh2) return;
-
-	for (int32 i = 0; i < Vertices1.Num(); ++i)
-	{
-		FPatternSewingConstraint Constraint;
-		Constraint.MeshA = Mesh1;
-		Constraint.VertexIndexA = Vertices1[i];
-		Constraint.MeshB = Mesh2;
-		Constraint.VertexIndexB = Vertices2[i];
-		Constraint.Stiffness = Stiffness;
-
-		OutConstraints.Add(Constraint);
-	}
-}
-
-
-void SClothDesignCanvas::SewingTest()
-{
-	UWorld* World = GEditor->GetEditorWorldContext().World();
-	if (!World) return;
-	
-	AActor* PatternPiece1 = nullptr;
-	AActor* PatternPiece2 = nullptr;
-	
-	// USkeletalMeshComponent* MeshComp1 = PatternPiece1->FindComponentByClass<USkeletalMeshComponent>();
-	// USkeletalMeshComponent* MeshComp2 = PatternPiece2->FindComponentByClass<USkeletalMeshComponent>();
-
-	// Option 1: Lookup by name (label in the outliner, not class)
-	for (TActorIterator<AActor> It(World); It; ++It)
-	{
-		AActor* Actor = *It;
-		if (Actor->GetActorLabel() == TEXT("SKM_pattern_piece_1"))
-		{
-			PatternPiece1 = Actor;
-		}
-		else if (Actor->GetActorLabel() == TEXT("SKM_pattern_piece_2"))
-		{
-			PatternPiece2 = Actor;
-		}
-	}
-	
-	if (!PatternPiece1 || !PatternPiece2)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Pattern pieces not found in scene."));
-		return;
-	}
-
-	
-	// Define vertex indices
-	TArray<int32> VerticesA = {2, 5, 8};
-	TArray<int32> VerticesB = {6, 7, 8};
-	
-	// Store constraints
-	// TArray<FPatternSewingConstraint> SewingConstraints;
-	SewingConstraints.Reset();
-
-	AddSewingConstraints(PatternPiece1, VerticesA, PatternPiece2, VerticesB, 1.0f, SewingConstraints);
-
-	UE_LOG(LogTemp, Warning, TEXT("Added %d uskel constraints."), SewingConstraints.Num());
-}
-
-
-
-void SClothDesignCanvas::SewingStart()
-{
-	UWorld* World = GEditor->GetEditorWorldContext().World();
-	if (!World) return;
-
-	AActor* PatternPiece1 = nullptr;
-	AActor* PatternPiece2 = nullptr;
-
-	// Find actors
-	for (TActorIterator<AActor> It(World); It; ++It)
-	{
-		AActor* Actor = *It;
-		if (Actor->GetActorLabel() == TEXT("SKM_pattern_piece_1")) PatternPiece1 = Actor;
-		if (Actor->GetActorLabel() == TEXT("SKM_pattern_piece_2")) PatternPiece2 = Actor;
-	}
-
-	if (!PatternPiece1 || !PatternPiece2) return;
-
-	USkeletalMeshComponent* Mesh1 = PatternPiece1->FindComponentByClass<USkeletalMeshComponent>();
-	USkeletalMeshComponent* Mesh2 = PatternPiece2->FindComponentByClass<USkeletalMeshComponent>();
-	if (!Mesh1 || !Mesh2) return;
-
-	TArray<int32> VerticesA = {8, 7, 5}; 
-	TArray<int32> VerticesB = {1, 2, 5};
-	// the vertex order from houdini of 0 to 8 in rows of three translates to this order in UE: 4, 6, 8, then 0, 3, 7, then 1, 2, 5
-
-	if (VerticesA.Num() != VerticesB.Num()) return;
-
-	// Get rest pose positions
-	FSkeletalMeshRenderData* RenderData1 = Mesh1->GetSkeletalMeshRenderData();
-	FSkeletalMeshRenderData* RenderData2 = Mesh2->GetSkeletalMeshRenderData();
-
-	if (!RenderData1 || !RenderData2) return;
-
-	const FPositionVertexBuffer& VertexBuffer1 = RenderData1->LODRenderData[0].StaticVertexBuffers.PositionVertexBuffer;
-	const FPositionVertexBuffer& VertexBuffer2 = RenderData2->LODRenderData[0].StaticVertexBuffers.PositionVertexBuffer;
-
-	// Compute average offset
-	FVector TotalOffset = FVector::ZeroVector;
-	int32 PairCount = VerticesA.Num();
-
-	for (int32 i = 0; i < PairCount; ++i)
-	{
-		int32 IndexA = VerticesA[i];
-		int32 IndexB = VerticesB[i];
-
-		if (IndexA >= VertexBuffer1.GetNumVertices() || IndexB >= VertexBuffer2.GetNumVertices()) continue;
-
-		FVector PosA = Mesh1->GetComponentTransform().TransformPosition(FVector(VertexBuffer1.VertexPosition(IndexA)));
-		FVector PosB = Mesh2->GetComponentTransform().TransformPosition(FVector(VertexBuffer2.VertexPosition(IndexB)));
-
-		FVector Delta = PosA - PosB;
-		TotalOffset += Delta;
-	}
-
-	
-	FVector AverageOffset = TotalOffset / PairCount;
-
-	// Apply offset to pattern_piece_2
-	FTransform CurrentTransform = PatternPiece2->GetActorTransform();
-	CurrentTransform.AddToTranslation(AverageOffset);
-	PatternPiece2->SetActorTransform(CurrentTransform);
-
-	UE_LOG(LogTemp, Warning, TEXT("Moved mesh by %s to preview sewing."), *AverageOffset.ToString());
-}
-
-
-
-UClothingSimulationInteractor* GetClothInteractor(USkeletalMeshComponent* Mesh)
-{
-	if (!Mesh) return nullptr;
-
-	return Mesh->GetClothingSimulationInteractor();
-}
-
-void SClothDesignCanvas::ApplySpringSeamForces(
-	const TArray<FPatternSewingConstraint>& Constraints,
-	float DeltaTime)
-{
-	
-	if (Constraints.Num() == 0) return;
-
-	// 1) Grab the Chaos Clothing Interactor
-	USkeletalMeshComponent* Mesh = Constraints[0].MeshA;
-	if (!Mesh) return;
-
-	// UClothingSimulationInteractor is the base, cast to Chaos version:
-	UChaosClothingSimulationInteractor* ChaosInteractor =
-		Cast<UChaosClothingSimulationInteractor>(
-			Mesh->GetClothingSimulationInteractor()
-		);
-	if (!ChaosInteractor) return;
-	
-}
-
-
-
-
-void SClothDesignCanvas::FinalizeSeamDefinition(
-	const FVector2D& AStart,
-	const FVector2D& AEnd,
-	const FVector2D& BStart,
-	const FVector2D& BEnd)
-{
-	// Step 1: Find the nearest mesh + edge for each click range (optional or future logic)
-
-	// Step 2: Sample N points along each line
-	const int32 NumSeamPoints = 10;
-	TArray<FVector2D> PointsA, PointsB;
-
-	for (int32 i = 0; i < NumSeamPoints; ++i)
-	{
-		float Alpha = (float)i / (NumSeamPoints - 1);
-		PointsA.Add(FMath::Lerp(AStart, AEnd, Alpha));
-		PointsB.Add(FMath::Lerp(BStart, BEnd, Alpha));
-	}
-
-	// Step 3: Store seam definition
-	FPatternSewingConstraint NewSeam;
-	NewSeam.ScreenPointsA = PointsA;
-	NewSeam.ScreenPointsB = PointsB;
-
-	AllDefinedSeams.Add(NewSeam);
-
-	
-	UE_LOG(LogTemp, Log, TEXT("Seam defined with %d points per side."), NumSeamPoints);
-	UE_LOG(LogTemp, Log, TEXT("AStart: (%.2f, %.2f), AEnd: (%.2f, %.2f)"), AStart.X, AStart.Y, AEnd.X, AEnd.Y);
-	UE_LOG(LogTemp, Log, TEXT("BStart: (%.2f, %.2f), BEnd: (%.2f, %.2f)"), BStart.X, BStart.Y, BEnd.X, BEnd.Y);
-}
 
 
 
@@ -2258,306 +1252,66 @@ void SClothDesignCanvas::MergeLastTwoMeshes()
 
 
 
-
-
-void SClothDesignCanvas::MergeAndWeldLastTwoMeshes()
-{
-    // 1) Grab the last two actors
-    if (SpawnedPatternActors.Num() < 2) { return; }
-    AClothPatternMeshActor* A = SpawnedPatternActors.Last(1).Get();
-    AClothPatternMeshActor* B = SpawnedPatternActors.Last().Get();
-    if (!A || !B) { return; }
-
-    // 2) Merge their DynamicMesh3’s
-    UE::Geometry::FDynamicMesh3 Merged = A->DynamicMesh;
-    int32 BaseVID = Merged.VertexCount();
-	
-    
-	
-    const FTransform& TA = A->GetActorTransform();
-    TArray<int> MapA;
-    MapA.SetNum(A->DynamicMesh.VertexCount());
-
-    // 1) Add all A’s vertices in world space
-    for (int vid : A->DynamicMesh.VertexIndicesItr())
-    {
-    	FVector3d LocalP = A->DynamicMesh.GetVertex(vid);
-    	FVector    WorldP = TA.TransformPosition((FVector)LocalP);
-    	MapA[vid] = Merged.AppendVertex(FVector3d(WorldP));
-    }
-    // 2) Add A’s triangles with remapped indices
-    for (int tid : A->DynamicMesh.TriangleIndicesItr())
-    {
-    	auto T = A->DynamicMesh.GetTriangle(tid);
-    	Merged.AppendTriangle(
-			MapA[T.A], MapA[T.B], MapA[T.C]
-		);
-    }
-	
-
-	// -- (B) Append B’s world‑transformed vertices & triangles --
-	// int32 BaseVID = Merged.VertexCount();
-	
-    const FTransform& TB = B->GetActorTransform();
-    TArray<int> MapB;
-    MapB.SetNum(B->DynamicMesh.VertexCount());
-
-    for (int vid : B->DynamicMesh.VertexIndicesItr())
-    {
-    	FVector3d LocalP = B->DynamicMesh.GetVertex(vid);
-    	FVector    WorldP = TB.TransformPosition((FVector)LocalP);
-    	MapB[vid] = Merged.AppendVertex(FVector3d(WorldP));
-    }
-    for (int tid : B->DynamicMesh.TriangleIndicesItr())
-    {
-    	auto T = B->DynamicMesh.GetTriangle(tid);
-    	Merged.AppendTriangle(
-			MapB[T.A], MapB[T.B], MapB[T.C]
-		);
-    }
-	
-	
-
-	
-	if (!Merged.HasAttributes())
-	{
-		Merged.EnableAttributes();
-	}
-	
-	
-    // 3) Weld each seam‐vertex pair
-    UE::Geometry::FDynamicMeshEditor Editor(&Merged);
-	TArray<int32> LoopA;
-	TArray<int32> LoopB;
-	int32 Count = FMath::Min(A->LastSeamVertexIDs.Num(), B->LastSeamVertexIDs.Num());
-
-	
-	
-	for (int32 i = 0; i < Count; ++i)
-	{
-		// origVA is the index in A->DynamicMesh
-		int32 origVA = A->LastSeamVertexIDs[i];
-		// The new ID in Merged is:
-		int32 mergedVA = MapA[origVA];
-		LoopA.Add( mergedVA );
-
-		// origVB is the index in B->DynamicMesh
-		int32 origVB = B->LastSeamVertexIDs[i];
-		// The new ID in Merged is:
-		int32 mergedVB = MapB[origVB];
-		LoopB.Add( mergedVB );
-	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("LoopA has %d vertices"), LoopA.Num());
-	UE_LOG(LogTemp, Warning, TEXT("LoopB has %d vertices"), LoopB.Num());
-
-
-	
-
-	
-	if (LoopA.Num() != LoopB.Num())
-	{
-		UE_LOG(LogTemp, Error, TEXT("Loop sizes don't match: A=%d, B=%d"), LoopA.Num(), LoopB.Num());
-		return;
-	}
-	
-	for (int32 i = 0; i < LoopA.Num(); ++i)
-	{
-		int32 VA = LoopA[i];
-		int32 VB = LoopB[i];
-
-		// Move VB to the position of VA
-		Merged.SetVertex(VB, Merged.GetVertex(VA));
-
-		// Replace all uses of VB in triangles with VA
-		TArray<int32> TrianglesToUpdate;
-		Merged.GetVtxTriangles(VB, TrianglesToUpdate);
-
-		for (int32 TID : TrianglesToUpdate)
-		{
-			auto Tri = Merged.GetTriangle(TID);
-			for (int j = 0; j < 3; ++j)
-			{
-				if (Tri[j] == VB)
-				{
-					Tri[j] = VA;
-				}
-			}
-			Merged.SetTriangle(TID, Tri);
-		}
-
-		// Optionally delete VB if it's no longer referenced
-		if (Merged.IsVertex(VB) && Merged.GetVtxTriangleCount(VB) == 0)
-		{
-			Merged.RemoveVertex(VB, false);
-		}
-	}
-
-	
-	// 4) Export welded mesh to a new actor
-	//    (same code as before to flatten vertices+indices + spawn)
-	TArray<FVector>    Verts;    Verts.Reserve(Merged.VertexCount());
-	TArray<int32>      Inds;     Inds.Reserve(Merged.TriangleCount()*3);
-	for (int vid : Merged.VertexIndicesItr())
-	{
-		auto P = Merged.GetVertex(vid);
-		Verts.Add(FVector(P.X,P.Y,P.Z));
-	}
-	for (int tid : Merged.TriangleIndicesItr())
-	{
-		auto T = Merged.GetTriangle(tid);
-		Inds.Add(T.A); Inds.Add(T.B); Inds.Add(T.C);
-	}
-
-	UWorld* World = GEditor->GetEditorWorldContext().World();
-	if (!World) return;
-	AClothPatternMeshActor* MergedActor =
-		World->SpawnActor<AClothPatternMeshActor>();
-	
-#if WITH_EDITOR
-	MergedActor->SetActorLabel(TEXT("WeldedPatternMesh"));
-#endif
-	MergedActor->DynamicMesh = MoveTemp(Merged);
-
-	TArray<FVector> Normals;     Normals.Init(FVector::UpVector, Verts.Num());
-	TArray<FVector2D> UV0;       UV0.Init(FVector2D::ZeroVector, Verts.Num());
-	TArray<FLinearColor> Colors; Colors.Init(FLinearColor::White,  Verts.Num());
-	TArray<FProcMeshTangent> Tangs; Tangs.Init(FProcMeshTangent(1,0,0), Verts.Num());
-
-	MergedActor->MeshComponent->CreateMeshSection_LinearColor(
-		0, Verts, Inds,
-		Normals, UV0, Colors, Tangs,
-		/*bCreateCollision=*/true
-	);
-
-	UE_LOG(LogTemp, Log, TEXT("Merged & welded: %d verts, %d tris"),
-		   Verts.Num(), Inds.Num()/3);
-}
-
-
-
-
-
-// bool SClothDesignCanvas::SaveShapeAsset(const FString& AssetPath, const FString& AssetName)
+// void SClothDesignCanvas::AddSewingConstraints(
+// 	AActor* PatternPiece1,
+// 	const TArray<int32>& Vertices1,
+// 	AActor* PatternPiece2,
+// 	const TArray<int32>& Vertices2,
+// 	float Stiffness,
+// 	TArray<FPatternSewingConstraint>& OutConstraints
+// )
 // {
-// 	// Create package path - e.g. /Game/YourFolder/AssetName
-// 	FString PackageName = FString::Printf(TEXT("/Game/%s/%s"), *AssetPath, *AssetName);
-// 	FString SanitizedPackageName = PackageTools::SanitizePackageName(PackageName);
+// 	if (!PatternPiece1 || !PatternPiece2) return;
+// 	if (Vertices1.Num() != Vertices2.Num()) return;
 //
-// 	UPackage* Package = LoadPackage(nullptr, *SanitizedPackageName, LOAD_None);
-// 	if (!Package)
+// 	USkeletalMeshComponent* Mesh1 = PatternPiece1->FindComponentByClass<USkeletalMeshComponent>();
+// 	USkeletalMeshComponent* Mesh2 = PatternPiece2->FindComponentByClass<USkeletalMeshComponent>();
+//
+//
+// 	if (!Mesh1 || !Mesh2) return;
+//
+// 	for (int32 i = 0; i < Vertices1.Num(); ++i)
 // 	{
-// 		// If the package doesn't exist, create it
-// 		Package = CreatePackage(*SanitizedPackageName);
-// 	}
-// 	if (!Package)
-// 	{
-// 		UE_LOG(LogTemp, Error, TEXT("Failed to create package for saving asset"));
-// 		return false;
-// 	}
+// 		FPatternSewingConstraint Constraint;
+// 		Constraint.MeshA = Mesh1;
+// 		Constraint.VertexIndexA = Vertices1[i];
+// 		Constraint.MeshB = Mesh2;
+// 		Constraint.VertexIndexB = Vertices2[i];
+// 		Constraint.Stiffness = Stiffness;
 //
-// 	// Force full load of the package (if not already)
-// 	Package->FullyLoad();
-//
-// 	
-// 	// Try to find existing asset
-// 	UClothShapeAsset* ExistingAsset = FindObject<UClothShapeAsset>(Package, *AssetName);
-// 	UClothShapeAsset* TargetAsset = ExistingAsset;
-//
-// 	if (!TargetAsset)
-// 	{
-// 		// If it doesn't exist, create a new one
-// 		TargetAsset = NewObject<UClothShapeAsset>(Package, *AssetName, RF_Public | RF_Standalone);
-// 		if (!TargetAsset)
-// 		{
-// 			UE_LOG(LogTemp, Error, TEXT("Failed to create new UClothShapeAsset"));
-// 			return false;
-// 		}
-// 	}
-//
-// 	// Clear and copy your canvas data to the asset
-// 	TargetAsset->ClothShapes.Empty();
-// 	TargetAsset->ClothCurvePoints.Empty();
-//
-//
-//
-// 	
-// 	// Copy all completed shapes into asset
-// 	// for (const auto& ShapeCurve : CompletedShapes)
-// 	// {
-// 	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
-// 	{
-// 		const auto& ShapeCurve = CompletedShapes[ShapeIdx];
-// 		const auto& ShapeFlags = CompletedBezierFlags[ShapeIdx];
-// 		
-// 		FShapeData SavedShape;
-// 		
-//
-// 		// int32 i = 0;
-// 		// for (const auto& Point : ShapeCurve.Points)
-// 		// {
-// 		for (int32 i = 0; i < ShapeCurve.Points.Num(); ++i)
-// 		{
-// 			const auto& Point = ShapeCurve.Points[i];
-//
-// 			FCurvePointData NewPoint;
-// 			NewPoint.InputKey = Point.InVal;
-// 			NewPoint.Position = Point.OutVal;
-// 			NewPoint.ArriveTangent = Point.ArriveTangent;
-// 			NewPoint.LeaveTangent = Point.LeaveTangent;
-// 			NewPoint.bUseBezier   = ShapeFlags.IsValidIndex(i) 
-// 									  ? ShapeFlags[i] 
-// 									  : true;
-// 			SavedShape.CompletedClothShape.Add(NewPoint);
-// 			// ++i;
-// 		}
-//
-// 		TargetAsset->ClothShapes.Add(SavedShape);
-// 	}
-//
-//
-//
-// 	
-// 	// Iterate over your FInterpCurve keys (points)
-// 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-// 	{
-// 		const FInterpCurvePoint<FVector2D>& Point = CurvePoints.Points[i];
-//
-// 		FCurvePointData NewPoint;
-// 		NewPoint.InputKey = Point.InVal;
-// 		NewPoint.Position = Point.OutVal;
-// 		NewPoint.ArriveTangent = Point.ArriveTangent;
-// 		NewPoint.LeaveTangent = Point.LeaveTangent;
-// 		NewPoint.bUseBezier = bUseBezierPerPoint.IsValidIndex(i) ? bUseBezierPerPoint[i] : true;
-//
-//
-// 		// Add to the array
-// 		TargetAsset->ClothCurvePoints.Add(NewPoint);
-// 	}
-//
-// 	
-// 	// Mark dirty and notify asset registry only once
-// 	TargetAsset->MarkPackageDirty();
-// 	FAssetRegistryModule::AssetCreated(TargetAsset);
-// 	
-//
-// 	// Save package to disk
-// 	FString PackageFileName = FPackageName::LongPackageNameToFilename(SanitizedPackageName, FPackageName::GetAssetPackageExtension());
-// 	bool bSaved = UPackage::SavePackage(Package, TargetAsset, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName);
-//
-// 	if (bSaved)
-// 	{
-// 		UE_LOG(LogTemp, Log, TEXT("Asset saved successfully: %s"), *PackageFileName);
-// 		return true;
-// 	}
-// 	else
-// 	{
-// 		UE_LOG(LogTemp, Error, TEXT("Failed to save asset: %s"), *PackageFileName);
-// 		return false;
+// 		OutConstraints.Add(Constraint);
 // 	}
 // }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+FString SClothDesignCanvas::GetSelectedShapeAssetPath() const
+{
+	return ClothAsset.IsValid() ? ClothAsset->GetPathName() : FString();
+}
+
+void SClothDesignCanvas::OnShapeAssetSelected(const FAssetData& AssetData)
+{
+	ClothAsset = Cast<UClothShapeAsset>(AssetData.GetAsset());
+
+	if (ClothAsset.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Selected shape: %s"), *ClothAsset->GetName());
+
+		LoadShapeAssetData();
+	}
+}
 
 void SClothDesignCanvas::LoadShapeAssetData()
 {
@@ -2578,68 +1332,6 @@ void SClothDesignCanvas::LoadShapeAssetData()
 	// Force a repaint
 	Invalidate(EInvalidateWidgetReason::Paint);
 }
-
-//
-// void SClothDesignCanvas::LoadShapeAssetData()
-// {
-// 	if (!ClothAsset.IsValid())
-// 	{
-// 		UE_LOG(LogTemp, Warning, TEXT("No valid shape asset to load."));
-// 		return;
-// 	}
-//
-// 	// Clear existing data first
-// 	ClearCurrentShapeData();
-// 	
-// 	Invalidate(EInvalidateWidgetReason::Paint);
-// 	
-// 	for (const auto& SavedShape : ClothAsset->ClothShapes)
-// 	{
-// 		//FInterpCurve<FVector2D> LoadedCurve;
-// 		//
-// 		CurvePoints.Points.Empty();
-// 		bUseBezierPerPoint.Empty();
-// 		UE_LOG(LogTemp, Log, TEXT("Trying to load shapes!"));
-//
-// 		for (const auto& SavedPoint : SavedShape.CompletedClothShape)
-// 		{
-// 			AddPointToCanvas(SavedPoint);
-// 		}
-// 		
-// 		if (CurvePoints.Points.Num() != bUseBezierPerPoint.Num())
-// 		{
-// 			UE_LOG(LogTemp, Error, TEXT("Mismatch between points and Bezier flags!"));
-// 			// Handle error, maybe fix array sizes here
-// 		}
-// 		
-// 		if (bUseBezierPerPoint.Num() == 0)
-// 		{
-// 			// Avoid accessing Last()
-// 			return;
-// 		}
-// 		
-// 		FInterpCurve<FVector2D> CopiedCurve = CurvePoints;
-// 		
-// 		// 3. Only add if something was loaded
-// 		if (CurvePoints.Points.Num() > 0)
-// 		{
-// 			CompletedShapes.Add(CopiedCurve);
-// 			CompletedBezierFlags.Add(bUseBezierPerPoint);
-// 		}
-// 	}
-// 	
-// 	ClearCurvePointArrays();
-// 	
-// 	// Example: Suppose your UMyShapeAsset has a TArray<FCurvePointData> called SavedPoints
-// 	for (const FCurvePointData& Point : ClothAsset->ClothCurvePoints)
-// 	{
-// 		UE_LOG(LogTemp, Log, TEXT("Loaded Point: %s"), *Point.Position.ToString());
-// 		AddPointToCanvas(Point);
-// 	}
-// 	
-// 	// Refresh the canvas/UI to display loaded data
-// 	Invalidate(EInvalidateWidgetReason::Paint);
-// }
 
 
 void SClothDesignCanvas::AddPointToCanvas(const FCurvePointData& Point)
@@ -2687,6 +1379,7 @@ void SClothDesignCanvas::AddPointToCanvas(const FCurvePointData& Point)
 
 
 
+
 void SClothDesignCanvas::ClearCurrentShapeData()
 {
 	CompletedShapes.Empty();
@@ -2700,39 +1393,4 @@ void SClothDesignCanvas::ClearCurrentShapeData()
 	SelectedShapeIndex = INDEX_NONE;
 	
 	Invalidate(EInvalidateWidgetReason::Paint);
-}
-
-
-void SClothDesignCanvas::ClearCurvePointArrays()
-{
-	// Reset selection and indices
-	SelectedPointIndex = INDEX_NONE;
-	SelectedShapeIndex = INDEX_NONE;
-	
-
-	CurvePoints.Points.Empty();
-	bUseBezierPerPoint.Empty();
-	
-	// Invalidate(EInvalidateWidgetReason::Paint);
-}
-
-
-
-
-
-FString SClothDesignCanvas::GetSelectedShapeAssetPath() const
-{
-	return ClothAsset.IsValid() ? ClothAsset->GetPathName() : FString();
-}
-
-void SClothDesignCanvas::OnShapeAssetSelected(const FAssetData& AssetData)
-{
-	ClothAsset = Cast<UClothShapeAsset>(AssetData.GetAsset());
-
-	if (ClothAsset.IsValid())
-	{
-		UE_LOG(LogTemp, Log, TEXT("Selected shape: %s"), *ClothAsset->GetName());
-
-		LoadShapeAssetData();
-	}
 }

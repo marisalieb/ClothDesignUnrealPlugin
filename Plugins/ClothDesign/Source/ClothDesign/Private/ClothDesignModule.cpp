@@ -13,7 +13,7 @@
 #include "PropertyCustomizationHelpers.h"
 #include "ContentBrowserModule.h"
 #include "IContentBrowserSingleton.h"
-#include "CanvasAssets.h"
+#include "Canvas/CanvasAssets.h"
 
 
 #define LOCTEXT_NAMESPACE "ClothDesignModule"
@@ -480,4 +480,5 @@ void FClothDesignModule::SaveCurrentShapesToAsset()
 
 #undef LOCTEXT_NAMESPACE
 
-IMPLEMENT_MODULE(FClothDesignModule, ClothDesignEditorMode)
+// IMPLEMENT_MODULE(FClothDesignModule, ClothDesignEditorMode)
+IMPLEMENT_MODULE(FClothDesignModule, ClothDesign)

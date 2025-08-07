@@ -10,8 +10,7 @@
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
 #include "MeshOpPreviewHelpers.h" 
-#include "CanvasUtils.h"
-#include "CanvasAssets.h"
+#include "Canvas/CanvasAssets.h"
 
 
 class SClothDesignCanvas : public SCompoundWidget
@@ -24,15 +23,81 @@ public:
 	
 	virtual bool SupportsKeyboardFocus() const override { return true; }
 
-	// --- Mouse handling ---
-	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+	FVector2D TransformPoint(const FVector2D& Point) const;
+	FVector2D InverseTransformPoint(const FVector2D& ScreenPoint) const;
 
 	// // --- Drawing logic ---
 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
 							  const FSlateRect& CullingRect, FSlateWindowElementList& OutDrawElements,
 							  int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+	
+	// --- Mouse handling ---
+	virtual FReply OnMouseWheel(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+	
+	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
 
+	virtual FReply OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+
+	virtual FReply OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+
+	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
+	
+	virtual FReply OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
+
+	virtual FReply OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent) override;
+
+	void FocusViewportOnPoints();
+	
+	enum class EClothEditorMode
+	{
+		Draw,
+		Select,
+		Move,
+		Sew
+	};
+	EClothEditorMode CurrentMode = EClothEditorMode::Draw;
+	FReply OnModeButtonClicked(EClothEditorMode NewMode);
+
+	
+	// Undo/Redo stacks
+	TArray<FCanvasState> UndoStack;
+	TArray<FCanvasState> RedoStack;
+	FCanvasState GetCurrentCanvasState() const;
+	void RestoreCanvasState(const FCanvasState& State);
+
+	// for mousemove and mousebuttonup, onkeyup
+	enum class ETangentHandle
+	{
+		None,
+		Arrive,
+		Leave
+	};
+	bool bSeparateTangents = false;
+	ETangentHandle SelectedTangentHandle = ETangentHandle::None;
+	
+
+	// background texture
+	TWeakObjectPtr<UTexture2D> BackgroundTexture;
+	FString GetSelectedTexturePath() const;
+	void OnBackgroundTextureSelected(const FAssetData& AssetData);
+	float BackgroundImageScale = 1.0f;
+	TOptional<float> GetBackgroundImageScale() const;
+	void OnBackgroundImageScaleChanged(float NewScale);
+
+	// part of paint
+	void RecalculateNTangents(
+		FInterpCurve<FVector2D>& Curve,
+		const TArray<bool>&      bBezierFlags);
+
+
+	
+
+
+	
+	// create mesh from 2d points to 3d procedural mesh
 	TArray<int32> LastSeamVertexIDs;  // filled each time you build a mesh
+
+	static bool IsPointInPolygon(const FVector2f& Test, const TArray<FVector2f>& Poly);
 
 	void TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape, bool bRecordSeam = false,
 								 int32 StartPointIdx2D = -1, int32 EndPointIdx2D = -1);
@@ -41,108 +106,43 @@ public:
 
 	void TriangulateAndBuildAllMeshes();
 
+	UE::Geometry::FDynamicMesh3 LastBuiltMesh;
+	TArray<int32>  LastBuiltSeamVertexIDs;
+
+
+
+
 
 	
+	// pretty universal variables
 	float ZoomFactor = 5.0f;
 	FVector2D PanOffset = FVector2D::ZeroVector;
-	
-	FVector2D TransformPoint(const FVector2D& Point) const;
-	
-	virtual FReply OnMouseWheel(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
-
-	// for selectable point and movement
 	mutable int32 SelectedPointIndex = INDEX_NONE;
-	mutable bool bIsDragging = false;
-	
-	virtual FReply OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
-	virtual FReply OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
-
-	// need different modes so button down isnt always just adding new points
-	enum class EClothEditorMode
-	{
-		Draw,
-		Select,
-		Move,
-		Sew
-	};
-
-	USkeletalMeshComponent* SkeletalMesh = nullptr;
-	
-	EClothEditorMode CurrentMode = EClothEditorMode::Draw;
-	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
-	virtual FReply OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent) override;
-
-	FVector2D InverseTransformPoint(const FVector2D& ScreenPoint) const;
-
-	// Add some member state variables
 	bool bIsDraggingPoint = false;
 	bool bIsDraggingShape = false;
 	bool bIsShapeSelected = false;
-	bool IsPointNearLine(const FVector2D& P, const FVector2D& A, const FVector2D& B, float Threshold) const;
-
-
-	TWeakObjectPtr<UTexture2D> BackgroundTexture;
-
-	FString GetSelectedTexturePath() const;
-	void OnBackgroundTextureSelected(const FAssetData& AssetData);
-	float BackgroundImageScale = 1.0f;
-
-	
-	TOptional<float> GetBackgroundImageScale() const;
-	void OnBackgroundImageScaleChanged(float NewScale);
-
-
-	// This holds your curve control points and interpolation mode
+	mutable bool bIsDragging = false;
 	FInterpCurve<FVector2D> CurvePoints;
-	//FCurveWithFlags CurvePoints; // !!
 	TArray<bool> bUseBezierPerPoint; 
-
-
-	enum class ETangentHandle
-	{
-		None,
-		Arrive,
-		Leave
-	};
-
-	// for bezier handles, toggle
-	bool bSeparateTangents = false;
-	virtual FReply OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent) override;
-	void FocusViewportOnPoints();
-
 	// for drawing multiple shapes
 	TArray<FInterpCurve<FVector2D>> CompletedShapes;
-	//TArray<FCurveWithFlags> CompletedShapes; // !!
 	TArray<TArray<bool>> CompletedBezierFlags;
-
-
 	mutable int32 SelectedShapeIndex = INDEX_NONE;
+	bool bIsPanning = false;
+	FVector2D LastMousePos = FVector2D::ZeroVector;
+	bool bUseBezierPoints = true;
+	bool bIsDraggingTangent = false;
+	
+	
+
+
+
+
 
 
 
 	// sewing
 	TArray<FPatternSewingConstraint> SewingConstraints;
-
-	void AddSewingConstraints(
-		AActor* PatternPiece1,
-		const TArray<int32>& Vertices1,
-		AActor* PatternPiece2,
-		const TArray<int32>& Vertices2,
-		float Stiffness,
-		TArray<FPatternSewingConstraint>& OutConstraints
-	);
-
-	void SewingTest();
-	void ApplySewingConstraints();
-
-	FVector GetSkinnedVertexPosition(USkeletalMeshComponent* MeshComp, int32 VertexIndex);
-
-	void SewingStart();
-	void ApplySpringSeamForces(const TArray<FPatternSewingConstraint>& Constraints, float DeltaTime);
-
-
-
-	// sew
 	enum class ESeamClickState : uint8
 	{
 		None,
@@ -151,136 +151,87 @@ public:
 		ClickedBStart,
 		ClickedBEnd
 	};
-
 	ESeamClickState SeamClickState = ESeamClickState::None;
-	FVector2D AStart, AEnd, BStart, BEnd;
-	void FinalizeSeamDefinition(
-		const FVector2D& AStart,
-		const FVector2D& AEnd,
-		const FVector2D& BStart,
-		const FVector2D& BEnd);
-	
 	TArray<FPatternSewingConstraint> AllDefinedSeams;
-	bool bIsSeamReady = false;
-
-	// In your .h
-	int32 SeamAStartIndex  = INDEX_NONE;
-	int32 SeamAEndIndex    = INDEX_NONE;
-	int32 SeamBStartIndex  = INDEX_NONE;
-	int32 SeamBEndIndex    = INDEX_NONE;
-
-
-	
-	struct FClickTarget {
-		int32 ShapeIndex;
-		int32 PointIndex;
-	};
-	
+	struct FClickTarget {int32 ShapeIndex;int32 PointIndex;};
 	FClickTarget AStartTarget, AEndTarget, BStartTarget, BEndTarget;
-	FVector2D GetPointFromShape(int32 ShapeIndex, int32 PointIndex);
-	
-	void FinalizeSeamDefinitionByIndex(FClickTarget AStart, FClickTarget AEnd, FClickTarget BStart, FClickTarget BEnd);
 
+	
 	void FinalizeSeamDefinitionByTargets(
 		const FClickTarget& AStart,
 		const FClickTarget& AEnd,
 		const FClickTarget& BStart,
 		const FClickTarget& BEnd);
-
-	// void SClothDesignCanvas::AlignSeamMeshes(
-	// 	AClothPatternMeshActor* MeshActorA,
-	// 	AClothPatternMeshActor* MeshActorB
-	// );
+	
 	void AlignSeamMeshes(AClothPatternMeshActor* A, AClothPatternMeshActor* B);
 
-	//UE::Geometry::FDynamicMesh3 DynamicMesh;
-
+	// triangluate two meshes + align seams
 	void BuildAndAlignClickedSeam();
 
+	// then merge those two separate seams
 	void MergeLastTwoMeshes();
-	void MergeAndWeldLastTwoMeshes();
-
-	// Represents one seam between two shapes
-	struct FSeamDefinition
-	{
-		int32 ShapeA, StartA, EndA;
-		int32 ShapeB, StartB, EndB;
-	};
-
-	TArray<FSeamDefinition> AllSeams;
-
-
-
-
-
-
-	void RecalculateNTangents(
-		FInterpCurve<FVector2D>& Curve,
-		const TArray<bool>&      bBezierFlags);
-
-	FReply OnModeButtonClicked(EClothEditorMode NewMode);
-	EClothEditorMode GetCurrentMode() const { return CurrentMode; }
+	// void MergeAndWeldLastTwoMeshes();
+	
+	// // COMING SEWING FEATURE!! 
+	// // Represents one seam between two shapes
+	// struct FSeamDefinition
+	// {
+	// 	int32 ShapeA, StartA, EndA;
+	// 	int32 ShapeB, StartB, EndB;
+	// };
+	// TArray<FSeamDefinition> AllSeams;
+	
+	// void AddSewingConstraints(
+	// 	AActor* PatternPiece1,
+	// 	const TArray<int32>& Vertices1,
+	// 	AActor* PatternPiece2,
+	// 	const TArray<int32>& Vertices2,
+	// 	float Stiffness,
+	// 	TArray<FPatternSewingConstraint>& OutConstraints
+	// );
 
 
-	bool SaveShapeAsset(const FString& AssetPath, const FString& AssetName);
 
+
+
+
+
+
+
+	
+	// save and load of shapes
 	FString GetSelectedShapeAssetPath() const;
 	void OnShapeAssetSelected(const FAssetData& AssetData);
 	TWeakObjectPtr<UClothShapeAsset> ClothAsset;
 	void LoadShapeAssetData();
 	void AddPointToCanvas(const FCurvePointData& Point);
 	void ClearCurrentShapeData();
-	void ClearCurvePointArrays();
 
+
+
+
+	
+	// simple getters used in the module class 
 	const TArray<FInterpCurve<FVector2D>>& GetCompletedShapes() const { return CompletedShapes; }
 	const TArray<TArray<bool>>& GetCompletedBezierFlags() const { return CompletedBezierFlags; }
 	const FInterpCurve<FVector2D>& GetCurrentCurvePoints() const { return CurvePoints; }
 	const TArray<bool>& GetCurrentBezierFlags() const { return bUseBezierPerPoint; }
+	// ui getter for the mode, so draw, edit or sew
+	EClothEditorMode GetCurrentMode() const { return CurrentMode; }
 
-
-	
-	
-protected:
-
-	// Undo/Redo stacks
-	TArray<FCanvasState> UndoStack;
-	TArray<FCanvasState> RedoStack;
-
-	// State management
-	// void SaveStateForUndo();
-	FCanvasState GetCurrentCanvasState() const;
-	void RestoreCanvasState(const FCanvasState& State);
-
-	// void Undo();
-	// void Redo();
-
-	
-	/** All the procedural mesh actors we’ve spawned for patterns */
-	TArray<TWeakObjectPtr<AClothPatternMeshActor>> SpawnedPatternActors;
-	UE::Geometry::FDynamicMesh3 LastBuiltMesh;
-	TArray<int32>  LastBuiltSeamVertexIDs;
 	
 private:
-	TArray<FVector2D> Points;
+	
 
-	ETangentHandle SelectedTangentHandle = ETangentHandle::None;
-	bool bIsDraggingTangent = false;
-	float TangentHandleRadius = 25.0f; // or whatever pixel radius
-
-	// Pan and zoom state for focus
-	// FVector2D ViewOffset = FVector2D::ZeroVector;
-	// Optional: store last geometry for sizing
+	// member vars
 	FGeometry LastGeometry;
-
-	bool bUseBezierPoints = true;
-
-	FVector2D ViewOffset = FVector2D::ZeroVector;
-	bool bIsPanning = false;
-	FVector2D LastMousePos = FVector2D::ZeroVector;
+	// triangluate and seams
+	TArray<TWeakObjectPtr<AClothPatternMeshActor>> SpawnedPatternActors;
 
 
-	static bool IsPointInPolygon(
-	const FVector2f& Test, 
-	const TArray<FVector2f>& Poly);
+
+	
+	// FVector2D ViewOffset = FVector2D::ZeroVector;
+	
 
 };

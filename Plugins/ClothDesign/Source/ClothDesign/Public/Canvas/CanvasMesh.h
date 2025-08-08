@@ -46,7 +46,8 @@
 
 namespace CanvasMesh
 {
-	inline TArray<APatternMesh*> SpawnedPatternActors;
+	// inline TArray<APatternMesh*> SpawnedPatternActors;
+	inline TArray<TWeakObjectPtr<APatternMesh>> SpawnedPatternActors;
 
 	
 	static bool IsPointInPolygon(

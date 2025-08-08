@@ -40,15 +40,17 @@ private:
 	FReply OnGenerateMeshClicked();  // Declare the handler
 
 	FReply OnSewingClicked();  // Declare the handler
-	
+	FReply OnMergeMeshesClicked();
+
 	FSlateColor GetModeButtonColor(SClothDesignCanvas::EClothEditorMode Mode) const;
 
-	void SaveCurrentShapesToAsset();
+	// void SaveCurrentShapesToAsset();
 
 	
 	FReply OnSaveClicked();  // Declare the handler
 	// FReply OnSaveAsClicked();  // Declare the handler
 	FReply OnClearClicked();  // Declare the handler
+	FReply OnClearSewingClicked();  // Declare the handler
 
 	FString CurrentSaveName = TEXT("ShapeName");
 
@@ -60,7 +62,7 @@ private:
 	TFunction<void(const FAssetData&)> OnChanged);
 
 	TSharedRef<SWidget> MakeActionButtons();
-	TSharedRef<SWidget> MakeClearAllButton();
+	TSharedRef<SWidget> MakeClearButtons();
 	TSharedRef<SWidget> MakeModeToolbar();
 	TSharedRef<SWidget> MakeModeButton(
 						SClothDesignCanvas::EClothEditorMode InMode,

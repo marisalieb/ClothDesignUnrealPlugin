@@ -420,6 +420,50 @@ void CanvasMesh::TriangulateAndBuildMesh(
 }
 
 
+void CanvasMesh::TriangulateAndBuildAllMeshes(
+	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
+	const FInterpCurve<FVector2D>& CurvePoints,
+	TArray<FDynamicMesh3>& OutMeshes)
+{
+
+	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
+	{
+		FDynamicMesh3 Mesh;
+		TArray<int32> SeamVerts;
+		TArray<int32> DummySeamVerts;
+
+		TriangulateAndBuildMesh(
+			Shape,
+			false,
+			0, 0,
+			SeamVerts,
+			Mesh,
+			DummySeamVerts,
+			SpawnedPatternActors);
+		
+		OutMeshes.Add(Mesh);
+	}
+
+	if (CurvePoints.Points.Num() >= 3)
+	{
+		FDynamicMesh3 Mesh;
+		TArray<int32> SeamVerts;
+		TArray<int32> DummySeamVerts;
+
+		TriangulateAndBuildMesh(
+			CurvePoints,
+			false,
+			0, 0,
+			SeamVerts,
+			Mesh,
+			DummySeamVerts,
+			SpawnedPatternActors);
+		
+		OutMeshes.Add(Mesh);
+	}
+}
+
+
 // // second version but with steiner points, grid spaced constrained delaunay
 // void CanvasMesh::TriangulateAndBuildMesh(
 // 	const FInterpCurve<FVector2D>& Shape,
@@ -619,44 +663,3 @@ void CanvasMesh::TriangulateAndBuildMesh(
 // 		);
 // }
 
-
-// void CanvasMesh::TriangulateAndBuildAllMeshes(
-// 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-// 	const FInterpCurve<FVector2D>& CurvePoints,
-// 	TArray<FDynamicMesh3>& OutMeshes)
-// {
-//
-// 	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
-// 	{
-// 		FDynamicMesh3 Mesh;
-// 		TArray<int32> SeamVerts;
-// 		TArray<int32> DummySeamVerts;
-//
-// 		TriangulateAndBuildMesh(
-// 			Shape,
-// 			false,
-// 			0, 0,
-// 			SeamVerts,
-// 			Mesh,
-// 			DummySeamVerts
-// 			);
-// 		OutMeshes.Add(Mesh);
-// 	}
-//
-// 	if (CurvePoints.Points.Num() >= 3)
-// 	{
-// 		FDynamicMesh3 Mesh;
-// 		TArray<int32> SeamVerts;
-// 		TArray<int32> DummySeamVerts;
-//
-// 		TriangulateAndBuildMesh(
-// 			CurvePoints,
-// 			false,
-// 			0, 0,
-// 			SeamVerts,
-// 			Mesh,
-// 			DummySeamVerts
-// 			);
-// 		OutMeshes.Add(Mesh);
-// 	}
-// }

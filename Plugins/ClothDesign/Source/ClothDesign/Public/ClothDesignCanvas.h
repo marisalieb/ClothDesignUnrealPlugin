@@ -95,9 +95,9 @@ public:
 	FCanvasSewing SewingManager;
 	void SewingClick();
 	void MergeClick();
-
-
-
+	void ClearAllSewing();
+	void GenerateMeshesClick();
+	FReply SaveClick(const FString& SaveName);
 
 	
 	// simple getters used in the module class 
@@ -110,8 +110,6 @@ public:
 	FCanvasSewing& GetSewingManager() { return SewingManager; }
 	const FCanvasSewing& GetSewingManager() const { return SewingManager; }
 	
-
-
 	
 	// pretty universal variables
 	float ZoomFactor = 5.0f;
@@ -131,91 +129,12 @@ public:
 	TArray<bool> bUseBezierPerPoint;
 	TArray<TArray<bool>> CompletedBezierFlags;
 	bool bUseBezierPoints = true;
-	
-	
-	
-	
 
 
-
-
-
-
-
-
-	
-	// // create mesh from 2d points to 3d procedural mesh
-	// TArray<int32> LastSeamVertexIDs;  // filled each time a mesh is build
-	// FDynamicMesh3 LastBuiltMesh;
-	// TArray<int32>  LastBuiltSeamVertexIDs;
-	//
-	// static bool IsPointInPolygon(const FVector2f& Test, const TArray<FVector2f>& Poly);
-	//
-	// void TriangulateAndBuildMesh(const FInterpCurve<FVector2D>& Shape, bool bRecordSeam = false,
-	// 							 int32 StartPointIdx2D = -1, int32 EndPointIdx2D = -1);
-	//
-	// void CreateProceduralMesh(const TArray<FVector>& Vertices, const TArray<int32>& Indices);
-
-	// void TriangulateAndBuildAllMeshes();
-
-	// void TestBuildAllMeshes();
-	
-	// // COMING SEWING FEATURE!! 
-	// // Represents one seam between two shapes
-	// struct FSeamDefinition
-	// {
-	// 	int32 ShapeA, StartA, EndA;
-	// 	int32 ShapeB, StartB, EndB;
-	// };
-	// TArray<FSeamDefinition> AllSeams;
-
-	// // sewing
-	// struct FClickTarget {int32 ShapeIndex;int32 PointIndex;};
-	// enum class ESeamClickState : uint8
-	// {
-	// 	None,
-	// 	ClickedAStart,
-	// 	ClickedAEnd,
-	// 	ClickedBStart,
-	// 	ClickedBEnd
-	// };
-	//
-	// TArray<FPatternSewingConstraint> SewingConstraints;
-	// TArray<FPatternSewingConstraint> AllDefinedSeams;
-	// ESeamClickState SeamClickState = ESeamClickState::None;
-	// FClickTarget AStartTarget, AEndTarget, BStartTarget, BEndTarget;
-	//
-	//
-	// void FinalizeSeamDefinitionByTargets(
-	// 	const FClickTarget& AStart,
-	// 	const FClickTarget& AEnd,
-	// 	const FClickTarget& BStart,
-	// 	const FClickTarget& BEnd);
-	//
-	// void AlignSeamMeshes(APatternMesh* A, APatternMesh* B);
-	//
-	// // triangluate two meshes + align seams
-	// void BuildAndAlignClickedSeam();
-
-	// then merge those two separate seams
-	//void MergeLastTwoMeshes();
-	// void MergeAndWeldLastTwoMeshes();
-	
 private:
-	
-
-	// member vars
 	FGeometry LastGeometry;
-	// triangluate and seams
-	// TArray<TWeakObjectPtr<APatternMesh>> SpawnedPatternActors;
 	TArray<TWeakObjectPtr<APatternMesh>> LastBuiltActors;
-
-
+	
 	// for save load managing 
 	FCanvasAssetManager AssetManager;
-
-	
-	// FVector2D ViewOffset = FVector2D::ZeroVector;
-	
-
 };

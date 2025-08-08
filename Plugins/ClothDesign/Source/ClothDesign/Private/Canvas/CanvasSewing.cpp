@@ -2,6 +2,16 @@
 #include "Canvas/CanvasMesh.h"
 #include "ClothDesignCanvas.h"
 
+void FCanvasSewing::ClearAllSeams()
+{
+	SewingConstraints.Empty();
+	AllDefinedSeams.Empty();
+	SeamClickState = ESeamClickState::None;
+	AStartTarget = FClickTarget();
+	AEndTarget = FClickTarget();
+	BStartTarget = FClickTarget();
+	BEndTarget = FClickTarget();
+}
 
 void FCanvasSewing::FinalizeSeamDefinitionByTargets(
 	const FClickTarget& AStart,
@@ -177,148 +187,6 @@ void FCanvasSewing::BuildAndAlignClickedSeam(TArray<TWeakObjectPtr<APatternMesh>
 }
 
 
-
-
-//
-// void FCanvasSewing::MergeLastTwoMeshes()
-// {
-// 	using namespace CanvasMesh; // for spawnedpatternactor
-// 	
-//     // 1) Make sure we have at least two actors
-//     if (SpawnedPatternActors.Num() < 2)
-//     {
-//         UE_LOG(LogTemp, Warning, TEXT("Need at least two meshes to merge"));
-//         return;
-//     }
-//     // Grab the last two
-//     TWeakObjectPtr<APatternMesh> A = SpawnedPatternActors[SpawnedPatternActors.Num() - 2];
-//     TWeakObjectPtr<APatternMesh> B = SpawnedPatternActors[SpawnedPatternActors.Num() - 1];
-//     // if (!A || !B)
-//     // {
-//     //     UE_LOG(LogTemp, Warning, TEXT("One of the two actors is invalid"));
-//     //     return;
-//     // }
-//
-//     // 2) Copy their dynamic meshes
-//     UE::Geometry::FDynamicMesh3 MergedMesh = A->DynamicMesh;
-// 	UE_LOG(LogTemp, Warning, TEXT("[Merge] After copy-from-A: Verts=%d, Tris=%d"),
-// 			MergedMesh.VertexCount(), MergedMesh.TriangleCount());
-// 	
-//     int32 BaseVID = MergedMesh.VertexCount();
-//
-//
-// 	const FTransform& TA = A->GetActorTransform();
-// 	TArray<int> MapA;
-// 	MapA.SetNum(A->DynamicMesh.VertexCount());
-//
-// 	// 1) Add all A’s vertices in world space
-// 	for (int vid : A->DynamicMesh.VertexIndicesItr())
-// 	{
-// 		FVector3d LocalP = A->DynamicMesh.GetVertex(vid);
-// 		FVector    WorldP = TA.TransformPosition((FVector)LocalP);
-// 		MapA[vid] = MergedMesh.AppendVertex(FVector3d(WorldP));
-// 	}
-// 	// 2) Add A’s triangles with remapped indices
-// 	for (int tid : A->DynamicMesh.TriangleIndicesItr())
-// 	{
-// 		auto T = A->DynamicMesh.GetTriangle(tid);
-// 		MergedMesh.AppendTriangle(
-// 			MapA[T.A], MapA[T.B], MapA[T.C]
-// 		);
-// 	}
-//
-// 	// After appending A’s vertices and triangles:
-// 	UE_LOG(LogTemp, Warning, TEXT("[Merge] After append-A: Verts=%d, Tris=%d"),
-// 			MergedMesh.VertexCount(), MergedMesh.TriangleCount());
-// 	
-// 	const FTransform& TB = B->GetActorTransform();
-// 	TArray<int> MapB;
-// 	MapB.SetNum(B->DynamicMesh.VertexCount());
-//
-// 	for (int vid : B->DynamicMesh.VertexIndicesItr())
-// 	{
-// 		FVector3d LocalP = B->DynamicMesh.GetVertex(vid);
-// 		FVector    WorldP = TB.TransformPosition((FVector)LocalP);
-// 		MapB[vid] = MergedMesh.AppendVertex(FVector3d(WorldP));
-// 	}
-// 	for (int tid : B->DynamicMesh.TriangleIndicesItr())
-// 	{
-// 		auto T = B->DynamicMesh.GetTriangle(tid);
-// 		MergedMesh.AppendTriangle(
-// 			MapB[T.A], MapB[T.B], MapB[T.C]
-// 		);
-// 	}
-//
-// 	// After appending B’s:
-// 	UE_LOG(LogTemp, Warning, TEXT("[Merge] After append-B: Verts=%d, Tris=%d"),
-// 			MergedMesh.VertexCount(), MergedMesh.TriangleCount());
-//
-// 	// (Optionally) before you enable attributes:
-// 	UE_LOG(LogTemp, Warning, TEXT("[Merge] Pre-extract: Verts=%d, Tris=%d"),
-// 			MergedMesh.VertexCount(), MergedMesh.TriangleCount());
-// 	
-// 	
-// 	if (!MergedMesh.HasAttributes())
-// 	{
-// 		MergedMesh.EnableAttributes();
-// 	}
-// 	
-// 	
-//     // 3) Extract to raw arrays for ProceduralMeshComponent
-//     TArray<FVector> Vertices;
-//     TArray<int32>   Indices;
-//     Vertices.Reserve(MergedMesh.VertexCount());
-//     Indices.Reserve(MergedMesh.TriangleCount() * 3);
-//
-//     for (int32 VID : MergedMesh.VertexIndicesItr())
-//     {
-//         FVector3d P = MergedMesh.GetVertex(VID);
-//         Vertices.Add(FVector(P.X, P.Y, P.Z));
-//     }
-//     for (int32 TID : MergedMesh.TriangleIndicesItr())
-//     {
-//         UE::Geometry::FIndex3i Tri = MergedMesh.GetTriangle(TID);
-//         Indices.Add(Tri.A);
-//         Indices.Add(Tri.B);
-//         Indices.Add(Tri.C);
-//     }
-// 	
-// 	UE_LOG(LogTemp, Warning, TEXT("[Merge] Extracted: Verts=%d, Tris=%d"),
-// 			Vertices.Num(), Indices.Num()/3);
-// 	
-//     // 4) Spawn a new actor for the merged mesh
-//     UWorld* World = GEditor->GetEditorWorldContext().World();
-//     if (!World) return;
-//
-//     FActorSpawnParameters Params;
-//     APatternMesh* MergedActor =
-//         World->SpawnActor<APatternMesh>(Params);
-//     if (!MergedActor) return;
-//
-// #if WITH_EDITOR
-//     MergedActor->SetActorLabel(TEXT("MergedPatternMesh"));
-// #endif
-//
-//     // Store the merged dynamic mesh
-//     MergedActor->DynamicMesh = MoveTemp(MergedMesh);
-//
-//     // Create the visible section
-//     TArray<FVector> Normals; Normals.Init(FVector::UpVector, Vertices.Num());
-//     TArray<FVector2D> UV0;  UV0.Init(FVector2D::ZeroVector, Vertices.Num());
-//     TArray<FLinearColor> VertexColors; VertexColors.Init(FLinearColor::White, Vertices.Num());
-//     TArray<FProcMeshTangent> Tangents;   Tangents.Init(FProcMeshTangent(1,0,0), Vertices.Num());
-//
-//     MergedActor->MeshComponent->CreateMeshSection_LinearColor(
-//         0, Vertices, Indices,
-//         Normals, UV0, VertexColors, Tangents,
-//         /*bCreateCollision=*/true
-//     );
-//
-//     UE_LOG(LogTemp, Log, TEXT("Merged two meshes into '%s' (%d verts, %d tris)"),
-//         *MergedActor->GetActorLabel(),
-//         Vertices.Num(), Indices.Num() / 3
-//     );
-// }
 
 void FCanvasSewing::MergeLastTwoMeshes()
 {

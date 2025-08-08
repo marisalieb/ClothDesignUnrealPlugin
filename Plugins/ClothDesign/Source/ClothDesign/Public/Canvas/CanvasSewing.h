@@ -18,6 +18,12 @@ enum class ESeamClickState : uint8
 	ClickedBEnd
 };
 
+// // Represents one seam between two shapes
+// struct FSeamDefinition
+// {
+// 	int32 ShapeA, StartA, EndA;
+// 	int32 ShapeB, StartB, EndB;
+// };
 
 struct FCanvasSewing
 {
@@ -31,6 +37,8 @@ struct FCanvasSewing
 	
 	TArray<TWeakObjectPtr<APatternMesh>> SpawnedPatternActors;
 
+	// TArray<FSeamDefinition> AllSeams;
+	
 	// Methods
 	void FinalizeSeamDefinitionByTargets(
 		const FClickTarget& AStart,
@@ -48,14 +56,6 @@ struct FCanvasSewing
 		const FInterpCurve<FVector2D>& CurvePoints);
 
 	void MergeLastTwoMeshes();
-	// void Reset()
-	// {
-	// 	SewingConstraints.Empty();
-	// 	AllDefinedSeams.Empty();
-	// 	SeamClickState = ESeamClickState::None;
-	// 	AStartTarget = FClickTarget();
-	// 	AEndTarget = FClickTarget();
-	// 	BStartTarget = FClickTarget();
-	// 	BEndTarget = FClickTarget();
-	// }
+	
+	void ClearAllSeams();
 };

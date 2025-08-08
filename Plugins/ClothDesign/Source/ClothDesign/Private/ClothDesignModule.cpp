@@ -234,12 +234,27 @@ TSharedRef<SWidget> FClothDesignModule::MakeActionButtons()
 				.Text(LOCTEXT("SewingBtn", "Sewing"))
 				.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSewingClicked))
 			]
+		]
+		// Merge meshes
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(10)
+		.HAlign(HAlign_Left)
+		[
+			SNew(SBox)
+			.WidthOverride(150.f)
+			[
+				SNew(SButton)
+				.Text(LOCTEXT("MergeMeshesBtn", "Merge Meshes"))
+				.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnMergeMeshesClicked))
+			]
 		];
 }
 
-TSharedRef<SWidget> FClothDesignModule::MakeClearAllButton()
+TSharedRef<SWidget> FClothDesignModule::MakeClearButtons()
 {
 	return SNew(SVerticalBox)
+		
 		+ SVerticalBox::Slot()
 		.AutoHeight()
 		.Padding(6)
@@ -262,8 +277,22 @@ TSharedRef<SWidget> FClothDesignModule::MakeClearAllButton()
 						.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnClearClicked))
 					]
 				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(10)
+				.HAlign(HAlign_Left) // Optional: Align button to the left
+				[
+					SNew(SBox)
+					.WidthOverride(150.f) // Set desired fixed width here
+					[
+						SNew(SButton)
+						.Text(FText::FromString("Clear Sewing"))
+						.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnClearSewingClicked))
+					]
+				]
 			]
 		];
+	
 }
 
 TSharedRef<SWidget> FClothDesignModule::MakeModeButton(
@@ -350,7 +379,7 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 						+ SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
 						+ SVerticalBox::Slot().AutoHeight().Padding(10)[ MakeActionButtons() ]
 						+ SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
-						+ SVerticalBox::Slot().AutoHeight().Padding(6) [ MakeClearAllButton() ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(6) [ MakeClearButtons() ]
 					]
 				]
 
@@ -396,67 +425,91 @@ FReply FClothDesignModule::OnGenerateMeshClicked()
 {
 	if (CanvasWidget.IsValid())
 	{
-		//CanvasWidget->TriangulateAndBuildMesh();
-		// CanvasWidget->TriangulateAndBuildAllMeshes();
-		// CanvasWidget->TestBuildAllMeshes();
-
-		//CanvasWidget->BuildAndAlignClickedSeam(); MergeLastTwoMeshes
-		// CanvasWidget->MergeAndWeldLastTwoMeshes();
-
-
-		CanvasWidget->MergeClick();
-
+		CanvasWidget->GenerateMeshesClick();
 	}
 	return FReply::Handled();
 }
+
+
 
 FReply FClothDesignModule::OnSewingClicked()
 {
 	if (CanvasWidget.IsValid())
 	{
-		//CanvasWidget->TriangulateAndBuildMesh();
-		// CanvasWidget->SewingStart();
 		CanvasWidget->SewingClick();
-
 	}
 	return FReply::Handled();
 }
 
+FReply FClothDesignModule::OnMergeMeshesClicked()
+{
+	if (CanvasWidget.IsValid())
+	{
+		CanvasWidget->MergeClick();
+	}
+	return FReply::Handled();
+}
 
 FReply FClothDesignModule::OnSaveClicked()
 {
-	if (!CanvasWidget.IsValid())
+	if (CanvasWidget.IsValid())
 	{
-		return FReply::Handled();
+		CanvasWidget->SaveClick(CurrentSaveName);
 	}
-
-	if (CurrentSaveName.IsEmpty())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Please enter a name before saving."));
-		return FReply::Handled();
-	}
-
-	// Extract required data from the canvas
-	TArray<FInterpCurve<FVector2D>> CompletedShapes = CanvasWidget->GetCompletedShapes();
-	TArray<TArray<bool>> CompletedBezierFlags = CanvasWidget->GetCompletedBezierFlags();
-	FInterpCurve<FVector2D> CurvePoints = CanvasWidget->GetCurrentCurvePoints();
-	TArray<bool> bUseBezierPerPoint = CanvasWidget->GetCurrentBezierFlags();
-
-	// Save
-	bool bOK = FCanvasAssets::SaveShapeAsset(
-		TEXT("SavedClothMeshes"),
-		CurrentSaveName,
-		CompletedShapes,
-		CompletedBezierFlags,
-		CurvePoints,
-		bUseBezierPerPoint
-	);
-
-	UE_LOG(LogTemp, Log, TEXT("Save %s: %s"), *CurrentSaveName, bOK ? TEXT("Success") : TEXT("FAILED"));
-
 	return FReply::Handled();
 }
 
+
+// FReply FClothDesignModule::OnSaveClicked()
+// {
+// 	if (!CanvasWidget.IsValid())
+// 	{
+// 		return FReply::Handled();
+// 	}
+//
+// 	if (CurrentSaveName.IsEmpty())
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("Please enter a name before saving."));
+// 		return FReply::Handled();
+// 	}
+//
+// 	// Extract required data from the canvas
+// 	TArray<FInterpCurve<FVector2D>> CompletedShapes = CanvasWidget->GetCompletedShapes();
+// 	TArray<TArray<bool>> CompletedBezierFlags = CanvasWidget->GetCompletedBezierFlags();
+// 	FInterpCurve<FVector2D> CurvePoints = CanvasWidget->GetCurrentCurvePoints();
+// 	TArray<bool> bUseBezierPerPoint = CanvasWidget->GetCurrentBezierFlags();
+//
+// 	// Save
+// 	bool bOK = FCanvasAssets::SaveShapeAsset(
+// 		TEXT("SavedClothMeshes"),
+// 		CurrentSaveName,
+// 		CompletedShapes,
+// 		CompletedBezierFlags,
+// 		CurvePoints,
+// 		bUseBezierPerPoint
+// 	);
+//
+// 	UE_LOG(LogTemp, Log, TEXT("Save %s: %s"), *CurrentSaveName, bOK ? TEXT("Success") : TEXT("FAILED"));
+//
+// 	return FReply::Handled();
+// }
+
+// FReply FClothDesignModule::OnSaveClicked()
+// {
+// 	if (!CanvasWidget.IsValid())
+// 	{
+// 		return FReply::Handled();
+// 	}
+//
+// 	if (CurrentSaveName.IsEmpty())
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("Please enter a name before saving."));
+// 		return FReply::Handled();
+// 	}
+// 	
+// 	return FReply::Handled();
+//
+// }
 
 FReply FClothDesignModule::OnClearClicked()
 {
@@ -467,19 +520,28 @@ FReply FClothDesignModule::OnClearClicked()
 	}
 	return FReply::Handled();
 }
-
-
-void FClothDesignModule::SaveCurrentShapesToAsset()
+FReply FClothDesignModule::OnClearSewingClicked()
 {
-	UClothShapeAsset* NewAsset = NewObject<UClothShapeAsset>(GetTransientPackage(), UClothShapeAsset::StaticClass(), NAME_None, RF_Public | RF_Standalone);
-	
-	FString PackageName = TEXT("/Game/Cloth/GeneratedShapeAsset");
-	FString AssetName = TEXT("GeneratedShapeAsset");
+	if (CanvasWidget.IsValid())
+	{
+		CanvasWidget->ClearAllSewing();
 
-	FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
-	UObject* FinalAsset = AssetToolsModule.Get().CreateAsset(AssetName, FPackageName::GetLongPackagePath(PackageName), UClothShapeAsset::StaticClass(), nullptr);
-    
+	}
+	return FReply::Handled();
 }
+
+
+// void FClothDesignModule::SaveCurrentShapesToAsset()
+// {
+// 	UClothShapeAsset* NewAsset = NewObject<UClothShapeAsset>(GetTransientPackage(), UClothShapeAsset::StaticClass(), NAME_None, RF_Public | RF_Standalone);
+// 	
+// 	FString PackageName = TEXT("/Game/Cloth/GeneratedShapeAsset");
+// 	FString AssetName = TEXT("GeneratedShapeAsset");
+//
+// 	FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+// 	UObject* FinalAsset = AssetToolsModule.Get().CreateAsset(AssetName, FPackageName::GetLongPackagePath(PackageName), UClothShapeAsset::StaticClass(), nullptr);
+//     
+// }
 
 
 #undef LOCTEXT_NAMESPACE

@@ -18,4 +18,10 @@ struct FCanvasUtils
 	  TArray<FCanvasState>& UndoStack,
 	  TArray<FCanvasState>& RedoStack,
 	  FCanvasState& CurrentState);
+
+	// recalc n-point tangents
+	static void RecalculateNTangents(
+		FInterpCurve<FVector2D>& Curve,
+		const TArray<bool>&      bBezierFlags);
+
 };

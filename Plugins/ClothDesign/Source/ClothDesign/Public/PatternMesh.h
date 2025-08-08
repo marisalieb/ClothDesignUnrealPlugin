@@ -7,11 +7,11 @@
 #include "DynamicMesh/DynamicMesh3.h"
 
 // Required for UCLASS to work:
-#include "ClothPatternMeshActor.generated.h"
+#include "PatternMesh.generated.h"
 
 
 UCLASS()
-class AClothPatternMeshActor : public AActor
+class APatternMesh : public AActor
 {
 	GENERATED_BODY()
 
@@ -19,7 +19,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Cloth Mesh")
 	UProceduralMeshComponent* MeshComponent;
 
-	AClothPatternMeshActor();
+	APatternMesh();
 
 	// Store the seam vertex IDs you recorded when building
 	UPROPERTY()

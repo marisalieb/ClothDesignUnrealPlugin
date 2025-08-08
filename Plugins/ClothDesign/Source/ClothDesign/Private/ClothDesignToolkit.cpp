@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "ClothDesignEditorModeToolkit.h"
+#include "ClothDesignToolkit.h"
 #include "ClothDesignEditorMode.h"
 #include "Engine/Selection.h"
 
@@ -11,20 +11,20 @@
 
 #define LOCTEXT_NAMESPACE "ClothDesignEditorModeToolkit"
 
-FClothDesignEditorModeToolkit::FClothDesignEditorModeToolkit()
+FClothDesignToolkit::FClothDesignToolkit()
 {
 }
 
 
 // helper functions to imrpove readability of the main ui init function
-TSharedRef<SWidget> FClothDesignEditorModeToolkit::MakeOpen2DButton()
+TSharedRef<SWidget> FClothDesignToolkit::MakeOpen2DButton()
 {
 	return SNew(SButton)
 		.Text(FText::FromString("Open 2D Window"))
-		.OnClicked(FOnClicked::CreateSP(this, &FClothDesignEditorModeToolkit::OnOpen2DWindowClicked));
+		.OnClicked(FOnClicked::CreateSP(this, &FClothDesignToolkit::OnOpen2DWindowClicked));
 }
 
-TSharedRef<SWidget> FClothDesignEditorModeToolkit::MakeObjectPicker(
+TSharedRef<SWidget> FClothDesignToolkit::MakeObjectPicker(
 	const FText& LabelText,
 	UClass* AllowedClass,
 	TFunction<FString()> GetPath,
@@ -53,7 +53,7 @@ TSharedRef<SWidget> FClothDesignEditorModeToolkit::MakeObjectPicker(
 		];
 }
 
-void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, TWeakObjectPtr<UEdMode> InOwningMode)
+void FClothDesignToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, TWeakObjectPtr<UEdMode> InOwningMode)
 {
 	FModeToolkit::Init(InitToolkitHost, InOwningMode);
 
@@ -125,7 +125,7 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 	// 	[
 	// 		SNew(SButton)
 	// 		.Text(FText::FromString("Open 2D Window"))
-	// 		.OnClicked(FOnClicked::CreateSP(this, &FClothDesignEditorModeToolkit::OnOpen2DWindowClicked))
+	// 		.OnClicked(FOnClicked::CreateSP(this, &FClothDesignToolkit::OnOpen2DWindowClicked))
 	//
 	// 	]
 	// ]
@@ -151,8 +151,8 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 	// 	[
 	// 		SNew(SObjectPropertyEntryBox)
 	// 		.AllowedClass(USkeletalMesh::StaticClass()) // or AActor::StaticClass()
-	// 		.ObjectPath(this, &FClothDesignEditorModeToolkit::GetSelectedSkeletalMeshPath)
-	// 		.OnObjectChanged(this, &FClothDesignEditorModeToolkit::OnSkeletalMeshSelected)
+	// 		.ObjectPath(this, &FClothDesignToolkit::GetSelectedSkeletalMeshPath)
+	// 		.OnObjectChanged(this, &FClothDesignToolkit::OnSkeletalMeshSelected)
 	// 	]
 	// ]
 	//
@@ -177,8 +177,8 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 	// 	[
 	// 		SNew(SObjectPropertyEntryBox)
 	// 		.AllowedClass(USkeletalMesh::StaticClass()) // or AActor::StaticClass()
-	// 		.ObjectPath(this, &FClothDesignEditorModeToolkit::GetSelectedClothMeshPath)
-	// 		.OnObjectChanged(this, &FClothDesignEditorModeToolkit::OnClothMeshSelected)
+	// 		.ObjectPath(this, &FClothDesignToolkit::GetSelectedClothMeshPath)
+	// 		.OnObjectChanged(this, &FClothDesignToolkit::OnClothMeshSelected)
 	// 	]
 	// ]
 	//
@@ -203,8 +203,8 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 	// 	[
 	// 		SNew(SObjectPropertyEntryBox)
 	// 		.AllowedClass(UMaterialInterface::StaticClass())
-	// 		.ObjectPath(this, &FClothDesignEditorModeToolkit::GetSelectedTextileMaterialPath)
-	// 		.OnObjectChanged(this, &FClothDesignEditorModeToolkit::OnTextileMaterialSelected)
+	// 		.ObjectPath(this, &FClothDesignToolkit::GetSelectedTextileMaterialPath)
+	// 		.OnObjectChanged(this, &FClothDesignToolkit::OnTextileMaterialSelected)
 	// 	]
 	// ]
 
@@ -227,32 +227,32 @@ void FClothDesignEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToo
 }
 
 
-FString FClothDesignEditorModeToolkit::GetSelectedSkeletalMeshPath() const
+FString FClothDesignToolkit::GetSelectedSkeletalMeshPath() const
 {
 	return SelectedSkeletalMesh.IsValid() ? SelectedSkeletalMesh->GetPathName() : FString();
 }
 
-void FClothDesignEditorModeToolkit::OnSkeletalMeshSelected(const FAssetData& AssetData)
+void FClothDesignToolkit::OnSkeletalMeshSelected(const FAssetData& AssetData)
 {
 	SelectedSkeletalMesh = Cast<USkeletalMesh>(AssetData.GetAsset());
 }
 
-FString FClothDesignEditorModeToolkit::GetSelectedClothMeshPath() const
+FString FClothDesignToolkit::GetSelectedClothMeshPath() const
 {
 	return SelectedClothMesh.IsValid() ? SelectedClothMesh->GetPathName() : FString();
 }
 
-void FClothDesignEditorModeToolkit::OnClothMeshSelected(const FAssetData& AssetData)
+void FClothDesignToolkit::OnClothMeshSelected(const FAssetData& AssetData)
 {
 	SelectedClothMesh = Cast<USkeletalMesh>(AssetData.GetAsset());
 }
 
-FString FClothDesignEditorModeToolkit::GetSelectedTextileMaterialPath() const
+FString FClothDesignToolkit::GetSelectedTextileMaterialPath() const
 {
 	return SelectedTextileMaterial.IsValid() ? SelectedTextileMaterial->GetPathName() : FString();
 }
 
-void FClothDesignEditorModeToolkit::OnTextileMaterialSelected(const FAssetData& AssetData)
+void FClothDesignToolkit::OnTextileMaterialSelected(const FAssetData& AssetData)
 {
 	SelectedTextileMaterial = Cast<UMaterialInterface>(AssetData.GetAsset());
 }
@@ -263,7 +263,7 @@ void FClothDesignEditorModeToolkit::OnTextileMaterialSelected(const FAssetData& 
 
 
 /*
-void FClothDesignEditorModeToolkit::OnClothObjectPicked(const FAssetData& AssetData)
+void FClothDesignToolkit::OnClothObjectPicked(const FAssetData& AssetData)
 {
 	UObject* PickedObject = AssetData.GetAsset();
 	if (AActor* PickedActor = Cast<AActor>(PickedObject))
@@ -275,24 +275,24 @@ void FClothDesignEditorModeToolkit::OnClothObjectPicked(const FAssetData& AssetD
 
 */
 
-void FClothDesignEditorModeToolkit::GetToolPaletteNames(TArray<FName>& PaletteNames) const
+void FClothDesignToolkit::GetToolPaletteNames(TArray<FName>& PaletteNames) const
 {
 	PaletteNames.Add(NAME_Default);
 }
 
-TSharedPtr<SWidget> FClothDesignEditorModeToolkit::GetInlineContent() const
+TSharedPtr<SWidget> FClothDesignToolkit::GetInlineContent() const
 {
 	return ToolkitWidget;
 }
 
 
 
-FName FClothDesignEditorModeToolkit::GetToolkitFName() const
+FName FClothDesignToolkit::GetToolkitFName() const
 {
 	return FName("ClothDesignEditorMode");
 }
 
-FText FClothDesignEditorModeToolkit::GetBaseToolkitName() const
+FText FClothDesignToolkit::GetBaseToolkitName() const
 {
 	return LOCTEXT("DisplayName", "ClothDesignEditorMode Toolkit");
 }
@@ -302,7 +302,7 @@ FText FClothDesignEditorModeToolkit::GetBaseToolkitName() const
 
 
 
-FReply FClothDesignEditorModeToolkit::OnOpen2DWindowClicked()
+FReply FClothDesignToolkit::OnOpen2DWindowClicked()
 {
 	static const FName TwoDTabName("TwoDWindowTab"); // change name here
 

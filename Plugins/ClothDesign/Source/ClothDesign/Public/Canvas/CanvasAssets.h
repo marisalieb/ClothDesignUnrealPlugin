@@ -3,14 +3,14 @@
 #include "Math/InterpCurve.h"
 #include "DynamicMesh/DynamicMesh3.h"
 #include "PatternSewingConstraint.h"
-#include "ClothPatternMeshActor.h"
+#include "PatternMesh.h"
 #include "Misc/ScopeLock.h"
 #include "ClothShapeAsset.h"
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
 #include "MeshOpPreviewHelpers.h" 
 //#include "SClothDesignCanvas.h"
-#include "ClothPatternMeshActor.h"
+#include "PatternMesh.h"
 #include "CompGeom/Delaunay2.h"
 #include "DynamicMesh/DynamicMesh3.h"
 #include "DynamicMeshEditor.h"
@@ -40,7 +40,7 @@
 #include "ClothShapeAsset.h"
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
-#include "ClothPatternMeshActor.h"
+#include "PatternMesh.h"
 #include "CanvasState.h"          // for FCanvasState
 
 
@@ -72,4 +72,18 @@ struct FCanvasAssets
 	UClothShapeAsset* ClothAsset,
 	/* out */ FCanvasState& OutState);
 
+};
+
+
+/** 
+ * Holds the currently selected shape asset and loads/saves its canvas state. 
+ */
+struct FCanvasAssetManager
+{
+	TWeakObjectPtr<UClothShapeAsset> ClothAsset;
+	FString GetSelectedShapeAssetPath() const;
+	bool OnShapeAssetSelected(const FAssetData& AssetData, FCanvasState& OutState);
+
+private:
+	bool LoadShapeAssetData(FCanvasState& OutState);
 };

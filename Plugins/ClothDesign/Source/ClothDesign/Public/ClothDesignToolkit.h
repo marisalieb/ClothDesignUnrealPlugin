@@ -12,10 +12,10 @@
  * This FModeToolkit just creates a basic UI panel that allows various InteractiveTools to
  * be initialized, and a DetailsView used to show properties of the active Tool.
  */
-class FClothDesignEditorModeToolkit : public FModeToolkit
+class FClothDesignToolkit : public FModeToolkit
 {
 public:
-	FClothDesignEditorModeToolkit();
+	FClothDesignToolkit();
 
 	/** FModeToolkit interface */
 	virtual void Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, TWeakObjectPtr<UEdMode> InOwningMode) override;

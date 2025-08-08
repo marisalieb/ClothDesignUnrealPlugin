@@ -7,10 +7,10 @@
 /*
  This class contains info about the full set of commands used in this editor mode.
  */
-class FClothDesignEditorModeCommands : public TCommands<FClothDesignEditorModeCommands>
+class FClothDesignCommands : public TCommands<FClothDesignCommands>
 {
 public:
-	FClothDesignEditorModeCommands();
+	FClothDesignCommands();
 
 	virtual void RegisterCommands() override;
 	static TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> GetCommands();

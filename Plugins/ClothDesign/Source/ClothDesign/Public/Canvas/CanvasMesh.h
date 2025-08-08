@@ -4,14 +4,14 @@
 #include "Math/InterpCurve.h"
 #include "DynamicMesh/DynamicMesh3.h"
 #include "PatternSewingConstraint.h"
-#include "ClothPatternMeshActor.h"
+#include "PatternMesh.h"
 #include "Misc/ScopeLock.h"
 #include "ClothShapeAsset.h"
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
 #include "MeshOpPreviewHelpers.h" 
-#include "SClothDesignCanvas.h"
-#include "ClothPatternMeshActor.h"
+#include "ClothDesignCanvas.h"
+#include "PatternMesh.h"
 #include "CompGeom/Delaunay2.h"
 #include "DynamicMesh/DynamicMesh3.h"
 #include "DynamicMeshEditor.h"
@@ -41,34 +41,78 @@
 #include "ClothShapeAsset.h"
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
-#include "ClothPatternMeshActor.h"
+#include "PatternMesh.h"
 
 
 namespace CanvasMesh
 {
-	inline TArray<AClothPatternMeshActor*> SpawnedPatternActors;
+	inline TArray<APatternMesh*> SpawnedPatternActors;
 
 	
 	static bool IsPointInPolygon(
 	const FVector2f& Test, 
 	const TArray<FVector2f>& Poly);
 
+
+
+
+	
+	void SampleShapeCurve(
+	const FInterpCurve<FVector2D>& Shape,
+	bool bRecordSeam,
+	int32 StartPointIdx2D,
+	int32 EndPointIdx2D,
+	int SamplesPerSegment,
+	TArray<FVector2f>& OutPolyVerts,
+	TArray<int32>& OutSeamVertexIDs,
+	TArray<int32>& OutVertexIDs,
+	FDynamicMesh3& Mesh);
+
+	void AddGridInteriorPoints(
+		TArray<FVector2f>& PolyVerts,
+		int32 OriginalBoundaryCount,
+		TArray<int32>& OutVertexIDs,
+		FDynamicMesh3& Mesh);
+
+	void BuildBoundaryEdges(
+		int32 OriginalBoundaryCount,
+		TArray<UE::Geometry::FIndex2i>& OutBoundaryEdges);
+
+	void RunConstrainedDelaunay(
+		const TArray<FVector2f>& PolyVerts,
+		const TArray<UE::Geometry::FIndex2i>& BoundaryEdges,
+		UE::Geometry::TConstrainedDelaunay2<float>& OutCDT);
+	
+	void ConvertCDTToDynamicMesh(
+		const UE::Geometry::TConstrainedDelaunay2<float>& CDT,
+		UE::Geometry::FDynamicMesh3& OutMesh);
+
+	void ExtractVerticesAndIndices(
+		const UE::Geometry::FDynamicMesh3& MeshOut,
+		TArray<FVector>& OutVertices,
+		TArray<int32>& OutIndices);
+
+
+
+	
 	void CreateProceduralMesh(
 	const TArray<FVector>& Vertices,
 	const TArray<int32>& Indices,
 	FDynamicMesh3&& DynamicMesh,
 	TArray<int32>&& SeamVertexIDs,
-	TArray<AClothPatternMeshActor*>& OutSpawnedActors);
+	TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors);
 	
 	
 	void TriangulateAndBuildMesh(
 		const FInterpCurve<FVector2D>& Shape,
-		bool bRecordSeam,
+		bool bRecordSeam ,
 		int32 StartPointIdx2D,
 		int32 EndPointIdx2D,
 		/* out */ TArray<int32>& LastSeamVertexIDs,
 		/* out */ FDynamicMesh3& LastBuiltMesh,
-		/* optional */ TArray<int32> LastBuiltSeamVertexIDs);
+		/* optional */ TArray<int32>& LastBuiltSeamVertexIDs,
+	    /* out */ TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors) // NEW
+;
 		
 	void TriangulateAndBuildAllMeshes(
 		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,

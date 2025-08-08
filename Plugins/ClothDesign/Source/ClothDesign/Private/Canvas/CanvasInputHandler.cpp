@@ -5,8 +5,9 @@
 #include "Logging/LogMacros.h"
 
 
-#include "SClothDesignCanvas.h"
+#include "ClothDesignCanvas.h"
 #include "Canvas/CanvasUtils.h"
+#include "Canvas/CanvasSewing.h"
 
 
 
@@ -40,7 +41,7 @@ FReply FCanvasInputHandler::HandleDraw(const FGeometry& Geo, const FPointerEvent
 
 	if (!Canvas->bUseBezierPoints)
 	{
-		Canvas->RecalculateNTangents(CurvePoints, Canvas->bUseBezierPerPoint);
+		FCanvasUtils::RecalculateNTangents(CurvePoints, Canvas->bUseBezierPerPoint);
 	}
 
 	else if (Canvas->bUseBezierPoints)
@@ -79,11 +80,11 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 	// add a point…
 	auto& CurvePoints = Canvas->CurvePoints;
 	auto& CompletedShapes =Canvas->CompletedShapes;
-	auto& SeamClickState =Canvas->SeamClickState;
-	auto&  AStartTarget=Canvas->AStartTarget ;
-	auto&  AEndTarget=Canvas->AEndTarget;
-	auto&  BStartTarget=Canvas->BStartTarget ;
-	auto&  BEndTarget=Canvas->BEndTarget ;
+	auto& SeamClickState =Canvas->GetSewingManager().SeamClickState;
+	auto&  AStartTarget=Canvas->GetSewingManager().AStartTarget ;
+	auto&  AEndTarget=Canvas->GetSewingManager().AEndTarget;
+	auto&  BStartTarget=Canvas->GetSewingManager().BStartTarget ;
+	auto&  BEndTarget=Canvas->GetSewingManager().BEndTarget ;
 
 	 // 1) Find nearest control point across all shapes + current
     const float SelRadius = 10.0f / Canvas->ZoomFactor;
@@ -134,37 +135,37 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
     // 2) Advance our 4-click state, storing shape+point each time
     switch (SeamClickState)
     {
-    case SClothDesignCanvas::ESeamClickState::None:
+    case ESeamClickState::None:
     	AStartTarget = { BestShape, BestPoint };
-    	SeamClickState = SClothDesignCanvas::ESeamClickState::ClickedAStart;
+    	SeamClickState = ESeamClickState::ClickedAStart;
     	UE_LOG(LogTemp, Log, TEXT("Sew: AStart = [%d,%d]"), BestShape, BestPoint);
     	break;
 
-    case SClothDesignCanvas::ESeamClickState::ClickedAStart:
+    case ESeamClickState::ClickedAStart:
     	AEndTarget = { BestShape, BestPoint };
-    	SeamClickState = SClothDesignCanvas::ESeamClickState::ClickedAEnd;
+    	SeamClickState = ESeamClickState::ClickedAEnd;
     	UE_LOG(LogTemp, Log, TEXT("Sew: AEnd   = [%d,%d]"), BestShape, BestPoint);
     	break;
     	
-    case SClothDesignCanvas::ESeamClickState::ClickedAEnd:
+    case ESeamClickState::ClickedAEnd:
     	BStartTarget = { BestShape, BestPoint };
-    	SeamClickState = SClothDesignCanvas::ESeamClickState::ClickedBStart;
+    	SeamClickState = ESeamClickState::ClickedBStart;
     	UE_LOG(LogTemp, Log, TEXT("Sew: BStart = [%d,%d]"), BestShape, BestPoint);
     	break;
     	
-    case SClothDesignCanvas::ESeamClickState::ClickedBStart:
+    case ESeamClickState::ClickedBStart:
     	BEndTarget = { BestShape, BestPoint };
 
-    	SeamClickState = SClothDesignCanvas::ESeamClickState::ClickedBEnd;
+    	SeamClickState = ESeamClickState::ClickedBEnd;
     	bIsSeamReady = true;
     	UE_LOG(LogTemp, Log, TEXT("Sew: BEnd   = [%d,%d]"), BestShape, BestPoint);
 
     	
     	// 3) Finalize: now you have (shape,index) for all four clicks
-    	Canvas->FinalizeSeamDefinitionByTargets(AStartTarget, AEndTarget, BStartTarget, BEndTarget);
+    	Canvas->GetSewingManager().FinalizeSeamDefinitionByTargets(AStartTarget, AEndTarget, BStartTarget, BEndTarget, Canvas->CurvePoints, Canvas->CompletedShapes);
 
     	// Reset for next seam
-    	SeamClickState = SClothDesignCanvas::ESeamClickState::None;
+    	SeamClickState = ESeamClickState::None;
     	break;
     }
 

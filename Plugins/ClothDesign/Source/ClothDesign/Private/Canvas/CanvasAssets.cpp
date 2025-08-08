@@ -1,4 +1,5 @@
 #include "Canvas/CanvasAssets.h"
+#include "UObject/SavePackage.h"
 
 
 
@@ -12,7 +13,7 @@ bool FCanvasAssets::SaveShapeAsset(
 {
 	// Create package path - e.g. /Game/YourFolder/AssetName
 	FString PackageName = FString::Printf(TEXT("/Game/%s/%s"), *AssetPath, *AssetName);
-	FString SanitizedPackageName = PackageTools::SanitizePackageName(PackageName);
+	FString SanitizedPackageName = UPackageTools::SanitizePackageName(PackageName);
 
 	UPackage* Package = LoadPackage(nullptr, *SanitizedPackageName, LOAD_None);
 	if (!Package)
@@ -113,8 +114,20 @@ bool FCanvasAssets::SaveShapeAsset(
 
 	// Save package to disk
 	FString PackageFileName = FPackageName::LongPackageNameToFilename(SanitizedPackageName, FPackageName::GetAssetPackageExtension());
-	bool bSaved = UPackage::SavePackage(Package, TargetAsset, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName);
+	
+	//bool bSaved = UPackage::SavePackage(Package, TargetAsset, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName);
+	FSavePackageArgs SaveArgs;
+	SaveArgs.TopLevelFlags   = RF_Public | RF_Standalone;
+	SaveArgs.Error           = GError;
+	SaveArgs.bWarnOfLongFilename = false;
 
+	bool bSaved = UPackage::SavePackage(
+		Package,                  // UPackage* InOuter
+		TargetAsset,              // UObject* Base
+		*PackageFileName,         // const TCHAR* Filename
+		SaveArgs                  // const FSavePackageArgs& Args
+	);
+	
 	if (bSaved)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Asset saved successfully: %s"), *PackageFileName);
@@ -264,4 +277,33 @@ bool FCanvasAssets::LoadCanvasState(UClothShapeAsset* ClothAsset, FCanvasState& 
     OutState.ZoomFactor         = 1.0f;
 
     return true;
+}
+
+
+// manage the assets here
+
+FString FCanvasAssetManager::GetSelectedShapeAssetPath() const
+{
+	return ClothAsset.IsValid() ? ClothAsset->GetPathName() : FString();
+}
+
+// Moved from OnShapeAssetSelected()
+bool FCanvasAssetManager::OnShapeAssetSelected(const FAssetData& AssetData, FCanvasState& OutState)
+{
+	ClothAsset = Cast<UClothShapeAsset>(AssetData.GetAsset());
+	if (!ClothAsset.IsValid())
+		return false;
+
+	UE_LOG(LogTemp, Log, TEXT("Selected shape: %s"), *ClothAsset->GetName());
+
+	// Moved from LoadShapeAssetData()
+	return LoadShapeAssetData(OutState);
+}
+
+bool FCanvasAssetManager::LoadShapeAssetData(FCanvasState& OutState)
+{
+	if (!ClothAsset.IsValid())
+		return false;
+	
+	return FCanvasAssets::LoadCanvasState(ClothAsset.Get(), OutState);
 }

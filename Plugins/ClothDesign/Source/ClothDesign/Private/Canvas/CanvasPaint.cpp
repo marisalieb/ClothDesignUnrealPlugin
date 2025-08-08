@@ -1,5 +1,5 @@
 #include "Canvas/CanvasPaint.h"
-#include "SClothDesignCanvas.h"
+#include "ClothDesignCanvas.h"
 #include "Rendering/DrawElements.h"
 
 

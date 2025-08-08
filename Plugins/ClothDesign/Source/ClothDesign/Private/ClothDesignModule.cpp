@@ -1,7 +1,7 @@
 
 #include "ClothDesignModule.h"
-#include "ClothDesignEditorModeCommands.h"
-#include "SClothDesignCanvas.h"
+#include "ClothDesignCommands.h"
+#include "ClothDesignCanvas.h"
 #include "ClothDesignStyle.h"
 #include "EditorModeManager.h"
 #include "ClothDesignEditorMode.h"
@@ -26,15 +26,15 @@ void FClothDesignModule::StartupModule()
 
 	// This code will execute after module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 
-	FClothDesignEditorModeCommands::Register();
+	FClothDesignCommands::Register();
 	PluginCommands = MakeShareable(new FUICommandList);
 	PluginCommands->MapAction(
-	  FClothDesignEditorModeCommands::Get().Open2DWindow,
+	  FClothDesignCommands::Get().Open2DWindow,
 	  FExecuteAction::CreateRaw(this, &FClothDesignModule::Spawn2DWindow),
 	  FCanExecuteAction()
 	);
 	
-	if (!FClothDesignEditorModeCommands::Get().Open2DWindow.IsValid())
+	if (!FClothDesignCommands::Get().Open2DWindow.IsValid())
 	{
 		UE_LOG(LogTemp, Error, TEXT("Open2DWindow command NOT valid after Register()!"));
 	}
@@ -53,7 +53,7 @@ void FClothDesignModule::ShutdownModule()
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(TwoDTabName);
 	UToolMenus::UnregisterOwner(this);
 
-	FClothDesignEditorModeCommands::Unregister();
+	FClothDesignCommands::Unregister();
 }
 
 
@@ -398,9 +398,13 @@ FReply FClothDesignModule::OnGenerateMeshClicked()
 	{
 		//CanvasWidget->TriangulateAndBuildMesh();
 		// CanvasWidget->TriangulateAndBuildAllMeshes();
+		// CanvasWidget->TestBuildAllMeshes();
+
 		//CanvasWidget->BuildAndAlignClickedSeam(); MergeLastTwoMeshes
-		CanvasWidget->MergeLastTwoMeshes();
 		// CanvasWidget->MergeAndWeldLastTwoMeshes();
+
+
+		CanvasWidget->MergeClick();
 
 	}
 	return FReply::Handled();
@@ -412,7 +416,7 @@ FReply FClothDesignModule::OnSewingClicked()
 	{
 		//CanvasWidget->TriangulateAndBuildMesh();
 		// CanvasWidget->SewingStart();
-		CanvasWidget->BuildAndAlignClickedSeam();
+		CanvasWidget->SewingClick();
 
 	}
 	return FReply::Handled();
@@ -456,10 +460,10 @@ FReply FClothDesignModule::OnSaveClicked()
 
 FReply FClothDesignModule::OnClearClicked()
 {
-	// ClearCurrentShapeData
+	// ClearAllShapeData
 	if (CanvasWidget.IsValid())
 	{
-		CanvasWidget->ClearCurrentShapeData();
+		CanvasWidget->ClearAllShapeData();
 	}
 	return FReply::Handled();
 }

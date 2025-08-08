@@ -3,7 +3,7 @@
 
 #include "Modules/ModuleManager.h"
 #include "Widgets/Input/SNumericEntryBox.h"
-#include "SClothDesignCanvas.h"
+#include "ClothDesignCanvas.h"
 #include "ClothShapeAsset.h"
 #include "AssetToolsModule.h"
 #include "IAssetTools.h"

@@ -98,6 +98,11 @@ $(document).ready(function(){initNavTree('classFClothDesignModule.html',''); ini
   <div class="headertitle"><div class="title">FClothDesignModule Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Main plugin module class for the Cloth Design editor mode.  
+ <a href="classFClothDesignModule.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="ClothDesignModule_8h_source.html">ClothDesignModule.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for FClothDesignModule:</div>
 <div class="dyncontent">
@@ -108,27 +113,150 @@ Inheritance diagram for FClothDesignModule:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9366364045bcc30c8c43c17a8025cf1c" id="r_a9366364045bcc30c8c43c17a8025cf1c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignModule.html#a9366364045bcc30c8c43c17a8025cf1c">StartupModule</a> () override</td></tr>
+<tr class="memdesc:a9366364045bcc30c8c43c17a8025cf1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when the module is loaded into memory.  <br /></td></tr>
 <tr class="separator:a9366364045bcc30c8c43c17a8025cf1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2a99e2bfd0179287cebdcef7802733d" id="r_ad2a99e2bfd0179287cebdcef7802733d"><td class="memItemLeft" align="right" valign="top"><a id="ad2a99e2bfd0179287cebdcef7802733d" name="ad2a99e2bfd0179287cebdcef7802733d"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>ShutdownModule</b> () override</td></tr>
+<tr class="memitem:ad2a99e2bfd0179287cebdcef7802733d" id="r_ad2a99e2bfd0179287cebdcef7802733d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignModule.html#ad2a99e2bfd0179287cebdcef7802733d">ShutdownModule</a> () override</td></tr>
+<tr class="memdesc:ad2a99e2bfd0179287cebdcef7802733d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called before the module is unloaded from memory.  <br /></td></tr>
 <tr class="separator:ad2a99e2bfd0179287cebdcef7802733d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96b08f599996746999ce0646c4039971" id="r_a96b08f599996746999ce0646c4039971"><td class="memItemLeft" align="right" valign="top"><a id="a96b08f599996746999ce0646c4039971" name="a96b08f599996746999ce0646c4039971"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Spawn2DWindow</b> ()</td></tr>
+<tr class="memitem:a96b08f599996746999ce0646c4039971" id="r_a96b08f599996746999ce0646c4039971"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignModule.html#a96b08f599996746999ce0646c4039971">Spawn2DWindow</a> ()</td></tr>
+<tr class="memdesc:a96b08f599996746999ce0646c4039971"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens the Cloth Design 2D editor window.  <br /></td></tr>
 <tr class="separator:a96b08f599996746999ce0646c4039971"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07af7c551ccac154cc8b7b966f96e8a1" id="r_a07af7c551ccac154cc8b7b966f96e8a1"><td class="memItemLeft" align="right" valign="top"><a id="a07af7c551ccac154cc8b7b966f96e8a1" name="a07af7c551ccac154cc8b7b966f96e8a1"></a>
-TSharedRef&lt; class SDockTab &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>OnSpawn2DWindowTab</b> (const class FSpawnTabArgs &amp;SpawnTabArgs)</td></tr>
+<tr class="memitem:a07af7c551ccac154cc8b7b966f96e8a1" id="r_a07af7c551ccac154cc8b7b966f96e8a1"><td class="memItemLeft" align="right" valign="top">TSharedRef&lt; class SDockTab &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignModule.html#a07af7c551ccac154cc8b7b966f96e8a1">OnSpawn2DWindowTab</a> (const class FSpawnTabArgs &amp;SpawnTabArgs)</td></tr>
+<tr class="memdesc:a07af7c551ccac154cc8b7b966f96e8a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback used to spawn the 2D design window tab.  <br /></td></tr>
 <tr class="separator:a07af7c551ccac154cc8b7b966f96e8a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6a47ad5ce171385bd8f7ecb2b5d3395" id="r_ac6a47ad5ce171385bd8f7ecb2b5d3395"><td class="memItemLeft" align="right" valign="top"><a id="ac6a47ad5ce171385bd8f7ecb2b5d3395" name="ac6a47ad5ce171385bd8f7ecb2b5d3395"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>OnTabActivated</b> (TSharedPtr&lt; SDockTab &gt; Tab, ETabActivationCause ActivationCause)</td></tr>
+<tr class="memitem:ac6a47ad5ce171385bd8f7ecb2b5d3395" id="r_ac6a47ad5ce171385bd8f7ecb2b5d3395"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignModule.html#ac6a47ad5ce171385bd8f7ecb2b5d3395">OnTabActivated</a> (TSharedPtr&lt; SDockTab &gt; Tab, ETabActivationCause ActivationCause)</td></tr>
+<tr class="memdesc:ac6a47ad5ce171385bd8f7ecb2b5d3395"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when the 2D editor tab becomes active.  <br /></td></tr>
 <tr class="separator:ac6a47ad5ce171385bd8f7ecb2b5d3395"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a34b2f1990b9234cb7e2c91a2bcc4050f" id="r_a34b2f1990b9234cb7e2c91a2bcc4050f"><td class="memItemLeft" align="right" valign="top"><a id="a34b2f1990b9234cb7e2c91a2bcc4050f" name="a34b2f1990b9234cb7e2c91a2bcc4050f"></a>
 static const FName&#160;</td><td class="memItemRight" valign="bottom"><b>TwoDTabName</b></td></tr>
+<tr class="memdesc:a34b2f1990b9234cb7e2c91a2bcc4050f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name identifier for the 2D design editor tab. <br /></td></tr>
 <tr class="separator:a34b2f1990b9234cb7e2c91a2bcc4050f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Main plugin module class for the Cloth Design editor mode. </p>
+<p>This module handles initialization and shutdown of the Cloth Design plugin, as well as spawning and managing custom Slate UI for cloth pattern design.</p>
+<p>Responsibilities:</p><ul>
+<li>Registers editor tabs and menus.</li>
+<li>Spawns the 2D design window and manages its lifecycle.</li>
+<li>Handles user actions such as generating meshes and sewing patterns.</li>
+</ul>
+<dl class="section see"><dt>See also</dt><dd>IModuleInterface </dd></dl>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a07af7c551ccac154cc8b7b966f96e8a1" name="a07af7c551ccac154cc8b7b966f96e8a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07af7c551ccac154cc8b7b966f96e8a1">&#9670;&#160;</a></span>OnSpawn2DWindowTab()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TSharedRef&lt; SDockTab &gt; FClothDesignModule::OnSpawn2DWindowTab </td>
+          <td>(</td>
+          <td class="paramtype">const class FSpawnTabArgs &amp;&#160;</td>
+          <td class="paramname"><em>SpawnTabArgs</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Callback used to spawn the 2D design window tab. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">SpawnTabArgs</td><td>Arguments provided by the tab manager when creating the tab. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A reference to the newly created dock tab widget. </dd></dl>
+
+</div>
+</div>
+<a id="ac6a47ad5ce171385bd8f7ecb2b5d3395" name="ac6a47ad5ce171385bd8f7ecb2b5d3395"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6a47ad5ce171385bd8f7ecb2b5d3395">&#9670;&#160;</a></span>OnTabActivated()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FClothDesignModule::OnTabActivated </td>
+          <td>(</td>
+          <td class="paramtype">TSharedPtr&lt; SDockTab &gt;&#160;</td>
+          <td class="paramname"><em>Tab</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ETabActivationCause&#160;</td>
+          <td class="paramname"><em>ActivationCause</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Called when the 2D editor tab becomes active. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Tab</td><td>The activated dock tab. </td></tr>
+    <tr><td class="paramname">ActivationCause</td><td>The reason the tab was activated. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad2a99e2bfd0179287cebdcef7802733d" name="ad2a99e2bfd0179287cebdcef7802733d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2a99e2bfd0179287cebdcef7802733d">&#9670;&#160;</a></span>ShutdownModule()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FClothDesignModule::ShutdownModule </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Called before the module is unloaded from memory. </p>
+<p>Cleans up resources, unregisters commands, and removes UI elements. </p>
+
+</div>
+</div>
+<a id="a96b08f599996746999ce0646c4039971" name="a96b08f599996746999ce0646c4039971"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96b08f599996746999ce0646c4039971">&#9670;&#160;</a></span>Spawn2DWindow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FClothDesignModule::Spawn2DWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Opens the Cloth Design 2D editor window. </p>
+<p>Creates a new tab in the editor to display the design canvas. </p>
+
+</div>
+</div>
 <a id="a9366364045bcc30c8c43c17a8025cf1c" name="a9366364045bcc30c8c43c17a8025cf1c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9366364045bcc30c8c43c17a8025cf1c">&#9670;&#160;</a></span>StartupModule()</h2>
 
@@ -151,7 +279,9 @@ static const FName&#160;</td><td class="memItemRight" valign="bottom"><b>TwoDTab
   </tr>
 </table>
 </div><div class="memdoc">
-<p>IModuleInterface implementation </p>
+
+<p>Called when the module is loaded into memory. </p>
+<p>Registers commands, menu entries, and sets up any required editor UI elements. </p>
 
 </div>
 </div>

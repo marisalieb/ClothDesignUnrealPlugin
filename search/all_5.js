@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['sclothdesigncanvas_0',['SClothDesignCanvas',['../classSClothDesignCanvas.html',1,'']]],
-  ['spawnedpatternactors_1',['SpawnedPatternActors',['../classSClothDesignCanvas.html#abd750e7c051d2a2a714f3705096e1859',1,'SClothDesignCanvas']]],
-  ['startupmodule_2',['StartupModule',['../classFClothDesignModule.html#a9366364045bcc30c8c43c17a8025cf1c',1,'FClothDesignModule']]]
+  ['init_0',['Init',['../classFClothDesignEditorModeToolkit.html#acc3bea3390c41cb05ca7f64eb1550f5f',1,'FClothDesignEditorModeToolkit']]],
+  ['initialize_1',['Initialize',['../classFClothDesignStyle.html#a2efd875883feba692df7f6e7a2e560e0',1,'FClothDesignStyle']]]
 ];

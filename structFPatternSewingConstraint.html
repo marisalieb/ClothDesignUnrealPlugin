@@ -97,32 +97,47 @@ $(document).ready(function(){initNavTree('structFPatternSewingConstraint.html','
   <div class="headertitle"><div class="title">FPatternSewingConstraint Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Represents a constraint between two points (vertices) on separate skeletal meshes used in pattern sewing or cloth simulation.  
+ <a href="structFPatternSewingConstraint.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="PatternSewingConstraint_8h_source.html">PatternSewingConstraint.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:addac424d7adf89c79289781391fa7497" id="r_addac424d7adf89c79289781391fa7497"><td class="memItemLeft" align="right" valign="top"><a id="addac424d7adf89c79289781391fa7497" name="addac424d7adf89c79289781391fa7497"></a>
 USkeletalMeshComponent *&#160;</td><td class="memItemRight" valign="bottom"><b>MeshA</b></td></tr>
+<tr class="memdesc:addac424d7adf89c79289781391fa7497"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the first skeletal mesh component participating in the constraint. <br /></td></tr>
 <tr class="separator:addac424d7adf89c79289781391fa7497"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80b0a9a810959c037a396cb0346c60cd" id="r_a80b0a9a810959c037a396cb0346c60cd"><td class="memItemLeft" align="right" valign="top"><a id="a80b0a9a810959c037a396cb0346c60cd" name="a80b0a9a810959c037a396cb0346c60cd"></a>
 int32&#160;</td><td class="memItemRight" valign="bottom"><b>VertexIndexA</b></td></tr>
+<tr class="memdesc:a80b0a9a810959c037a396cb0346c60cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of the vertex on the first skeletal mesh that is part of the constraint. <br /></td></tr>
 <tr class="separator:a80b0a9a810959c037a396cb0346c60cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a033998e1f2e84acd9e687b1d58cf0fc0" id="r_a033998e1f2e84acd9e687b1d58cf0fc0"><td class="memItemLeft" align="right" valign="top"><a id="a033998e1f2e84acd9e687b1d58cf0fc0" name="a033998e1f2e84acd9e687b1d58cf0fc0"></a>
 USkeletalMeshComponent *&#160;</td><td class="memItemRight" valign="bottom"><b>MeshB</b></td></tr>
+<tr class="memdesc:a033998e1f2e84acd9e687b1d58cf0fc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the second skeletal mesh component participating in the constraint. <br /></td></tr>
 <tr class="separator:a033998e1f2e84acd9e687b1d58cf0fc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52feea599a474e96d5aa132be2c048a1" id="r_a52feea599a474e96d5aa132be2c048a1"><td class="memItemLeft" align="right" valign="top"><a id="a52feea599a474e96d5aa132be2c048a1" name="a52feea599a474e96d5aa132be2c048a1"></a>
 int32&#160;</td><td class="memItemRight" valign="bottom"><b>VertexIndexB</b></td></tr>
+<tr class="memdesc:a52feea599a474e96d5aa132be2c048a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of the vertex on the second skeletal mesh that is part of the constraint. <br /></td></tr>
 <tr class="separator:a52feea599a474e96d5aa132be2c048a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e0f877cd5509bbdbf8cb2e8d2c9f095" id="r_a3e0f877cd5509bbdbf8cb2e8d2c9f095"><td class="memItemLeft" align="right" valign="top"><a id="a3e0f877cd5509bbdbf8cb2e8d2c9f095" name="a3e0f877cd5509bbdbf8cb2e8d2c9f095"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>Stiffness</b></td></tr>
+<tr class="memdesc:a3e0f877cd5509bbdbf8cb2e8d2c9f095"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stiffness of the sewing constraint, controlling how strongly the two vertices are held together. A higher value means the constraint resists stretching more. <br /></td></tr>
 <tr class="separator:a3e0f877cd5509bbdbf8cb2e8d2c9f095"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9862bcedec7b04ba9af7e1997c22554b" id="r_a9862bcedec7b04ba9af7e1997c22554b"><td class="memItemLeft" align="right" valign="top"><a id="a9862bcedec7b04ba9af7e1997c22554b" name="a9862bcedec7b04ba9af7e1997c22554b"></a>
 TArray&lt; FVector2D &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ScreenPointsA</b></td></tr>
+<tr class="memdesc:a9862bcedec7b04ba9af7e1997c22554b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Screen-space points representing the position of the first mesh's vertices for visualization or debugging. <br /></td></tr>
 <tr class="separator:a9862bcedec7b04ba9af7e1997c22554b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b7d6829ef90c024e2fc4edee632dfc9" id="r_a7b7d6829ef90c024e2fc4edee632dfc9"><td class="memItemLeft" align="right" valign="top"><a id="a7b7d6829ef90c024e2fc4edee632dfc9" name="a7b7d6829ef90c024e2fc4edee632dfc9"></a>
 TArray&lt; FVector2D &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ScreenPointsB</b></td></tr>
+<tr class="memdesc:a7b7d6829ef90c024e2fc4edee632dfc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Screen-space points representing the position of the second mesh's vertices for visualization or debugging. <br /></td></tr>
 <tr class="separator:a7b7d6829ef90c024e2fc4edee632dfc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Represents a constraint between two points (vertices) on separate skeletal meshes used in pattern sewing or cloth simulation. </p>
+<p>This structure defines a link between a vertex on one skeletal mesh and a vertex on another skeletal mesh, including the physical properties of the constraint and optional screen-space representation data. It can be used for stitching virtual fabric together in simulation or visualization contexts. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>Plugins/ClothDesign/Source/ClothDesign/Public/<a class="el" href="PatternSewingConstraint_8h_source.html">PatternSewingConstraint.h</a></li>
 </ul>
 </div><!-- contents -->

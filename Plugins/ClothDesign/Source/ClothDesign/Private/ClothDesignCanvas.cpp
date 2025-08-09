@@ -1,8 +1,6 @@
 #include "ClothDesignCanvas.h"
-#include "PatternMesh.h"
-#include "CompGeom/Delaunay2.h"
+
 #include "DynamicMesh/DynamicMesh3.h"
-#include "DynamicMeshEditor.h"
 #include "CoreMinimal.h"
 #include "Math/MathFwd.h"
 #include "UObject/Class.h"
@@ -10,25 +8,15 @@
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "EngineUtils.h"
-#include "Rendering/SkeletalMeshRenderData.h"
 #include "Engine/SkeletalMesh.h"
-#include "ClothingSimulationInteractor.h"
 #include "ClothingSimulationFactory.h"
-#include "ChaosCloth/ChaosClothingSimulationInteractor.h"
 #include "ClothingSimulationFactory.h"
 #include "Widgets/SCompoundWidget.h"
-#include "ProceduralMeshComponent.h"
 #include "Math/InterpCurve.h"
-#include "PatternSewingConstraint.h"
-#include "Curve/DynamicGraph.h"
-#include "ConstrainedDelaunay2.h"
 #include "Misc/ScopeLock.h"
-#include "AssetRegistry/AssetRegistryModule.h"
-#include "PackageTools.h"
-#include "ClothShapeAsset.h"
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
+
 #include "Canvas/CanvasPaint.h"
 #include "Canvas/CanvasUtils.h"
 #include "Canvas/CanvasInputHandler.h"
@@ -77,7 +65,7 @@ int32 SClothDesignCanvas::OnPaint(
 	const_cast<SClothDesignCanvas*>(this)->LastGeometry = AllottedGeometry;
 	
 	// Respect parent clipping
-	const bool bEnabled = ShouldBeEnabled(bParentEnabled);
+	// const bool bEnabled = ShouldBeEnabled(bParentEnabled);
 	// ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
 
 

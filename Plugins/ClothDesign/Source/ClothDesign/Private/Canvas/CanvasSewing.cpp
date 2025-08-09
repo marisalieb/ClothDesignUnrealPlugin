@@ -107,7 +107,7 @@ void FCanvasSewing::AlignSeamMeshes(
 }
 
 
-void FCanvasSewing::BuildAndAlignClickedSeam(TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors,
+void FCanvasSewing::BuildAndAlignClickedSeam(
 		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
 		const FInterpCurve<FVector2D>& CurvePoints)
 {

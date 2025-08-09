@@ -705,7 +705,7 @@ void SClothDesignCanvas::ClearAllShapeData()
 
 void SClothDesignCanvas::SewingClick()
 {
-	SewingManager.BuildAndAlignClickedSeam(SewingManager.SpawnedPatternActors, CompletedShapes, CurvePoints);
+	SewingManager.BuildAndAlignClickedSeam(CompletedShapes, CurvePoints);
 }
 
 

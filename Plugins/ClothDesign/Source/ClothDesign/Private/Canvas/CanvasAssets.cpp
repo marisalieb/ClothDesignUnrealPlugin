@@ -143,71 +143,6 @@ bool FCanvasAssets::SaveShapeAsset(
 
 
 
-// bool FCanvasAssets::LoadShapeAssetData(UClothShapeAsset* ClothAsset, FLoadedShapeData& OutData)
-// {
-// 	if (!ClothAsset)
-// 	{
-// 		UE_LOG(LogTemp, Warning, TEXT("No valid shape asset to load."));
-// 		return false;
-// 	}
-//
-// 	// Clear output data first
-// 	OutData.CompletedShapes.Empty();
-// 	OutData.CompletedBezierFlags.Empty();
-// 	OutData.CurvePoints.Points.Empty();
-// 	OutData.bUseBezierPerPoint.Empty();
-//
-// 	// Load completed shapes and their bezier flags
-// 	for (const auto& SavedShape : ClothAsset->ClothShapes)
-// 	{
-// 		FInterpCurve<FVector2D> Curve;
-// 		TArray<bool> BezierFlags;
-//
-// 		for (const auto& SavedPoint : SavedShape.CompletedClothShape)
-// 		{
-// 			FInterpCurvePoint<FVector2D> NewPoint;
-// 			NewPoint.InVal = SavedPoint.InputKey;
-// 			NewPoint.OutVal = SavedPoint.Position;
-// 			NewPoint.ArriveTangent = SavedPoint.ArriveTangent;
-// 			NewPoint.LeaveTangent = SavedPoint.LeaveTangent;
-// 			NewPoint.InterpMode = CIM_CurveAuto;
-//
-// 			Curve.Points.Add(NewPoint);
-// 			BezierFlags.Add(SavedPoint.bUseBezier);
-// 		}
-//
-// 		if (Curve.Points.Num() != BezierFlags.Num())
-// 		{
-// 			UE_LOG(LogTemp, Error, TEXT("Mismatch between points and Bezier flags!"));
-// 			return false;
-// 		}
-//
-// 		if (Curve.Points.Num() > 0)
-// 		{
-// 			OutData.CompletedShapes.Add(Curve);
-// 			OutData.CompletedBezierFlags.Add(BezierFlags);
-// 		}
-// 	}
-//
-// 	// Load current curve points
-// 	for (const FCurvePointData& Point : ClothAsset->ClothCurvePoints)
-// 	{
-// 		FInterpCurvePoint<FVector2D> NewPoint;
-// 		NewPoint.InVal = Point.InputKey;
-// 		NewPoint.OutVal = Point.Position;
-// 		NewPoint.ArriveTangent = Point.ArriveTangent;
-// 		NewPoint.LeaveTangent = Point.LeaveTangent;
-// 		NewPoint.InterpMode = CIM_CurveAuto;
-//
-// 		OutData.CurvePoints.Points.Add(NewPoint);
-// 		OutData.bUseBezierPerPoint.Add(Point.bUseBezier);
-// 	}
-//
-// 	return true;
-// }
-
-
-
 bool FCanvasAssets::LoadCanvasState(UClothShapeAsset* ClothAsset, FCanvasState& OutState)
 {
     if (!ClothAsset)
@@ -307,3 +242,67 @@ bool FCanvasAssetManager::LoadShapeAssetData(FCanvasState& OutState)
 	
 	return FCanvasAssets::LoadCanvasState(ClothAsset.Get(), OutState);
 }
+
+// bool FCanvasAssets::LoadShapeAssetData(UClothShapeAsset* ClothAsset, FLoadedShapeData& OutData)
+// {
+// 	if (!ClothAsset)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("No valid shape asset to load."));
+// 		return false;
+// 	}
+//
+// 	// Clear output data first
+// 	OutData.CompletedShapes.Empty();
+// 	OutData.CompletedBezierFlags.Empty();
+// 	OutData.CurvePoints.Points.Empty();
+// 	OutData.bUseBezierPerPoint.Empty();
+//
+// 	// Load completed shapes and their bezier flags
+// 	for (const auto& SavedShape : ClothAsset->ClothShapes)
+// 	{
+// 		FInterpCurve<FVector2D> Curve;
+// 		TArray<bool> BezierFlags;
+//
+// 		for (const auto& SavedPoint : SavedShape.CompletedClothShape)
+// 		{
+// 			FInterpCurvePoint<FVector2D> NewPoint;
+// 			NewPoint.InVal = SavedPoint.InputKey;
+// 			NewPoint.OutVal = SavedPoint.Position;
+// 			NewPoint.ArriveTangent = SavedPoint.ArriveTangent;
+// 			NewPoint.LeaveTangent = SavedPoint.LeaveTangent;
+// 			NewPoint.InterpMode = CIM_CurveAuto;
+//
+// 			Curve.Points.Add(NewPoint);
+// 			BezierFlags.Add(SavedPoint.bUseBezier);
+// 		}
+//
+// 		if (Curve.Points.Num() != BezierFlags.Num())
+// 		{
+// 			UE_LOG(LogTemp, Error, TEXT("Mismatch between points and Bezier flags!"));
+// 			return false;
+// 		}
+//
+// 		if (Curve.Points.Num() > 0)
+// 		{
+// 			OutData.CompletedShapes.Add(Curve);
+// 			OutData.CompletedBezierFlags.Add(BezierFlags);
+// 		}
+// 	}
+//
+// 	// Load current curve points
+// 	for (const FCurvePointData& Point : ClothAsset->ClothCurvePoints)
+// 	{
+// 		FInterpCurvePoint<FVector2D> NewPoint;
+// 		NewPoint.InVal = Point.InputKey;
+// 		NewPoint.OutVal = Point.Position;
+// 		NewPoint.ArriveTangent = Point.ArriveTangent;
+// 		NewPoint.LeaveTangent = Point.LeaveTangent;
+// 		NewPoint.InterpMode = CIM_CurveAuto;
+//
+// 		OutData.CurvePoints.Points.Add(NewPoint);
+// 		OutData.bUseBezierPerPoint.Add(Point.bUseBezier);
+// 	}
+//
+// 	return true;
+// }
+

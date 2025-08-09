@@ -21,60 +21,6 @@ bool CanvasMesh::IsPointInPolygon(
 	return bInside;
 }
 
-//
-// void CanvasMesh::CreateProceduralMesh(
-// 	const TArray<FVector>& Vertices,
-// 	const TArray<int32>& Indices,
-// 	FDynamicMesh3&& DynamicMesh,
-// 	TArray<int32>&& SeamVertexIDs,
-// 	TArray<APatternMesh*>& OutSpawnedActors)
-// {
-// 	UE_LOG(LogTemp, Log, TEXT("CreateProceduralMesh called: Vertices=%d, Indices=%d, bRecordSeamActorsBefore=%d"),
-// 			Vertices.Num(), Indices.Num(), SpawnedPatternActors.Num());
-// 	
-// 	UWorld* World = GEditor->GetEditorWorldContext().World();
-// 	if (!World) return;
-//
-// 	static int32 MeshCounter = 0;
-// 	FString UniqueLabel = FString::Printf(TEXT("ClothMeshActor_%d"), MeshCounter++);
-//
-// 	FActorSpawnParameters SpawnParams;
-// 	APatternMesh* MeshActor = World->SpawnActor<APatternMesh>(SpawnParams);
-// 	if (!MeshActor) return;
-//
-// 	OutSpawnedActors.Add(MeshActor);
-//
-// 	// Transfer ownership of mesh data
-// 	MeshActor->DynamicMesh        = MoveTemp(DynamicMesh);
-// 	MeshActor->LastSeamVertexIDs = MoveTemp(SeamVertexIDs);
-//
-// 	MeshActor->SetFolderPath(FName(TEXT("GeneratedClothActors")));
-//
-// #if WITH_EDITOR
-// 	MeshActor->SetActorLabel(UniqueLabel);
-// #endif
-//
-// 	TArray<FVector> Normals;
-// 	TArray<FVector2D> UV0;
-// 	TArray<FLinearColor> VertexColors;
-// 	TArray<FProcMeshTangent> Tangents;
-//
-// 	for (const FVector& V : Vertices)
-// 	{
-// 		Normals.Add(FVector::UpVector);
-// 		UV0.Add(FVector2D(V.X * 0.01f, V.Y * 0.01f));
-// 		VertexColors.Add(FLinearColor::White);
-// 		Tangents.Add(FProcMeshTangent(1.0f, 0.0f, 0.0f));
-// 	}
-//
-// 	MeshActor->MeshComponent->CreateMeshSection_LinearColor(0, Vertices, Indices, Normals, UV0, VertexColors, Tangents, true);
-//
-// 	OutSpawnedActors.Add(MeshActor);
-// 	// SpawnedPatternActors.Add(MeshActor);
-//
-// 	//UE_LOG(LogTemp, Log, TEXT("  -> SpawnedPatternActors after call: %d"), SpawnedPatternActors.Num());
-//
-// }
 
 void CanvasMesh::SampleShapeCurve(
 	const FInterpCurve<FVector2D>& Shape,

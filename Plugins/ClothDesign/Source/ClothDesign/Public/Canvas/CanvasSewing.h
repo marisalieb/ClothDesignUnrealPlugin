@@ -50,11 +50,14 @@ struct FCanvasSewing
 
 	void AlignSeamMeshes(APatternMesh* A, APatternMesh* B);
 
+	// void BuildAndAlignClickedSeam(
+	// 	TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors,
+	// 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
+	// 	const FInterpCurve<FVector2D>& CurvePoints);
 	void BuildAndAlignClickedSeam(
-		TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors,
 		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
 		const FInterpCurve<FVector2D>& CurvePoints);
-
+	
 	void MergeLastTwoMeshes();
 	
 	void ClearAllSeams();

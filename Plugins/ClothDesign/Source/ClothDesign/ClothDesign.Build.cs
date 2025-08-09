@@ -1,12 +1,10 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 using UnrealBuildTool;
 
 public class ClothDesign : ModuleRules
 {
-	public ClothDesign(ReadOnlyTargetRules Target) : base(Target)
+	public ClothDesign(ReadOnlyTargetRules target) : base(target)
 	{
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
@@ -23,7 +21,7 @@ public class ClothDesign : ModuleRules
 			
 		
 		PublicDependencyModuleNames.AddRange(
-			new string[]
+			new []
 			{
 				"Core",
 				"GeometryFramework", 
@@ -32,18 +30,15 @@ public class ClothDesign : ModuleRules
 				"ProceduralMeshComponent",
 				"GeometryCore",
 				"ChaosCloth",
-				"ChaosCloth",
 				"MeshModelingTools",
 				"ModelingOperators",
 				"EditorScriptingUtilities"
-
-				// ... add other public dependencies that you statically link with here ...
 			}
 			);
 			
 		
 		PrivateDependencyModuleNames.AddRange(
-			new string[]
+			new []
 			{
 				"CoreUObject",
 				"Engine",
@@ -56,38 +51,15 @@ public class ClothDesign : ModuleRules
 				"LevelEditor",
 				"InteractiveToolsFramework",
 				"EditorInteractiveToolsFramework",
-				"ToolMenus", // for 2d window
+				"ToolMenus",
 				"PropertyEditor",
 				"Projects",
-				"GeometryCore",
 				"GeometryAlgorithms",
-				"GeometryFramework", 
-				"DynamicMesh",      // for FDynamicMesh3
-				"GeometryCore",        // Core geometry types
-				"MeshModelingTools", // Optional but useful
+				"DynamicMesh",
 				"ContentBrowser",
-				"PropertyEditor",
-				"EditorStyle",
 				"ClothingSystemRuntimeInterface",
 				"ClothingSystemRuntimeCommon",
-				"ChaosCloth",
-				"InputCore",
-				"Core", "CoreUObject", "Engine", "InputCore",
-				"ClothingSystemRuntimeCommon",
-				"ClothingSystemRuntimeInterface",
-				"ChaosCloth",
-				"Core", "CoreUObject", "Engine",
-				"ClothingSystemRuntimeCommon",
-				"ClothingSystemRuntimeInterface",
-				"ChaosCloth",
-				"ModelingOperators",
 				"MeshConversion",
-				"GeometryCore",    
-				"DynamicMesh",   
-				"EditorScriptingUtilities",
-				
-				
-				// ... add private dependencies that you statically link with here ...	
 			}
 			);
 		
@@ -95,7 +67,7 @@ public class ClothDesign : ModuleRules
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{
-				// ... add any modules that your module loads dynamically here ...
+				// ... add any modules that the module loads dynamically here ...
 			}
 			);
 	}

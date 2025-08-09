@@ -51,23 +51,19 @@ namespace CanvasMesh
 
 	
 	static bool IsPointInPolygon(
-	const FVector2f& Test, 
-	const TArray<FVector2f>& Poly);
-
-
-
-
+		const FVector2f& Test, 
+		const TArray<FVector2f>& Poly);
 	
 	void SampleShapeCurve(
-	const FInterpCurve<FVector2D>& Shape,
-	bool bRecordSeam,
-	int32 StartPointIdx2D,
-	int32 EndPointIdx2D,
-	int SamplesPerSegment,
-	TArray<FVector2f>& OutPolyVerts,
-	TArray<int32>& OutSeamVertexIDs,
-	TArray<int32>& OutVertexIDs,
-	FDynamicMesh3& Mesh);
+		const FInterpCurve<FVector2D>& Shape,
+		bool bRecordSeam,
+		int32 StartPointIdx2D,
+		int32 EndPointIdx2D,
+		int SamplesPerSegment,
+		TArray<FVector2f>& OutPolyVerts,
+		TArray<int32>& OutSeamVertexIDs,
+		TArray<int32>& OutVertexIDs,
+		FDynamicMesh3& Mesh);
 
 	void AddGridInteriorPoints(
 		TArray<FVector2f>& PolyVerts,
@@ -93,16 +89,13 @@ namespace CanvasMesh
 		TArray<FVector>& OutVertices,
 		TArray<int32>& OutIndices);
 
-
-
 	
 	void CreateProceduralMesh(
-	const TArray<FVector>& Vertices,
-	const TArray<int32>& Indices,
-	FDynamicMesh3&& DynamicMesh,
-	TArray<int32>&& SeamVertexIDs,
-	TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors);
-	
+		const TArray<FVector>& Vertices,
+		const TArray<int32>& Indices,
+		FDynamicMesh3&& DynamicMesh,
+		TArray<int32>&& SeamVertexIDs,
+		TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors);
 	
 	void TriangulateAndBuildMesh(
 		const FInterpCurve<FVector2D>& Shape,
@@ -112,13 +105,13 @@ namespace CanvasMesh
 		/* out */ TArray<int32>& LastSeamVertexIDs,
 		/* out */ FDynamicMesh3& LastBuiltMesh,
 		/* optional */ TArray<int32>& LastBuiltSeamVertexIDs,
-	    /* out */ TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors) // NEW
-;
+	    /* out */ TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors);
 		
 	void TriangulateAndBuildAllMeshes(
 		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
 		const FInterpCurve<FVector2D>& CurvePoints,
 		TArray<FDynamicMesh3>& OutMeshes);
+	
 }
 
 

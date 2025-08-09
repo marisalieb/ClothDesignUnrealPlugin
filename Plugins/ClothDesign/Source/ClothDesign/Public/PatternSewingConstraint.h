@@ -2,6 +2,8 @@
 
 
 #include "CoreMinimal.h"
+#include "ProceduralMeshComponent.h"
+
 #include "PatternSewingConstraint.generated.h"
 
 USTRUCT()
@@ -10,19 +12,19 @@ struct FPatternSewingConstraint
 	GENERATED_BODY()
 
 	UPROPERTY()
-	USkeletalMeshComponent* MeshA;
+	UProceduralMeshComponent* MeshA;
 
 	UPROPERTY()
 	int32 VertexIndexA;
 
 	UPROPERTY()
-	USkeletalMeshComponent* MeshB;
+	UProceduralMeshComponent* MeshB;
 
 	UPROPERTY()
 	int32 VertexIndexB;
 
-	UPROPERTY()
-	float Stiffness;
+	// UPROPERTY()
+	// float Stiffness;
 
 	
 	UPROPERTY()

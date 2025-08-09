@@ -47,9 +47,10 @@
 namespace CanvasMesh
 {
 	// inline TArray<APatternMesh*> SpawnedPatternActors;
-	inline TArray<TWeakObjectPtr<APatternMesh>> SpawnedPatternActors;
+	// inline TArray<TWeakObjectPtr<APatternMesh>> SpawnedPatternActors;
 
-	
+	inline TArray<TArray<int32>> PolyIndexToVIDPerShape;
+
 	static bool IsPointInPolygon(
 		const FVector2f& Test, 
 		const TArray<FVector2f>& Poly);
@@ -82,10 +83,12 @@ namespace CanvasMesh
 	
 	void ConvertCDTToDynamicMesh(
 		const UE::Geometry::TConstrainedDelaunay2<float>& CDT,
-		UE::Geometry::FDynamicMesh3& OutMesh);
+		FDynamicMesh3& OutMesh,
+		TArray<int32>& OutPolyIndexToVID);
+
 
 	void ExtractVerticesAndIndices(
-		const UE::Geometry::FDynamicMesh3& MeshOut,
+		const FDynamicMesh3& MeshOut,
 		TArray<FVector>& OutVertices,
 		TArray<int32>& OutIndices);
 
@@ -95,6 +98,8 @@ namespace CanvasMesh
 		const TArray<int32>& Indices,
 		FDynamicMesh3&& DynamicMesh,
 		TArray<int32>&& SeamVertexIDs,
+		const TArray<FVector2f>& BoundarySamples2D,        // NEW
+		const TArray<int32>& BoundarySampleVIDs,
 		TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors);
 	
 	void TriangulateAndBuildMesh(
@@ -110,7 +115,8 @@ namespace CanvasMesh
 	void TriangulateAndBuildAllMeshes(
 		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
 		const FInterpCurve<FVector2D>& CurvePoints,
-		TArray<FDynamicMesh3>& OutMeshes);
+		TArray<FDynamicMesh3>& OutMeshes,
+		TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors);
 	
 }
 

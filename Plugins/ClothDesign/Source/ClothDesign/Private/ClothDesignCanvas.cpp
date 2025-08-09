@@ -457,32 +457,34 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 	{
 		if (Key == EKeys::Enter)
 		{
-			if (CurvePoints.Points.Num() > 0)
-			{
-				FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
-
-
-				// add bezier tangents to the start and end points
-				if (CurvePoints.Points.Num() >= 2)
-				{
-					int32 LastIdx = CurvePoints.Points.Num() - 1;
-
-					FVector2D Delta0 = CurvePoints.Points[1].OutVal - CurvePoints.Points[0].OutVal;
-					CurvePoints.Points[0].ArriveTangent = FVector2D::ZeroVector;
-					CurvePoints.Points[0].LeaveTangent  = Delta0 * 0.5f;
-
-					FVector2D Delta1 = CurvePoints.Points[LastIdx].OutVal - CurvePoints.Points[LastIdx - 1].OutVal;
-					CurvePoints.Points[LastIdx].ArriveTangent = Delta1 * 0.5f;
-					CurvePoints.Points[LastIdx].LeaveTangent  = FVector2D::ZeroVector;
-				}
-				
-				CompletedShapes.Add(CurvePoints);
-				CompletedBezierFlags.Add(bUseBezierPerPoint);
-				
-				CurvePoints.Points.Empty();
-				bUseBezierPerPoint.Empty();
-				UE_LOG(LogTemp, Warning, TEXT("Shape finalized. Ready to start a new one."));
-			}
+			// if (CurvePoints.Points.Num() > 0)
+			// {
+			// 	FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
+			//
+			//
+			// 	// add bezier tangents to the start and end points
+			// 	if (CurvePoints.Points.Num() >= 2)
+			// 	{
+			// 		int32 LastIdx = CurvePoints.Points.Num() - 1;
+			//
+			// 		FVector2D Delta0 = CurvePoints.Points[1].OutVal - CurvePoints.Points[0].OutVal;
+			// 		CurvePoints.Points[0].ArriveTangent = FVector2D::ZeroVector;
+			// 		CurvePoints.Points[0].LeaveTangent  = Delta0 * 0.5f;
+			//
+			// 		FVector2D Delta1 = CurvePoints.Points[LastIdx].OutVal - CurvePoints.Points[LastIdx - 1].OutVal;
+			// 		CurvePoints.Points[LastIdx].ArriveTangent = Delta1 * 0.5f;
+			// 		CurvePoints.Points[LastIdx].LeaveTangent  = FVector2D::ZeroVector;
+			// 	}
+			// 	
+			// 	CompletedShapes.Add(CurvePoints);
+			// 	CompletedBezierFlags.Add(bUseBezierPerPoint);
+			// 	
+			// 	CurvePoints.Points.Empty();
+			// 	bUseBezierPerPoint.Empty();
+			// 	UE_LOG(LogTemp, Warning, TEXT("Shape finalized. Ready to start a new one."));
+			// }
+			// return FReply::Handled();
+			FinaliseCurrentShape();
 			return FReply::Handled();
 		}
 	}
@@ -492,6 +494,48 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 
 }
 
+int32 SClothDesignCanvas::FinaliseCurrentShape(bool bGenerateNow, TArray<TWeakObjectPtr<APatternMesh>>* OutSpawnedActors)
+{
+	 // nothing to finalize
+    if (CurvePoints.Points.Num() == 0)
+    {
+        UE_LOG(LogTemp, Verbose, TEXT("FinalizeCurrentShape: no points to finalize"));
+        return INDEX_NONE;
+    }
+	
+	FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
+	
+
+    // Add bezier tangents to the start and end points (same as your original)
+    if (CurvePoints.Points.Num() >= 2)
+    {
+        int32 LastIdx = CurvePoints.Points.Num() - 1;
+
+        FVector2D Delta0 = CurvePoints.Points[1].OutVal - CurvePoints.Points[0].OutVal;
+        CurvePoints.Points[0].ArriveTangent = FVector2D::ZeroVector;
+        CurvePoints.Points[0].LeaveTangent  = Delta0 * 0.5f;
+
+        FVector2D Delta1 = CurvePoints.Points[LastIdx].OutVal - CurvePoints.Points[LastIdx - 1].OutVal;
+        CurvePoints.Points[LastIdx].ArriveTangent = Delta1 * 0.5f;
+        CurvePoints.Points[LastIdx].LeaveTangent  = FVector2D::ZeroVector;
+    }
+
+    // Move current sketch into CompletedShapes
+    CompletedShapes.Add(CurvePoints);
+    CompletedBezierFlags.Add(bUseBezierPerPoint); // keep your existing boolean flags array in sync
+
+	int32 NewIndex = CompletedShapes.Num() - 1;
+
+    // Clear the current sketch so user can start a new one
+    CurvePoints.Points.Empty();
+    bUseBezierPerPoint.Empty();
+
+    UE_LOG(LogTemp, Warning, TEXT("Shape finalised. Ready to start a new one."));
+	
+	return NewIndex;
+	
+
+}
 
 
 FReply SClothDesignCanvas::OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
@@ -691,15 +735,20 @@ void SClothDesignCanvas::ClearAllShapeData()
 }
 
 
+// void SClothDesignCanvas::SewingClick()
+// {
+// 	SewingManager.BuildAndAlignClickedSeam(CompletedShapes, CurvePoints);
+// }
+
 void SClothDesignCanvas::SewingClick()
 {
-	SewingManager.BuildAndAlignClickedSeam(CompletedShapes, CurvePoints);
+	SewingManager.BuildAndAlignAllSeams(CompletedShapes, CurvePoints);
 }
 
 
 void SClothDesignCanvas::MergeClick()
 {
-	SewingManager.MergeLastTwoMeshes();
+	SewingManager.MergeSewnGroups();
 }
 
 void SClothDesignCanvas::ClearAllSewing()
@@ -737,12 +786,22 @@ FReply SClothDesignCanvas::SaveClick(const FString& SaveName)
 
 void SClothDesignCanvas::GenerateMeshesClick()
 {
+	SewingManager.SpawnedPatternActors.Empty();
+	
 	TArray<FDynamicMesh3> AllMeshes;
 	CanvasMesh::TriangulateAndBuildAllMeshes(
 		CompletedShapes,
 		CurvePoints,
-		AllMeshes
-	);
+		AllMeshes,
+		SewingManager.SpawnedPatternActors);
+
+	for (int i = 0; i < SewingManager.SpawnedPatternActors.Num(); ++i)
+	{
+		if (APatternMesh* A = SewingManager.SpawnedPatternActors[i].Get())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("overall SpawnedActors[%d] = %s"), i, *A->GetName());
+		}
+	}
 
 	UE_LOG(LogTemp, Log, TEXT("Built %d meshes"), AllMeshes.Num());
 	// You can inspect AllMeshes[0].TriangleCount(), VertexCount(), etc.

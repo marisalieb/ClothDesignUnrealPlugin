@@ -130,6 +130,9 @@ public:
 	TArray<TArray<bool>> CompletedBezierFlags;
 	bool bUseBezierPoints = true;
 
+	// other, maybe reorganise??
+	int32 FinaliseCurrentShape(bool bGenerateNow = false, TArray<TWeakObjectPtr<APatternMesh>>* OutSpawnedActors = nullptr);
+
 
 private:
 	FGeometry LastGeometry;

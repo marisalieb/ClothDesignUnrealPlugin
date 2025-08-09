@@ -177,28 +177,38 @@ void CanvasMesh::RunConstrainedDelaunay(
 
 void CanvasMesh::ConvertCDTToDynamicMesh(
 	const UE::Geometry::TConstrainedDelaunay2<float>& CDT,
-	UE::Geometry::FDynamicMesh3& OutMesh)
+	FDynamicMesh3& OutMesh,
+	TArray<int32>& OutPolyIndexToVID)
 {
 	// Your code converting CDT vertices and triangles to FDynamicMesh3
 	OutMesh.EnableTriangleGroups();
 	// MeshOut.SetAllowBowties(true);  // if you expect split‐bowties
 
+	OutPolyIndexToVID.Reset();
+	OutPolyIndexToVID.Reserve(CDT.Vertices.Num());
+
+	
 	// Append all vertices:
 	for (const UE::Geometry::TVector2<float>& V2 : CDT.Vertices)
 	{
-		OutMesh.AppendVertex(FVector3d(V2.X, V2.Y, 0));
+		int NewVID = OutMesh.AppendVertex(FVector3d(V2.X, V2.Y, 0));
+		OutPolyIndexToVID.Add(NewVID);
 	}
 
 	// Append all triangles:
 	for (const UE::Geometry::FIndex3i& Tri : CDT.Triangles)
 	{
 		// Tri is CCW if bOutputCCW==true
-		OutMesh.AppendTriangle(Tri.A, Tri.B, Tri.C);
+		//OutMesh.AppendTriangle(Tri.A, Tri.B, Tri.C);
+		int VA = OutPolyIndexToVID[Tri.A];
+		int VB = OutPolyIndexToVID[Tri.B];
+		int VC = OutPolyIndexToVID[Tri.C];
+		OutMesh.AppendTriangle(VA, VB, VC);
 	}
 }
 
 void CanvasMesh::ExtractVerticesAndIndices(
-	const UE::Geometry::FDynamicMesh3& OutMesh,
+	const FDynamicMesh3& OutMesh,
 	TArray<FVector>& OutVertices,
 	TArray<int32>& OutIndices)
 {
@@ -225,6 +235,8 @@ void CanvasMesh::CreateProceduralMesh(
 	const TArray<int32>& Indices,
 	FDynamicMesh3&& DynamicMesh,
 	TArray<int32>&& SeamVertexIDs,
+	const TArray<FVector2f>& BoundarySamples2D,        // NEW
+	const TArray<int32>& BoundarySampleVIDs,
 	TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors)
 {
 	// UE_LOG(LogTemp, Log, TEXT("CreateProceduralMesh called: Vertices=%d, Indices=%d"),
@@ -265,7 +277,30 @@ void CanvasMesh::CreateProceduralMesh(
 
 	MeshActor->DynamicMesh        = MoveTemp(DynamicMesh);
 	MeshActor->LastSeamVertexIDs  = MoveTemp(SeamVertexIDs);
-	MeshActor->SetFolderPath(FName(TEXT("GeneratedClothActors")));
+
+	// store boundary sample 2D points and vertex IDs
+	MeshActor->BoundarySamplePoints2D = BoundarySamples2D;
+	MeshActor->BoundarySampleVertexIDs = BoundarySampleVIDs;
+
+	// compute and store world positions for convenience
+	MeshActor->BoundarySampleWorldPositions.Reset();
+	MeshActor->BoundarySampleWorldPositions.SetNum(BoundarySampleVIDs.Num());
+	for (int i = 0; i < BoundarySampleVIDs.Num(); ++i)
+	{
+		int VID = BoundarySampleVIDs[i];
+		if (VID >= 0 && VID < MeshActor->DynamicMesh.VertexCount())
+		{
+			FVector3d P = MeshActor->DynamicMesh.GetVertex(VID);
+			MeshActor->BoundarySampleWorldPositions[i] = MeshActor->GetActorTransform().TransformPosition(FVector(P.X, P.Y, P.Z));
+		}
+		else
+		{
+			MeshActor->BoundarySampleWorldPositions[i] = FVector::ZeroVector;
+		}
+	}
+
+	
+	MeshActor->SetFolderPath(FName(TEXT("ClothDesignActors")));
 #if WITH_EDITOR
 	MeshActor->SetActorLabel(UniqueLabel);
 #endif
@@ -335,13 +370,41 @@ void CanvasMesh::TriangulateAndBuildMesh(
 	RunConstrainedDelaunay(PolyVerts, BoundaryEdges, CDT);
 
 
+
+
+
+	
 	// Convert CDT result to dynamic mesh
 	UE::Geometry::FDynamicMesh3 OutMesh;
-	ConvertCDTToDynamicMesh(CDT, OutMesh);
+	TArray<int32> PolyIndexToVID;
+	ConvertCDTToDynamicMesh(CDT, OutMesh, PolyIndexToVID);
 
 	// Debug: make sure CDT produced triangles
 	UE_LOG(LogTemp, Warning, TEXT("[Triangulate] CDT produced: vertices=%d triangles=%d"),
 		   CDT.Vertices.Num(), CDT.Triangles.Num());
+	
+	if (OutSpawnedActors.Num() > 0 && OutSpawnedActors.Last().IsValid())
+	{
+		OutSpawnedActors.Last()->SetPolyIndexToVID(PolyIndexToVID);
+	}
+
+	TArray<FVector2f> BoundarySamples2D;
+	TArray<int32> BoundarySampleVIDs;
+	TArray<FVector> BoundarySampleWorld; // we'll compute world positions in CreateProceduralMesh
+
+	BoundarySamples2D.Reserve(OriginalBoundaryCount);
+	BoundarySampleVIDs.Reserve(OriginalBoundaryCount);
+
+	for (int b = 0; b < OriginalBoundaryCount; ++b)
+	{
+		BoundarySamples2D.Add(PolyVerts[b]);                 // store 2D sample
+		int VID = (b >= 0 && b < PolyIndexToVID.Num()) ? PolyIndexToVID[b] : INDEX_NONE;
+		BoundarySampleVIDs.Add(VID);
+	}
+
+
+
+
 	
 	// Extract vertices and indices for procedural mesh
 	TArray<FVector> Vertices;
@@ -361,15 +424,20 @@ void CanvasMesh::TriangulateAndBuildMesh(
 	Indices,
 	MoveTemp(LastBuiltMesh),
 	MoveTemp(LastBuiltSeamVertexIDs),
+	BoundarySamples2D,       // NEW param
+	BoundarySampleVIDs,      // NEW param
 	OutSpawnedActors
 		);
 }
 
 
+
+
 void CanvasMesh::TriangulateAndBuildAllMeshes(
 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
 	const FInterpCurve<FVector2D>& CurvePoints,
-	TArray<FDynamicMesh3>& OutMeshes)
+	TArray<FDynamicMesh3>& OutMeshes,
+	TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors)
 {
 
 	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
@@ -385,7 +453,7 @@ void CanvasMesh::TriangulateAndBuildAllMeshes(
 			SeamVerts,
 			Mesh,
 			DummySeamVerts,
-			SpawnedPatternActors);
+			OutSpawnedActors);
 		
 		OutMeshes.Add(Mesh);
 	}
@@ -403,209 +471,17 @@ void CanvasMesh::TriangulateAndBuildAllMeshes(
 			SeamVerts,
 			Mesh,
 			DummySeamVerts,
-			SpawnedPatternActors);
+			OutSpawnedActors);
 		
 		OutMeshes.Add(Mesh);
 	}
+
+	for (int i = 0; i < OutSpawnedActors.Num(); ++i)
+	{
+		if (APatternMesh* A = OutSpawnedActors[i].Get())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("SpawnedActors[%d] = %s"), i, *A->GetName());
+		}
+	}
 }
-
-
-// // second version but with steiner points, grid spaced constrained delaunay
-// void CanvasMesh::TriangulateAndBuildMesh(
-// 	const FInterpCurve<FVector2D>& Shape,
-// 	bool bRecordSeam,
-// 	int32 StartPointIdx2D,
-// 	int32 EndPointIdx2D,
-// 	/* out */ TArray<int32>& LastSeamVertexIDs,
-// 	/* out */ FDynamicMesh3& LastBuiltMesh,
-// 	/* optional */ TArray<int32>& LastBuiltSeamVertexIDs,
-// 	/* out */ TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors) // NEW
-// {
-// 	if (Shape.Points.Num() < 3)
-// 	{
-// 		UE_LOG(LogTemp, Warning, TEXT("Need at least 3 points to triangulate"));
-// 		return;
-// 	}
-//
-// 	TArray<FVector2f> PolyVerts;
-// 	const int SamplesPerSegment = 10;
-// 	
-// 	// Step 3: Build DynamicMesh
-// 	FDynamicMesh3 Mesh;
-//
-// 	
-// 	// Before your loop, compute the integer sample‐range once:
-// 	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
-// 	int SampleCounter = 0;
-//
-// 	// Default to an empty range
-// 	int MinSample = TotalSamples + 1;
-// 	int MaxSample = -1;
-//
-// 	// Only compute if we really want to record a seam
-// 	if (bRecordSeam && StartPointIdx2D >= 0 && EndPointIdx2D >= 0)
-// 	{
-// 		int S0 = StartPointIdx2D * SamplesPerSegment;
-// 		int S1 = EndPointIdx2D   * SamplesPerSegment;
-// 		MinSample = FMath::Min(S0, S1);
-// 		MaxSample = FMath::Max(S0, S1);
-// 	}
-//
-// 	LastSeamVertexIDs.Empty();
-// 	TArray<int32> VertexIDs;
-//
-// 	for (int Seg = 0; Seg < Shape.Points.Num() - 1; ++Seg)
-// 	{
-// 		float In0 = Shape.Points[Seg].InVal;
-// 		float In1 = Shape.Points[Seg + 1].InVal;
-//
-// 		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter)
-// 		{
-// 			float Alpha = float(i) / SamplesPerSegment;
-// 			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, Alpha));
-// 			PolyVerts.Add(FVector2f(P2.X, P2.Y));
-//
-// 			int VID = Mesh.AppendVertex(FVector3d(P2.X, P2.Y, 0));
-// 			VertexIDs.Add(VID);
-//
-// 			// record seam if this sample falls in the integer [MinSample,MaxSample] range
-// 			if (bRecordSeam && SampleCounter >= MinSample && SampleCounter <= MaxSample)
-// 			{
-// 				LastSeamVertexIDs.Add(VID);
-// 			}
-// 		}
-// 	}
-//
-// 	// RIGHT HERE: remember how many boundary points you have
-// 	int32 OriginalBoundaryCount = PolyVerts.Num();
-// 	
-// 	// Copy out just the boundary verts for your in‐polygon test:
-// 	TArray<FVector2f> BoundaryOnly;
-// 	BoundaryOnly.Append( PolyVerts.GetData(), OriginalBoundaryCount );
-//
-// 	// --- compute 2D bounding‐box of your sampled polyline
-// 	float MinX = FLT_MAX, MinY = FLT_MAX, MaxX = -FLT_MAX, MaxY = -FLT_MAX;
-// 	for (int32 i = 0; i < OriginalBoundaryCount; ++i)
-// 	{
-// 		const FVector2f& V = PolyVerts[i];
-// 		MinX = FMath::Min(MinX, V.X);
-// 		MinY = FMath::Min(MinY, V.Y);
-// 		MaxX = FMath::Max(MaxX, V.X);
-// 		MaxY = FMath::Max(MaxY, V.Y);
-// 	}
-//
-// 	// --- grid parameters
-// 	const int32 GridRes = 20;    // 10×10 grid → up to 100 interior seeds
-// 	int32 Added = 0;
-//
-// 	// --- sample on a regular grid, keep only centers inside the original polygon
-// 	for (int32 iy = 0; iy < GridRes; ++iy)
-// 	{
-// 		float fy = (iy + 0.5f) / float(GridRes);
-// 		float Y  = FMath::Lerp(MinY, MaxY, fy);
-//
-// 		for (int32 ix = 0; ix < GridRes; ++ix)
-// 		{
-// 			float fx = (ix + 0.5f) / float(GridRes);
-// 			float X  = FMath::Lerp(MinX, MaxX, fx);
-//
-// 			FVector2f Cand(X, Y);
-// 			if ( IsPointInPolygon(Cand, BoundaryOnly) )
-// 			{
-// 				// add to the full list
-// 				PolyVerts.Add(Cand);
-//
-// 				// let your Delaunay/CDT see it:
-// 				int32 VID = Mesh.AppendVertex(FVector3d(Cand.X, Cand.Y, 0));
-// 				VertexIDs.Add(VID);
-//
-// 				++Added;
-// 			}
-// 		}
-// 	}
-//
-// 	// UE_LOG(LogTemp, Log, TEXT("Placed %d grid‐based interior samples"), Added);
-//
-// 	// Build the list of constrained edges on the original boundary:
-// 	TArray<UE::Geometry::FIndex2i> BoundaryEdges;
-// 	BoundaryEdges.Reserve(OriginalBoundaryCount);
-// 	for (int32 i = 0; i < OriginalBoundaryCount; ++i)
-// 	{
-// 		BoundaryEdges.Add(
-// 			UE::Geometry::FIndex2i(i, (i + 1) % OriginalBoundaryCount)
-// 		);
-// 	}
-// 	
-//
-// 	// --- 2) Set up and run the Constrained Delaunay ---
-// 	UE::Geometry::TConstrainedDelaunay2<float> CDT;
-// 	
-// 	
-// 	CDT.Vertices      = PolyVerts;          // TArray<TVector2<float>>
-// 	CDT.Edges         = BoundaryEdges;      // TArray<FIndex2i>
-// 	CDT.bOrientedEdges = true;              // enforce input edge orientation
-// 	CDT.FillRule = UE::Geometry::TConstrainedDelaunay2<float>::EFillRule::Odd;  
-//
-// 	// CDT.FillRule      = EFillRule::EvenOdd;  
-// 	CDT.bOutputCCW    = true;               // get CCW‐wound triangles
-//
-// 	// If you want to cut out hole‐loops, you can fill CDT.HoleEdges similarly.
-//
-// 	// Run the triangulation:
-// 	bool bOK = CDT.Triangulate();
-// 	if (!bOK || CDT.Triangles.Num() == 0)
-// 	{
-// 	    UE_LOG(LogTemp, Error, TEXT("CDT failed to triangulate shape"));
-// 	    return;
-// 	}
-//
-// 	// --- 3) Move it into an FDynamicMesh3 ---
-// 	UE::Geometry::FDynamicMesh3 MeshOut;
-// 	MeshOut.EnableTriangleGroups();
-// 	// MeshOut.SetAllowBowties(true);  // if you expect split‐bowties
-//
-// 	// Append all vertices:
-// 	for (const UE::Geometry::TVector2<float>& V2 : CDT.Vertices)
-// 	{
-// 	    MeshOut.AppendVertex(FVector3d(V2.X, V2.Y, 0));
-// 	}
-//
-// 	// Append all triangles:
-// 	for (const UE::Geometry::FIndex3i& Tri : CDT.Triangles)
-// 	{
-// 	    // Tri is CCW if bOutputCCW==true
-// 	    MeshOut.AppendTriangle(Tri.A, Tri.B, Tri.C);
-// 	}
-//
-// 	// --- 4) Extract to your ProceduralMeshComponent as before ---
-// 	TArray<FVector> Vertices;
-// 	TArray<int32>   Indices;
-// 	Vertices.Reserve(MeshOut.VertexCount());
-// 	for (int vid : MeshOut.VertexIndicesItr())
-// 	{
-// 	    FVector3d P = MeshOut.GetVertex(vid);
-// 	    Vertices.Add(FVector(P.X, P.Y, P.Z));
-// 	}
-// 	for (int tid : MeshOut.TriangleIndicesItr())
-// 	{
-// 	    auto T = MeshOut.GetTriangle(tid);
-// 	    // already CCW, so push A→B→C
-// 	    Indices.Add(T.C);
-// 	    Indices.Add(T.B);
-// 	    Indices.Add(T.A);
-// 	}
-//
-// 	UE_LOG(LogTemp, Warning, TEXT("[Triangulate] Mesh has %d verts, %d triangles"), Mesh.VertexCount(), Mesh.TriangleCount());
-// 	LastBuiltMesh = MoveTemp(Mesh);
-// 	LastBuiltSeamVertexIDs = MoveTemp(LastSeamVertexIDs);
-//
-// 	// CreateProceduralMesh(Vertices, Indices);
-// 	CreateProceduralMesh(
-// 	Vertices,
-// 	Indices,
-// 	MoveTemp(LastBuiltMesh),
-// 	MoveTemp(LastBuiltSeamVertexIDs),
-// 	OutSpawnedActors
-// 		);
-// }
 

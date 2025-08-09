@@ -1,9 +1,8 @@
 
-
 #include "Canvas/CanvasInputHandler.h"
 #include "Widgets/SWidget.h"
 #include "Logging/LogMacros.h"
-
+#include "Misc/MessageDialog.h"
 
 #include "ClothDesignCanvas.h"
 #include "Canvas/CanvasUtils.h"
@@ -85,7 +84,8 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 	auto&  AEndTarget=Canvas->GetSewingManager().AEndTarget;
 	auto&  BStartTarget=Canvas->GetSewingManager().BStartTarget ;
 	auto&  BEndTarget=Canvas->GetSewingManager().BEndTarget ;
-
+	auto&  SpawnedPatternActors=Canvas->GetSewingManager().SpawnedPatternActors;
+	
 	 // 1) Find nearest control point across all shapes + current
     const float SelRadius = 10.0f / Canvas->ZoomFactor;
     const float BestRadiusSq = SelRadius * SelRadius;
@@ -124,7 +124,7 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
             }
         }
     }
-
+	
     // If we didn't hit anything, just consume the click and exit
     if (BestPoint == INDEX_NONE)
     {
@@ -132,6 +132,44 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
         return FReply::Handled();
     }
 
+
+
+	// If user clicked a point on the in-progress shape
+	if (BestShape == INDEX_NONE)
+	{
+		// Ask user whether to finalize this shape now for sewing
+		EAppReturnType::Type Choice = FMessageDialog::Open(
+			EAppMsgType::YesNo,
+			FText::FromString(TEXT("You clicked a point on the unfinished shape. Finalize this shape now so you can sew it? (Yes = finalize and allow sewing, No = cancel)"))
+		);
+
+		if (Choice == EAppReturnType::Yes)
+		{
+			int32 NewShapeIndex = Canvas->FinaliseCurrentShape();
+			if (NewShapeIndex == INDEX_NONE)
+			{
+				return FReply::Handled(); // nothing finalized
+			}
+
+			// Recompute BestShape/BestPoint so the click maps to the new completed shape:
+			BestShape = NewShapeIndex;
+			BestPoint = INDEX_NONE;
+			for (int i = 0; i < Canvas->CompletedShapes[BestShape].Points.Num(); ++i)
+			{
+				float D2 = FVector2D::DistSquared(Canvas->CompletedShapes[BestShape].Points[i].OutVal, CanvasClickPos);
+				if (D2 <= BestRadiusSq) { BestPoint = i; break; }
+			}
+			if (BestPoint == INDEX_NONE) return FReply::Handled(); // shouldn't happen, but safe
+		}
+		else
+		{
+			// User chose not to finalize — ignore the click for sewing
+			return FReply::Handled();
+		}
+	}
+
+
+	
     // 2) Advance our 4-click state, storing shape+point each time
     switch (SeamClickState)
     {
@@ -162,7 +200,7 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 
     	
     	// 3) Finalize: now you have (shape,index) for all four clicks
-    	Canvas->GetSewingManager().FinalizeSeamDefinitionByTargets(AStartTarget, AEndTarget, BStartTarget, BEndTarget, Canvas->CurvePoints, Canvas->CompletedShapes);
+    	Canvas->GetSewingManager().FinaliseSeamDefinitionByTargets(AStartTarget, AEndTarget, BStartTarget, BEndTarget, Canvas->CurvePoints, Canvas->CompletedShapes, SpawnedPatternActors);
 
     	// Reset for next seam
     	SeamClickState = ESeamClickState::None;

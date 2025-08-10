@@ -134,10 +134,25 @@ public:
 	int32 FinaliseCurrentShape(bool bGenerateNow = false, TArray<TWeakObjectPtr<APatternMesh>>* OutSpawnedActors = nullptr);
 
 
+
+	
+	TMap<int32, TSet<int32>> SewnPointIndicesPerShape;
+	// Temporary data for currently-being-selected seam
+	// TMap<int32, TSet<int32>> CurrentSeamPreviewPoints;
+	
+	void UpdateSewnPointSets();
+	int32 SelectedSeamIndex = INDEX_NONE;
+	// UPROPERTY()
+	// TSet<int32> SelectedSewingPointIndices;
+	// // Canvas.h (or wherever canvas state lives)
+	
 private:
 	FGeometry LastGeometry;
 	TArray<TWeakObjectPtr<APatternMesh>> LastBuiltActors;
 	
 	// for save load managing 
 	FCanvasAssetManager AssetManager;
+
+	
+
 };

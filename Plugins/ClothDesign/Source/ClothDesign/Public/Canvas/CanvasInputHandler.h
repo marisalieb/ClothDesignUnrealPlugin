@@ -25,4 +25,7 @@ private:
 	SClothDesignCanvas* Canvas;
 	bool bIsSeamReady = false;
 
+	static float DistPointToSegmentSq(const FVector2D& P,
+		const FVector2D& A, const FVector2D& B);
+
 };

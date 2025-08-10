@@ -117,3 +117,5 @@ corresponding samples pair in the correct order.
 FPatternSewingConstraint (your Unreal USTRUCT) which stores mesh components, vertex indices, stiffness, and screen points — used at runtime for physics/sewing constraints.
 
 FSeamDefinition (my suggestion), which just stores the indices of shapes and edges for bookkeeping multiple seams in your canvas editor.
+
+

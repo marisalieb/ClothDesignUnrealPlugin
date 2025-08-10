@@ -22,10 +22,6 @@ struct FPatternSewingConstraint
 
 	UPROPERTY()
 	int32 VertexIndexB;
-
-	// UPROPERTY()
-	// float Stiffness;
-
 	
 	UPROPERTY()
 	TArray<FVector2D> ScreenPointsA;

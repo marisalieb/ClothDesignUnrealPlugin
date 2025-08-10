@@ -78,8 +78,9 @@ int32 SClothDesignCanvas::OnPaint(
 	
 	Layer = Drawer.DrawBackground(AllottedGeometry, OutDrawElements, Layer);
 	Layer = Drawer.DrawGrid(AllottedGeometry, OutDrawElements, Layer);
+	Layer = Drawer.DrawFinalisedSeamLines(AllottedGeometry, OutDrawElements, Layer);
 	Layer = Drawer.DrawCompletedShapes(AllottedGeometry, OutDrawElements, Layer);
-	Layer = Drawer.DrawCurrentCurve(AllottedGeometry, OutDrawElements, Layer);
+	Layer = Drawer.DrawCurrentShape(AllottedGeometry, OutDrawElements, Layer);
 
 	
 	OutDrawElements.PopClip(); // end clipping
@@ -151,10 +152,14 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 			return FReply::Handled(); // not enough points
 		
 		// Clicked on empty space; DESELECT
+		
+		SelectedSeamIndex = INDEX_NONE;
+		SelectedShapeIndex = INDEX_NONE;
 		SelectedPointIndex = INDEX_NONE;
 		bIsDraggingPoint = false;
 		bIsShapeSelected = false;
 		UE_LOG(LogTemp, Warning, TEXT("Deselected all"));
+		// Invalidate(EInvalidateWidget::Paint);  // trigger repaint so highlight updates
 		return FReply::Handled()
 			.SetUserFocus(SharedThis(this), EFocusCause::SetDirectly);
 	}
@@ -185,7 +190,7 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 	{
 		FVector2D LocalMousePos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
 		const FVector2D CanvasMousePos = InverseTransformPoint(LocalMousePos);
-		UE_LOG(LogTemp, Warning, TEXT("CanvasClick: %s"), *CanvasMousePos.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("CanvasClick: %s"), *CanvasMousePos.ToString());
 
 		if (bIsDraggingTangent && SelectedPointIndex != INDEX_NONE)
 		{
@@ -340,6 +345,37 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 
 	if (Key == EKeys::Delete || Key == EKeys::BackSpace)
 	{
+		// seam deletion
+		// If a seam is selected -> delete the seam (remove its bookkeeping + runtime constraint)
+		if (SelectedSeamIndex != INDEX_NONE)
+		{
+			FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
+
+			int32 idx = SelectedSeamIndex;
+
+			// 1) Remove FSeamDefinition
+			if (GetSewingManager().SeamDefinitions.IsValidIndex(idx))
+			{
+				GetSewingManager().SeamDefinitions.RemoveAt(idx);
+			}
+
+			// 2) Remove runtime cached constraint if you kept one-per-seam in AllDefinedSeams (best-effort)
+			if (GetSewingManager().AllDefinedSeams.IsValidIndex(idx))
+			{
+				GetSewingManager().AllDefinedSeams.RemoveAt(idx);
+			}
+			// If your runtime sewing constraints are stored separately, try to find & remove matching entries:
+			// e.g. if you have FPatternSewingConstraint list, compare ScreenPointsA/B or Mesh pointers to find the matching one and remove it.
+
+			// 3) Update the canvas sewn-point cache & redraw
+			UpdateSewnPointSets(); // recompute sewn-point map from SeamDefinitions
+			SelectedSeamIndex = INDEX_NONE;
+			Invalidate(EInvalidateWidgetReason::Paint | EInvalidateWidgetReason::Layout);
+			return FReply::Handled();
+		}
+
+
+		// point deletion
 		UE_LOG(LogTemp, Warning, TEXT("Trying to deelete point: %d"), SelectedPointIndex);
 		
 		if (SelectedPointIndex != INDEX_NONE)
@@ -432,7 +468,7 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 	
 	if (CurrentMode == EClothEditorMode::Select)
 	{
-		if (Key == EKeys::T)
+		if (Key == EKeys::T) // so hold down while editing the tangent
 		{
 			bSeparateTangents = true;
 			return FReply::Handled();
@@ -457,33 +493,6 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 	{
 		if (Key == EKeys::Enter)
 		{
-			// if (CurvePoints.Points.Num() > 0)
-			// {
-			// 	FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
-			//
-			//
-			// 	// add bezier tangents to the start and end points
-			// 	if (CurvePoints.Points.Num() >= 2)
-			// 	{
-			// 		int32 LastIdx = CurvePoints.Points.Num() - 1;
-			//
-			// 		FVector2D Delta0 = CurvePoints.Points[1].OutVal - CurvePoints.Points[0].OutVal;
-			// 		CurvePoints.Points[0].ArriveTangent = FVector2D::ZeroVector;
-			// 		CurvePoints.Points[0].LeaveTangent  = Delta0 * 0.5f;
-			//
-			// 		FVector2D Delta1 = CurvePoints.Points[LastIdx].OutVal - CurvePoints.Points[LastIdx - 1].OutVal;
-			// 		CurvePoints.Points[LastIdx].ArriveTangent = Delta1 * 0.5f;
-			// 		CurvePoints.Points[LastIdx].LeaveTangent  = FVector2D::ZeroVector;
-			// 	}
-			// 	
-			// 	CompletedShapes.Add(CurvePoints);
-			// 	CompletedBezierFlags.Add(bUseBezierPerPoint);
-			// 	
-			// 	CurvePoints.Points.Empty();
-			// 	bUseBezierPerPoint.Empty();
-			// 	UE_LOG(LogTemp, Warning, TEXT("Shape finalized. Ready to start a new one."));
-			// }
-			// return FReply::Handled();
 			FinaliseCurrentShape();
 			return FReply::Handled();
 		}
@@ -753,6 +762,8 @@ void SClothDesignCanvas::MergeClick()
 
 void SClothDesignCanvas::ClearAllSewing()
 {
+	SewnPointIndicesPerShape.Empty();
+	GetSewingManager().CurrentSeamPreviewPoints.Empty();
 	SewingManager.ClearAllSeams();
 }
 
@@ -807,4 +818,15 @@ void SClothDesignCanvas::GenerateMeshesClick()
 	// You can inspect AllMeshes[0].TriangleCount(), VertexCount(), etc.
 }
 
+
+// Canvas.cpp
+void SClothDesignCanvas::UpdateSewnPointSets()
+{
+	//SewnPointIndicesPerShape.Empty();
+
+	SewingManager.BuildSewnPointSets(SewnPointIndicesPerShape);
+	
+	// request redraw
+	Invalidate(EInvalidateWidget::Paint);
+}
 

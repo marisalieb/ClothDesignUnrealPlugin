@@ -2,12 +2,8 @@
 #include "PatternSewingConstraint.h"
 #include "PatternMesh.h"
 
-// // Represents one seam between two shapes
-// struct FSeamDefinition
-// {
-// 	int32 ShapeA, StartA, EndA;
-// 	int32 ShapeB, StartB, EndB;
-// };
+
+class SClothDesignCanvas;
 
 struct FEdgeIndices
 {
@@ -52,10 +48,7 @@ struct FCanvasSewing
 	FClickTarget AStartTarget, AEndTarget, BStartTarget, BEndTarget;
 	
 	TArray<TWeakObjectPtr<APatternMesh>> SpawnedPatternActors;
-
-	// TArray<FSeamDefinition> AllSeams;
 	
-	// Methods
 	void FinaliseSeamDefinitionByTargets(
 		const FClickTarget& AStart,
 		const FClickTarget& AEnd,
@@ -91,7 +84,16 @@ struct FCanvasSewing
 
 	void MergeSewnGroups();
 
+	void BuildSewnPointSets(TMap<int32, TSet<int32>>& OutSewn) const;
 
+	// In FCanvasSewing.h
+	TMap<int32, TSet<int32>> CurrentSeamPreviewPoints;
+	void AddPreviewPoint(int32 ShapeIndex, int32 PointIndex);
+
+	// void UpdateSewnPointSetsOnCanvas(
+	// 	SClothDesignCanvas* Canvas,
+	// 	const TArray<FSeamDefinition>& SeamDefinitions);
+	//
 	// APatternMesh* GetPatternActor(int32 ShapeIndex);
 	// int32 GetVertexID(int32 ShapeIndex, int32 PointIndex);
 

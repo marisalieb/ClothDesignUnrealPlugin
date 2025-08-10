@@ -45,8 +45,18 @@ struct FCanvasPaint
 		FSlateWindowElementList& OutDraw,
 		int32 Layer);
 	
-	int32 DrawCurrentCurve(
+	int32 DrawCurrentShape(
 		const FGeometry& Geo,
 		FSlateWindowElementList& OutDraw,
 		int32 Layer);
+
+	static void BuildShortestArcSegments(
+		int32 StartIdx, int32 EndIdx,
+		int32 NumPts, TSet<int32>& OutSegments);
+
+	int DrawFinalisedSeamLines(
+		const FGeometry& Geo,
+		FSlateWindowElementList& OutDraw,
+		int32 Layer);
+
 };

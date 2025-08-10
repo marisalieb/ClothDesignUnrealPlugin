@@ -60,7 +60,7 @@ void FCanvasSewing::FinaliseSeamDefinitionByTargets(
 	NewSeamDef.EdgeB.End = BEnd.PointIndex;
 
 	SeamDefinitions.Add(NewSeamDef);
-
+	
 
 
 	
@@ -250,6 +250,66 @@ void FCanvasSewing::FinaliseSeamDefinitionByTargets(
 //
 // 	UE_LOG(LogTemp, Log, TEXT("Aligned MeshB by %s"), *AverageOffset.ToString());
 // }
+//
+// void FCanvasSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* MeshActorB)
+// {
+//     if (!MeshActorA || !MeshActorB) return;
+//
+//     const TArray<int32>& IDsA = MeshActorA->LastSeamVertexIDs;
+//     const TArray<int32>& IDsB = MeshActorB->LastSeamVertexIDs;
+//     int32 NumA = IDsA.Num(), NumB = IDsB.Num();
+//     if (NumA == 0 || NumB == 0) {
+//         UE_LOG(LogTemp, Warning, TEXT("Cannot align: one of the seam lists is empty (A=%d, B=%d)"), NumA, NumB);
+//         return;
+//     }
+//     if (NumA != NumB) {
+//         UE_LOG(LogTemp, Warning, TEXT("Warning: mismatched seam lengths (A=%d, B=%d) — proceeding with min length."), NumA, NumB);
+//     }
+//     int32 N = FMath::Min(NumA, NumB);
+//
+//     // Build world-space point lists
+//     FVector TotalOffset = FVector::ZeroVector;
+//     TArray<FVector> WorldA; WorldA.Reserve(N);
+//     TArray<FVector> WorldB; WorldB.Reserve(N);
+//     for (int i = 0; i < N; ++i)
+//     {
+//         int vidA = IDsA[i];
+//         int vidB = IDsB[i];
+//         if (vidA < 0 || vidA >= MeshActorA->DynamicMesh.VertexCount()) continue;
+//         if (vidB < 0 || vidB >= MeshActorB->DynamicMesh.VertexCount()) continue;
+//
+//         FVector3d pA3 = MeshActorA->DynamicMesh.GetVertex(vidA);
+//         FVector3d pB3 = MeshActorB->DynamicMesh.GetVertex(vidB);
+//
+//         FVector worldA = MeshActorA->GetActorTransform().TransformPosition(FVector(pA3.X,pA3.Y,pA3.Z));
+//         FVector worldB = MeshActorB->GetActorTransform().TransformPosition(FVector(pB3.X,pB3.Y,pB3.Z));
+//
+//         WorldA.Add(worldA);
+//         WorldB.Add(worldB);
+//         TotalOffset += (worldA - worldB);
+//     }
+//
+//     if (WorldA.Num() == 0) {
+//         UE_LOG(LogTemp, Warning, TEXT("No valid seam points to align."));
+//         return;
+//     }
+//
+//     FVector AverageOffset = TotalOffset / float(WorldA.Num());
+//
+//     // Move both actors half the offset (symmetric)
+//     FVector Half = AverageOffset * 0.5f;
+//
+//     FTransform TA = MeshActorA->GetActorTransform();
+//     TA.AddToTranslation(-Half);   // move A half toward B (so they meet halfway)
+//     MeshActorA->SetActorTransform(TA);
+//
+//     FTransform TB = MeshActorB->GetActorTransform();
+//     TB.AddToTranslation(Half);    // move B half toward A
+//     MeshActorB->SetActorTransform(TB);
+//
+//     UE_LOG(LogTemp, Log, TEXT("Aligned meshes by splitting offset: %s (half=%s)"),
+//            *AverageOffset.ToString(), *Half.ToString());
+// }
 
 void FCanvasSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* MeshActorB)
 {
@@ -258,19 +318,112 @@ void FCanvasSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* Mesh
     const TArray<int32>& IDsA = MeshActorA->LastSeamVertexIDs;
     const TArray<int32>& IDsB = MeshActorB->LastSeamVertexIDs;
     int32 NumA = IDsA.Num(), NumB = IDsB.Num();
-    if (NumA == 0 || NumB == 0) {
+    if (NumA == 0 || NumB == 0)
+    {
         UE_LOG(LogTemp, Warning, TEXT("Cannot align: one of the seam lists is empty (A=%d, B=%d)"), NumA, NumB);
         return;
     }
-    if (NumA != NumB) {
-        UE_LOG(LogTemp, Warning, TEXT("Warning: mismatched seam lengths (A=%d, B=%d) — proceeding with min length."), NumA, NumB);
-    }
+
+    // Use min count (defensive)
     int32 N = FMath::Min(NumA, NumB);
 
-    // Build world-space point lists
-    FVector TotalOffset = FVector::ZeroVector;
+    // pick first and last valid indices to represent seam endpoints (robust for straight seams)
+    int firstIdx = 0;
+    while (firstIdx < N &&
+           (IDsA[firstIdx] < 0 || IDsA[firstIdx] >= MeshActorA->DynamicMesh.VertexCount() ||
+            IDsB[firstIdx] < 0 || IDsB[firstIdx] >= MeshActorB->DynamicMesh.VertexCount()))
+    {
+        ++firstIdx;
+    }
+    int lastIdx = N - 1;
+    while (lastIdx >= 0 &&
+           (IDsA[lastIdx] < 0 || IDsA[lastIdx] >= MeshActorA->DynamicMesh.VertexCount() ||
+            IDsB[lastIdx] < 0 || IDsB[lastIdx] >= MeshActorB->DynamicMesh.VertexCount()))
+    {
+        --lastIdx;
+    }
+
+    if (firstIdx >= lastIdx)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Not enough valid seam points to compute direction (first=%d last=%d)"), firstIdx, lastIdx);
+        return;
+    }
+
+    // Fetch world-space endpoints
+    auto GetWorldVertex = [](APatternMesh* Actor, int vid) -> FVector {
+        FVector3d p = Actor->DynamicMesh.GetVertex(vid);
+        return Actor->GetActorTransform().TransformPosition(FVector(p.X, p.Y, p.Z));
+    };
+
+    FVector A0 = GetWorldVertex(MeshActorA, IDsA[firstIdx]);
+    FVector A1 = GetWorldVertex(MeshActorA, IDsA[lastIdx]);
+    FVector B0 = GetWorldVertex(MeshActorB, IDsB[firstIdx]);
+    FVector B1 = GetWorldVertex(MeshActorB, IDsB[lastIdx]);
+
+    // Directions (3D)
+    FVector DirA = (A1 - A0).GetSafeNormal();
+    FVector DirB = (B1 - B0).GetSafeNormal();
+
+    if (DirA.IsNearlyZero() || DirB.IsNearlyZero())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Degenerate seam direction (zero-length), skipping rotation."));
+    }
+    else
+    {
+        // Compute quaternion that rotates DirB -> DirA
+        float cosTheta = FVector::DotProduct(DirB, DirA);
+        const float EPS = 1e-6f;
+
+        FQuat RotQuat = FQuat::Identity;
+
+        if (cosTheta > 1.0f - EPS)
+        {
+            // nearly identical, do nothing
+            RotQuat = FQuat::Identity;
+        }
+        else if (cosTheta < -1.0f + EPS)
+        {
+            // opposite vectors: find an orthogonal axis to rotate 180deg about
+            FVector Ortho = FVector::CrossProduct(FVector::UpVector, DirB);
+            if (Ortho.IsNearlyZero())
+            {
+                Ortho = FVector::CrossProduct(FVector::RightVector, DirB);
+            }
+            Ortho.Normalize();
+            RotQuat = FQuat(Ortho, PI); // 180 degrees
+        }
+        else
+        {
+            FVector Axis = FVector::CrossProduct(DirB, DirA);
+            Axis.Normalize();
+            float Angle = FMath::Acos(FMath::Clamp(cosTheta, -1.0f, 1.0f));
+            RotQuat = FQuat(Axis, Angle);
+        }
+
+        // Rotate actor B about its seam midpoint (B midpoint)
+        FVector MidB = (B0 + B1) * 0.5f;
+        FTransform TB = MeshActorB->GetActorTransform();
+        FVector OldLoc = TB.GetLocation();
+        FQuat OldRot = TB.GetRotation();
+
+        // Rotate position around MidB
+        FVector NewLoc = RotQuat.RotateVector(OldLoc - MidB) + MidB;
+        FQuat NewRot = RotQuat * OldRot;
+
+        TB.SetRotation(NewRot);
+        TB.SetLocation(NewLoc);
+
+        // Use TeleportPhysics if actors might have physics in play:
+        MeshActorB->SetActorTransform(TB, false, nullptr, ETeleportType::TeleportPhysics);
+
+        UE_LOG(LogTemp, Log, TEXT("Rotated MeshB by quat (axis=%s angle=%f)"), *RotQuat.GetRotationAxis().ToString(), RotQuat.GetAngle());
+    }
+
+    // Recompute world positions after rotation and compute translation offset (average)
     TArray<FVector> WorldA; WorldA.Reserve(N);
     TArray<FVector> WorldB; WorldB.Reserve(N);
+    FVector TotalOffset = FVector::ZeroVector;
+
     for (int i = 0; i < N; ++i)
     {
         int vidA = IDsA[i];
@@ -289,190 +442,30 @@ void FCanvasSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* Mesh
         TotalOffset += (worldA - worldB);
     }
 
-    if (WorldA.Num() == 0) {
-        UE_LOG(LogTemp, Warning, TEXT("No valid seam points to align."));
+    if (WorldA.Num() == 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No valid seam points to translate after rotation."));
         return;
     }
 
     FVector AverageOffset = TotalOffset / float(WorldA.Num());
+    FVector HalfTrans = AverageOffset * 0.5f;
 
-    // Move both actors half the offset (symmetric)
-    FVector Half = AverageOffset * 0.5f;
+    // Symmetric translation: move A back half, B forward half
+    {
+        FTransform TA = MeshActorA->GetActorTransform();
+        TA.AddToTranslation(-HalfTrans);
+        MeshActorA->SetActorTransform(TA, false, nullptr, ETeleportType::TeleportPhysics);
+    }
+    {
+        FTransform TB2 = MeshActorB->GetActorTransform();
+        TB2.AddToTranslation(HalfTrans);
+        MeshActorB->SetActorTransform(TB2, false, nullptr, ETeleportType::TeleportPhysics);
+    }
 
-    FTransform TA = MeshActorA->GetActorTransform();
-    TA.AddToTranslation(-Half);   // move A half toward B (so they meet halfway)
-    MeshActorA->SetActorTransform(TA);
-
-    FTransform TB = MeshActorB->GetActorTransform();
-    TB.AddToTranslation(Half);    // move B half toward A
-    MeshActorB->SetActorTransform(TB);
-
-    UE_LOG(LogTemp, Log, TEXT("Aligned meshes by splitting offset: %s (half=%s)"),
-           *AverageOffset.ToString(), *Half.ToString());
+    UE_LOG(LogTemp, Log, TEXT("AlignSeamMeshes: rotated B into alignment then applied symmetric translation (AverageOffset=%s)"), *AverageOffset.ToString());
 }
 
-
-//
-// void FCanvasSewing::BuildAndAlignClickedSeam(
-//     const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-//     const FInterpCurve<FVector2D>& CurvePoints)
-// {
-//     // Don't destroy existing actors (we want to use the already-spawned ones)
-//     // helper: fetch 2D point from ClickTarget
-//     auto Get2DPoint = [&](const FClickTarget& T) -> FVector2D {
-//         if (T.ShapeIndex == INDEX_NONE) return CurvePoints.Points[T.PointIndex].OutVal;
-//         return CompletedShapes[T.ShapeIndex].Points[T.PointIndex].OutVal;
-//     };
-//
-//     // Sample seam 2D points (same as FinalizeSeamDefinitionByTargets)
-//     const int32 NumSeamSamples = 10;
-//     auto SampleSegment2D = [&](const FVector2D& A, const FVector2D& B, TArray<FVector2D>& Out) {
-//         Out.Reset(); Out.Reserve(NumSeamSamples);
-//         for (int i = 0; i < NumSeamSamples; ++i) {
-//             float Alpha = float(i) / float(NumSeamSamples - 1);
-//             Out.Add(FMath::Lerp(A, B, Alpha));
-//         }
-//     };
-// 	
-// 	// Make sure the targets are set and valid
-// 	if (AStartTarget.PointIndex == INDEX_NONE || AEndTarget.PointIndex == INDEX_NONE ||
-// 		BStartTarget.PointIndex == INDEX_NONE || BEndTarget.PointIndex == INDEX_NONE)
-// 	{
-// 		FText Msg = FText::FromString(TEXT("One or more seam targets are undefined. Please finish creating seams first."));
-// 		FMessageDialog::Open(EAppMsgType::Ok, Msg);
-// 		UE_LOG(LogTemp, Warning, TEXT("Cannot build seam: One or more seam targets are undefined."));
-// 		return;
-// 	}
-// 	
-//     FVector2D A1 = Get2DPoint(AStartTarget);
-//     FVector2D A2 = Get2DPoint(AEndTarget);
-//     FVector2D B1 = Get2DPoint(BStartTarget);
-//     FVector2D B2 = Get2DPoint(BEndTarget);
-//
-//     TArray<FVector2D> SeamA2D, SeamB2D;
-//     SampleSegment2D(A1, A2, SeamA2D);
-//     SampleSegment2D(B1, B2, SeamB2D);
-//
-//     // Find the actors (we assume SpawnedPatternActors indexes correspond to CompletedShapes)
-//     int32 AShapeIdx = AStartTarget.ShapeIndex;
-//     int32 BShapeIdx = BStartTarget.ShapeIndex;
-// 	
-//     if (AShapeIdx == INDEX_NONE || BShapeIdx == INDEX_NONE) {
-//         // UE_LOG(LogTemp, Warning, TEXT("Seam targets reference the curvePoints or invalid shape index; handle separately if needed"));
-//     	FText Msg = FText::FromString(TEXT("Cannot sew an in-progress shape. Please finish the shape first."));
-//     	FMessageDialog::Open(EAppMsgType::Ok, Msg);
-//         return;
-//     }
-// 	
-//     if (!SpawnedPatternActors.IsValidIndex(AShapeIdx) || !SpawnedPatternActors.IsValidIndex(BShapeIdx)) {
-//     	FText Msg = FText::FromString(TEXT("No valid actors. Please generate meshes first."));
-//     	FMessageDialog::Open(EAppMsgType::Ok, Msg);
-//     	UE_LOG(LogTemp, Warning, TEXT("No spawned actor found for given shape index."));
-//         return;
-//     }
-// 	
-//     APatternMesh* ActorA = SpawnedPatternActors[AShapeIdx].Get();
-//     APatternMesh* ActorB = SpawnedPatternActors[BShapeIdx].Get();
-//     if (!ActorA || !ActorB) {
-//     	FText Msg = FText::FromString(TEXT("Missing meshes. Please generate meshes first."));
-//     	FMessageDialog::Open(EAppMsgType::Ok, Msg);
-//         UE_LOG(LogTemp, Warning, TEXT("Spawned actor invalid."));
-//         return;
-//     }
-//
-//     // Helper: map a set of seam 2D points -> an array of VIDs by nearest boundary sample on the actor
-//     auto MapSeam2DToVIDs = [&](APatternMesh* Actor, const TArray<FVector2D>& Seam2D, TArray<int32>& OutVIDs) {
-//         OutVIDs.Reset();
-//         int32 NumBoundary = Actor->BoundarySamplePoints2D.Num();
-//         if (NumBoundary == 0) {
-//             UE_LOG(LogTemp, Warning, TEXT("Actor %s has no boundary samples."), *Actor->GetName());
-//             return;
-//         }
-//         for (const FVector2D& Q : Seam2D) {
-//             int BestIdx = INDEX_NONE;
-//             float BestDist2 = FLT_MAX;
-//             // BoundarySamplePoints2D are stored as FVector2f (x,y)
-//             for (int i = 0; i < NumBoundary; ++i) {
-//                 const FVector2f& S = Actor->BoundarySamplePoints2D[i];
-//                 float dx = S.X - (float)Q.X;
-//                 float dy = S.Y - (float)Q.Y;
-//                 float d2 = dx*dx + dy*dy;
-//                 if (d2 < BestDist2) { BestDist2 = d2; BestIdx = i; }
-//             }
-//             int32 VID = INDEX_NONE;
-//             if (BestIdx != INDEX_NONE && Actor->BoundarySampleVertexIDs.IsValidIndex(BestIdx))
-//                 VID = Actor->BoundarySampleVertexIDs[BestIdx];
-//             OutVIDs.Add(VID);
-//         }
-//     };
-//
-//     // Map seam 2D samples to VIDs
-//     TArray<int32> VIDsA, VIDsB;
-//     MapSeam2DToVIDs(ActorA, SeamA2D, VIDsA);
-//     MapSeam2DToVIDs(ActorB, SeamB2D, VIDsB);
-//
-//     // Filter out invalid VIDs and keep pairs (we only keep positions where both are valid)
-//     TArray<int32> PairedA, PairedB;
-//     int32 PairCount = FMath::Min(VIDsA.Num(), VIDsB.Num());
-//     for (int i = 0; i < PairCount; ++i) {
-//         int32 a = VIDsA[i];
-//         int32 b = VIDsB[i];
-//         bool aValid = (a != INDEX_NONE) && (a >= 0 && a < ActorA->DynamicMesh.VertexCount());
-//         bool bValid = (b != INDEX_NONE) && (b >= 0 && b < ActorB->DynamicMesh.VertexCount());
-//         if (aValid && bValid) {
-//             PairedA.Add(a);
-//             PairedB.Add(b);
-//         }
-//     }
-//
-//     if (PairedA.Num() == 0 || PairedB.Num() == 0) {
-//         UE_LOG(LogTemp, Warning, TEXT("No valid paired seam vertices found (A=%d, B=%d)"), PairedA.Num(), PairedB.Num());
-//         return;
-//     }
-//
-//     // Orientation check: which ordering produces smaller average distance? If reversed B is better, reverse it.
-//     auto BuildWorldPositions = [&](APatternMesh* Actor, const TArray<int32>& VIDs, TArray<FVector>& OutPos) {
-//         OutPos.Reset(); OutPos.Reserve(VIDs.Num());
-//         for (int id : VIDs) {
-//             FVector3d p3d = Actor->DynamicMesh.GetVertex(id);
-//             OutPos.Add(Actor->GetActorTransform().TransformPosition(FVector(p3d.X, p3d.Y, p3d.Z)));
-//         }
-//     };
-//
-//     TArray<FVector> WorldA, WorldB;
-//     BuildWorldPositions(ActorA, PairedA, WorldA);
-//     BuildWorldPositions(ActorB, PairedB, WorldB);
-//
-//     // compute avg distance for normal and reversed B
-//     auto AverageDistance = [&](const TArray<FVector>& X, const TArray<FVector>& Y) -> double {
-//         int n = FMath::Min(X.Num(), Y.Num());
-//         if (n == 0) return DBL_MAX;
-//         double sum = 0.0;
-//         for (int i = 0; i < n; ++i) sum += (X[i] - Y[i]).Size();
-//         return sum / double(n);
-//     };
-//
-//     double avgNormal = AverageDistance(WorldA, WorldB);
-//
-//     // build reversed WorldB and compute distance
-//     TArray<FVector> WorldBRev = WorldB;
-//     Algo::Reverse(WorldBRev); // requires #include "Algo/Reverse.h"
-//     double avgReversed = AverageDistance(WorldA, WorldBRev);
-//
-//     if (avgReversed + KINDA_SMALL_NUMBER < avgNormal) { // reversed matches better; reverse PairedB
-//         Algo::Reverse(PairedB);
-//         UE_LOG(LogTemp, Log, TEXT("Reversed B seam ordering to match A (avgNormal=%f avgRev=%f)"), avgNormal, avgReversed);
-//     }
-//
-//     // Final lengths should now be equal (or close). Store into actors and align.
-//     ActorA->LastSeamVertexIDs = PairedA;
-//     ActorB->LastSeamVertexIDs = PairedB;
-//
-//     UE_LOG(LogTemp, Log, TEXT("Seam prepared: A=%d verts, B=%d verts"), ActorA->LastSeamVertexIDs.Num(), ActorB->LastSeamVertexIDs.Num());
-//
-// 	
-//     AlignSeamMeshes(ActorA, ActorB);
-// }
 
 void FCanvasSewing::BuildAndAlignSeam(
 	const FPatternSewingConstraint& Seam,
@@ -674,6 +667,7 @@ void FCanvasSewing::BuildAndAlignSeam(
 
 
 
+
 void FCanvasSewing::BuildAndAlignAllSeams(
 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
 	const FInterpCurve<FVector2D>& CurvePoints)
@@ -692,350 +686,30 @@ void FCanvasSewing::MergeSewnGroups()
 
 
 
+void FCanvasSewing::BuildSewnPointSets(TMap<int32, TSet<int32>>& OutSewn) const
+{
+	OutSewn.Empty();
+	for (const FSeamDefinition& S : SeamDefinitions)
+	{
+		// Shape A
+		TSet<int32>& SetA = OutSewn.FindOrAdd(S.ShapeA);
+		SetA.Add(S.EdgeA.Start);
+		SetA.Add(S.EdgeA.End);
 
+		// Shape B
+		TSet<int32>& SetB = OutSewn.FindOrAdd(S.ShapeB);
+		SetB.Add(S.EdgeB.Start);
+		SetB.Add(S.EdgeB.End);
 
-// void FCanvasSewing::BuildAndAlignClickedSeam(
-//         const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-//         const FInterpCurve<FVector2D>& CurvePoints)
-// {
-//     // don't destroy existing spawned actors here — we want to reuse existing actors.
-//     // assume SpawnedPatternActors already contains the actors in the same order as CompletedShapes
-//     // (you must ensure that when meshes were generated earlier).
-//
-//     // helper to get 2D point from a ClickTarget
-//     auto Get2DPoint = [&](const FClickTarget& T) -> FVector2D {
-//         if (T.ShapeIndex == INDEX_NONE) return CurvePoints.Points[T.PointIndex].OutVal;
-//         return CompletedShapes[T.ShapeIndex].Points[T.PointIndex].OutVal;
-//     };
-//
-//     FVector2D A1 = Get2DPoint(AStartTarget);
-//     FVector2D A2 = Get2DPoint(AEndTarget);
-//     FVector2D B1 = Get2DPoint(BStartTarget);
-//     FVector2D B2 = Get2DPoint(BEndTarget);
-//
-//     const int32 NumSeamSamples = 10;
-//     auto SampleSegment = [&](const FVector2D& P0, const FVector2D& P1, TArray<FVector2D>& Out){
-//         Out.Reset(); Out.Reserve(NumSeamSamples);
-//         for (int i = 0; i < NumSeamSamples; ++i)
-//         {
-//             float Alpha = float(i) / float(NumSeamSamples - 1);
-//             Out.Add( FMath::Lerp(P0, P1, Alpha) );
-//         }
-//     };
-//
-//     TArray<FVector2D> SeamA2D, SeamB2D;
-//     SampleSegment(A1, A2, SeamA2D);
-//     SampleSegment(B1, B2, SeamB2D);
-//
-//     // find actors: assume shapeIndex maps directly into SpawnedPatternActors
-//     int32 AShapeIdx = AStartTarget.ShapeIndex;
-//     int32 BShapeIdx = BStartTarget.ShapeIndex;
-//
-//     if (AShapeIdx == INDEX_NONE || BShapeIdx == INDEX_NONE)
-//     {
-//         UE_LOG(LogTemp, Warning, TEXT("Canvas-sewing: clicked seam refers to curvePoints or unsupported actor mapping"));
-//         // handle curvePoints case if you spawned an actor for curvePoints as well
-//         return;
-//     }
-//
-//     if (!SpawnedPatternActors.IsValidIndex(AShapeIdx) || !SpawnedPatternActors.IsValidIndex(BShapeIdx))
-//     {
-//         UE_LOG(LogTemp, Warning, TEXT("No spawned actor found for given shape index."));
-//         return;
-//     }
-//
-//     APatternMesh* ActorA = SpawnedPatternActors[AShapeIdx].Get();
-//     APatternMesh* ActorB = SpawnedPatternActors[BShapeIdx].Get();
-//     if (!ActorA || !ActorB)
-//     {
-//         UE_LOG(LogTemp, Warning, TEXT("Spawned actor invalid."));
-//         return;
-//     }
-//
-//     // helper: find nearest boundary sample index for a given 2D point
-//     auto FindNearestBoundaryIndex = [&](APatternMesh* Actor, const FVector2D& Query)->int32
-//     {
-//         int32 Best = INDEX_NONE;
-//         float BestDistSqr = FLT_MAX;
-//         for (int i = 0; i < Actor->BoundarySamplePoints2D.Num(); ++i)
-//         {
-//             const FVector2f& S = Actor->BoundarySamplePoints2D[i];
-//             float dx = S.X - Query.X;
-//             float dy = S.Y - Query.Y;
-//             float d2 = dx*dx + dy*dy;
-//             if (d2 < BestDistSqr) { BestDistSqr = d2; Best = i; }
-//         }
-//         return Best;
-//     };
-//
-//     // find start & end indices on each boundary
-//     int AstartIdx = FindNearestBoundaryIndex(ActorA, FVector2D(SeamA2D[0]));
-//     int AendIdx   = FindNearestBoundaryIndex(ActorA, FVector2D(SeamA2D.Last()));
-//     int BstartIdx = FindNearestBoundaryIndex(ActorB, FVector2D(SeamB2D[0]));
-//     int BendIdx   = FindNearestBoundaryIndex(ActorB, FVector2D(SeamB2D.Last()));
-//
-//     if (AstartIdx == INDEX_NONE || AendIdx == INDEX_NONE || BstartIdx == INDEX_NONE || BendIdx == INDEX_NONE)
-//     {
-//         UE_LOG(LogTemp, Warning, TEXT("Failed to find nearest boundary sample for one of the seam endpoints."));
-//         return;
-//     }
-//
-//     // helper: make contiguous list between two indices (wrap-around allowed)
-//     auto MakeIndexSequence = [&](int32 Start, int32 End, int32 N, TArray<int32>& OutSeq)
-//     {
-//         OutSeq.Reset();
-//         if (Start <= End)
-//         {
-//             for (int i = Start; i <= End; ++i) OutSeq.Add(i);
-//         }
-//         else
-//         {
-//             for (int i = Start; i < N; ++i) OutSeq.Add(i);
-//             for (int i = 0; i <= End; ++i) OutSeq.Add(i);
-//         }
-//     };
-//
-//     // build vertex-ID sequences using actor->BoundarySampleVertexIDs
-//     TArray<int32> SeamVIDsA_idx, SeamVIDsB_idx;
-//     MakeIndexSequence(AstartIdx, AendIdx, ActorA->BoundarySampleVertexIDs.Num(), SeamVIDsA_idx);
-//     MakeIndexSequence(BstartIdx, BendIdx, ActorB->BoundarySampleVertexIDs.Num(), SeamVIDsB_idx);
-//
-//     // map index -> actual VID
-//     TArray<int32> SeamVIDsA, SeamVIDsB;
-//     SeamVIDsA.Reserve(SeamVIDsA_idx.Num());
-//     for (int idx : SeamVIDsA_idx)
-//     {
-//         SeamVIDsA.Add( ActorA->BoundarySampleVertexIDs.IsValidIndex(idx) ? ActorA->BoundarySampleVertexIDs[idx] : INDEX_NONE );
-//     }
-//     SeamVIDsB.Reserve(SeamVIDsB_idx.Num());
-//     for (int idx : SeamVIDsB_idx)
-//     {
-//         SeamVIDsB.Add( ActorB->BoundarySampleVertexIDs.IsValidIndex(idx) ? ActorB->BoundarySampleVertexIDs[idx] : INDEX_NONE );
-//     }
-//
-//     // Option A (minimal change): store them on the actors and call existing AlignSeamMeshes
-//     ActorA->LastSeamVertexIDs = SeamVIDsA;
-//     ActorB->LastSeamVertexIDs = SeamVIDsB;
-//
-//     // Align using your existing method
-//     AlignSeamMeshes(ActorA, ActorB);
-// }
+		// If you want to include the whole edge range (start..end) instead of just endpoints,
+		// replace Add(...) above with a small loop from min->max.
+	}
+}
 
-
-
-
-//
-// void FCanvasSewing::BuildAndAlignClickedSeam(
-// 		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-// 		const FInterpCurve<FVector2D>& CurvePoints)
-// {
-// 	// 1) Clear old actors
-// 	for (auto& Weak : SpawnedPatternActors)
-// 		if (auto* A = Weak.Get()) A->Destroy();
-// 	SpawnedPatternActors.Empty();
-//
-// 	// Arrays to hold the seam IDs for A and B
-// 	TArray<int32> SeamVertsA;
-// 	TArray<int32> SeamVertsB;
-// 	
-// 	// 2) Build mesh and spawn actor for first shape
-// 	{
-// 		int32 ShapeIdx = AStartTarget.ShapeIndex;
-// 		const FInterpCurve<FVector2D>& Shape = (ShapeIdx == INDEX_NONE) ? CurvePoints : CompletedShapes[ShapeIdx];
-// 		// CanvasMesh::TriangulateAndBuildMesh(Shape, /*bRecordSeam=*/true, AStartTarget.PointIndex, AEndTarget.PointIndex);
-// 		FDynamicMesh3 Mesh;
-// 		// TArray<int32> SeamVerts;
-// 		TArray<int32> DummySeamVerts;
-// 	
-// 		CanvasMesh::TriangulateAndBuildMesh(
-// 			Shape,
-// 			true,
-// 			AStartTarget.PointIndex, AEndTarget.PointIndex,
-// 			SeamVertsA, //SeamVerts,
-// 			Mesh,
-// 			DummySeamVerts,
-// 			SpawnedPatternActors
-// 			);
-// 	}
-// 	
-// 	
-// 	// 3) Build mesh and spawn actor for second shape
-// 	{
-// 		int32 ShapeIdx = BStartTarget.ShapeIndex;
-// 		const FInterpCurve<FVector2D>& Shape = (ShapeIdx == INDEX_NONE) ? CurvePoints : CompletedShapes[ShapeIdx];
-// 		// CanvasMesh::TriangulateAndBuildMesh(Shape, /*bRecordSeam=*/true, BStartTarget.PointIndex, BEndTarget.PointIndex);
-// 		FDynamicMesh3 Mesh;
-// 		// TArray<int32> SeamVerts;
-// 		TArray<int32> DummySeamVerts;
-// 	
-// 		CanvasMesh::TriangulateAndBuildMesh(
-// 			Shape,
-// 			true,
-// 			BStartTarget.PointIndex, BEndTarget.PointIndex,
-// 			SeamVertsB, //SeamVerts,
-// 			Mesh,
-// 			DummySeamVerts,
-// 			SpawnedPatternActors
-// 			);
-// 	}
-// 	
-//
-// 	// Now check the weak array
-// 	UE_LOG(LogTemp, Log, TEXT("SpawnedPatternActors.Num() = %d"), SpawnedPatternActors.Num());
-//
-// 	if (SpawnedPatternActors.Num() >= 2)
-// 	{
-// 		APatternMesh* A = SpawnedPatternActors[0].Get();
-// 		APatternMesh* B = SpawnedPatternActors[1].Get();
-// 		if (A && B)
-// 		{
-// 			AlignSeamMeshes(A, B);
-// 		}
-// 		else
-// 		{
-// 			UE_LOG(LogTemp, Warning, TEXT("Spawned actors exist but were garbage-collected or invalid"));
-// 		}
-// 	}
-// 	else
-// 	{
-// 		UE_LOG(LogTemp, Warning, TEXT("Expected 2 SpawnedPatternActors, got %d"), SpawnedPatternActors.Num());
-// 	}
-// 	
-// }
-
-
-
-// void FCanvasSewing::MergeLastTwoMeshes()
-// {
-//     using namespace CanvasMesh;
-//
-//     if (SpawnedPatternActors.Num() < 2)
-//     {
-//         UE_LOG(LogTemp, Warning, TEXT("Need at least two meshes to merge"));
-//         return;
-//     }
-//
-//     TWeakObjectPtr<APatternMesh> AWeak = SpawnedPatternActors[SpawnedPatternActors.Num() - 2];
-//     TWeakObjectPtr<APatternMesh> BWeak = SpawnedPatternActors[SpawnedPatternActors.Num() - 1];
-//
-//     APatternMesh* A = AWeak.Get();
-//     APatternMesh* B = BWeak.Get();
-//
-//     if (!A || !B)
-//     {
-//         UE_LOG(LogTemp, Warning, TEXT("One of the two actors is invalid"));
-//         return;
-//     }
-//
-//     UE_LOG(LogTemp, Warning, TEXT("[Merge] Source A: verts=%d tris=%d"), A->DynamicMesh.VertexCount(), A->DynamicMesh.TriangleCount());
-//     UE_LOG(LogTemp, Warning, TEXT("[Merge] Source B: verts=%d tris=%d"), B->DynamicMesh.VertexCount(), B->DynamicMesh.TriangleCount());
-//
-//     // If either source has 0 triangles, bail (triangulation problem earlier)
-//     if (A->DynamicMesh.TriangleCount() == 0 || B->DynamicMesh.TriangleCount() == 0)
-//     {
-//         UE_LOG(LogTemp, Warning, TEXT("[Merge] One source has no triangles; aborting merge"));
-//         return;
-//     }
-//
-//     // Start with an empty merged mesh
-//     UE::Geometry::FDynamicMesh3 MergedMesh;
-//     // (Optional) Enable attributes if you need them later
-//     // MergedMesh.EnableAttributes();
-//
-//     // Helper lambda to append one actor's mesh into MergedMesh
-//     auto AppendMeshIntoMerged = [&](APatternMesh* Src, const FTransform& SrcTransform)
-//     {
-//         TMap<int, int> Remap; // mapping old vertex id -> new vertex id
-//
-//         // Append vertices
-//         for (int vid : Src->DynamicMesh.VertexIndicesItr())
-//         {
-//             FVector3d LocalP = Src->DynamicMesh.GetVertex(vid);
-//             FVector WorldP = SrcTransform.TransformPosition(FVector(LocalP.X, LocalP.Y, LocalP.Z));
-//             int newVid = MergedMesh.AppendVertex(FVector3d(WorldP));
-//             Remap.Add(vid, newVid);
-//         }
-//
-//         // Append triangles using remapped indices
-//         for (int tid : Src->DynamicMesh.TriangleIndicesItr())
-//         {
-//             UE::Geometry::FIndex3i T = Src->DynamicMesh.GetTriangle(tid);
-//             int Aidx = Remap[T.A];
-//             int Bidx = Remap[T.B];
-//             int Cidx = Remap[T.C];
-//             MergedMesh.AppendTriangle(Aidx, Bidx, Cidx);
-//         }
-//     };
-//
-//     // Append A then B
-//     AppendMeshIntoMerged(A, A->GetActorTransform());
-//     UE_LOG(LogTemp, Warning, TEXT("[Merge] After append-A: Verts=%d Tris=%d"), MergedMesh.VertexCount(), MergedMesh.TriangleCount());
-//
-//     AppendMeshIntoMerged(B, B->GetActorTransform());
-//     UE_LOG(LogTemp, Warning, TEXT("[Merge] After append-B: Verts=%d Tris=%d"), MergedMesh.VertexCount(), MergedMesh.TriangleCount());
-//
-//     // If still no triangles, something upstream is wrong
-//     if (MergedMesh.TriangleCount() == 0)
-//     {
-//         UE_LOG(LogTemp, Warning, TEXT("[Merge] Merged mesh has 0 triangles, aborting"));
-//         return;
-//     }
-//
-//     // Extract to raw arrays
-//     TArray<FVector> Vertices; Vertices.Reserve(MergedMesh.VertexCount());
-//     TArray<int32> Indices; Indices.Reserve(MergedMesh.TriangleCount() * 3);
-//
-//     for (int vid : MergedMesh.VertexIndicesItr())
-//     {
-//         FVector3d P = MergedMesh.GetVertex(vid);
-//         Vertices.Add(FVector(P.X, P.Y, P.Z));
-//     }
-//     for (int tid : MergedMesh.TriangleIndicesItr())
-//     {
-//         UE::Geometry::FIndex3i Tri = MergedMesh.GetTriangle(tid);
-//         Indices.Add(Tri.C);
-//         Indices.Add(Tri.B);
-//         Indices.Add(Tri.A);
-//     }
-//
-//     UE_LOG(LogTemp, Warning, TEXT("[Merge] Extracted: Verts=%d Tris=%d"), Vertices.Num(), Indices.Num()/3);
-//
-//     // Spawn merged actor
-//     UWorld* World = GEditor->GetEditorWorldContext().World();
-//     if (!World) return;
-//
-//     FActorSpawnParameters Params;
-//     APatternMesh* MergedActor = World->SpawnActor<APatternMesh>(Params);
-//     if (!MergedActor) return;
-//
-// #if WITH_EDITOR
-//     MergedActor->SetActorLabel(TEXT("MergedPatternMesh"));
-// #endif
-//
-//     // Store the merged dynamic mesh and create procedural mesh section
-//     MergedActor->DynamicMesh = MoveTemp(MergedMesh);
-//
-//     TArray<FVector> Normals; Normals.Init(FVector::UpVector, Vertices.Num());
-//     TArray<FVector2D> UV0; UV0.Init(FVector2D::ZeroVector, Vertices.Num());
-//     TArray<FLinearColor> VertexColors; VertexColors.Init(FLinearColor::White, Vertices.Num());
-//     TArray<FProcMeshTangent> Tangents; Tangents.Init(FProcMeshTangent(1,0,0), Vertices.Num());
-//
-//     MergedActor->MeshComponent->CreateMeshSection_LinearColor(
-//         0, Vertices, Indices, Normals, UV0, VertexColors, Tangents, true
-//     );
-//
-//     UE_LOG(LogTemp, Log, TEXT("Merged two meshes into '%s' (%d verts, %d tris)"),
-//         *MergedActor->GetActorLabel(), Vertices.Num(), Indices.Num() / 3);
-// }
-//
-
-
-  // i have this function from my old code that would merge the last
-  // two meshes (since those were the ones with any sewing since mesh
-  // generation and sewing were linked and when sewing were restricted
-  // to 2 meshes) so it would create one procedural mesh from those
-  // two meshes. but now could i have it so that it creates a procedural
-  // mesh from any sewn meshes? so if meshes a and b are sewn but not c it
-  // would merget hose first two meshes, etc
-
-
+void FCanvasSewing::AddPreviewPoint(int32 ShapeIndex, int32 PointIndex)
+{
+	if (ShapeIndex != INDEX_NONE && PointIndex != INDEX_NONE)
+	{
+		CurrentSeamPreviewPoints.FindOrAdd(ShapeIndex).Add(PointIndex);
+	}
+}

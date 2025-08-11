@@ -125,7 +125,7 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
         }
     }
 	
-    // If we didn't hit anything, just consume the click and exit
+    // If user didn't hit anything, just consume the click and exit
     if (BestPoint == INDEX_NONE)
     {
         UE_LOG(LogTemp, Verbose, TEXT("Sew click missed all control points."));
@@ -181,6 +181,15 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
     	break;
 
     case ESeamClickState::ClickedAStart:
+    	// Ensure second click is on the SAME shape as the first (AStart)
+    	if (BestShape != AStartTarget.ShapeIndex)
+    	{
+    		FMessageDialog::Open(EAppMsgType::Ok,
+				FText::FromString(TEXT("Please click a point on the same shape as the previous point.")));
+    		UE_LOG(LogTemp, Warning, TEXT("Sew: AEnd rejected because it is on a different shape (%d) than AStart (%d)"), BestShape, AStartTarget.ShapeIndex);
+    		return FReply::Handled(); // do not advance state or add preview point
+    	}
+    	
     	AEndTarget = { BestShape, BestPoint };
     	SeamClickState = ESeamClickState::ClickedAEnd;
     	Canvas->GetSewingManager().AddPreviewPoint(BestShape, BestPoint);
@@ -197,15 +206,28 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
     	break;
     	
     case ESeamClickState::ClickedBStart:
+    	// Ensure fourth click is on the SAME shape as the third (BStart)
+    	if (BestShape != BStartTarget.ShapeIndex)
+    	{
+    		FMessageDialog::Open(EAppMsgType::Ok,
+				FText::FromString(TEXT("Please click a point on the same shape as the previous point.")));
+    		UE_LOG(LogTemp, Warning, TEXT("Sew: BEnd rejected because it is on a different shape (%d) than BStart (%d)"), BestShape, BStartTarget.ShapeIndex);
+    		return FReply::Handled(); // do not advance state or add preview point
+    	}
+    	
     	BEndTarget = { BestShape, BestPoint };
 
     	SeamClickState = ESeamClickState::ClickedBEnd;
     	bIsSeamReady = true;
+    	Canvas->GetSewingManager().AddPreviewPoint(BestShape, BestPoint);
     	UE_LOG(LogTemp, Log, TEXT("Sew: BEnd   = [%d,%d]"), BestShape, BestPoint);
 
     	
     	// 3) Finalize: now you have (shape,index) for all four clicks
-    	Canvas->GetSewingManager().FinaliseSeamDefinitionByTargets(AStartTarget, AEndTarget, BStartTarget, BEndTarget, Canvas->CurvePoints, Canvas->CompletedShapes, SpawnedPatternActors);
+    	Canvas->GetSewingManager().FinaliseSeamDefinitionByTargets(
+    		AStartTarget, AEndTarget, BStartTarget,
+    		BEndTarget, Canvas->CurvePoints,
+    		Canvas->CompletedShapes, SpawnedPatternActors);
     	
     	// then update canvas cache and repaint
     	Canvas->UpdateSewnPointSets();
@@ -214,6 +236,12 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
     	// Reset for next seam
     	SeamClickState = ESeamClickState::None;
     	break;
+
+    default:
+    	ensureMsgf(false,
+			TEXT("Unhandled ESeamClickState in seam click handler: %d"),
+			static_cast<int32>(SeamClickState));
+    	break;
     }
 
     return FReply::Handled();
@@ -221,129 +249,6 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 
 
 
-//
-// FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
-// {
-//     // Alias the data members on the helper
-//     auto& CurvePoints        = Canvas->CurvePoints;
-//     auto& CompletedShapes    = Canvas->CompletedShapes;
-//     auto& BezierFlags        = Canvas->CompletedBezierFlags;
-//     auto& bUseBezierPerPoint = Canvas->bUseBezierPerPoint;
-//     float  ZoomFactor        = Canvas->ZoomFactor;
-//     // float  TangentRadius     = Canvas->TangentHandleRadius;
-// 	float TangentRadius = 25.0f; // or whatever pixel radius
-//
-//     // 1) Try selecting a tangent handle on completed shapes
-//     for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
-//     {
-//         const auto& Shape = CompletedShapes[ShapeIndex];
-//         const auto& Flags = BezierFlags[ShapeIndex];
-//         int32 NumPts = Shape.Points.Num();
-//
-//         for (int32 i = 0; i < NumPts; ++i)
-//         {
-//             const auto& Pt = Shape.Points[i];
-//             FVector2D World = Pt.OutVal;
-//
-//             FVector2D Arrive = Flags[i]
-//                 ? (World - Pt.ArriveTangent)
-//                 : (World + (i > 0 ? Shape.Points[i-1].OutVal : World)) * 0.5f;
-//
-//             FVector2D Leave = Flags[i]
-//                 ? (World + Pt.LeaveTangent)
-//                 : (World + (i < NumPts-1 ? Shape.Points[i+1].OutVal : World)) * 0.5f;
-//
-//             if (!Flags[i]) continue;
-//
-//             if (FVector2D::Distance(CanvasClickPos, Arrive) < TangentRadius / ZoomFactor)
-//             {
-//                 FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
-//                 Canvas->SelectedShapeIndex    = ShapeIndex;
-//                 Canvas->SelectedPointIndex    = i;
-//                 Canvas->SelectedTangentHandle = SClothDesignCanvas::ETangentHandle::Arrive;
-//                 Canvas->bIsDraggingTangent    = true;
-//                 return FReply::Handled();  // capture/focus done by widget
-//             }
-//             else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentRadius / ZoomFactor)
-//             {
-//                 FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
-//                 Canvas->SelectedShapeIndex    = ShapeIndex;
-//                 Canvas->SelectedPointIndex    = i;
-//                 Canvas->SelectedTangentHandle = SClothDesignCanvas::ETangentHandle::Leave;
-//                 Canvas->bIsDraggingTangent    = true;
-//                 return FReply::Handled();
-//             }
-//         }
-//     }
-//
-//     // 2) Then the in-progress shape’s handles
-//     for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-//     {
-//         const auto& Pt = CurvePoints.Points[i];
-//         if (!bUseBezierPerPoint[i])
-//             continue;
-//
-//         FVector2D Arrive = Pt.OutVal - Pt.ArriveTangent;
-//         FVector2D Leave  = Pt.OutVal + Pt.LeaveTangent;
-//
-//         if (FVector2D::Distance(CanvasClickPos, Arrive) < TangentRadius / ZoomFactor)
-//         {
-//             FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
-//             Canvas->SelectedShapeIndex    = INDEX_NONE;
-//             Canvas->SelectedPointIndex    = i;
-//             Canvas->SelectedTangentHandle = SClothDesignCanvas::ETangentHandle::Arrive;
-//             Canvas->bIsDraggingTangent    = true;
-//             return FReply::Handled();
-//         }
-//         else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentRadius / ZoomFactor)
-//         {
-//             FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
-//             Canvas->SelectedShapeIndex    = INDEX_NONE;
-//             Canvas->SelectedPointIndex    = i;
-//             Canvas->SelectedTangentHandle = SClothDesignCanvas::ETangentHandle::Leave;
-//             Canvas->bIsDraggingTangent    = true;
-//             return FReply::Handled();
-//         }
-//     }
-//
-//     // 3) Selecting whole points on completed shapes
-//     const float SelectionRadius = 10.f;
-//     for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
-//     {
-//         const auto& Shape = CompletedShapes[ShapeIndex];
-//         for (int32 i = 0; i < Shape.Points.Num(); ++i)
-//         {
-//             FVector2D WorldPoint = Shape.Points[i].OutVal;
-//             if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
-//             {
-//                 FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
-//                 Canvas->SelectedShapeIndex = ShapeIndex;
-//                 Canvas->SelectedPointIndex = i;
-//                 Canvas->bIsShapeSelected   = true;
-//                 Canvas->bIsDraggingPoint   = true;
-//                 return FReply::Handled();
-//             }
-//         }
-//     }
-//
-//     // 4) Selecting points in the in-progress curve
-//     for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-//     {
-//         FVector2D WorldPoint = CurvePoints.Points[i].OutVal;
-//         if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
-//         {
-//             FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
-//             Canvas->SelectedShapeIndex = INDEX_NONE;
-//             Canvas->SelectedPointIndex = i;
-//             Canvas->bIsShapeSelected   = true;
-//             Canvas->bIsDraggingPoint   = true;
-//             return FReply::Handled();
-//         }
-//     }
-//
-//     // Nothing selected—handled, but no capture/focus
-//     return FReply::Handled();
-// }
 
 FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 {
@@ -354,6 +259,40 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	auto& bUseBezierPerPoint = Canvas->bUseBezierPerPoint;
 	float  ZoomFactor        = Canvas->ZoomFactor;
 	
+	// 3) Selecting whole points on completed shapes
+	constexpr float SelectionRadius = 10.f;
+	for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
+	{
+		const auto& Shape = CompletedShapes[ShapeIndex];
+		for (int32 i = 0; i < Shape.Points.Num(); ++i)
+		{
+			FVector2D WorldPoint = Shape.Points[i].OutVal;
+			if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
+			{
+				FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
+				Canvas->SelectedShapeIndex = ShapeIndex;
+				Canvas->SelectedPointIndex = i;
+				Canvas->bIsShapeSelected   = true;
+				Canvas->bIsDraggingPoint   = true;
+				return FReply::Handled();
+			}
+		}
+	}
+
+	// 4) Selecting points in the in-progress curve
+	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
+	{
+		FVector2D WorldPoint = CurvePoints.Points[i].OutVal;
+		if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
+		{
+			FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
+			Canvas->SelectedShapeIndex = INDEX_NONE;
+			Canvas->SelectedPointIndex = i;
+			Canvas->bIsShapeSelected   = true;
+			Canvas->bIsDraggingPoint   = true;
+			return FReply::Handled();
+		}
+	}
 	
 	float TangentRadius = 25.0f;
 
@@ -430,44 +369,14 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
         }
     }
 
-    // 3) Selecting whole points on completed shapes
-    const float SelectionRadius = 10.f;
-    for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
-    {
-        const auto& Shape = CompletedShapes[ShapeIndex];
-        for (int32 i = 0; i < Shape.Points.Num(); ++i)
-        {
-            FVector2D WorldPoint = Shape.Points[i].OutVal;
-            if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
-            {
-                FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
-                Canvas->SelectedShapeIndex = ShapeIndex;
-                Canvas->SelectedPointIndex = i;
-                Canvas->bIsShapeSelected   = true;
-                Canvas->bIsDraggingPoint   = true;
-                return FReply::Handled();
-            }
-        }
-    }
 
-    // 4) Selecting points in the in-progress curve
-    for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
-    {
-        FVector2D WorldPoint = CurvePoints.Points[i].OutVal;
-        if (FVector2D::Distance(WorldPoint, CanvasClickPos) < SelectionRadius / ZoomFactor)
-        {
-            FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
-            Canvas->SelectedShapeIndex = INDEX_NONE;
-            Canvas->SelectedPointIndex = i;
-            Canvas->bIsShapeSelected   = true;
-            Canvas->bIsDraggingPoint   = true;
-            return FReply::Handled();
-        }
-    }
+
+	
 	// used to match the coordinate system for the seam selection
 	const FVector2D LocalMousePos = Canvas->TransformPoint(CanvasClickPos);
-	const float SeamSelectionRadius = 25.0f ; // pixels threshold (tune as needed)
-	const float SeamSelectionRadiusSq = SeamSelectionRadius * SeamSelectionRadius;
+
+	constexpr float SeamSelectionRadius = 25.0f ; // pixels threshold (tune as needed)
+	constexpr float SeamSelectionRadiusSq = SeamSelectionRadius * SeamSelectionRadius;
 
 	UE_LOG(LogTemp, Warning, TEXT("HandleSelect called, click pos: (%f, %f), ZoomFactor: %f, Seams count:"), CanvasClickPos.X, CanvasClickPos.Y, ZoomFactor);
 	UE_LOG(LogTemp, Warning, TEXT("Seams count: %d"), Canvas->GetSewingManager().SeamDefinitions.Num());

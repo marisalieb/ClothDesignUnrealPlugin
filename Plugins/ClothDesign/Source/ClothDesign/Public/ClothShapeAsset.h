@@ -6,8 +6,7 @@ USTRUCT(BlueprintType)
 struct FCurvePointData
 {
 	GENERATED_BODY()
-
-
+	
 	// The X value for the curve point (used as InVal)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Curve Point")
 	float InputKey = 0.0f;
@@ -26,18 +25,16 @@ struct FCurvePointData
 	// Whether to use Bezier for this point
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Curve Point")
 	bool bUseBezier = false;
-
 	
 };
-
-
 
 USTRUCT(BlueprintType)
 struct FShapeData
 {
 	GENERATED_BODY()
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Cloth Shape")
-			 TArray<FCurvePointData> CompletedClothShape;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Cloth Shape")
+	TArray<FCurvePointData> CompletedClothShape;
 };
 
 
@@ -53,5 +50,4 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Cloth Shapes")
 	TArray<FShapeData> ClothShapes;
 
-	// UPROPERTY(EditAnywhere) TArray<FShapeData> Shapes;
 };

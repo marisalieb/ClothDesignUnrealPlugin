@@ -8,6 +8,8 @@
 #include "Editor.h"                      // GEditor
 #include "Containers/Set.h"
 
+#include "Canvas/CanvasUtils.h"
+
 FCanvasPatternMerge::FCanvasPatternMerge(
     TArray<TWeakObjectPtr<APatternMesh>>& InSpawnedActors,
     TArray<FPatternSewingConstraint>& InAllSeams)
@@ -15,7 +17,9 @@ FCanvasPatternMerge::FCanvasPatternMerge(
     , AllSeamsRef(InAllSeams)
 {}
 
-void FCanvasPatternMerge::BuildActorListAndIndexMap(TArray<APatternMesh*>& OutActors, TMap<APatternMesh*, int32>& OutMap) const
+void FCanvasPatternMerge::BuildActorListAndIndexMap(
+    TArray<APatternMesh*>& OutActors,
+    TMap<APatternMesh*, int32>& OutMap) const
 {
     OutActors.Reset();
     OutMap.Empty();
@@ -30,7 +34,10 @@ void FCanvasPatternMerge::BuildActorListAndIndexMap(TArray<APatternMesh*>& OutAc
     }
 }
 
-void FCanvasPatternMerge::BuildAdjacencyFromSeams(const TArray<APatternMesh*>& Actors, const TMap<APatternMesh*,int32>& ActorToIndex, TArray<TArray<int32>>& OutAdj) const
+void FCanvasPatternMerge::BuildAdjacencyFromSeams(
+    const TArray<APatternMesh*>& Actors,
+    const TMap<APatternMesh*,int32>& ActorToIndex,
+    TArray<TArray<int32>>& OutAdj) const
 {
     int32 N = Actors.Num();
     OutAdj.SetNumZeroed(N);
@@ -55,7 +62,9 @@ void FCanvasPatternMerge::BuildAdjacencyFromSeams(const TArray<APatternMesh*>& A
     }
 }
 
-void FCanvasPatternMerge::FindConnectedComponents(const TArray<TArray<int32>>& Adj, TArray<TArray<int32>>& OutComponents) const
+void FCanvasPatternMerge::FindConnectedComponents(
+    const TArray<TArray<int32>>& Adj,
+    TArray<TArray<int32>>& OutComponents)
 {
     OutComponents.Reset();
     int32 N = Adj.Num();
@@ -78,7 +87,9 @@ void FCanvasPatternMerge::FindConnectedComponents(const TArray<TArray<int32>>& A
     }
 }
 
-bool FCanvasPatternMerge::ComponentHasExternalEdges(const TArray<int32>& Component, const TArray<APatternMesh*>& Actors, const TMap<APatternMesh*,int32>& ActorToIndex) const
+bool FCanvasPatternMerge::ComponentHasExternalEdges(
+    const TArray<int32>& Component,
+    const TMap<APatternMesh*,int32>& ActorToIndex) const
 {
     TSet<int32> Set; for (int idx : Component) Set.Add(idx);
 
@@ -98,7 +109,10 @@ bool FCanvasPatternMerge::ComponentHasExternalEdges(const TArray<int32>& Compone
     return false;
 }
 
-bool FCanvasPatternMerge::MergeComponentToDynamicMesh(const TArray<int32>& Component, const TArray<APatternMesh*>& Actors, UE::Geometry::FDynamicMesh3& OutMerged) const
+bool FCanvasPatternMerge::MergeComponentToDynamicMesh(
+    const TArray<int32>& Component,
+    const TArray<APatternMesh*>& Actors,
+    UE::Geometry::FDynamicMesh3& OutMerged)
 {
     OutMerged = UE::Geometry::FDynamicMesh3();
     for (int idx : Component)
@@ -125,8 +139,17 @@ bool FCanvasPatternMerge::MergeComponentToDynamicMesh(const TArray<int32>& Compo
     return OutMerged.TriangleCount() > 0;
 }
 
-APatternMesh* FCanvasPatternMerge::SpawnMergedActorFromDynamicMesh(UE::Geometry::FDynamicMesh3&& MergedMesh) const
+APatternMesh* FCanvasPatternMerge::SpawnMergedActorFromDynamicMesh(
+    UE::Geometry::FDynamicMesh3&& MergedMesh)
 {
+    // compute centroid in world space (MergedMesh currently stores world positions)
+    FVector3d Centroid3d = FCanvasUtils::ComputeAreaWeightedCentroid(MergedMesh);
+    FVector CentroidF(Centroid3d.X, Centroid3d.Y, Centroid3d.Z);
+
+    // Translate the dynamic mesh so centroid moves to origin (local coords)
+    FCanvasUtils::TranslateDynamicMeshBy(MergedMesh, Centroid3d);
+
+    
     static int32 MeshCounter = 0;
     FString UniqueLabel = FString::Printf(TEXT("MergedPatternMesh_%d"), MeshCounter++);
     
@@ -134,7 +157,11 @@ APatternMesh* FCanvasPatternMerge::SpawnMergedActorFromDynamicMesh(UE::Geometry:
     if (!World) return nullptr;
 
     FActorSpawnParameters Params;
-    APatternMesh* MergedActor = World->SpawnActor<APatternMesh>(Params);
+    FTransform SpawnTransform;
+    SpawnTransform.SetLocation(CentroidF);
+
+    APatternMesh* MergedActor = World->SpawnActor<APatternMesh>(APatternMesh::StaticClass(), SpawnTransform, Params);
+    // APatternMesh* MergedActor = World->SpawnActor<APatternMesh>(Params);
     if (!MergedActor) return nullptr;
 
     MergedActor->SetFolderPath(FName(TEXT("ClothDesignActors")));
@@ -169,7 +196,10 @@ APatternMesh* FCanvasPatternMerge::SpawnMergedActorFromDynamicMesh(UE::Geometry:
     return MergedActor;
 }
 
-void FCanvasPatternMerge::ReplaceActorsWithMerged(const TArray<int32>& Component, const TArray<APatternMesh*>& Actors, APatternMesh* MergedActor)
+void FCanvasPatternMerge::ReplaceActorsWithMerged(
+    const TArray<int32>& Component,
+    const TArray<APatternMesh*>& Actors,
+    APatternMesh* MergedActor) const
 {
     if (!MergedActor) return;
     TSet<APatternMesh*> ToRemove;
@@ -192,7 +222,9 @@ void FCanvasPatternMerge::ReplaceActorsWithMerged(const TArray<int32>& Component
     SpawnedActorsRef = MoveTemp(NewList);
 }
 
-void FCanvasPatternMerge::RemoveInternalSeams(const TArray<int32>& Component, const TArray<APatternMesh*>& Actors, const TMap<APatternMesh*,int32>& ActorToIndex)
+void FCanvasPatternMerge::RemoveInternalSeams(
+    const TArray<int32>& Component,
+    const TMap<APatternMesh*,int32>& ActorToIndex) const
 {
     TSet<int32> CompSet; for (int idx : Component) CompSet.Add(idx);
 
@@ -215,7 +247,7 @@ void FCanvasPatternMerge::RemoveInternalSeams(const TArray<int32>& Component, co
     AllSeamsRef = MoveTemp(Kept);
 }
 
-void FCanvasPatternMerge::MergeSewnGroups()
+void FCanvasPatternMerge::MergeSewnGroups() const
 {
     TArray<APatternMesh*> Actors;
     TMap<APatternMesh*,int32> ActorToIndex;
@@ -230,7 +262,7 @@ void FCanvasPatternMerge::MergeSewnGroups()
     for (const TArray<int32>& Comp : Components)
     {
         if (Comp.Num() < 2) continue;
-        if (ComponentHasExternalEdges(Comp, Actors, ActorToIndex))
+        if (ComponentHasExternalEdges(Comp, ActorToIndex))
         {
             UE_LOG(LogTemp, Warning, TEXT("[Merge] Skipping component size %d: has external seams."), Comp.Num());
             continue;
@@ -243,7 +275,7 @@ void FCanvasPatternMerge::MergeSewnGroups()
         if (!MergedActor) { UE_LOG(LogTemp, Warning, TEXT("[Merge] spawn failed")); continue; }
 
         ReplaceActorsWithMerged(Comp, Actors, MergedActor);
-        RemoveInternalSeams(Comp, Actors, ActorToIndex);
+        RemoveInternalSeams(Comp, ActorToIndex);
 
         UE_LOG(LogTemp, Log, TEXT("[Merge] merged component of %d actors into %s"), Comp.Num(), *MergedActor->GetName());
     }

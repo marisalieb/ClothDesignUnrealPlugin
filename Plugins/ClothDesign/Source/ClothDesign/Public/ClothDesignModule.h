@@ -1,18 +1,9 @@
-
 #pragma once
 
 #include "Modules/ModuleManager.h"
-#include "Widgets/Input/SNumericEntryBox.h"
 #include "ClothDesignCanvas.h"
-#include "ClothShapeAsset.h"
-#include "AssetToolsModule.h"
-#include "IAssetTools.h"
 
 
-/*
- This is the module definition for the editor mode. You can implement custom functionality
- as your plugin module starts up and shuts down. See IModuleInterface for more extensibility options.
- */
 class FClothDesignModule : public IModuleInterface
 {
 public:
@@ -21,51 +12,38 @@ public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 	
-	void Spawn2DWindow();
-	//TSharedRef<class SDockTab> OnSpawn2DWindowTab(const class FSpawnTabArgs& SpawnTabArgs);
-	TSharedRef<SDockTab> OnSpawn2DWindowTab(const FSpawnTabArgs& Args);
-	TSharedRef<SWidget> MakeBackgroundControls();
-	TSharedRef<SWidget> MakeLoadSavePanel();
-
-
-	
 	static const FName TwoDTabName;
-	void OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivationCause ActivationCause);
 
 private:
-	TSharedPtr<class FUICommandList> PluginCommands;
+	TSharedPtr<FUICommandList> PluginCommands;
 	
-	TSharedPtr<class SClothDesignCanvas> CanvasWidget;
-
-	FReply OnGenerateMeshClicked();  // Declare the handler
-
-	FReply OnSewingClicked();  // Declare the handler
-	FReply OnMergeMeshesClicked();
-
-	FSlateColor GetModeButtonColor(SClothDesignCanvas::EClothEditorMode Mode) const;
-
-	// void SaveCurrentShapesToAsset();
-
-	
-	FReply OnSaveClicked();  // Declare the handler
-	// FReply OnSaveAsClicked();  // Declare the handler
-	FReply OnClearClicked();  // Declare the handler
-	FReply OnClearSewingClicked();  // Declare the handler
-
+	TSharedPtr<SClothDesignCanvas> CanvasWidget;
 	FString CurrentSaveName = TEXT("ShapeName");
-
+	
+	void Spawn2DWindow();
+	void OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivationCause ActivationCause);
 	
 	TSharedRef<SWidget> MakeObjectPicker(
-	const FText& LabelText,
-	UClass* AllowedClass,
-	TFunction<FString()> GetPath,
-	TFunction<void(const FAssetData&)> OnChanged);
-
+			const FText& LabelText,
+			const UClass* AllowedClass,
+			TFunction<FString()> GetPath,
+			TFunction<void(const FAssetData&)> OnChanged);
+	TSharedRef<SWidget> MakeBackgroundControls();
+	TSharedRef<SWidget> MakeLoadSavePanel();
 	TSharedRef<SWidget> MakeActionButtons();
 	TSharedRef<SWidget> MakeClearButtons();
-	TSharedRef<SWidget> MakeModeToolbar();
 	TSharedRef<SWidget> MakeModeButton(
-						SClothDesignCanvas::EClothEditorMode InMode,
-						const FText& InLabel);
+			SClothDesignCanvas::EClothEditorMode InMode,
+			const FText& InLabel);
+	TSharedRef<SWidget> MakeModeToolbar();
+	FSlateColor GetModeButtonColor(SClothDesignCanvas::EClothEditorMode Mode) const;
+	
+	TSharedRef<SDockTab> OnSpawn2DWindowTab(const FSpawnTabArgs& Args);
+	FReply OnGenerateMeshClicked();
+	FReply OnSewingClicked();
+	FReply OnMergeMeshesClicked();
+	FReply OnSaveClicked();
+	FReply OnClearClicked(); 
+	FReply OnClearSewingClicked(); 
 
 };

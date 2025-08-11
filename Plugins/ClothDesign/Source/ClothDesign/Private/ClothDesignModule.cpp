@@ -2,19 +2,12 @@
 #include "ClothDesignModule.h"
 #include "ClothDesignCommands.h"
 #include "ClothDesignCanvas.h"
-#include "ClothDesignStyle.h"
-#include "EditorModeManager.h"
-#include "ClothDesignEditorMode.h"
-#include "EditorModeRegistry.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Tickable.h"
 #include "Containers/Ticker.h"
 #include "PropertyCustomizationHelpers.h"
-#include "ContentBrowserModule.h"
-#include "IContentBrowserSingleton.h"
-#include "Canvas/CanvasAssets.h"
-
+#include "Widgets/Input/SNumericEntryBox.h"
 
 #define LOCTEXT_NAMESPACE "ClothDesignModule"
 
@@ -23,9 +16,7 @@ const FName FClothDesignModule::TwoDTabName(TEXT("TwoDWindowTab"));
 
 void FClothDesignModule::StartupModule()
 {
-
-	// This code will execute after module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-
+	// This code will execute after the module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	FClothDesignCommands::Register();
 	PluginCommands = MakeShareable(new FUICommandList);
 	PluginCommands->MapAction(
@@ -57,6 +48,7 @@ void FClothDesignModule::ShutdownModule()
 }
 
 
+
 void FClothDesignModule::Spawn2DWindow()
 {
 	FGlobalTabmanager::Get()->TryInvokeTab(FName("TwoDWindowTab"));
@@ -72,7 +64,7 @@ void FClothDesignModule::OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivation
 
 TSharedRef<SWidget> FClothDesignModule::MakeObjectPicker(
 	const FText& LabelText,
-	UClass* AllowedClass,
+	const UClass* AllowedClass,
 	TFunction<FString()> GetPath,
 	TFunction<void(const FAssetData&)> OnChanged)
 {
@@ -352,6 +344,19 @@ TSharedRef<SWidget> FClothDesignModule::MakeModeToolbar()
 		];
 }
 
+FSlateColor FClothDesignModule::GetModeButtonColor(SClothDesignCanvas::EClothEditorMode Mode) const
+{
+	if (CanvasWidget.IsValid() && CanvasWidget->GetCurrentMode() == Mode)
+	{
+		return FSlateColor(FLinearColor(0.686f, 1.f, 0.0f, 1.f)); // Highlighted
+	}
+	return FSlateColor(FLinearColor::White); // Default color
+}
+
+
+
+
+
 
 TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
 {
@@ -411,14 +416,6 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 }
 
 
-FSlateColor FClothDesignModule::GetModeButtonColor(SClothDesignCanvas::EClothEditorMode Mode) const
-{
-	if (CanvasWidget.IsValid() && CanvasWidget->GetCurrentMode() == Mode)
-	{
-		return FSlateColor(FLinearColor(0.686f, 1.f, 0.0f, 1.f)); // Highlighted
-	}
-	return FSlateColor(FLinearColor::White); // Default color
-}
 
 
 FReply FClothDesignModule::OnGenerateMeshClicked()
@@ -460,56 +457,6 @@ FReply FClothDesignModule::OnSaveClicked()
 }
 
 
-// FReply FClothDesignModule::OnSaveClicked()
-// {
-// 	if (!CanvasWidget.IsValid())
-// 	{
-// 		return FReply::Handled();
-// 	}
-//
-// 	if (CurrentSaveName.IsEmpty())
-// 	{
-// 		UE_LOG(LogTemp, Warning, TEXT("Please enter a name before saving."));
-// 		return FReply::Handled();
-// 	}
-//
-// 	// Extract required data from the canvas
-// 	TArray<FInterpCurve<FVector2D>> CompletedShapes = CanvasWidget->GetCompletedShapes();
-// 	TArray<TArray<bool>> CompletedBezierFlags = CanvasWidget->GetCompletedBezierFlags();
-// 	FInterpCurve<FVector2D> CurvePoints = CanvasWidget->GetCurrentCurvePoints();
-// 	TArray<bool> bUseBezierPerPoint = CanvasWidget->GetCurrentBezierFlags();
-//
-// 	// Save
-// 	bool bOK = FCanvasAssets::SaveShapeAsset(
-// 		TEXT("SavedClothMeshes"),
-// 		CurrentSaveName,
-// 		CompletedShapes,
-// 		CompletedBezierFlags,
-// 		CurvePoints,
-// 		bUseBezierPerPoint
-// 	);
-//
-// 	UE_LOG(LogTemp, Log, TEXT("Save %s: %s"), *CurrentSaveName, bOK ? TEXT("Success") : TEXT("FAILED"));
-//
-// 	return FReply::Handled();
-// }
-
-// FReply FClothDesignModule::OnSaveClicked()
-// {
-// 	if (!CanvasWidget.IsValid())
-// 	{
-// 		return FReply::Handled();
-// 	}
-//
-// 	if (CurrentSaveName.IsEmpty())
-// 	{
-// 		UE_LOG(LogTemp, Warning, TEXT("Please enter a name before saving."));
-// 		return FReply::Handled();
-// 	}
-// 	
-// 	return FReply::Handled();
-//
-// }
 
 FReply FClothDesignModule::OnClearClicked()
 {
@@ -520,6 +467,7 @@ FReply FClothDesignModule::OnClearClicked()
 	}
 	return FReply::Handled();
 }
+
 FReply FClothDesignModule::OnClearSewingClicked()
 {
 	if (CanvasWidget.IsValid())
@@ -531,20 +479,6 @@ FReply FClothDesignModule::OnClearSewingClicked()
 }
 
 
-// void FClothDesignModule::SaveCurrentShapesToAsset()
-// {
-// 	UClothShapeAsset* NewAsset = NewObject<UClothShapeAsset>(GetTransientPackage(), UClothShapeAsset::StaticClass(), NAME_None, RF_Public | RF_Standalone);
-// 	
-// 	FString PackageName = TEXT("/Game/Cloth/GeneratedShapeAsset");
-// 	FString AssetName = TEXT("GeneratedShapeAsset");
-//
-// 	FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
-// 	UObject* FinalAsset = AssetToolsModule.Get().CreateAsset(AssetName, FPackageName::GetLongPackagePath(PackageName), UClothShapeAsset::StaticClass(), nullptr);
-//     
-// }
-
-
 #undef LOCTEXT_NAMESPACE
 
-// IMPLEMENT_MODULE(FClothDesignModule, ClothDesignEditorMode)
 IMPLEMENT_MODULE(FClothDesignModule, ClothDesign)

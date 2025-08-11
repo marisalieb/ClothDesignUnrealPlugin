@@ -3,19 +3,15 @@
 // Canvas state struct
 struct FCanvasState
 {
-
-	FInterpCurve<FVector2D> CurvePoints;  // Was: TArray<FVector2D> Points
+	FInterpCurve<FVector2D> CurvePoints;
 	TArray<FInterpCurve<FVector2D>> CompletedShapes;
-
-
-
+	
 	int32 SelectedPointIndex;
 	FVector2D PanOffset;
 	float ZoomFactor;
 	
 	TArray<bool> bUseBezierPerPoint; // For the current curve
 	TArray<TArray<bool>> CompletedBezierFlags; // for completed shapes
-
 	
 	// Optional equality operator 
 	bool operator==(const FCanvasState& Other) const

@@ -14,15 +14,10 @@ struct FCanvasPaint
 
 	FCanvasPaint(SClothDesignCanvas* InCanvas) : Canvas(InCanvas) {}
 	
-	const float WorldGridSpacing = 100.f;
-	// --- Smaller Grid Lines ---
-	const int32 NumSubdivisions = 10;
-	const float SubGridSpacing = WorldGridSpacing / NumSubdivisions;
-	
 	int32 DrawBackground(
 		const FGeometry& Geo,
 		FSlateWindowElementList& OutDraw,
-		int32 Layer);
+		int32 Layer) const;
 
 	
 	void DrawGridLines(
@@ -32,31 +27,52 @@ struct FCanvasPaint
 		bool bVertical,
 		float Spacing,
 		const FLinearColor& Color,
-		bool bSkipMajor
-	);
+		bool bSkipMajor) const;
 
 	int32 DrawGrid(
 		const FGeometry& Geo,
 		FSlateWindowElementList& OutDraw,
-		int32 Layer);
-	
-	int32 DrawCompletedShapes(
-		const FGeometry& Geo,
-		FSlateWindowElementList& OutDraw,
-		int32 Layer);
-	
-	int32 DrawCurrentShape(
-		const FGeometry& Geo,
-		FSlateWindowElementList& OutDraw,
-		int32 Layer);
+		int32 Layer) const;
 
 	static void BuildShortestArcSegments(
 		int32 StartIdx, int32 EndIdx,
 		int32 NumPts, TSet<int32>& OutSegments);
+	
+	int32 DrawCompletedShapes(
+		const FGeometry& Geo,
+		FSlateWindowElementList& OutDraw,
+		int32 Layer) const;
+	
+	int32 DrawCurrentShape(
+		const FGeometry& Geo,
+		FSlateWindowElementList& OutDraw,
+		int32 Layer) const;
+
 
 	int DrawFinalisedSeamLines(
 		const FGeometry& Geo,
 		FSlateWindowElementList& OutDraw,
-		int32 Layer);
+		int32 Layer) const;
 
+private:
+	const float WorldGridSpacing = 100.f;
+	const int32 NumSubdivisions = 10;
+	const float SubGridSpacing = WorldGridSpacing / NumSubdivisions;
+
+	// ---- UI colours ---- 
+	static const FLinearColor GridColour;
+	static const FLinearColor GridColourSmall;
+
+	static const FLinearColor LineColour;
+	static const FLinearColor CompletedLineColour;
+
+	static const FLinearColor PointColour;
+	static const FLinearColor PostCurrentPointColour;
+
+	static const FLinearColor BezierHandleColour;
+	static const FLinearColor CompletedBezierHandleColour;
+
+	static const FLinearColor SewingLineColour;
+	static const FLinearColor SewingPointColour;
+	
 };

@@ -76,3 +76,64 @@ void FCanvasUtils::RecalculateNTangents(
 		}
 	}
 }
+
+
+FVector3d FCanvasUtils::ComputeAreaWeightedCentroid(const UE::Geometry::FDynamicMesh3& Mesh)
+{
+	double totalArea = 0.0;
+	FVector3d accum(0,0,0);
+
+	for (int tid : Mesh.TriangleIndicesItr())
+	{
+		UE::Geometry::FIndex3i T = Mesh.GetTriangle(tid);
+		FVector3d A = Mesh.GetVertex(T.A);
+		FVector3d B = Mesh.GetVertex(T.B);
+		FVector3d C = Mesh.GetVertex(T.C);
+
+		FVector3d e1 = B - A;
+		FVector3d e2 = C - A;
+		double triArea = 0.5 * FVector3d::CrossProduct(e1, e2).Length();
+
+		if (triArea > KINDA_SMALL_NUMBER)
+		{
+			FVector3d triCentroid = (A + B + C) / 3.0;
+			accum += triCentroid * triArea;
+			totalArea += triArea;
+		}
+	}
+
+	if (totalArea > KINDA_SMALL_NUMBER) return accum / totalArea;
+
+	// Fallback: simple average of vertices
+	int nv = 0;
+	FVector3d sum(0,0,0);
+	for (int vid : Mesh.VertexIndicesItr())
+	{
+		sum += Mesh.GetVertex(vid);
+		++nv;
+	}
+	if (nv > 0) return sum / static_cast<double>(nv);
+	return FVector3d::Zero();
+}
+
+/** Subtract pivotFrom (centroid) from all vertices to move pivot to origin. */
+void FCanvasUtils::CenterMeshVerticesToOrigin(TArray<FVector>& Vertices, const FVector& PivotFrom)
+{
+    for (FVector& V : Vertices)
+    {
+        V -= PivotFrom;
+    }
+}
+
+void FCanvasUtils::TranslateDynamicMeshBy(UE::Geometry::FDynamicMesh3& Mesh, const FVector3d& Offset)
+{
+	for (int vid : Mesh.VertexIndicesItr())
+	{
+		FVector3d p = Mesh.GetVertex(vid);
+		p -= Offset;           // subtract offset so mesh becomes local around origin
+		Mesh.SetVertex(vid, p);
+	}
+	// If you cache bounds/normals in other systems, recompute them here if necessary.
+}
+
+

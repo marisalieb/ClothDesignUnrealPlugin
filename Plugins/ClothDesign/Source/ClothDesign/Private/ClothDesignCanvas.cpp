@@ -92,7 +92,7 @@ int32 SClothDesignCanvas::OnPaint(
 FReply SClothDesignCanvas::OnMouseWheel(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	const float ScrollDelta = MouseEvent.GetWheelDelta();
-	const float ZoomDelta = 0.1f; // How fast to zoom
+	constexpr float ZoomDelta = 0.1f; // How fast to zoom
 
 	const FVector2D MousePos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
 
@@ -364,10 +364,10 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 			{
 				GetSewingManager().AllDefinedSeams.RemoveAt(idx);
 			}
-			// If your runtime sewing constraints are stored separately, try to find & remove matching entries:
+			// If your runtime sewing constraints are stored separately, try to find and  remove matching entries:
 			// e.g. if you have FPatternSewingConstraint list, compare ScreenPointsA/B or Mesh pointers to find the matching one and remove it.
 
-			// 3) Update the canvas sewn-point cache & redraw
+			// 3) Update the canvas sewn-point cache and redraw
 			UpdateSewnPointSets(); // recompute sewn-point map from SeamDefinitions
 			SelectedSeamIndex = INDEX_NONE;
 			Invalidate(EInvalidateWidgetReason::Paint | EInvalidateWidgetReason::Layout);
@@ -503,6 +503,7 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 
 }
 
+
 int32 SClothDesignCanvas::FinaliseCurrentShape(bool bGenerateNow, TArray<TWeakObjectPtr<APatternMesh>>* OutSpawnedActors)
 {
 	 // nothing to finalize
@@ -542,8 +543,6 @@ int32 SClothDesignCanvas::FinaliseCurrentShape(bool bGenerateNow, TArray<TWeakOb
     UE_LOG(LogTemp, Warning, TEXT("Shape finalised. Ready to start a new one."));
 	
 	return NewIndex;
-	
-
 }
 
 
@@ -612,7 +611,7 @@ void SClothDesignCanvas::FocusViewportOnPoints()
 
 	// Optional: adjust zoom to fit bounds
 	const FVector2D ViewportSize = LastGeometry.GetLocalSize();
-	const float Margin = 1.2f; // add some margin around the bounds
+	constexpr float Margin = 1.2f; // add some margin around the bounds
 
 	float ZoomX = ViewportSize.X / (BoundsSize.X * Margin);
 	float ZoomY = ViewportSize.Y / (BoundsSize.Y * Margin);
@@ -744,11 +743,6 @@ void SClothDesignCanvas::ClearAllShapeData()
 }
 
 
-// void SClothDesignCanvas::SewingClick()
-// {
-// 	SewingManager.BuildAndAlignClickedSeam(CompletedShapes, CurvePoints);
-// }
-
 void SClothDesignCanvas::SewingClick()
 {
 	SewingManager.BuildAndAlignAllSeams(CompletedShapes, CurvePoints);
@@ -757,7 +751,7 @@ void SClothDesignCanvas::SewingClick()
 
 void SClothDesignCanvas::MergeClick()
 {
-	SewingManager.MergeSewnGroups();
+	SewingManager.MergeSewnPatternPieces();
 }
 
 void SClothDesignCanvas::ClearAllSewing()
@@ -800,7 +794,9 @@ void SClothDesignCanvas::GenerateMeshesClick()
 	SewingManager.SpawnedPatternActors.Empty();
 	
 	TArray<FDynamicMesh3> AllMeshes;
-	CanvasMesh::TriangulateAndBuildAllMeshes(
+	CanvasMesh CanvasMesh;
+
+	CanvasMesh.TriangulateAndBuildAllMeshes(
 		CompletedShapes,
 		CurvePoints,
 		AllMeshes,

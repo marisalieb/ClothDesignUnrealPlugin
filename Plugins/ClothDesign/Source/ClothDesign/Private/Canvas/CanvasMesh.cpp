@@ -1,4 +1,10 @@
 #include "Canvas/CanvasMesh.h"
+#include "Canvas/CanvasUtils.h"
+#include "DynamicMesh/DynamicMesh3.h"
+#include "CoreMinimal.h"
+
+
+
 
 // 1) Helper: even–odd rule point-in-polygon test
 bool CanvasMesh::IsPointInPolygon(
@@ -59,7 +65,7 @@ void CanvasMesh::SampleShapeCurve(
 
 		for (int i = 0; i < SamplesPerSegment; ++i, ++SampleCounter)
 		{
-			float Alpha = float(i) / SamplesPerSegment;
+			float Alpha = static_cast<float>(i) / SamplesPerSegment;
 			FVector2D P2 = Shape.Eval(FMath::Lerp(In0, In1, Alpha));
 			OutPolyVerts.Add(FVector2f(P2.X, P2.Y));
 
@@ -100,18 +106,18 @@ void CanvasMesh::AddGridInteriorPoints(
 	}
 
 	// --- grid parameters
-	const int32 GridRes = 20;    // 10×10 grid → up to 100 interior seeds
+	constexpr int32 GridRes = 20;    // 10×10 grid → up to 100 interior seeds
 	int32 Added = 0;
 
 	// --- sample on a regular grid, keep only centers inside the original polygon
 	for (int32 iy = 0; iy < GridRes; ++iy)
 	{
-		float fy = (iy + 0.5f) / float(GridRes);
+		float fy = (iy + 0.5f) / static_cast<float>(GridRes);
 		float Y  = FMath::Lerp(MinY, MaxY, fy);
 
 		for (int32 ix = 0; ix < GridRes; ++ix)
 		{
-			float fx = (ix + 0.5f) / float(GridRes);
+			float fx = (ix + 0.5f) / static_cast<float>(GridRes);
 			float X  = FMath::Lerp(MinX, MaxX, fx);
 
 			FVector2f Cand(X, Y);
@@ -235,96 +241,86 @@ void CanvasMesh::CreateProceduralMesh(
 	const TArray<int32>& Indices,
 	FDynamicMesh3&& DynamicMesh,
 	TArray<int32>&& SeamVertexIDs,
-	const TArray<FVector2f>& BoundarySamples2D,        // NEW
+	const TArray<FVector2f>& BoundarySamples2D,
 	const TArray<int32>& BoundarySampleVIDs,
-	TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors)
+	TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors,
+	FVector MeshCentroid)
 {
-	// UE_LOG(LogTemp, Log, TEXT("CreateProceduralMesh called: Vertices=%d, Indices=%d"),
-	// 	Vertices.Num(), Indices.Num());
-	// you must store SeamVertexIDs here:
+    UWorld* World = GEditor->GetEditorWorldContext().World();
+    if (!World) return;
 
-	
-	UWorld* World = GEditor->GetEditorWorldContext().World();
-	if (!World) return;
+    static int32 MeshCounter = 0;
+    FString UniqueLabel = FString::Printf(TEXT("ClothMeshActor_%d"), MeshCounter++);
 
-	static int32 MeshCounter = 0;
-	FString UniqueLabel = FString::Printf(TEXT("ClothMeshActor_%d"), MeshCounter++);
-
-	FActorSpawnParameters SpawnParams;
-	APatternMesh* MeshActor = World->SpawnActor<APatternMesh>(SpawnParams);
-	// if (!MeshActor) return;
-	if (!MeshActor)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to spawn APatternMesh!"));
-		return;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Log, TEXT("Spawned APatternMesh successfully."));
-	}
-
-
-	// **ONLY** add to the passed-in list, not the global!
+    FActorSpawnParameters SpawnParams;
+    APatternMesh* MeshActor = World->SpawnActor<APatternMesh>(SpawnParams);
+    if (!MeshActor)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to spawn APatternMesh!"));
+        return;
+    }
     OutSpawnedActors.Add(TWeakObjectPtr<APatternMesh>(MeshActor));
-	UE_LOG(LogTemp, Warning, TEXT("Added actor to OutSpawnedActors. Now contains %d"), OutSpawnedActors.Num());
-
-	// Transfer mesh data into the actor
-	UE_LOG(LogTemp, Warning, TEXT("Storing SeamVertexIDs — Count: %d"), SeamVertexIDs.Num());
-	// for (int32 i = 0; i < SeamVertexIDs.Num(); ++i)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("  Seam ID [%d] = %d"), i, SeamVertexIDs[i]);
-	// }
-
-	MeshActor->DynamicMesh        = MoveTemp(DynamicMesh);
-	MeshActor->LastSeamVertexIDs  = MoveTemp(SeamVertexIDs);
-
-	// store boundary sample 2D points and vertex IDs
-	MeshActor->BoundarySamplePoints2D = BoundarySamples2D;
-	MeshActor->BoundarySampleVertexIDs = BoundarySampleVIDs;
-
-	// compute and store world positions for convenience
-	MeshActor->BoundarySampleWorldPositions.Reset();
-	MeshActor->BoundarySampleWorldPositions.SetNum(BoundarySampleVIDs.Num());
-	for (int i = 0; i < BoundarySampleVIDs.Num(); ++i)
-	{
-		int VID = BoundarySampleVIDs[i];
-		if (VID >= 0 && VID < MeshActor->DynamicMesh.VertexCount())
-		{
-			FVector3d P = MeshActor->DynamicMesh.GetVertex(VID);
-			MeshActor->BoundarySampleWorldPositions[i] = MeshActor->GetActorTransform().TransformPosition(FVector(P.X, P.Y, P.Z));
-		}
-		else
-		{
-			MeshActor->BoundarySampleWorldPositions[i] = FVector::ZeroVector;
-		}
-	}
-
 	
-	MeshActor->SetFolderPath(FName(TEXT("ClothDesignActors")));
+    {
+        // If you want to spawn at a specific location, compute that first and use it here.
+        const FVector CurrentActorLoc = MeshActor->GetActorLocation();
+        const FVector CentroidWorldPos = MeshActor->GetActorTransform().TransformPosition(MeshCentroid);
+        const FVector WorldOffset = CentroidWorldPos - CurrentActorLoc;
+
+        // Move the actor by the computed world offset
+        MeshActor->SetActorLocation(CurrentActorLoc + WorldOffset);
+    }
+
+    // store transform-dependent data AFTER repositioning so world samples are correct
+    MeshActor->DynamicMesh        = MoveTemp(DynamicMesh);
+    MeshActor->LastSeamVertexIDs  = MoveTemp(SeamVertexIDs);
+
+    MeshActor->BoundarySamplePoints2D = BoundarySamples2D;
+    MeshActor->BoundarySampleVertexIDs = BoundarySampleVIDs;
+
+    // compute and store world positions for convenience (move this AFTER reposition)
+    MeshActor->BoundarySampleWorldPositions.Reset();
+    MeshActor->BoundarySampleWorldPositions.SetNum(BoundarySampleVIDs.Num());
+    for (int i = 0; i < BoundarySampleVIDs.Num(); ++i)
+    {
+        int VID = BoundarySampleVIDs[i];
+        if (VID >= 0 && VID < MeshActor->DynamicMesh.VertexCount())
+        {
+            FVector3d P = MeshActor->DynamicMesh.GetVertex(VID);
+            // DynamicMesh vertex is local to actor; transform to actor's new world transform:
+            MeshActor->BoundarySampleWorldPositions[i] = MeshActor->GetActorTransform().TransformPosition(FVector(P.X, P.Y, P.Z));
+        }
+        else
+        {
+            MeshActor->BoundarySampleWorldPositions[i] = FVector::ZeroVector;
+        }
+    }
+
+    MeshActor->SetFolderPath(FName(TEXT("ClothDesignActors")));
 #if WITH_EDITOR
-	MeshActor->SetActorLabel(UniqueLabel);
+    MeshActor->SetActorLabel(UniqueLabel);
 #endif
 
-	// Build the visible section
-	TArray<FVector>      Normals;      Normals.AddUninitialized(Vertices.Num());
-	TArray<FVector2D>    UV0;          UV0.AddUninitialized(Vertices.Num());
-	TArray<FLinearColor> VertexColors; VertexColors.AddUninitialized(Vertices.Num());
-	TArray<FProcMeshTangent> Tangents; Tangents.AddUninitialized(Vertices.Num());
+    // Build the visible section
+    // NOTE: 'Vertices' must already be centered (centroid subtracted) before you call this fn.
+    TArray<FVector>      Normals;      Normals.AddUninitialized(Vertices.Num());
+    TArray<FVector2D>    UV0;          UV0.AddUninitialized(Vertices.Num());
+    TArray<FLinearColor> VertexColors; VertexColors.AddUninitialized(Vertices.Num());
+    TArray<FProcMeshTangent> Tangents; Tangents.AddUninitialized(Vertices.Num());
 
-	for (int i = 0; i < Vertices.Num(); ++i)
-	{
-		Normals[i]      = FVector::UpVector;
-		UV0[i]          = FVector2D(Vertices[i].X * .01f, Vertices[i].Y * .01f);
-		VertexColors[i] = FLinearColor::White;
-		Tangents[i]     = FProcMeshTangent(1,0,0);
-	}
+    for (int i = 0; i < Vertices.Num(); ++i)
+    {
+        Normals[i]      = FVector::UpVector;
+        UV0[i]          = FVector2D(Vertices[i].X * .01f, Vertices[i].Y * .01f);
+        VertexColors[i] = FLinearColor::White;
+        Tangents[i]     = FProcMeshTangent(1,0,0);
+    }
 
-	MeshActor->MeshComponent->CreateMeshSection_LinearColor(
-		0, Vertices, Indices,
-		Normals, UV0, VertexColors, Tangents,
-		/*bCreateCollision=*/true
-	);
-	
+    MeshActor->MeshComponent->CreateMeshSection_LinearColor(
+        0, Vertices, Indices,
+        Normals, UV0, VertexColors, Tangents,
+        /*bCreateCollision=*/true
+    );
 }
 
 
@@ -333,13 +329,13 @@ void CanvasMesh::CreateProceduralMesh(
 // second version but with steiner points, grid spaced constrained delaunay
 void CanvasMesh::TriangulateAndBuildMesh(
 	const FInterpCurve<FVector2D>& Shape,
-	bool bRecordSeam,
+	bool bRecordSeam ,
 	int32 StartPointIdx2D,
 	int32 EndPointIdx2D,
-	/* out */ TArray<int32>& LastSeamVertexIDs,
-	/* out */ FDynamicMesh3& LastBuiltMesh,
-	/* optional */ TArray<int32>& LastBuiltSeamVertexIDs,
-	/* out */ TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors) // NEW
+	TArray<int32>& LastSeamVertexIDs,
+	FDynamicMesh3& LastBuiltMesh,
+	TArray<int32>& LastBuiltSeamVertexIDs,
+	TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors)
 {
 	if (Shape.Points.Num() < 3)
 	{
@@ -348,7 +344,7 @@ void CanvasMesh::TriangulateAndBuildMesh(
 	}
 
 	TArray<FVector2f> PolyVerts;
-	const int SamplesPerSegment = 10;
+	constexpr int SamplesPerSegment = 10;
 	FDynamicMesh3 Mesh;
 	
 	// Sample shape curve points and build seam info
@@ -418,18 +414,40 @@ void CanvasMesh::TriangulateAndBuildMesh(
 	LastBuiltMesh = MoveTemp(OutMesh);
 	LastBuiltSeamVertexIDs = MoveTemp(LastSeamVertexIDs);
 
-	// CreateProceduralMesh(Vertices, Indices);
+
+	
+	FDynamicMesh3 CentroidTempMesh;
+	// Fill TempMesh with Vertices + Indices
+	for (const FVector& V : Vertices)
+	{
+		CentroidTempMesh.AppendVertex(FVector3d(V));
+	}
+	for (int i = 0; i < Indices.Num(); i += 3)
+	{
+		CentroidTempMesh.AppendTriangle(Indices[i], Indices[i+1], Indices[i+2]);
+	}
+	// FVector MeshCentroid = CanvasMesh::ComputeAreaWeightedCentroid(Vertices, Indices);
+	FVector3d MeshCentroid = FCanvasUtils::ComputeAreaWeightedCentroid(CentroidTempMesh);
+	// // Shift vertices so centroid becomes local origin (pivot at 0,0,0)
+	FCanvasUtils::CenterMeshVerticesToOrigin(Vertices, MeshCentroid);
+	// ALSO shift the dynamic mesh (double precision)
+	FVector3d Centroid3d(MeshCentroid);
+	FCanvasUtils::TranslateDynamicMeshBy(LastBuiltMesh, Centroid3d);	// CreateProceduralMesh(Vertices, Indices);
+
+
+	
 	CreateProceduralMesh(
 	Vertices,
 	Indices,
 	MoveTemp(LastBuiltMesh),
 	MoveTemp(LastBuiltSeamVertexIDs),
-	BoundarySamples2D,       // NEW param
-	BoundarySampleVIDs,      // NEW param
-	OutSpawnedActors
+	BoundarySamples2D,
+	BoundarySampleVIDs,
+	OutSpawnedActors,
+	MeshCentroid
+
 		);
 }
-
 
 
 

@@ -4,27 +4,27 @@
 
 
 // class members
-const FLinearColor GridColour(0.215f, 0.215f, 0.215f, 0.6f);
-const FLinearColor GridColourSmall(0.081f, 0.081f, 0.081f, 0.4f);
-
 // ---- POINTS AND LINES -----
-const FLinearColor LineColour(0.6059f, 1.f, 0.0f, 1.f);
-const FLinearColor CompletedLineColour(0.26304559f, 0.3405508f, 0.05165f, 1.f);
+const FLinearColor FCanvasPaint::GridColour(0.215f, 0.215f, 0.215f, 0.6f);
+const FLinearColor FCanvasPaint::GridColourSmall(0.081f, 0.081f, 0.081f, 0.4f);
 
-const FLinearColor PointColour(0.831, .0f, 1.f, 1.f);
-const FLinearColor PostCurrentPointColour(0.263463f, .15208f, 0.5659f, 1.f);
+const FLinearColor FCanvasPaint::LineColour(0.6059f, 1.f, 0.0f, 1.f);
+const FLinearColor FCanvasPaint::CompletedLineColour(0.26304559f, 0.3405508f, 0.05165f, 1.f);
 
-const FLinearColor BezierHandleColour(0.43229f, 0.54342f, 0.0f, 1.f);
-const FLinearColor CompletedBezierHandleColour(0.1025f, 0.1288f, 0.0f, 1.f);
+const FLinearColor FCanvasPaint::PointColour(0.831, .0f, 1.f, 1.f);
+const FLinearColor FCanvasPaint::PostCurrentPointColour(0.263463f, .15208f, 0.5659f, 1.f);
 
-const FLinearColor SewingLineColour(0.99, .340f, .0f, .8f);
-const FLinearColor SewingPointColour(1.f, .0f, .0f, 1.f);
+const FLinearColor FCanvasPaint::BezierHandleColour(0.43229f, 0.54342f, 0.0f, 1.f);
+const FLinearColor FCanvasPaint::CompletedBezierHandleColour(0.1025f, 0.1288f, 0.0f, 1.f);
+
+const FLinearColor FCanvasPaint::SewingLineColour(0.99, .340f, .0f, .8f);
+const FLinearColor FCanvasPaint::SewingPointColour(1.f, .0f, .0f, 1.f);
 
 
 int32 FCanvasPaint::DrawBackground(
     const FGeometry& Geo,
     FSlateWindowElementList& OutDraw,
-    int32 Layer)
+    int32 Layer) const
 {
     if (!Canvas->BackgroundTexture.IsValid())
     {
@@ -69,8 +69,7 @@ void FCanvasPaint::DrawGridLines(
     bool bVertical,
     float Spacing,
     const FLinearColor& Color,
-    bool bSkipMajor
-)
+    bool bSkipMajor) const
 {
     const FVector2D Size = Geo.GetLocalSize();
 
@@ -110,7 +109,7 @@ void FCanvasPaint::DrawGridLines(
 int32 FCanvasPaint::DrawGrid(
     const FGeometry& Geo,
     FSlateWindowElementList& OutDraw,
-    int32 Layer)
+    int32 Layer) const
 {
     Layer = DrawBackground(Geo, OutDraw, Layer);
     
@@ -166,7 +165,7 @@ void FCanvasPaint::BuildShortestArcSegments(
 int32 FCanvasPaint::DrawCompletedShapes(
     const FGeometry& Geo,
     FSlateWindowElementList& OutDraw,
-    int32 Layer)
+    int32 Layer) const
 {
     // Quick refs
     const auto& Shapes       = Canvas->CompletedShapes;
@@ -183,27 +182,26 @@ int32 FCanvasPaint::DrawCompletedShapes(
         if (NumPts < 2) continue;
 
         // Build per-shape map of segments to highlight (union of all seams that reference this shape)
-        TSet<int32> SegsToHighlight;
+        TSet<int32> SegmentsToHighlight;
         for (const FSeamDefinition& SD : SeamDefs)
         {
             // Check both sides — if SD.ShapeA == ShapeIdx handle EdgeA, if SD.ShapeB==ShapeIdx handle EdgeB
             if (SD.ShapeA == ShapeIdx)
             {
-                BuildShortestArcSegments(SD.EdgeA.Start, SD.EdgeA.End, NumPts, SegsToHighlight);
+                BuildShortestArcSegments(SD.EdgeA.Start, SD.EdgeA.End, NumPts, SegmentsToHighlight);
             }
             if (SD.ShapeB == ShapeIdx)
             {
-                BuildShortestArcSegments(SD.EdgeB.Start, SD.EdgeB.End, NumPts, SegsToHighlight);
+                BuildShortestArcSegments(SD.EdgeB.Start, SD.EdgeB.End, NumPts, SegmentsToHighlight);
             }
         }
 
-        const int SamplesPerSegment = 10;
         const bool bClosed = (NumPts > 2);
 
         for (int32 Seg = 0; Seg < NumPts - 1; ++Seg)
         {
             // Is this segment highlighted?
-            bool bThisSegIsSewn = SegsToHighlight.Contains(Seg);
+            bool bThisSegIsSewn = SegmentsToHighlight.Contains(Seg);
 
             // pick the color to draw for this segment
             FLinearColor LineCol = bThisSegIsSewn ? SewingLineColour : CompletedLineColour;
@@ -211,11 +209,13 @@ int32 FCanvasPaint::DrawCompletedShapes(
             // draw samples for this segment
             float AIn = Shape.Points[Seg].InVal;
             float BIn = Shape.Points[Seg + 1].InVal;
+            constexpr int SamplesPerSegment = 10;
+            
             for (int i = 0; i < SamplesPerSegment; ++i)
             {
-                float t0 = FMath::Lerp(AIn, BIn, float(i) / SamplesPerSegment);
-                float t1 = FMath::Lerp(AIn, BIn, float(i + 1) / SamplesPerSegment);
-
+                float t0 = FMath::Lerp(AIn, BIn, static_cast<float>(i) / SamplesPerSegment);
+                float t1 = FMath::Lerp(AIn, BIn, static_cast<float>(i + 1) / SamplesPerSegment);
+                
                 FVector2D P0 = Canvas->TransformPoint(Shape.Eval(t0));
                 FVector2D P1 = Canvas->TransformPoint(Shape.Eval(t1));
                 FPaintGeometry LineGeo = Geo.ToPaintGeometry();
@@ -237,7 +237,7 @@ int32 FCanvasPaint::DrawCompletedShapes(
         if (bClosed)
         {
             int32 seg = NumPts - 1; // treat as segment index seg -> (seg+1)%NumPts == last->0
-            bool bThisSegIsSewn = SegsToHighlight.Contains(seg);
+            bool bThisSegIsSewn = SegmentsToHighlight.Contains(seg);
             FLinearColor LineCol = bThisSegIsSewn ? FLinearColor::Green : FLinearColor::Black;
 
             FVector2D LastPt = Canvas->TransformPoint(Shape.Points.Last().OutVal);
@@ -255,62 +255,6 @@ int32 FCanvasPaint::DrawCompletedShapes(
 
         ++Layer;
     }    
-    // // --- Section 1: Draw each completed shape's edges ---
-    // for (int32 ShapeIdx = 0; ShapeIdx < NumShapes; ++ShapeIdx)
-    // {
-    //     const auto& Shape = Shapes[ShapeIdx];
-    //     //const auto& Flags = BezierFlags[ShapeIdx];
-    //     const int32 NumPts = Shape.Points.Num();
-    //     if (NumPts < 2) continue;
-    //
-    //     const int SamplesPerSegment = 10;
-    //     for (int32 Seg = 0; Seg < NumPts - 1; ++Seg)
-    //     {
-    //         float AIn = Shape.Points[Seg].InVal;
-    //         float BIn = Shape.Points[Seg + 1].InVal;
-    //
-    //         for (int i = 0; i < SamplesPerSegment; ++i)
-    //         {
-    //             float t0 = FMath::Lerp(AIn, BIn, float(i)   / SamplesPerSegment);
-    //             float t1 = FMath::Lerp(AIn, BIn, float(i+1) / SamplesPerSegment);
-    //
-    //             FVector2D P0 = Canvas->TransformPoint(Shape.Eval(t0));
-    //             FVector2D P1 = Canvas->TransformPoint(Shape.Eval(t1));
-    //
-    //             FPaintGeometry LineGeo = Geo.ToPaintGeometry();
-    //
-    //             FSlateDrawElement::MakeLines(
-    //                 OutDraw, Layer,
-    //                 LineGeo,
-    //                 TArray<FVector2f>{ FVector2f(P0), FVector2f(P1) },
-    //                 ESlateDrawEffect::None,
-    //                 CompletedLineColour,
-    //                 true, 2.0f
-    //             );
-    //         }
-    //     }
-    //
-    //     // Close the loop if >2 points
-    //     if (NumPts > 2)
-    //     {
-    //         FVector2D LastPt = Canvas->TransformPoint(Shape.Points.Last().OutVal);
-    //         FVector2D FirstPt= Canvas->TransformPoint(Shape.Points[0].OutVal);
-    //         
-    //         FPaintGeometry LoopGeo = Geo.ToPaintGeometry();
-    //
-    //         FSlateDrawElement::MakeLines(
-    //             OutDraw, Layer,
-    //             LoopGeo,
-    //             TArray<FVector2f>{ FVector2f(LastPt), FVector2f(FirstPt) },
-    //             ESlateDrawEffect::None,
-    //             FLinearColor::Black,
-    //             true, 2.0f
-    //         );
-    //     }
-    //
-    //     ++Layer;
-    // }
-
 
     
     // --- Section 3: Draw each shape's Bezier handles ---
@@ -424,7 +368,7 @@ int32 FCanvasPaint::DrawCompletedShapes(
 int FCanvasPaint::DrawFinalisedSeamLines(
     const FGeometry& Geo,
     FSlateWindowElementList& OutDraw,
-    int32 Layer)
+    int32 Layer) const
 {
     // using namespace UE::Slate;
 
@@ -433,7 +377,6 @@ int FCanvasPaint::DrawFinalisedSeamLines(
 
     // color/thickness
     //const FLinearColor LineCol = FLinearColor(0.0f, 0.6f, 1.0f, 1.0f); // cyan-ish
-    const float LineThickness = 2.5f;
 
     for (int32 s = 0; s < Seams.Num(); ++s)
     {
@@ -464,6 +407,8 @@ int FCanvasPaint::DrawFinalisedSeamLines(
         bool bOkBstart = GetPatternPoint2D(SD.ShapeB, SD.EdgeB.Start, Bstart2D);
         bool bOkAend   = GetPatternPoint2D(SD.ShapeA, SD.EdgeA.End,   Aend2D);
         bool bOkBend   = GetPatternPoint2D(SD.ShapeB, SD.EdgeB.End,   Bend2D);
+
+        constexpr float LineThickness = 2.5f;
 
         bool bSelected = (Canvas->SelectedSeamIndex == s);
         FLinearColor ThisCol = bSelected ? FLinearColor::Yellow : SewingLineColour;
@@ -512,25 +457,24 @@ int FCanvasPaint::DrawFinalisedSeamLines(
 int32 FCanvasPaint::DrawCurrentShape(
     const FGeometry& Geo,
     FSlateWindowElementList& OutDraw,
-    int32 Layer)
+    int32 Layer) const
 {
     const auto& CurvePoints = Canvas->CurvePoints;
     const auto& bUseBezierPerPoint = Canvas->bUseBezierPerPoint;
     
 	if (CurvePoints.Points.Num() >= 2)
 	{
-		const int SamplesPerSegment = 10; // Smoothness
 
 		for (int SegIndex = 0; SegIndex < CurvePoints.Points.Num() - 1; ++SegIndex)
 		{
 			float StartInVal = CurvePoints.Points[SegIndex].InVal;
 			float EndInVal   = CurvePoints.Points[SegIndex + 1].InVal;
+		    constexpr int SamplesPerSegment = 10; // Smoothness
 
 			for (int i = 0; i < SamplesPerSegment; ++i)
 			{
-				float t0 = FMath::Lerp(StartInVal, EndInVal, float(i) / SamplesPerSegment);
-				float t1   = FMath::Lerp(StartInVal, EndInVal, float(i + 1) / SamplesPerSegment);
-
+			    float t0 = FMath::Lerp(StartInVal, EndInVal, static_cast<float>(i) / SamplesPerSegment);
+			    float t1 = FMath::Lerp(StartInVal, EndInVal, static_cast<float>(i + 1) / SamplesPerSegment);
 
 			    FVector2D P0 = Canvas->TransformPoint(CurvePoints.Eval(t0));
 			    FVector2D P1 = Canvas->TransformPoint(CurvePoints.Eval(t1));

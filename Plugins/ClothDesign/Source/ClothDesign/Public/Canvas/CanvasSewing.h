@@ -37,18 +37,18 @@ enum class ESeamClickState : uint8
 
 struct FCanvasSewing
 {
-	// State
+public:
 	TArray<FSeamDefinition> SeamDefinitions;
-	// TArray<FPatternSewingConstraint> SewingConstraints;
 	TArray<FPatternSewingConstraint> AllDefinedSeams;
 
 	ESeamClickState SeamClickState = ESeamClickState::None;
-
-
+	
 	FClickTarget AStartTarget, AEndTarget, BStartTarget, BEndTarget;
 	
 	TArray<TWeakObjectPtr<APatternMesh>> SpawnedPatternActors;
 	
+	TMap<int32, TSet<int32>> CurrentSeamPreviewPoints;
+
 	void FinaliseSeamDefinitionByTargets(
 		const FClickTarget& AStart,
 		const FClickTarget& AEnd,
@@ -57,44 +57,25 @@ struct FCanvasSewing
 		const FInterpCurve<FVector2D>& CurvePoints,
 		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
 		const TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors);
-
-	void AlignSeamMeshes(APatternMesh* A, APatternMesh* B);
-
-	// void BuildAndAlignClickedSeam(
-	// 	TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors,
-	// 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-	// 	const FInterpCurve<FVector2D>& CurvePoints);
-	// void BuildAndAlignClickedSeam(
-	// 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-	// 	const FInterpCurve<FVector2D>& CurvePoints);
-	
-	void BuildAndAlignSeam(
-		const FPatternSewingConstraint& Seam,
-		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-		const FInterpCurve<FVector2D>& CurvePoints);
 	
 	void BuildAndAlignAllSeams(
 		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
 		const FInterpCurve<FVector2D>& CurvePoints);
-
-	
-	// void MergeLastTwoMeshes();
 	
 	void ClearAllSeams();
 
-	void MergeSewnGroups();
+	void MergeSewnPatternPieces();
 
 	void BuildSewnPointSets(TMap<int32, TSet<int32>>& OutSewn) const;
 
-	// In FCanvasSewing.h
-	TMap<int32, TSet<int32>> CurrentSeamPreviewPoints;
 	void AddPreviewPoint(int32 ShapeIndex, int32 PointIndex);
 
-	// void UpdateSewnPointSetsOnCanvas(
-	// 	SClothDesignCanvas* Canvas,
-	// 	const TArray<FSeamDefinition>& SeamDefinitions);
-	//
-	// APatternMesh* GetPatternActor(int32 ShapeIndex);
-	// int32 GetVertexID(int32 ShapeIndex, int32 PointIndex);
+	
+private:
+	static void AlignSeamMeshes(APatternMesh* A, APatternMesh* B);
 
+	void BuildAndAlignSeam(
+		const FPatternSewingConstraint& Seam,
+		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
+		const FInterpCurve<FVector2D>& CurvePoints);
 };

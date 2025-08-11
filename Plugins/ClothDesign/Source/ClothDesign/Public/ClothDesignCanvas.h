@@ -2,16 +2,13 @@
 
 #include "Widgets/SCompoundWidget.h"
 #include "Math/InterpCurve.h"
-#include "DynamicMesh/DynamicMesh3.h"
-#include "PatternSewingConstraint.h"
 #include "PatternMesh.h"
 #include "Misc/ScopeLock.h"
-#include "ClothShapeAsset.h"
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
-#include "MeshOpPreviewHelpers.h" 
 #include "Canvas/CanvasAssets.h"
 #include "Canvas/CanvasSewing.h"
+
 
 
 class SClothDesignCanvas : public SCompoundWidget
@@ -32,7 +29,7 @@ public:
 							  const FSlateRect& CullingRect, FSlateWindowElementList& OutDrawElements,
 							  int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
 	
-	// --- Mouse handling ---
+	// --- Mouse and key handling ---
 	virtual FReply OnMouseWheel(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
 	
 	virtual FReply OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
@@ -47,16 +44,13 @@ public:
 
 	virtual FReply OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent) override;
 
-	void FocusViewportOnPoints();
 	
 	enum class EClothEditorMode
 	{
 		Draw,
-		Select,
-		Move,
+		Select, // called edit in the UI
 		Sew
 	};
-	EClothEditorMode CurrentMode = EClothEditorMode::Draw;
 	FReply OnModeButtonClicked(EClothEditorMode NewMode);
 
 	
@@ -64,7 +58,6 @@ public:
 	TArray<FCanvasState> UndoStack;
 	TArray<FCanvasState> RedoStack;
 	FCanvasState GetCurrentCanvasState() const;
-	void RestoreCanvasState(const FCanvasState& State);
 
 	// for mousemove and mousebuttonup, onkeyup
 	enum class ETangentHandle
@@ -81,7 +74,6 @@ public:
 	TWeakObjectPtr<UTexture2D> BackgroundTexture;
 	FString GetSelectedTexturePath() const;
 	void OnBackgroundTextureSelected(const FAssetData& AssetData);
-	float BackgroundImageScale = 1.0f;
 	TOptional<float> GetBackgroundImageScale() const;
 	void OnBackgroundImageScaleChanged(float NewScale);
 
@@ -92,7 +84,6 @@ public:
 	void OnShapeAssetSelected(const FAssetData& AssetData);
 	void ClearAllShapeData();
 
-	FCanvasSewing SewingManager;
 	void SewingClick();
 	void MergeClick();
 	void ClearAllSewing();
@@ -101,10 +92,10 @@ public:
 
 	
 	// simple getters used in the module class 
-	const TArray<FInterpCurve<FVector2D>>& GetCompletedShapes() const { return CompletedShapes; }
-	const TArray<TArray<bool>>& GetCompletedBezierFlags() const { return CompletedBezierFlags; }
-	const FInterpCurve<FVector2D>& GetCurrentCurvePoints() const { return CurvePoints; }
-	const TArray<bool>& GetCurrentBezierFlags() const { return bUseBezierPerPoint; }
+	// const TArray<FInterpCurve<FVector2D>>& GetCompletedShapes() const { return CompletedShapes; }
+	// const TArray<TArray<bool>>& GetCompletedBezierFlags() const { return CompletedBezierFlags; }
+	// const FInterpCurve<FVector2D>& GetCurrentCurvePoints() const { return CurvePoints; }
+	// const TArray<bool>& GetCurrentBezierFlags() const { return bUseBezierPerPoint; }
 	// ui getter for the mode, so draw, edit or sew
 	EClothEditorMode GetCurrentMode() const { return CurrentMode; }
 	FCanvasSewing& GetSewingManager() { return SewingManager; }
@@ -123,35 +114,40 @@ public:
 	bool bIsShapeSelected = false;
 	mutable bool bIsDragging = false;
 	bool bIsPanning = false;
-	
+	float BackgroundImageScale = 1.0f;
+
 	FInterpCurve<FVector2D> CurvePoints;
 	TArray<FInterpCurve<FVector2D>> CompletedShapes;
 	TArray<bool> bUseBezierPerPoint;
 	TArray<TArray<bool>> CompletedBezierFlags;
 	bool bUseBezierPoints = true;
 
-	// other, maybe reorganise??
-	int32 FinaliseCurrentShape(bool bGenerateNow = false, TArray<TWeakObjectPtr<APatternMesh>>* OutSpawnedActors = nullptr);
+
 
 
 
 	
+	// other, maybe reorganise??
+	int32 FinaliseCurrentShape(bool bGenerateNow = false, TArray<TWeakObjectPtr<APatternMesh>>* OutSpawnedActors = nullptr);
+	
 	TMap<int32, TSet<int32>> SewnPointIndicesPerShape;
-	// Temporary data for currently-being-selected seam
-	// TMap<int32, TSet<int32>> CurrentSeamPreviewPoints;
 	
 	void UpdateSewnPointSets();
 	int32 SelectedSeamIndex = INDEX_NONE;
-	// UPROPERTY()
-	// TSet<int32> SelectedSewingPointIndices;
-	// // Canvas.h (or wherever canvas state lives)
-	
+
 private:
 	FGeometry LastGeometry;
-	TArray<TWeakObjectPtr<APatternMesh>> LastBuiltActors;
 	
 	// for save load managing 
 	FCanvasAssetManager AssetManager;
+
+	FCanvasSewing SewingManager;
+	EClothEditorMode CurrentMode = EClothEditorMode::Draw;
+	
+	void FocusViewportOnPoints();
+
+	void RestoreCanvasState(const FCanvasState& State);
+
 
 	
 

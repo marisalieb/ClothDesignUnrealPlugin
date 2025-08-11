@@ -1,17 +1,10 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "Toolkits/BaseToolkit.h"
 #include "ClothDesignEditorMode.h"
-
-#include "PropertyCustomizationHelpers.h"
 #include "GameFramework/Actor.h"
 
-/**
- * This FModeToolkit just creates a basic UI panel that allows various InteractiveTools to
- * be initialized, and a DetailsView used to show properties of the active Tool.
- */
+
 class FClothDesignToolkit : public FModeToolkit
 {
 public:
@@ -28,20 +21,25 @@ public:
 	// custom UI
 	virtual TSharedPtr<SWidget> GetInlineContent() const override;
 
-	FReply OnOpen2DWindowClicked();
-
-	TSharedRef<SWidget> MakeOpen2DButton();
-	TSharedRef<SWidget> MakeObjectPicker(
-		const FText& LabelText,
-		UClass* AllowedClass,
-		TFunction<FString()> GetPath,
-		TFunction<void(const FAssetData&)> OnChanged);
 	
+private:
+	TSharedPtr<SWidget> ToolkitWidget;
+
 	// objects for pickers: collision body mesh, cloth, object, material for fabric
 	TWeakObjectPtr<USkeletalMesh> SelectedSkeletalMesh;
 	TWeakObjectPtr<USkeletalMesh> SelectedClothMesh;
 	TWeakObjectPtr<UMaterialInterface> SelectedTextileMaterial;
 
+	FReply OnOpen2DWindowClicked();
+
+	TSharedRef<SWidget> MakeOpen2DButton();
+	
+	TSharedRef<SWidget> MakeObjectPicker(
+		const FText& LabelText,
+		const UClass* AllowedClass,
+		TFunction<FString()> GetPath,
+		TFunction<void(const FAssetData&)> OnChanged);
+	
 	// functions for each picker
 	FString GetSelectedSkeletalMeshPath() const;
 	void OnSkeletalMeshSelected(const FAssetData& AssetData);
@@ -51,7 +49,4 @@ public:
 
 	FString GetSelectedTextileMaterialPath() const;
 	void OnTextileMaterialSelected(const FAssetData& AssetData);
-	
-private:
-	TSharedPtr<SWidget> ToolkitWidget;
 };

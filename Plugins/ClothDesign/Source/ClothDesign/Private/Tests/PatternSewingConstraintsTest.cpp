@@ -22,10 +22,7 @@ bool FPatternSewingConstraint_DefaultsTest::RunTest(const FString& Parameters)
 	// // Integers default to zero
 	// TestEqual(TEXT("VertexIndexA should default to 0"), Constraint.VertexIndexA, 0);
 	// TestEqual(TEXT("VertexIndexB should default to 0"), Constraint.VertexIndexB, 0);
-	//
-	// // Float default is 0.0 unless initialized otherwise
-	// TestEqual(TEXT("Stiffness should default to 0.0f"), Constraint.Stiffness, 0.0f);
-
+	
 	// Arrays should start empty
 	TestTrue(TEXT("ScreenPointsA should be empty"), Constraint.ScreenPointsA.Num() == 0);
 	TestTrue(TEXT("ScreenPointsB should be empty"), Constraint.ScreenPointsB.Num() == 0);

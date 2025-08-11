@@ -2,7 +2,6 @@
 
 #include "Styling/SlateStyleRegistry.h"
 #include "Interfaces/IPluginManager.h"
-#include "Slate/SlateGameResources.h"
 
 TSharedPtr<FSlateStyleSet> FClothDesignStyle::StyleInstance = nullptr;
 
@@ -36,13 +35,14 @@ void FClothDesignStyle::Shutdown()
 	}
 }
 
+const ISlateStyle& FClothDesignStyle::Get()
+{
+	return *StyleInstance;
+}
+
 FName FClothDesignStyle::GetStyleSetName()
 {
 	static FName StyleSetName(TEXT("ClothDesignEditorModeStyle"));
 	return StyleSetName;
 }
 
-const ISlateStyle& FClothDesignStyle::Get()
-{
-	return *StyleInstance;
-}

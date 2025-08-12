@@ -3,6 +3,26 @@
 #include "Toolkits/BaseToolkit.h"
 #include "ClothDesignEditorMode.h"
 #include "GameFramework/Actor.h"
+#include "ClothSimSettings.h"  // include your new struct header
+
+// UENUM()
+// enum class EClothPreset : uint8
+// {
+// 	Denim,
+// 	Leather,
+// 	Silk,
+// 	Jersey,
+// 	Max UMETA(Hidden)  // Optional helper
+// };
+//
+// struct FPresetItem
+// {
+// 	EClothPreset Preset;
+// 	FString DisplayName;
+//
+// 	FPresetItem(EClothPreset InPreset, const FString& InName)
+// 		: Preset(InPreset), DisplayName(InName) {}
+// };
 
 
 class FClothDesignToolkit : public FModeToolkit
@@ -49,4 +69,30 @@ private:
 
 	FString GetSelectedTextileMaterialPath() const;
 	void OnTextileMaterialSelected(const FAssetData& AssetData);
+
+
+
+
+	// TArray<TSharedPtr<FPresetItem>> PresetOptions = {
+	// 	MakeShared<FPresetItem>(EClothPreset::Denim, TEXT("Denim")),
+	// 	MakeShared<FPresetItem>(EClothPreset::Leather, TEXT("Leather")),
+	// 	MakeShared<FPresetItem>(EClothPreset::Silk, TEXT("Silk")),
+	// 	MakeShared<FPresetItem>(EClothPreset::Jersey, TEXT("Jersey"))
+	// };
+
+	//TSharedPtr<FPresetItem> SelectedPreset = PresetOptions[0];
+	FClothSimSettings SimSettings;
+	TSharedPtr<FPresetItem> SelectedPresetSharedPtr; // mirrors SimSettings.SelectedPreset
+	
+	TSharedRef<SWidget> MakePresetPicker();
+	
+	void OnPresetSelected(TSharedPtr<FPresetItem> NewSelection, ESelectInfo::Type SelectInfo);
+
+	FText GetPresetDisplayName(EClothPreset Preset);
+	void ForEachComponentUsingSelectedMesh(TFunctionRef<void(USkeletalMeshComponent*)> Fn);
+
+	//static void SetClothCollisionFlags(USkeletalMeshComponent* SkelComp);
+
 };
+
+

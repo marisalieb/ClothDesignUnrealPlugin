@@ -317,51 +317,51 @@ TSharedRef<SWidget> FClothDesignModule::MakeActionButtons()
 		.BorderImage(FAppStyle::Get().GetBrush("ToolPanel.GroupBorder"))
 		.Padding(8)
 		[
-		SNew(SVerticalBox)
+			SNew(SVerticalBox)
 
-		// Generate Mesh
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		.Padding(10)
-		.HAlign(HAlign_Left)
-		[
-			SNew(SBox)
-			.WidthOverride(250.f)
+			// Generate Mesh
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(10)
+			.HAlign(HAlign_Left)
 			[
-				SNew(SButton)
-				.Text(LOCTEXT("GenerateMeshBtn", "Generate Mesh"))
-				.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
+				SNew(SBox)
+				.WidthOverride(250.f)
+				[
+					SNew(SButton)
+					.Text(LOCTEXT("GenerateMeshBtn", "Generate Mesh"))
+					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
+				]
 			]
-		]
 
-		// Sewing
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		.Padding(10)
-		.HAlign(HAlign_Left)
-		[
-			SNew(SBox)
-			.WidthOverride(250.f)
+			// Sewing
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(10)
+			.HAlign(HAlign_Left)
 			[
-				SNew(SButton)
-				.Text(LOCTEXT("SewingBtn", "Sewing"))
-				.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSewingClicked))
+				SNew(SBox)
+				.WidthOverride(250.f)
+				[
+					SNew(SButton)
+					.Text(LOCTEXT("SewingBtn", "Sewing"))
+					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSewingClicked))
+				]
 			]
-		]
-		// Merge meshes
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		.Padding(10)
-		.HAlign(HAlign_Left)
-		[
-			SNew(SBox)
-			.WidthOverride(250.f)
+			// Merge meshes
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(10)
+			.HAlign(HAlign_Left)
 			[
-				SNew(SButton)
-				.Text(LOCTEXT("MergeMeshesBtn", "Merge Meshes"))
-				.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnMergeMeshesClicked))
+				SNew(SBox)
+				.WidthOverride(250.f)
+				[
+					SNew(SButton)
+					.Text(LOCTEXT("MergeMeshesBtn", "Merge Meshes"))
+					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnMergeMeshesClicked))
+				]
 			]
-		]
 
 		];
 }

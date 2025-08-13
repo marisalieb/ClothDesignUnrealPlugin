@@ -42,6 +42,10 @@ private:
 		TFunction<FString()> GetPath,
 		TFunction<void(const FAssetData&)> OnChanged,
 		bool bFilterBySceneUsage);
+
+	TSharedRef<SWidget> MakeClothSettingsSection();
+	TSharedRef<SWidget> MakeCollisionSection();
+
 	
 	// functions for each picker
 	FString GetSelectedCollisionMeshPath() const;

@@ -27,6 +27,8 @@ void FClothDesignToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, 
 	// custom UI
 	ToolkitWidget = SNew(SVerticalBox)
 
+
+		// SNew(SVerticalBox)
 		// open 2d button
 		+ SVerticalBox::Slot()
 		.AutoHeight()
@@ -35,18 +37,7 @@ void FClothDesignToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, 
 			MakeOpen2DButton()
 		]
 
-		// object pickers
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		.Padding(4)
-		[
-			MakeObjectPicker(
-				FText::FromString("Collision Object:"),
-				UStaticMesh::StaticClass(),
-				[this]() { return GetSelectedCollisionMeshPath(); },
-				[this](const FAssetData& A) { OnCollisionMeshSelected(A); },
-				true)
-		]
+		+ SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
 
 		+ SVerticalBox::Slot()
 		.AutoHeight()
@@ -59,48 +50,23 @@ void FClothDesignToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, 
 				[this](const FAssetData& A) { OnClothMeshSelected(A); },
 				true)
 		]
+		
+		// + SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
 
 		+ SVerticalBox::Slot()
 		.AutoHeight()
-		.Padding(4)
+		.Padding(2)
 		[
-			MakeObjectPicker(
-				FText::FromString("Cloth Material:"),
-				UMaterialInterface::StaticClass(),
-				[this]() { return GetSelectedTextileMaterialPath(); },
-				[this](const FAssetData& A) { OnTextileMaterialSelected(A); },
-				false)
+			MakeClothSettingsSection()
 		]
 
-		// + SVerticalBox::Slot()
-		// .AutoHeight()
-		// .Padding(4)
-		// [
-		// 	MakeObjectPicker(
-		// 		FText::FromString("Cloth Material:"),
-		// 		UMaterialInterface::StaticClass(),
-		// 		[this]() { return GetSelectedTextileMaterialPath(); },
-		// 		[this](const FAssetData& A) { OnTextileMaterialSelected(A); }
-		// 	)
-		// ]
-
-		// // save button
-		// + SVerticalBox::Slot()
-		// .AutoHeight()
-		// .Padding(4)
-		// [
-		// 	SNew(SButton)
-		// 	.Text(FText::FromString("Save Setup"))
-		// 	// .OnClicked(...) // hook up when ready
-		// ]
-
-		// presets
 		+ SVerticalBox::Slot()
 		.AutoHeight()
-		.Padding(4)
+		.Padding(2)
 		[
-			MakePresetPicker()
+			MakeCollisionSection()
 		];
+
 }
 
 void FClothDesignToolkit::GetToolPaletteNames(TArray<FName>& PaletteNames) const
@@ -136,9 +102,71 @@ FReply FClothDesignToolkit::OnOpen2DWindowClicked()
 TSharedRef<SWidget> FClothDesignToolkit::MakeOpen2DButton()
 {
 	return SNew(SButton)
-		.Text(FText::FromString("Open 2D Window"))
+		.Text(FText::FromString("Open 2D Editor"))
 		.OnClicked(FOnClicked::CreateSP(this, &FClothDesignToolkit::OnOpen2DWindowClicked));
 }
+
+TSharedRef<SWidget> FClothDesignToolkit::MakeClothSettingsSection()
+{
+	return
+		SNew(SExpandableArea)
+		.AreaTitle(LOCTEXT("ClothSettings", "Cloth Settings"))
+		// .AreaTitle(FText::FromString("Cloth Settings"))
+		.InitiallyCollapsed(true) // start collapsed by default
+		.BodyContent()
+		[
+			SNew(SVerticalBox)
+
+			// Cloth Material picker
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(4)
+			[
+				MakeObjectPicker(
+					FText::FromString("Cloth Material:"),
+					UMaterialInterface::StaticClass(),
+					[this]() { return GetSelectedTextileMaterialPath(); },
+					[this](const FAssetData& A) { OnTextileMaterialSelected(A); },
+					false)
+			]
+
+			// Preset picker
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(4)
+			[
+				MakePresetPicker()
+			]
+		];
+}
+
+TSharedRef<SWidget> FClothDesignToolkit::MakeCollisionSection()
+{
+	return
+		SNew(SExpandableArea)
+		.AreaTitle(LOCTEXT("Collision", "Collision Object"))
+		// .AreaTitle(FText::FromString("Cloth Settings"))
+		.InitiallyCollapsed(true) // start collapsed by default
+		.BodyContent()
+		[
+			SNew(SVerticalBox)
+
+			// object pickers
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			.Padding(4)
+			[
+				MakeObjectPicker(
+					FText::FromString("Collision Object:"),
+					UStaticMesh::StaticClass(),
+					[this]() { return GetSelectedCollisionMeshPath(); },
+					[this](const FAssetData& A) { OnCollisionMeshSelected(A); },
+					true)
+			]
+		];
+}
+
+
 
 TSharedRef<SWidget> FClothDesignToolkit::MakeObjectPicker(
 	const FText& LabelText,

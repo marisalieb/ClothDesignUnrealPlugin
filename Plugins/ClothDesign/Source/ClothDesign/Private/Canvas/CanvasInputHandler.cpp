@@ -442,7 +442,7 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	        FVector2D Ps = Canvas->TransformPoint(Aend);
 	        FVector2D Pe = Canvas->TransformPoint(Bend);
 	    	// Before distance test: log everything
-	    	//FVector2D LocalMousePos = /* whatever you get from MyGeometry.AbsoluteToLocal(...) at the call site */;
+	    	//FVector2D LocalMousePos = /* whatever you get from Geometry.AbsoluteToLocal(...) at the call site */;
 	    	UE_LOG(LogTemp, Warning, TEXT("Debug coords: LocalMouse=(%f,%f) CanvasClick(pos maybe pattern)=(%f,%f) Ps=(%f,%f) Pe=(%f,%f) Zoom=%f Pan=(%f,%f)"),
 				LocalMousePos.X, LocalMousePos.Y,
 				CanvasClickPos.X, CanvasClickPos.Y,

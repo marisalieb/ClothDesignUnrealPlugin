@@ -1,14 +1,32 @@
 #include "Canvas/CanvasPatternMerge.h"
 
-#include "PatternMesh.h"                 // APatternMesh
-#include "PatternSewingConstraint.h"     // FPatternSewingConstraint
+#include "PatternMesh.h" 
+#include "PatternSewingConstraint.h" 
 #include "Algo/Reverse.h"
 #include "Misc/MessageDialog.h"
 #include "Engine/World.h"
-#include "Editor.h"                      // GEditor
+#include "Editor.h" 
 #include "Containers/Set.h"
 
 #include "Canvas/CanvasUtils.h"
+#include "ClothSimSettings.h"
+
+#include "DynamicMesh/Operations/MergeCoincidentMeshEdges.h"
+#include "DynamicMesh/MeshNormals.h"
+
+#if WITH_EDITOR
+#include "CoreMinimal.h"
+#include "UDynamicMesh.h" 
+#include "GeometryScript/CreateNewAssetUtilityFunctions.h"
+#include "GeometryScript/GeometryScriptTypes.h"
+#include "Editor.h"
+#include "Animation/SkeletalMeshActor.h"
+#include "GeometryScript/MeshBoneWeightFunctions.h"
+#include "Subsystems/AssetEditorSubsystem.h"
+#include "Rendering/SkeletalMeshLODModel.h"
+#include "Rendering/SkeletalMeshRenderData.h"
+#endif
+
 
 FCanvasPatternMerge::FCanvasPatternMerge(
     TArray<TWeakObjectPtr<APatternMesh>>& InSpawnedActors,
@@ -132,10 +150,35 @@ bool FCanvasPatternMerge::MergeComponentToDynamicMesh(
         for (int tid : Src->DynamicMesh.TriangleIndicesItr())
         {
             UE::Geometry::FIndex3i T = Src->DynamicMesh.GetTriangle(tid);
-            if (!Remap.Contains(T.A) || !Remap.Contains(T.B) || !Remap.Contains(T.C)) continue;
-            OutMerged.AppendTriangle(Remap[T.A], Remap[T.B], Remap[T.C]);
+            if (!Remap.Contains(T.C) || !Remap.Contains(T.B) || !Remap.Contains(T.A)) continue;
+            OutMerged.AppendTriangle(Remap[T.C], Remap[T.B], Remap[T.A]);
         }
+        
     }
+    // Step 2: Merge vertices along seams
+    double MergeSearchTolerance = 5.5;
+    double MergeVertexTolerance = 1.05;
+
+    UE::Geometry::FMergeCoincidentMeshEdges Merger(&OutMerged);
+    Merger.MergeSearchTolerance = MergeSearchTolerance;
+    Merger.MergeVertexTolerance = MergeVertexTolerance;
+    Merger.bWeldAttrsOnMergedEdges = true;
+
+    bool bMerged = Merger.Apply();
+    if (bMerged)
+    {
+        UE_LOG(LogTemp, Log, TEXT("[Merge] MergeCoincidentMeshEdges succeeded. initial boundary edges: %d final: %d"),
+            Merger.InitialNumBoundaryEdges, Merger.FinalNumBoundaryEdges);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("[Merge] MergeCoincidentMeshEdges did not merge anything."));
+    }
+
+    // Step 3: Recompute normals (optional)
+    UE::Geometry::FMeshNormals Normals(&OutMerged);
+    Normals.ComputeVertexNormals();
+
     return OutMerged.TriangleCount() > 0;
 }
 
@@ -270,13 +313,229 @@ void FCanvasPatternMerge::MergeSewnGroups() const
 
         UE::Geometry::FDynamicMesh3 Merged;
         if (!MergeComponentToDynamicMesh(Comp, Actors, Merged)) { UE_LOG(LogTemp, Warning, TEXT("[Merge] merged had no triangles")); continue; }
-
+        
         APatternMesh* MergedActor = SpawnMergedActorFromDynamicMesh(MoveTemp(Merged));
         if (!MergedActor) { UE_LOG(LogTemp, Warning, TEXT("[Merge] spawn failed")); continue; }
 
+        // Now update your lists (or you may have destroyed the merged actor already)
         ReplaceActorsWithMerged(Comp, Actors, MergedActor);
         RemoveInternalSeams(Comp, ActorToIndex);
+        
+        // after MergedActor is created and has .DynamicMesh populated
+#if WITH_EDITOR
+        UDynamicMesh* TempDyn = NewObject<UDynamicMesh>(GetTransientPackage(), NAME_None);
+        if (TempDyn)
+        {
+            TempDyn->SetMesh(MergedActor->DynamicMesh); // copy FDynamicMesh3 into UDynamicMesh
 
-        UE_LOG(LogTemp, Log, TEXT("[Merge] merged component of %d actors into %s"), Comp.Num(), *MergedActor->GetName());
-    }
+            FString SafeLabel = MergedActor->GetActorLabel();
+            SafeLabel.ReplaceInline(TEXT(" "), TEXT("_"));
+            FString Guid = FGuid::NewGuid().ToString(EGuidFormats::Digits);
+            FString AssetPathAndName = FString::Printf(TEXT("/Game/ClothDesign/MergedClothPattern/%s"), *SafeLabel);
+
+            // Use the static helper that creates bone weights then the skeletal asset
+            USkeletalMesh* NewSkel = CreateSkeletalFromFDynamicMesh(TempDyn, AssetPathAndName);
+            if (NewSkel)
+            {
+                UWorld* World = GEditor->GetEditorWorldContext().World();
+                if (World)
+                {
+                    FActorSpawnParameters SpawnParams;
+                    FTransform SpawnTransform = MergedActor->GetActorTransform();
+                    ASkeletalMeshActor* SkelActor = World->SpawnActor<ASkeletalMeshActor>(ASkeletalMeshActor::StaticClass(), SpawnTransform, SpawnParams);
+                    if (SkelActor && SkelActor->GetSkeletalMeshComponent())
+                    {
+                        SkelActor->GetSkeletalMeshComponent()->SetSkeletalMesh(NewSkel);
+#if WITH_EDITOR
+                        SkelActor->SetFolderPath(FName(TEXT("ClothDesignActors")));
+                        SkelActor->SetActorLabel(FString::Printf(TEXT("%s"), *SafeLabel));
+#endif
+                        // remove the merged APatternMesh if you want:
+                        MergedActor->Destroy();
+                        MergedActor = nullptr;
+                    }
+                }
+
+                // // assume NewSkel is valid and SafeLabel exists
+                // FString ClothAssetPath = FString::Printf(TEXT("/Game/ClothDesign/MergedClothPattern/%s_Cloth"), *SafeLabel);
+                // int32 LODIndex = 0;
+                // int32 SectionIndex = 0; // choose the section you want to cloth (0 if single-section mesh)
+                // FTimerHandle TimerHandle;
+                //
+                // FClothSimSettings ClothSettings;
+                //ClothSettings.CreateAndBindClothingAssetForSkeletalMesh(NewSkel, ClothAssetPath, LODIndex, SectionIndex);
+                // bool bSuccess = ClothSettings.CreateAndBindClothingAssetForSkeletalMesh(NewSkel, ClothAssetPath, 0, 0);
+                //
+                // if (!bSuccess)
+                // {
+                //     UE_LOG(LogTemp, Warning, TEXT("Failed to create and bind clothing asset."));
+                // }
+                // else
+                // {
+                //     UE_LOG(LogTemp, Display, TEXT("Successfully created and bound clothing asset."));
+                // }
+                // GEditor->GetEditorWorldContext().World()->GetTimerManager().SetTimer(TimerHandle, [NewSkel, ClothAssetPath]()
+                // {
+                //     FClothSimSettings ClothSettings;
+                //       //ClothSettings.CreateAndBindClothingAssetForSkeletalMesh(NewSkel, ClothAssetPath, LODIndex, SectionIndex);
+                //       bool bSuccess = ClothSettings.CreateAndBindClothingAssetForSkeletalMesh(NewSkel, ClothAssetPath, 0, 0);
+                //
+                //       if (!bSuccess)
+                //       {
+                //           UE_LOG(LogTemp, Warning, TEXT("Failed to create and bind clothing asset."));
+                //       }
+                //       else
+                //       {
+                //           UE_LOG(LogTemp, Display, TEXT("Successfully created and bound clothing asset."));
+                //       }
+                // }, 0.1f, false);
+                
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("[Merge] CreateSkeletalFromFDynamicMesh failed for %s"), *AssetPathAndName);
+            }
+        }
+#endif
+
+
+     // Now update your lists (or you may have destroyed the merged actor already)
+     ReplaceActorsWithMerged(Comp, Actors, MergedActor);
+     RemoveInternalSeams(Comp, ActorToIndex);
+     }
 }
+
+
+
+USkeletalMesh* FCanvasPatternMerge::CreateSkeletalFromFDynamicMesh(UDynamicMesh* DynMesh, const FString& AssetPathAndName)
+{
+#if WITH_EDITOR
+    if (!IsValid(DynMesh))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CreateSkeletalFromFDynamicMesh_Static: DynMesh null"));
+        return nullptr;
+    }
+
+    // optional debug object
+    UGeometryScriptDebug* DebugObj = NewObject<UGeometryScriptDebug>(GetTransientPackage(), NAME_None);
+
+    // 1) Create/replace a bone-weight profile named "Default"
+    bool bReplaceExistingProfile = true;
+    FGeometryScriptBoneWeightProfile Profile;
+    Profile.ProfileName = FName(TEXT("Default"));
+
+    bool bProfileExisted = UGeometryScriptLibrary_MeshBoneWeightFunctions::MeshCreateBoneWeights(
+        DynMesh,
+        bReplaceExistingProfile,
+        DebugObj,
+        Profile
+    );
+
+    // 2) Set all vertex weights to bone 0 with weight 1.0 (rigid bind)
+    FGeometryScriptBoneWeight SingleBW;
+    SingleBW.BoneIndex = 0;
+    SingleBW.Weight = 1.0f;
+    TArray<FGeometryScriptBoneWeight> AllWeights;
+    AllWeights.Add(SingleBW);
+
+    // Some builds accept Debug as optional 4th param; include it for safety
+    UGeometryScriptLibrary_MeshBoneWeightFunctions::SetAllVertexBoneWeights(
+        DynMesh,
+        AllWeights,
+        Profile,
+        DebugObj
+    );
+
+    // 3) Load a small skeleton asset you've included in your plugin content.
+    // Put the skeleton uasset under Plugins/YourPlugin/Content/SimpleSkeleton.uasset
+    // and use the object path "/Plugin/YourPlugin/SimpleSkeleton.SimpleSkeleton"
+    USkeleton* SkeletonAsset = LoadObject<USkeleton>(nullptr, TEXT("/Game/ClothDesign/SkelAsset/SK_ProcMesh.SK_ProcMesh"));
+    if (!SkeletonAsset)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CreateSkeletal: could not load skeleton asset at '/Plugin/...' - please add it to plugin Content"));
+        return nullptr;
+    }
+
+    // 4) Create the skeletal mesh asset (pass the skeleton so generator has bone definitions)
+    FGeometryScriptCreateNewSkeletalMeshAssetOptions Options;
+    Options.bEnableRecomputeNormals = false;
+    Options.bEnableRecomputeTangents = false;
+    EGeometryScriptOutcomePins Outcome = EGeometryScriptOutcomePins::Failure;
+
+    USkeletalMesh* NewSkeletal = UGeometryScriptLibrary_CreateNewAssetFunctions::CreateNewSkeletalMeshAssetFromMesh(
+        DynMesh,          // UDynamicMesh*
+        SkeletonAsset,    // pass real skeleton (not nullptr)
+        AssetPathAndName,
+        Options,
+        Outcome,
+        DebugObj
+    );
+
+    if (!IsValid(NewSkeletal) || Outcome != EGeometryScriptOutcomePins::Success)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CreateNewSkeletalMeshAssetFromMesh failed. Outcome=%d"), (int32)Outcome);
+        return nullptr;
+    }
+    
+    // // After creation and before cloth binding:
+    // const FSkeletalMeshRenderData* RenderData = NewSkeletal->GetResourceForRendering();
+    // if (!RenderData || RenderData->LODRenderData.Num() == 0)
+    // {
+    //     UE_LOG(LogTemp, Warning, TEXT("No LODs found on skeletal mesh! Cannot bind cloth asset."));
+    //     return nullptr;
+    // }
+    // else
+    // {
+    //     UE_LOG(LogTemp, Display, TEXT("Skeletal mesh has %d LOD(s)."), RenderData->LODRenderData.Num());
+    // }
+    //
+    // if (NewSkeletal->GetLODNum() > 0)
+    // {
+    //     FSkeletalMeshRenderData* RenderData = NewSkeletal->GetResourceForRendering();
+    //     if (RenderData && RenderData->LODRenderData.Num() > 0)
+    //     {
+    //         const FSkeletalMeshLODRenderData& Lod0 = RenderData->LODRenderData[0];
+    //         int32 NumSections = Lod0.RenderSections.Num();
+    //         UE_LOG(LogTemp, Display, TEXT("LOD0 has %d sections"), NumSections);
+    //     }
+    // }
+
+    // if (NewSkeletal)
+    // {
+    //     // Make sure at least 1 LOD exists
+    //     if (NewSkeletal->GetLODNum() == 0)
+    //     {
+    //         FSkeletalMeshLODInfo NewLODInfo;
+    //         NewLODInfo.ReductionSettings.NumOfTrianglesPercentage = 1.0f;
+    //         NewSkeletal->AddLODInfo(NewLODInfo);
+    //     }
+    //
+    //     // Mark dirty before rebuild
+    //     NewSkeletal->MarkPackageDirty();
+    //
+    //     // Build the skeletal mesh (rebuild render data, skinning data, etc.)
+    //     NewSkeletal->Build();
+    //
+    //     // Initialize rendering resources explicitly to ensure LOD0 is available
+    //     NewSkeletal->InitResources();
+    //     NewSkeletal->GetResourceForRendering(); // Force update of render data
+    //
+    //     // Post-edit change notification to notify the editor and update references
+    //     NewSkeletal->PostEditChange();
+    //
+    //     // Mark dirty again to make sure changes are saved
+    //     NewSkeletal->MarkPackageDirty();
+    // }
+
+
+    UE_LOG(LogTemp, Display, TEXT("Created SkeletalMesh asset at %s"), *AssetPathAndName);
+    return NewSkeletal;
+    
+#else
+    return nullptr;
+#endif
+}
+
+
+
+

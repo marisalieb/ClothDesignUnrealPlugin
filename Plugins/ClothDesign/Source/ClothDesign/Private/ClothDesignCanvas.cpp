@@ -89,18 +89,24 @@ int32 SClothDesignCanvas::OnPaint(
 
 
 
-FReply SClothDesignCanvas::OnMouseWheel(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+FReply SClothDesignCanvas::OnMouseWheel(const FGeometry& Geometry, const FPointerEvent& MouseEvent)
 {
 	const float ScrollDelta = MouseEvent.GetWheelDelta();
-	constexpr float ZoomDelta = 0.1f; // How fast to zoom
-
-	const FVector2D MousePos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
+	const FVector2D MousePos = Geometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
 
 	// Compute the world position under the mouse before zoom
 	const FVector2D WorldBeforeZoom = (MousePos - PanOffset) / ZoomFactor;
 
+	// constexpr float ZoomDelta = 0.1f; // How fast to zoom
+	// Adjust zoom factor multiplicatively
+	float ZoomScale = 1.1f; // How much each wheel tick zooms (10% per tick)
+	if (ScrollDelta < 0)
+		ZoomFactor /= FMath::Pow(ZoomScale, -ScrollDelta);
+	else
+		ZoomFactor *= FMath::Pow(ZoomScale, ScrollDelta);
+	
 	// Adjust zoom factor
-	ZoomFactor = FMath::Clamp(ZoomFactor + ScrollDelta * ZoomDelta, 0.1f, 10.0f);
+	ZoomFactor = FMath::Clamp(ZoomFactor, 1.f, 20.0f);
 
 	// Recalculate pan offset to keep zoom centered under mouse
 	PanOffset = MousePos - WorldBeforeZoom * ZoomFactor;
@@ -113,7 +119,7 @@ FReply SClothDesignCanvas::OnMouseWheel(const FGeometry& MyGeometry, const FPoin
 
 
 
-FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& Geometry, const FPointerEvent& MouseEvent)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnMouseButtonDown fired. Mode: %d"), (int32)CurrentMode);
 
@@ -130,12 +136,12 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 	
 	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
-		const FVector2D LocalClickPos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
+		const FVector2D LocalClickPos = Geometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
 		const FVector2D CanvasClickPos = InverseTransformPoint(LocalClickPos);
 		
 		if (CurrentMode == EClothEditorMode::Draw)
 		{
-			return Handler.HandleDraw(MyGeometry, MouseEvent);
+			return Handler.HandleDraw(Geometry, MouseEvent);
 		}
 		
 		else if (CurrentMode == EClothEditorMode::Sew)
@@ -170,7 +176,7 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& MyGeometry, const 
 
 
 
-FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+FReply SClothDesignCanvas::OnMouseMove(const FGeometry& Geometry, const FPointerEvent& MouseEvent)
 {
 	if (bIsPanning)
 	{
@@ -188,7 +194,7 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 	
 	if (CurrentMode == EClothEditorMode::Select && MouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
 	{
-		FVector2D LocalMousePos = MyGeometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
+		FVector2D LocalMousePos = Geometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
 		const FVector2D CanvasMousePos = InverseTransformPoint(LocalMousePos);
 		//UE_LOG(LogTemp, Warning, TEXT("CanvasClick: %s"), *CanvasMousePos.ToString());
 
@@ -306,7 +312,7 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& MyGeometry, const FPoint
 }
 
 
-FReply SClothDesignCanvas::OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+FReply SClothDesignCanvas::OnMouseButtonUp(const FGeometry& Geometry, const FPointerEvent& MouseEvent)
 {
 	if (MouseEvent.GetEffectingButton() == EKeys::MiddleMouseButton)
 	{
@@ -336,7 +342,7 @@ FReply SClothDesignCanvas::OnMouseButtonUp(const FGeometry& MyGeometry, const FP
 
 
 
-FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+FReply SClothDesignCanvas::OnKeyDown(const FGeometry& Geometry, const FKeyEvent& InKeyEvent)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Key pressed: %s"), *InKeyEvent.GetKey().ToString());
 
@@ -499,7 +505,7 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& MyGeometry, const FKeyEven
 	}
 	
 	//return FReply::Unhandled();
-	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
+	return SCompoundWidget::OnKeyDown(Geometry, InKeyEvent);
 
 }
 
@@ -546,7 +552,7 @@ int32 SClothDesignCanvas::FinaliseCurrentShape(bool bGenerateNow, TArray<TWeakOb
 }
 
 
-FReply SClothDesignCanvas::OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+FReply SClothDesignCanvas::OnKeyUp(const FGeometry& Geometry, const FKeyEvent& InKeyEvent)
 {
 	const FKey Key = InKeyEvent.GetKey();
 	
@@ -559,11 +565,11 @@ FReply SClothDesignCanvas::OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent&
 		}
 	}
 	//return FReply::Unhandled();
-	return SCompoundWidget::OnKeyUp(MyGeometry, InKeyEvent);
+	return SCompoundWidget::OnKeyUp(Geometry, InKeyEvent);
 }
 
 
-FReply SClothDesignCanvas::OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent)
+FReply SClothDesignCanvas::OnFocusReceived(const FGeometry& Geometry, const FFocusEvent& InFocusEvent)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Canvas received keyboard focus"));
 	return FReply::Handled();
@@ -615,7 +621,7 @@ void SClothDesignCanvas::FocusViewportOnPoints()
 
 	float ZoomX = ViewportSize.X / (BoundsSize.X * Margin);
 	float ZoomY = ViewportSize.Y / (BoundsSize.Y * Margin);
-	ZoomFactor = FMath::Clamp(FMath::Min(ZoomX, ZoomY), 0.1f, 10.0f);
+	ZoomFactor = FMath::Clamp(FMath::Min(ZoomX, ZoomY), 0.1f, 20.0f);
 	
 	PanOffset = ViewportSize * 0.5f - Center * ZoomFactor;
 }

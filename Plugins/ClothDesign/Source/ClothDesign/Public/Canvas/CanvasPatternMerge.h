@@ -5,6 +5,7 @@
 #include "Containers/Array.h"
 #include "Templates/SharedPointer.h"
 #include "DynamicMesh/DynamicMesh3.h"
+#include "UDynamicMesh.h"                                 // UDynamicMesh
 
 class APatternMesh;
 struct FPatternSewingConstraint;
@@ -61,4 +62,7 @@ private:
     void RemoveInternalSeams(
         const TArray<int32>& Component,
         const TMap<APatternMesh*,int32>& ActorToIndex) const;
+    
+    static USkeletalMesh* CreateSkeletalFromFDynamicMesh(UDynamicMesh* DynMesh, const FString& AssetPathAndName);
+
 };

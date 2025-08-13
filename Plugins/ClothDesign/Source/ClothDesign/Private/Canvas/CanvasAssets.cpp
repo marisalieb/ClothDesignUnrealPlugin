@@ -14,7 +14,7 @@ bool FCanvasAssets::SaveShapeAsset(
 	const TArray<bool>& bUseBezierPerPoint)
 {
 	// Create package path - e.g. /Game/YourFolder/AssetName
-	FString PackageName = FString::Printf(TEXT("/Game/%s/%s"), *AssetPath, *AssetName);
+	FString PackageName = FString::Printf(TEXT("/Game/ClothDesign/%s/%s"), *AssetPath, *AssetName);
 	FString SanitizedPackageName = UPackageTools::SanitizePackageName(PackageName);
 
 	UPackage* Package = LoadPackage(nullptr, *SanitizedPackageName, LOAD_None);

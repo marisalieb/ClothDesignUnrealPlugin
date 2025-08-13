@@ -25,17 +25,25 @@ struct FPresetItem
 
 struct FClothPhysicalConfig
 {
-	float Density;
-	float BendStiffness;
-	float AreaStiffness;
-	float TetherStiffness;
-	float TetherScale;
-	float Friction;
-	float Damping;
-	float Drag;
-	float Lift;
-	float GravityScale;
+	float Density; // single value
+	float BendStiffnessLow;
+	float BendStiffnessHigh;
+	float AreaStiffnessLow;
+	float AreaStiffnessHigh;
+	float TetherStiffnessLow;
+	float TetherStiffnessHigh;
+	float TetherScaleLow;
+	float TetherScaleHigh;
+	
+	float Friction; // single value
+	float Damping; // single value
+	float DragLow;
+	float DragHigh;
+	float LiftLow;
+	float LiftHigh;
+	float GravityScale; // single value
 };
+
 
 
 struct FClothSimSettings
@@ -44,13 +52,7 @@ struct FClothSimSettings
 
 	
 	EClothPreset SelectedPreset = EClothPreset::Custom;
-
-	// TArray<TSharedPtr<FPresetItem>> PresetOptions = {
-	// 	MakeShared<FPresetItem>(EClothPreset::Denim, TEXT("Denim")),
-	// 	MakeShared<FPresetItem>(EClothPreset::Leather, TEXT("Leather")),
-	// 	MakeShared<FPresetItem>(EClothPreset::Silk, TEXT("Silk")),
-	// 	MakeShared<FPresetItem>(EClothPreset::Jersey, TEXT("Jersey"))
-	// };
+	
 	// Holds the configuration for each preset
 	TMap<EClothPreset, FClothPhysicalConfig> PresetConfigs;
 	
@@ -65,4 +67,10 @@ struct FClothSimSettings
 
 	// Put future sim-related settings or functions here,
 	// like setting collision flags on the cloth asset
+
+	bool CreateAndBindClothingAssetForSkeletalMesh(
+		USkeletalMesh* TargetSkel,
+		const FString& ClothAssetPackagePath, // "/Game/Cloth/MyClothAsset"
+		int32 MeshLODIndex,
+		int32 SectionIndex);
 };

@@ -60,6 +60,8 @@ public class ClothDesign : ModuleRules
 				"ClothingSystemRuntimeInterface",
 				"ClothingSystemRuntimeCommon",
 				"MeshConversion",
+				"GeometryScriptingEditor",
+				"GeometryScriptingCore", 
 			}
 			);
 		

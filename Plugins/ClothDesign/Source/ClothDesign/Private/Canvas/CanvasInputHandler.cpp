@@ -74,7 +74,7 @@ FReply FCanvasInputHandler::HandleDraw(const FGeometry& Geo, const FPointerEvent
 FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 {
 	
-	FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
+	// FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
 
 	// add a point…
 	auto& CurvePoints = Canvas->CurvePoints;
@@ -174,6 +174,7 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
     switch (SeamClickState)
     {
     case ESeamClickState::None:
+    	FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
     	AStartTarget = { BestShape, BestPoint };
     	SeamClickState = ESeamClickState::ClickedAStart;
     	Canvas->GetSewingManager().AddPreviewPoint(BestShape, BestPoint);
@@ -189,7 +190,8 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
     		UE_LOG(LogTemp, Warning, TEXT("Sew: AEnd rejected because it is on a different shape (%d) than AStart (%d)"), BestShape, AStartTarget.ShapeIndex);
     		return FReply::Handled(); // do not advance state or add preview point
     	}
-    	
+    	FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
+
     	AEndTarget = { BestShape, BestPoint };
     	SeamClickState = ESeamClickState::ClickedAEnd;
     	Canvas->GetSewingManager().AddPreviewPoint(BestShape, BestPoint);
@@ -198,6 +200,8 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
     	break;
     	
     case ESeamClickState::ClickedAEnd:
+    	FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
+
     	BStartTarget = { BestShape, BestPoint };
     	SeamClickState = ESeamClickState::ClickedBStart;
     	Canvas->GetSewingManager().AddPreviewPoint(BestShape, BestPoint);
@@ -214,7 +218,8 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
     		UE_LOG(LogTemp, Warning, TEXT("Sew: BEnd rejected because it is on a different shape (%d) than BStart (%d)"), BestShape, BStartTarget.ShapeIndex);
     		return FReply::Handled(); // do not advance state or add preview point
     	}
-    	
+    	FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
+
     	BEndTarget = { BestShape, BestPoint };
 
     	SeamClickState = ESeamClickState::ClickedBEnd;
@@ -422,6 +427,7 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	    	if (DistSq <= SeamSelectionRadiusSq)
 	    	{
 	    		UE_LOG(LogTemp, Warning, TEXT("Seam %d start-start line selected"), s);
+	    		FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
 
 	            // select this seam
 	            Canvas->SelectedSeamIndex = s;
@@ -454,7 +460,8 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	    	if (DistSq <= SeamSelectionRadiusSq)
 	    	{
 	    		UE_LOG(LogTemp, Warning, TEXT("Seam %d end-end line selected"), s);
-                
+	    		FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
+
 	            Canvas->SelectedSeamIndex = s;
 	            Canvas->SelectedShapeIndex = INDEX_NONE;
 	            Canvas->SelectedPointIndex = INDEX_NONE;

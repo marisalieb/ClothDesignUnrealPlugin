@@ -647,6 +647,27 @@ FCanvasState SClothDesignCanvas::GetCurrentCanvasState() const
 	State.SelectedPointIndex = SelectedPointIndex;
 	State.PanOffset = PanOffset;
 	State.ZoomFactor = ZoomFactor;
+
+	// --- Sewing manager data ---
+	const auto& SewingMgr = GetSewingManager(); // your accessor
+
+	// copy seam definitions (deep copy)
+	State.SeamDefinitions = SewingMgr.SeamDefinitions;
+
+	// copy the transient preview points drawn during sewing
+	State.SeamPreviewPoints = SewingMgr.CurrentSeamPreviewPoints;
+
+	// store click-state as int
+	State.SeamClickState = static_cast<int32>(SewingMgr.SeamClickState);
+
+	// copy the 4 targets (shape,index) into FIntPoint pairs
+	State.AStartTarget = FIntPoint(SewingMgr.AStartTarget.ShapeIndex, SewingMgr.AStartTarget.PointIndex);
+	State.AEndTarget   = FIntPoint(SewingMgr.AEndTarget.ShapeIndex,   SewingMgr.AEndTarget.PointIndex);
+	State.BStartTarget = FIntPoint(SewingMgr.BStartTarget.ShapeIndex, SewingMgr.BStartTarget.PointIndex);
+	State.BEndTarget   = FIntPoint(SewingMgr.BEndTarget.ShapeIndex,   SewingMgr.BEndTarget.PointIndex);
+
+	State.SelectedSeamIndex = SelectedSeamIndex;
+	
 	return State;
 }
 
@@ -669,7 +690,21 @@ void SClothDesignCanvas::RestoreCanvasState(const FCanvasState& State)
 	
 	SelectedPointIndex = INDEX_NONE;
 	SelectedShapeIndex = INDEX_NONE;
+
+	// restore sewing manager
+	auto& SewingMgr = GetSewingManager();
+	SewingMgr.SeamDefinitions = State.SeamDefinitions;
+	SewingMgr.CurrentSeamPreviewPoints = State.SeamPreviewPoints;
+	SewingMgr.SeamClickState = static_cast<ESeamClickState>(State.SeamClickState);
+	SewingMgr.AStartTarget = { State.AStartTarget.X, State.AStartTarget.Y };
+	SewingMgr.AEndTarget   = { State.AEndTarget.X,   State.AEndTarget.Y };
+	SewingMgr.BStartTarget = { State.BStartTarget.X, State.BStartTarget.Y };
+	SewingMgr.BEndTarget   = { State.BEndTarget.X,   State.BEndTarget.Y };
+
+	SelectedSeamIndex = State.SelectedSeamIndex;
 	
+	UpdateSewnPointSets();
+
 	Invalidate(EInvalidateWidgetReason::Paint | EInvalidateWidgetReason::Layout);
 }
 

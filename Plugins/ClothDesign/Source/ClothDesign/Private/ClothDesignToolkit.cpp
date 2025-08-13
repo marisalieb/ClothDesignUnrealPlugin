@@ -26,7 +26,7 @@ void FClothDesignToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, 
 
 	// custom UI
 	ToolkitWidget = SNew(SVerticalBox)
-		
+
 		// open 2d button
 		+ SVerticalBox::Slot()
 		.AutoHeight()
@@ -37,17 +37,17 @@ void FClothDesignToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, 
 
 		// object pickers
 		+ SVerticalBox::Slot()
-	    .AutoHeight()
-	    .Padding(4)
+		.AutoHeight()
+		.Padding(4)
 		[
-		   MakeObjectPicker(
-			   FText::FromString("Body Object:"),
-			   USkeletalMesh::StaticClass(),
-			   [this]() { return GetSelectedSkeletalMeshPath(); },
-			   [this](const FAssetData& A) { OnSkeletalMeshSelected(A); }
-		   )
+			MakeObjectPicker(
+				FText::FromString("Collision Object:"),
+				UStaticMesh::StaticClass(),
+				[this]() { return GetSelectedCollisionMeshPath(); },
+				[this](const FAssetData& A) { OnCollisionMeshSelected(A); },
+				true)
 		]
-		
+
 		+ SVerticalBox::Slot()
 		.AutoHeight()
 		.Padding(4)
@@ -56,8 +56,8 @@ void FClothDesignToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, 
 				FText::FromString("Cloth Object:"),
 				USkeletalMesh::StaticClass(),
 				[this]() { return GetSelectedClothMeshPath(); },
-				[this](const FAssetData& A) { OnClothMeshSelected(A); }
-			)
+				[this](const FAssetData& A) { OnClothMeshSelected(A); },
+				true)
 		]
 
 		+ SVerticalBox::Slot()
@@ -68,19 +68,31 @@ void FClothDesignToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, 
 				FText::FromString("Cloth Material:"),
 				UMaterialInterface::StaticClass(),
 				[this]() { return GetSelectedTextileMaterialPath(); },
-				[this](const FAssetData& A) { OnTextileMaterialSelected(A); }
-			)
+				[this](const FAssetData& A) { OnTextileMaterialSelected(A); },
+				false)
 		]
 
-		// save button
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		.Padding(4)
-		[
-			SNew(SButton)
-			.Text(FText::FromString("Save Setup"))
-			// .OnClicked(...) // hook up when ready
-		]
+		// + SVerticalBox::Slot()
+		// .AutoHeight()
+		// .Padding(4)
+		// [
+		// 	MakeObjectPicker(
+		// 		FText::FromString("Cloth Material:"),
+		// 		UMaterialInterface::StaticClass(),
+		// 		[this]() { return GetSelectedTextileMaterialPath(); },
+		// 		[this](const FAssetData& A) { OnTextileMaterialSelected(A); }
+		// 	)
+		// ]
+
+		// // save button
+		// + SVerticalBox::Slot()
+		// .AutoHeight()
+		// .Padding(4)
+		// [
+		// 	SNew(SButton)
+		// 	.Text(FText::FromString("Save Setup"))
+		// 	// .OnClicked(...) // hook up when ready
+		// ]
 
 		// presets
 		+ SVerticalBox::Slot()
@@ -89,7 +101,6 @@ void FClothDesignToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, 
 		[
 			MakePresetPicker()
 		];
-
 }
 
 void FClothDesignToolkit::GetToolPaletteNames(TArray<FName>& PaletteNames) const
@@ -113,8 +124,6 @@ TSharedPtr<SWidget> FClothDesignToolkit::GetInlineContent() const
 }
 
 
-
-
 FReply FClothDesignToolkit::OnOpen2DWindowClicked()
 {
 	static const FName TwoDTabName("TwoDWindowTab"); // change name here
@@ -135,80 +144,98 @@ TSharedRef<SWidget> FClothDesignToolkit::MakeObjectPicker(
 	const FText& LabelText,
 	const UClass* AllowedClass,
 	TFunction<FString()> GetPath,
-	TFunction<void(const FAssetData&)> OnChanged)
+	TFunction<void(const FAssetData&)> OnChanged,
+	bool bFilterBySceneUsage)
 {
-	return SNew(SHorizontalBox)
+// Start building the property entry box
+    SObjectPropertyEntryBox::FArguments EntryBoxArgs;
+    EntryBoxArgs.AllowedClass(AllowedClass);
+    EntryBoxArgs.ObjectPath_Lambda(MoveTemp(GetPath));
+    EntryBoxArgs.OnObjectChanged_Lambda([OnChanged](const FAssetData& Asset)
+    {
+        OnChanged(Asset);
+    });
 
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(4)
-		[
-			SNew(STextBlock).Text(LabelText)
-		]
+    // Only add filtering if requested
+    if (bFilterBySceneUsage)
+    {
+        EntryBoxArgs.OnShouldFilterAsset(FOnShouldFilterAsset::CreateLambda([](const FAssetData& AssetData)
+        {
+            if (!GEditor)
+                return true; // filter out if no editor
 
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(4)
-		[
-			SNew(SObjectPropertyEntryBox)
-			.AllowedClass(AllowedClass)
-			.ObjectPath_Lambda(MoveTemp(GetPath))
-			.OnObjectChanged_Lambda([this, OnChanged](const FAssetData& Asset)
-			{
-				OnChanged(Asset);
-			})
-			.OnShouldFilterAsset(FOnShouldFilterAsset::CreateLambda([this](const FAssetData& AssetData)
-			{
-				if (!GEditor)
-				return true; // filter out if no editor
-			
-				UWorld* World = GEditor->GetEditorWorldContext().World();
-				if (!World)
-				return true;
-			
-				// We only want to show assets that have at least one component in the world using them
-			
-				for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
-				{
-				  // AActor* Actor = ActorItr.Get();
-				  AActor* Actor = *ActorItr;
-				  if (!Actor)
-					continue;
-			
-				  TArray<USkeletalMeshComponent*> Components;
-				  Actor->GetComponents<USkeletalMeshComponent>(Components);
-			
-				  for (USkeletalMeshComponent* Comp : Components)
-				  {
-					  if (Comp && Comp->GetSkeletalMeshAsset())
-					  {
-						  if (Comp->GetSkeletalMeshAsset()->GetPathName() == AssetData.GetSoftObjectPath().GetAssetPathString()
-)
-						  {
-							  return false; // do NOT filter out, asset is used in scene
-						  }
-					  }
-				  }
-				}
-			
-				return true; // filter out assets not used in scene
-			}))
-		];
+            UWorld* World = GEditor->GetEditorWorldContext().World();
+            if (!World)
+                return true;
+
+            for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+            {
+                AActor* Actor = *ActorItr;
+                if (!Actor)
+                    continue;
+
+                TArray<UMeshComponent*> Components;
+                Actor->GetComponents<UMeshComponent>(Components);
+
+                for (UMeshComponent* Comp : Components)
+                {
+                    if (!Comp)
+                        continue;
+
+                    UObject* UsedAsset = nullptr;
+
+                    if (USkeletalMeshComponent* SkelComp = Cast<USkeletalMeshComponent>(Comp))
+                    {
+                        UsedAsset = SkelComp->GetSkeletalMeshAsset();
+                    }
+                    else if (UStaticMeshComponent* StaticComp = Cast<UStaticMeshComponent>(Comp))
+                    {
+                        UsedAsset = StaticComp->GetStaticMesh();
+                    }
+
+                    if (UsedAsset && UsedAsset->GetPathName() == AssetData.GetSoftObjectPath().GetAssetPathString())
+                    {
+                        return false; // asset is in scene → don't filter out
+                    }
+                }
+            }
+
+            return true; // filter out assets not used in scene
+        }));
+    }
+
+    // Build the horizontal layout with the label and picker
+    return SNew(SHorizontalBox)
+
+        + SHorizontalBox::Slot()
+        .AutoWidth()
+        .Padding(4)
+        [
+            SNew(STextBlock).Text(LabelText)
+        ]
+
+        + SHorizontalBox::Slot()
+        .AutoWidth()
+        .Padding(4)
+        [
+            SNew(SObjectPropertyEntryBox)
+            .AllowedClass(EntryBoxArgs._AllowedClass)
+            .ObjectPath(EntryBoxArgs._ObjectPath)
+            .OnObjectChanged(EntryBoxArgs._OnObjectChanged)
+            .OnShouldFilterAsset(EntryBoxArgs._OnShouldFilterAsset) // Will be empty if not filtering
+        ];
 }
 
 
-
-FString FClothDesignToolkit::GetSelectedSkeletalMeshPath() const
+FString FClothDesignToolkit::GetSelectedCollisionMeshPath() const
 {
-	return SelectedSkeletalMesh.IsValid() ? SelectedSkeletalMesh->GetPathName() : FString();
+	return SelectedCollisionMesh.IsValid() ? SelectedCollisionMesh->GetPathName() : FString();
 }
 
-void FClothDesignToolkit::OnSkeletalMeshSelected(const FAssetData& AssetData)
+void FClothDesignToolkit::OnCollisionMeshSelected(const FAssetData& AssetData)
 {
-	SelectedSkeletalMesh = Cast<USkeletalMesh>(AssetData.GetAsset());
-	
+	SelectedCollisionMesh = Cast<UStaticMesh>(AssetData.GetAsset());
 }
-
 
 
 FString FClothDesignToolkit::GetSelectedClothMeshPath() const
@@ -266,7 +293,6 @@ void FClothDesignToolkit::OnClothMeshSelected(const FAssetData& AssetData)
 			}
 		}
 	}
-	
 }
 
 FString FClothDesignToolkit::GetSelectedTextileMaterialPath() const
@@ -274,10 +300,11 @@ FString FClothDesignToolkit::GetSelectedTextileMaterialPath() const
 	return SelectedTextileMaterial.IsValid() ? SelectedTextileMaterial->GetPathName() : FString();
 }
 
-void FClothDesignToolkit::OnTextileMaterialSelected(const FAssetData& AssetData)
-{
-	SelectedTextileMaterial = Cast<UMaterialInterface>(AssetData.GetAsset());
-}
+// void FClothDesignToolkit::OnTextileMaterialSelected(const FAssetData& AssetData)
+// {
+// 	SelectedTextileMaterial = Cast<UMaterialInterface>(AssetData.GetAsset());
+// }
+
 
 
 // void FClothDesignToolkit::SetSimFlags(USkeletalMeshComponent* SkelComp)
@@ -299,6 +326,90 @@ void FClothDesignToolkit::OnTextileMaterialSelected(const FAssetData& AssetData)
 // }
 
 
+#if WITH_EDITOR
+
+// New helper: iterate components that use the given mesh (explicit param)
+void FClothDesignToolkit::ForEachComponentUsingMesh(USkeletalMesh* Mesh, TFunctionRef<void(USkeletalMeshComponent*)> Op) const
+{
+	if (!Mesh)
+	{
+		return;
+	}
+
+	UWorld* World = nullptr;
+	if (GEditor)
+	{
+		World = GEditor->GetEditorWorldContext().World();
+	}
+	if (!World)
+	{
+		return;
+	}
+
+	for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+	{
+		AActor* Actor = *ActorItr;
+		if (!Actor) continue;
+
+		TArray<USkeletalMeshComponent*> Components;
+		Actor->GetComponents<USkeletalMeshComponent>(Components);
+		for (USkeletalMeshComponent* SkelComp : Components)
+		{
+			if (!SkelComp) continue;
+
+			// Compare the skeletal mesh asset pointer directly
+			if (SkelComp->GetSkeletalMeshAsset() == Mesh)
+			{
+				Op(SkelComp);
+			}
+		}
+	}
+}
+
+#endif // WITH_EDITOR
+
+
+// Modified OnTextileMaterialSelected: explicitly use the current SelectedClothMesh when applying
+void FClothDesignToolkit::OnTextileMaterialSelected(const FAssetData& AssetData)
+{
+	SelectedTextileMaterial = Cast<UMaterialInterface>(AssetData.GetAsset());
+
+	if (!SelectedTextileMaterial.IsValid())
+	{
+		return;
+	}
+
+#if WITH_EDITOR
+	// If no cloth mesh currently selected, do nothing (or optionally notify user)
+	USkeletalMesh* TargetMesh = SelectedClothMesh.Get();
+	if (!TargetMesh)
+	{
+		// Optionally: log or notify the user that no mesh is selected
+		return;
+	}
+
+	const FScopedTransaction Transaction(LOCTEXT("ApplyTextileMaterialTx", "Apply Textile Material"));
+
+	// Use the explicit helper so we always test against the current mesh
+	ForEachComponentUsingMesh(TargetMesh, [this](USkeletalMeshComponent* SkelComp)
+	{
+		if (!SkelComp) return;
+		SkelComp->Modify();
+		const int32 NumMats = SkelComp->GetNumMaterials();
+		for (int32 SlotIndex = 0; SlotIndex < NumMats; ++SlotIndex)
+		{
+			// SkelComp->SetMaterial(SlotIndex, SelectedTextileMaterial.Get());
+			UMaterialInterface* BaseMaterial = SelectedTextileMaterial.Get();
+			UMaterialInstanceDynamic* MID = SkelComp->CreateAndSetMaterialInstanceDynamicFromMaterial(SlotIndex, BaseMaterial);
+
+		}
+		
+		SkelComp->MarkRenderStateDirty();
+	});
+#endif // WITH_EDITOR
+}
+
+
 TSharedRef<SWidget> FClothDesignToolkit::MakePresetPicker()
 {
 	// Find the currently selected preset shared ptr
@@ -311,7 +422,7 @@ TSharedRef<SWidget> FClothDesignToolkit::MakePresetPicker()
 			break;
 		}
 	}
-	
+
 	return
 		SNew(SHorizontalBox)
 
@@ -327,47 +438,53 @@ TSharedRef<SWidget> FClothDesignToolkit::MakePresetPicker()
 		.Padding(4)
 		[
 			SNew(SComboBox<TSharedPtr<FPresetItem>>)
-			.OptionsSource(&SimSettings.PresetOptions)
-			.InitiallySelectedItem(SelectedPresetSharedPtr)
+	        .OptionsSource(&SimSettings.PresetOptions)
+	        .InitiallySelectedItem(SelectedPresetSharedPtr)
 			// This fixes your issue:
-			.OnGenerateWidget_Lambda([](TSharedPtr<FPresetItem> InItem)
-			{
-				return SNew(STextBlock)
-					.Text(FText::FromString(InItem->DisplayName))
-					.Font(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/Roboto-Regular.ttf"), 10));
-			})
+	        .OnGenerateWidget_Lambda([](TSharedPtr<FPresetItem> InItem)
+	        {
+	            return SNew(STextBlock)
+	                .Text(FText::FromString(InItem->DisplayName))
+	                .Font(FSlateFontInfo(
+	                    FPaths::EngineContentDir() / TEXT(
+	                        "Slate/Fonts/Roboto-Regular.ttf"), 10));
+	        })
 
-			.OnSelectionChanged_Lambda([this](TSharedPtr<FPresetItem> NewSelection, ESelectInfo::Type)
-			{
-				if (NewSelection.IsValid())
-				{
-					SimSettings.SelectedPreset = NewSelection->Preset;
-					const FClothPhysicalConfig& UsedPreset = SimSettings.PresetConfigs[SimSettings.SelectedPreset];
+	        .OnSelectionChanged_Lambda(
+	            [this](TSharedPtr<FPresetItem> NewSelection,
+	                   ESelectInfo::Type)
+	            {
+	                if (NewSelection.IsValid())
+	                {
+	                    SimSettings.SelectedPreset = NewSelection->Preset;
+	                    const FClothPhysicalConfig& UsedPreset = SimSettings
+	                        .PresetConfigs[SimSettings.SelectedPreset];
 
-					ForEachComponentUsingSelectedMesh([this, &UsedPreset](USkeletalMeshComponent* Comp)
-					{
-						SimSettings.ApplyPresetToCloth(Comp, UsedPreset, SimSettings.SelectedPreset);
-					});
-				}
-			})
+	                    ForEachComponentUsingSelectedMesh(
+	                        [this, &UsedPreset](
+	                        USkeletalMeshComponent* Comp)
+	                        {
+	                            SimSettings.ApplyPresetToCloth(
+	                                Comp, UsedPreset,
+	                                SimSettings.SelectedPreset);
+	                        });
+	                }
+	            })
 
-			.Content()
+	        .Content()
 			[
 				SNew(STextBlock)
-					.Text_Lambda([this]()
+				.Text_Lambda([this]()
+				{
+					for (const auto& Item : SimSettings.PresetOptions)
 					{
-						for (const auto& Item : SimSettings.PresetOptions)
-						{
-							if (Item->Preset == SimSettings.SelectedPreset)
-								return FText::FromString(Item->DisplayName);
-						}
-						return FText::FromString(TEXT("Select Preset"));
-					})
+						if (Item->Preset == SimSettings.SelectedPreset)
+							return FText::FromString(Item->DisplayName);
+					}
+					return FText::FromString(TEXT("Select Preset"));
+				})
 			]
 		];
-		
-
-		
 }
 
 
@@ -392,7 +509,6 @@ void FClothDesignToolkit::OnPresetSelected(TSharedPtr<FPresetItem> NewSelection,
 		{
 			SimSettings.ApplyPresetToCloth(Comp, UsedPreset, SimSettings.SelectedPreset);
 		});
-
 	}
 }
 
@@ -401,11 +517,11 @@ FText FClothDesignToolkit::GetPresetDisplayName(EClothPreset Preset)
 {
 	switch (Preset)
 	{
-	case EClothPreset::Denim:   return FText::FromString("Denim");
+	case EClothPreset::Denim: return FText::FromString("Denim");
 	case EClothPreset::Leather: return FText::FromString("Leather");
-	case EClothPreset::Silk:    return FText::FromString("Silk");
-	case EClothPreset::Jersey:  return FText::FromString("Jersey");
-	default:                    return FText::FromString("Unknown");
+	case EClothPreset::Silk: return FText::FromString("Silk");
+	case EClothPreset::Jersey: return FText::FromString("Jersey");
+	default: return FText::FromString("Unknown");
 	}
 }
 

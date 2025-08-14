@@ -23,8 +23,6 @@
 #include "Canvas/CanvasMesh.h"
 
 
-
-
 void SClothDesignCanvas::Construct(const FArguments& InArgs)
 {
 	ChildSlot
@@ -786,7 +784,7 @@ void SClothDesignCanvas::ClearAllShapeData()
 
 void SClothDesignCanvas::SewingClick()
 {
-	SewingManager.BuildAndAlignAllSeams(CompletedShapes, CurvePoints);
+	SewingManager.BuildAndAlignAllSeams();
 }
 
 
@@ -866,4 +864,5 @@ void SClothDesignCanvas::UpdateSewnPointSets()
 	// request redraw
 	Invalidate(EInvalidateWidget::Paint);
 }
+
 

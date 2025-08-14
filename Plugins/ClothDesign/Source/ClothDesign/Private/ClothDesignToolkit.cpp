@@ -1,4 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ClothDesignToolkit.h"
 #include "PropertyCustomizationHelpers.h"
@@ -11,6 +10,14 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Editor.h"
 #include "EngineUtils.h"
+#include "ClothDesignModule.h"
+
+
+// This file was started using the Unreal Engine 5.5 Editor Mode C++ template.
+// This template can be created directly in Unreal Engine in the plugins section.
+//
+// The template code has been modified and extended for this project.
+// The unmodified template code is included at the bottom of the file for reference.
 
 
 #define LOCTEXT_NAMESPACE "ClothDesignEditorModeToolkit"
@@ -98,13 +105,23 @@ FReply FClothDesignToolkit::OnOpen2DWindowClicked()
 	return FReply::Handled();
 }
 
-// helper functions to improve readability of the main ui init function
+// // helper functions to improve readability of the main ui init function
+// TSharedRef<SWidget> FClothDesignToolkit::MakeOpen2DButton()
+// {
+// 	return SNew(SButton)
+// 		.Text(FText::FromString("Open 2D Editor"))
+// 		.OnClicked(FOnClicked::CreateSP(this, &FClothDesignToolkit::OnOpen2DWindowClicked));
+// }
 TSharedRef<SWidget> FClothDesignToolkit::MakeOpen2DButton()
 {
 	return SNew(SButton)
 		.Text(FText::FromString("Open 2D Editor"))
-		.OnClicked(FOnClicked::CreateSP(this, &FClothDesignToolkit::OnOpen2DWindowClicked));
+		.OnClicked(FOnClicked::CreateLambda([]() -> FReply {
+			FModuleManager::GetModuleChecked<FClothDesignModule>("ClothDesign").Spawn2DWindow();
+			return FReply::Handled();
+		}));
 }
+
 
 TSharedRef<SWidget> FClothDesignToolkit::MakeClothSettingsSection()
 {
@@ -584,3 +601,48 @@ void FClothDesignToolkit::ForEachComponentUsingSelectedMesh(TFunctionRef<void(US
 }
 
 #undef LOCTEXT_NAMESPACE
+
+/*
+------------------------------------------
+Original Unreal Engine Template Code
+------------------------------------------
+// Copyright Epic Games, Inc. All Rights Reserved.
+
+#include "NewEditorModeEditorModeToolkit.h"
+#include "NewEditorModeEditorMode.h"
+#include "Engine/Selection.h"
+
+#include "Modules/ModuleManager.h"
+#include "PropertyEditorModule.h"
+#include "IDetailsView.h"
+#include "EditorModeManager.h"
+
+#define LOCTEXT_NAMESPACE "NewEditorModeEditorModeToolkit"
+
+FNewEditorModeEditorModeToolkit::FNewEditorModeEditorModeToolkit()
+{
+}
+
+void FNewEditorModeEditorModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, TWeakObjectPtr<UEdMode> InOwningMode)
+{
+	FModeToolkit::Init(InitToolkitHost, InOwningMode);
+}
+
+void FNewEditorModeEditorModeToolkit::GetToolPaletteNames(TArray<FName>& PaletteNames) const
+{
+	PaletteNames.Add(NAME_Default);
+}
+
+
+FName FNewEditorModeEditorModeToolkit::GetToolkitFName() const
+{
+	return FName("NewEditorModeEditorMode");
+}
+
+FText FNewEditorModeEditorModeToolkit::GetBaseToolkitName() const
+{
+	return LOCTEXT("DisplayName", "NewEditorModeEditorMode Toolkit");
+}
+
+#undef LOCTEXT_NAMESPACE
+*/

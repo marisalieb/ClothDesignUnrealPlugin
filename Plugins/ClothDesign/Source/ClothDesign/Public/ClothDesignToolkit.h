@@ -26,7 +26,7 @@ public:
 	
 private:
 	TSharedPtr<SWidget> ToolkitWidget;
-
+	TSharedPtr<FUICommandList> ToolkitCommandList;
 	// objects for pickers: collision body mesh, cloth, object, material for fabric
 	TWeakObjectPtr<UStaticMesh> SelectedCollisionMesh;
 	TWeakObjectPtr<USkeletalMesh> SelectedClothMesh;

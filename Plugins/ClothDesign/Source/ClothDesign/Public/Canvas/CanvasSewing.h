@@ -58,9 +58,7 @@ public:
 		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
 		const TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors);
 	
-	void BuildAndAlignAllSeams(
-		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-		const FInterpCurve<FVector2D>& CurvePoints);
+	void BuildAndAlignAllSeams();
 	
 	void ClearAllSeams();
 
@@ -75,7 +73,5 @@ private:
 	static void AlignSeamMeshes(APatternMesh* A, APatternMesh* B);
 
 	void BuildAndAlignSeam(
-		const FPatternSewingConstraint& Seam,
-		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-		const FInterpCurve<FVector2D>& CurvePoints);
+		const FPatternSewingConstraint& Seam);
 };

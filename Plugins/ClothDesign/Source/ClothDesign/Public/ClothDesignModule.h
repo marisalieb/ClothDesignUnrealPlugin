@@ -13,6 +13,7 @@ public:
 	virtual void ShutdownModule() override;
 	
 	static const FName TwoDTabName;
+	void Spawn2DWindow();
 
 private:
 	TSharedPtr<FUICommandList> PluginCommands;
@@ -20,7 +21,6 @@ private:
 	TSharedPtr<SClothDesignCanvas> CanvasWidget;
 	FString CurrentSaveName = TEXT("ShapeName");
 	
-	void Spawn2DWindow();
 	void OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivationCause ActivationCause);
 	
 	TSharedRef<SWidget> MakeObjectPicker(

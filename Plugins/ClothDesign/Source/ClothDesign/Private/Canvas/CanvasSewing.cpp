@@ -276,9 +276,7 @@ void FCanvasSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* Mesh
 
 
 void FCanvasSewing::BuildAndAlignSeam(
-	const FPatternSewingConstraint& Seam,
-	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-	const FInterpCurve<FVector2D>& CurvePoints)
+	const FPatternSewingConstraint& Seam)
 {
 	// --- helper: find the APatternMesh that owns this procedural mesh component ---
 	auto FindActorForMesh = [&](const UProceduralMeshComponent* MeshComp) -> APatternMesh*
@@ -463,13 +461,11 @@ void FCanvasSewing::BuildAndAlignSeam(
 
 
 
-void FCanvasSewing::BuildAndAlignAllSeams(
-	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-	const FInterpCurve<FVector2D>& CurvePoints)
+void FCanvasSewing::BuildAndAlignAllSeams()
 {
 	for (const FPatternSewingConstraint& Seam : AllDefinedSeams)
 	{
-		BuildAndAlignSeam(Seam, CompletedShapes, CurvePoints);
+		BuildAndAlignSeam(Seam);
 	}
 }
 

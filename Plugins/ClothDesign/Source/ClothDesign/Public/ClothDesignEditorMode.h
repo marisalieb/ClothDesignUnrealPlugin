@@ -26,6 +26,7 @@ public:
 	virtual void CreateToolkit() override;
 	virtual TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> GetModeCommands() const override; // took out override
 
+ 	// this enables the transform widgets at the top of the editor mode which would otherwise be disabled
  	virtual bool UsesTransformWidget(UE::Widget::EWidgetMode CheckMode) const override { return true; }
  	virtual bool ShouldDrawWidget() const override { return true; }
  	virtual bool ShowModeWidgets() const override { return true; }

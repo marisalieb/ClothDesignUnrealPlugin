@@ -8,6 +8,15 @@
 #include "Containers/Ticker.h"
 #include "PropertyCustomizationHelpers.h"
 #include "Widgets/Input/SNumericEntryBox.h"
+#include "EditorModeRegistry.h"
+#include "ClothDesignEditorMode.h"
+#include "ClothDesignStyle.h"
+
+// This file was started using the Unreal Engine 5.5 Editor Mode C++ template.
+// This template can be created directly in Unreal Engine in the plugins section.
+//
+// The template code has been modified and extended for this project.
+// The unmodified template code is included at the bottom of the file for reference.
 
 #define LOCTEXT_NAMESPACE "ClothDesignModule"
 
@@ -16,8 +25,11 @@ const FName FClothDesignModule::TwoDTabName(TEXT("TwoDWindowTab"));
 
 void FClothDesignModule::StartupModule()
 {
+	FClothDesignStyle::Initialize();
+
 	// This code will execute after the module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	FClothDesignCommands::Register();
+	
 	PluginCommands = MakeShareable(new FUICommandList);
 	PluginCommands->MapAction(
 	  FClothDesignCommands::Get().Open2DWindow,
@@ -35,6 +47,8 @@ void FClothDesignModule::StartupModule()
 	  FOnSpawnTab::CreateRaw(this, &FClothDesignModule::OnSpawn2DWindowTab))
 	  .SetDisplayName(LOCTEXT("TwoDTabTitle", "ClothDesign 2D Editor"))
 	  .SetMenuType(ETabSpawnerMenuType::Hidden);
+
+	
 }
 
 void FClothDesignModule::ShutdownModule()
@@ -45,6 +59,8 @@ void FClothDesignModule::ShutdownModule()
 	UToolMenus::UnregisterOwner(this);
 
 	FClothDesignCommands::Unregister();
+	FClothDesignStyle::Shutdown();
+
 }
 
 
@@ -605,3 +621,35 @@ FReply FClothDesignModule::OnClearSewingClicked()
 #undef LOCTEXT_NAMESPACE
 
 IMPLEMENT_MODULE(FClothDesignModule, ClothDesign)
+
+
+/*
+------------------------------------------
+Original Unreal Engine Template Code
+------------------------------------------
+// Copyright Epic Games, Inc. All Rights Reserved.
+
+#include "NewEditorModeModule.h"
+#include "NewEditorModeEditorModeCommands.h"
+
+#define LOCTEXT_NAMESPACE "NewEditorModeModule"
+
+void FNewEditorModeModule::StartupModule()
+{
+	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+
+	FNewEditorModeEditorModeCommands::Register();
+}
+
+void FNewEditorModeModule::ShutdownModule()
+{
+	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
+	// we call this function before unloading the module.
+
+	FNewEditorModeEditorModeCommands::Unregister();
+}
+
+#undef LOCTEXT_NAMESPACE
+
+IMPLEMENT_MODULE(FNewEditorModeModule, NewEditorModeEditorMode)
+*/

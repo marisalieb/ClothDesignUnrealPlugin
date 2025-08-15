@@ -107,65 +107,6 @@ TSharedRef<SWidget> FClothDesignModule::MakeObjectPicker(
 		];
 }
 
-//
-// TSharedRef<SWidget> FClothDesignModule::MakeBackgroundControls()
-// {
-// 	return SNew(SVerticalBox)
-//
-// 		+ SVerticalBox::Slot()
-// 		.AutoHeight()
-// 		.Padding(2)
-// 		[
-// 			SNew(SHorizontalBox)
-//             
-// 			+ SHorizontalBox::Slot().AutoWidth().Padding(4)
-// 			[
-// 				SNew(STextBlock).Text(LOCTEXT("BGImageLabel","Background Image:"))
-// 			]
-// 			+ SHorizontalBox::Slot().AutoWidth().Padding(4)
-// 			[
-// 				SNew(SObjectPropertyEntryBox)
-// 				.AllowedClass(UTexture2D::StaticClass())
-// 				.ObjectPath_Lambda([this]() {
-// 					return CanvasWidget.IsValid()
-// 						? CanvasWidget->GetSelectedTexturePath()
-// 						: FString();
-// 				})
-// 				.OnObjectChanged_Lambda([this](const FAssetData& Asset){
-// 					if (CanvasWidget.IsValid())
-// 						CanvasWidget->OnBackgroundTextureSelected(Asset);
-// 				})
-// 			]
-//
-// 		]   
-//
-// 		+ SVerticalBox::Slot()
-// 		.AutoHeight()
-// 		.Padding(2)
-// 		[
-// 			SNew(SHorizontalBox)
-//             
-// 			+ SHorizontalBox::Slot().AutoWidth().Padding(4)
-// 			[
-// 				SNew(STextBlock).Text(LOCTEXT("BGScaleLabel","Background Image Scale:"))
-// 			]
-// 			+ SHorizontalBox::Slot().AutoWidth().Padding(4)
-// 			[
-// 				SNew(SNumericEntryBox<float>)
-// 				.Value_Lambda([this]() {
-// 					return CanvasWidget.IsValid()
-// 						? CanvasWidget->GetBackgroundImageScale()
-// 						: TOptional<float>();
-// 				})
-// 				.OnValueChanged_Lambda([this](float NewVal){
-// 					if (CanvasWidget.IsValid())
-// 						CanvasWidget->OnBackgroundImageScaleChanged(NewVal);
-// 				})
-// 				.MinValue(0.1f).MaxValue(10.0f)
-// 				.AllowSpin(true)
-// 			]
-// 		];
-// }
 
 TSharedRef<SWidget> FClothDesignModule::MakeBackgroundControls()
 {
@@ -231,49 +172,6 @@ TSharedRef<SWidget> FClothDesignModule::MakeBackgroundControls()
         ];
 }
 
-//
-// TSharedRef<SWidget> FClothDesignModule::MakeLoadSavePanel()
-// { 
-// 	return SNew(SBorder)
-// 		.BorderImage(FAppStyle::Get().GetBrush("ToolPanel.GroupBorder"))
-// 		.Padding(8)
-// 		[
-// 			SNew(SVerticalBox)
-//
-// 			+ SVerticalBox::Slot().AutoHeight().Padding(2)
-// 			[
-// 				MakeObjectPicker(
-// 					LOCTEXT("LoadLabel","Load:"),
-// 					UClothShapeAsset::StaticClass(),
-// 					[this](){ return CanvasWidget->GetSelectedShapeAssetPath(); },
-// 					[this](auto Asset){ CanvasWidget->OnShapeAssetSelected(Asset); }
-// 				)
-// 			]
-// 			
-// 			+ SVerticalBox::Slot().AutoHeight().Padding(4)
-// 			[
-// 				SNew(SHorizontalBox)
-// 				+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
-// 				  [ SNew(STextBlock).Text(LOCTEXT("SaveAsLabel","Save As:")) ]
-// 				+ SHorizontalBox::Slot().FillWidth(1.f).Padding(4,0)
-// 				  [ SNew(SEditableTextBox)
-// 					.Text_Lambda([this](){ return FText::FromString(CurrentSaveName); })
-// 					.OnTextCommitted_Lambda([this](auto NewText, ETextCommit::Type){
-// 						CurrentSaveName = NewText.ToString();
-// 					})
-// 				  ]
-// 			]
-// 			+ SVerticalBox::Slot().AutoHeight().Padding(10).HAlign(HAlign_Left)
-// 			[
-// 				SNew(SBox).WidthOverride(240.f)
-// 				[
-// 					SNew(SButton)
-// 					.Text(LOCTEXT("SaveBtn","Save"))
-// 					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSaveClicked))
-// 				]
-// 			]
-// 		];
-// }
 
 
 TSharedRef<SWidget> FClothDesignModule::MakeLoadSavePanel()

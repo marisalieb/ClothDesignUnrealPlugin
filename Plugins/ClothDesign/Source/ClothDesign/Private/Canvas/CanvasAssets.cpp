@@ -13,10 +13,15 @@ bool FCanvasAssets::SaveShapeAsset(
 	const FInterpCurve<FVector2D>& CurvePoints,
 	const TArray<bool>& bUseBezierPerPoint)
 {
+	if (AssetPath.Contains(TEXT(":")) || AssetPath.Contains(TEXT("?")))
+	{
+		return false; // reject illegal chars
+	}
+	
 	// Create package path - e.g. /Game/YourFolder/AssetName
 	FString PackageName = FString::Printf(TEXT("/Game/ClothDesign/%s/%s"), *AssetPath, *AssetName);
 	FString SanitizedPackageName = UPackageTools::SanitizePackageName(PackageName);
-
+	
 	UPackage* Package = LoadPackage(nullptr, *SanitizedPackageName, LOAD_None);
 	if (!Package)
 	{

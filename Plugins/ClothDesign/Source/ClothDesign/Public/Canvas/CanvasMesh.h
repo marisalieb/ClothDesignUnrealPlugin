@@ -5,7 +5,7 @@
 #include "MeshOpPreviewHelpers.h" 
 
 
-struct CanvasMesh
+struct FCanvasMesh
 {
 	
 public:
@@ -15,6 +15,7 @@ public:
 		TArray<FDynamicMesh3>& OutMeshes,
 		TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors);
 
+	friend class FCanvasMeshTests;
 	
 private:
 	static bool IsPointInPolygon(

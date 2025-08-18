@@ -355,40 +355,6 @@ void FCanvasPatternMerge::MergeSewnGroups() const
                         MergedActor = nullptr;
                     }
                 }
-
-                // // assume NewSkel is valid and SafeLabel exists
-                // FString ClothAssetPath = FString::Printf(TEXT("/Game/ClothDesign/MergedClothPattern/%s_Cloth"), *SafeLabel);
-                // int32 LODIndex = 0;
-                // int32 SectionIndex = 0; // choose the section you want to cloth (0 if single-section mesh)
-                // FTimerHandle TimerHandle;
-                //
-                // FClothSimSettings ClothSettings;
-                //ClothSettings.CreateAndBindClothingAssetForSkeletalMesh(NewSkel, ClothAssetPath, LODIndex, SectionIndex);
-                // bool bSuccess = ClothSettings.CreateAndBindClothingAssetForSkeletalMesh(NewSkel, ClothAssetPath, 0, 0);
-                //
-                // if (!bSuccess)
-                // {
-                //     UE_LOG(LogTemp, Warning, TEXT("Failed to create and bind clothing asset."));
-                // }
-                // else
-                // {
-                //     UE_LOG(LogTemp, Display, TEXT("Successfully created and bound clothing asset."));
-                // }
-                // GEditor->GetEditorWorldContext().World()->GetTimerManager().SetTimer(TimerHandle, [NewSkel, ClothAssetPath]()
-                // {
-                //     FClothSimSettings ClothSettings;
-                //       //ClothSettings.CreateAndBindClothingAssetForSkeletalMesh(NewSkel, ClothAssetPath, LODIndex, SectionIndex);
-                //       bool bSuccess = ClothSettings.CreateAndBindClothingAssetForSkeletalMesh(NewSkel, ClothAssetPath, 0, 0);
-                //
-                //       if (!bSuccess)
-                //       {
-                //           UE_LOG(LogTemp, Warning, TEXT("Failed to create and bind clothing asset."));
-                //       }
-                //       else
-                //       {
-                //           UE_LOG(LogTemp, Display, TEXT("Successfully created and bound clothing asset."));
-                //       }
-                // }, 0.1f, false);
                 
             }
             else
@@ -477,55 +443,7 @@ USkeletalMesh* FCanvasPatternMerge::CreateSkeletalFromFDynamicMesh(UDynamicMesh*
         return nullptr;
     }
     
-    // // After creation and before cloth binding:
-    // const FSkeletalMeshRenderData* RenderData = NewSkeletal->GetResourceForRendering();
-    // if (!RenderData || RenderData->LODRenderData.Num() == 0)
-    // {
-    //     UE_LOG(LogTemp, Warning, TEXT("No LODs found on skeletal mesh! Cannot bind cloth asset."));
-    //     return nullptr;
-    // }
-    // else
-    // {
-    //     UE_LOG(LogTemp, Display, TEXT("Skeletal mesh has %d LOD(s)."), RenderData->LODRenderData.Num());
-    // }
-    //
-    // if (NewSkeletal->GetLODNum() > 0)
-    // {
-    //     FSkeletalMeshRenderData* RenderData = NewSkeletal->GetResourceForRendering();
-    //     if (RenderData && RenderData->LODRenderData.Num() > 0)
-    //     {
-    //         const FSkeletalMeshLODRenderData& Lod0 = RenderData->LODRenderData[0];
-    //         int32 NumSections = Lod0.RenderSections.Num();
-    //         UE_LOG(LogTemp, Display, TEXT("LOD0 has %d sections"), NumSections);
-    //     }
-    // }
-
-    // if (NewSkeletal)
-    // {
-    //     // Make sure at least 1 LOD exists
-    //     if (NewSkeletal->GetLODNum() == 0)
-    //     {
-    //         FSkeletalMeshLODInfo NewLODInfo;
-    //         NewLODInfo.ReductionSettings.NumOfTrianglesPercentage = 1.0f;
-    //         NewSkeletal->AddLODInfo(NewLODInfo);
-    //     }
-    //
-    //     // Mark dirty before rebuild
-    //     NewSkeletal->MarkPackageDirty();
-    //
-    //     // Build the skeletal mesh (rebuild render data, skinning data, etc.)
-    //     NewSkeletal->Build();
-    //
-    //     // Initialize rendering resources explicitly to ensure LOD0 is available
-    //     NewSkeletal->InitResources();
-    //     NewSkeletal->GetResourceForRendering(); // Force update of render data
-    //
-    //     // Post-edit change notification to notify the editor and update references
-    //     NewSkeletal->PostEditChange();
-    //
-    //     // Mark dirty again to make sure changes are saved
-    //     NewSkeletal->MarkPackageDirty();
-    // }
+  
 
 
     UE_LOG(LogTemp, Display, TEXT("Created SkeletalMesh asset at %s"), *AssetPathAndName);

@@ -165,7 +165,7 @@ TSharedRef<SWidget> FClothDesignModule::MakeBackgroundControls()
                         if (CanvasWidget.IsValid())
                             CanvasWidget->OnBackgroundImageScaleChanged(NewVal);
                     })
-                    .MinValue(0.1f).MaxValue(10.0f)
+                    .MinValue(0.01f).MaxValue(10.0f)
                     .AllowSpin(true)
                 ]
             ]

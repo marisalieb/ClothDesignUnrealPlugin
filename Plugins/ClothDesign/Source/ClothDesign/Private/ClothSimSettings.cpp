@@ -26,27 +26,7 @@
 FClothSimSettings::FClothSimSettings()
 {
 	PresetConfigs.Add(EClothPreset::Custom, {});
-
-    // PresetConfigs.Add(EClothPreset::Denim,   {0.25f, 0.85f, 0.85f, 1.0f, 0.99f, 0.8f, 0.03f, 0.15f, 0.07f, 1.05f});
-    // PresetConfigs.Add(EClothPreset::Leather, {0.35f, 0.9f,  0.9f,  1.0f, 0.99f, 0.85f, 0.04f, 0.18f, 0.09f, 1.2f});
-    // PresetConfigs.Add(EClothPreset::Silk,    {0.15f, 0.6f,  0.6f,  1.0f, 0.98f, 0.7f,  0.02f, 0.12f, 0.05f, 1.05f});
-    // PresetConfigs.Add(EClothPreset::Jersey,  {0.20f, 0.75f, 0.75f, 1.0f, 0.99f, 0.75f, 0.025f,0.14f, 0.06f, 0.9f});
-
-//     PresetConfigs.Add(EClothPreset::Denim,   
-// {0.25f, 0.85f,1.f, 0.85f,1.f, 1.0f,1.f, 0.99f,1.f, 
-// 0.8f, 0.03f, 0.15f,1.f, 0.07f,1.f, 1.05f});
-//
-//     PresetConfigs.Add(EClothPreset::Leather,  
-//     {0.6f, 0.99f, 1.f, 0.95f, 1.f, 1.0f, 1.f, 1.0f, 1.f, 
-//     0.95f, 0.25f,0.072f, 1.f, 0.06f, 1.f, 1.2f});
-//     
-//     PresetConfigs.Add(EClothPreset::Silk,    
-//     {0.1f, 0.76f,1.f,  0.7f,1.f,  0.85f,1.f, 1.025f, 1.f,
-//     0.8f,  0.025f, 0.3f, 1.f, 0.09f, 1.f, 0.9f});
-//     
-//     PresetConfigs.Add(EClothPreset::Jersey, 
-//     {0.25f, 0.85f,  1.f,0.85f, 1.f, 1.0f, 1.f,0.99f, 1.f,
-//     0.8f, 0.13f, 0.5f,1.f, 0.07f,1.f, 1.05f});
+    
 
     PresetConfigs.Add(EClothPreset::Denim,
     {0.42f, 0.85f, 0.95f, 0.85f, 0.95f, 0.9f, 0.97f, 1.0f, 1.f,
@@ -162,106 +142,61 @@ void FClothSimSettings::ApplyPresetToCloth(USkeletalMeshComponent* SkelComp, con
 
 
 
-bool FClothSimSettings::CreateAndBindClothingAssetForSkeletalMesh(
-    USkeletalMesh* TargetSkel,
-    const FString& ClothAssetPackagePath, // "/Game/Cloth/MyClothAsset"
-    int32 MeshLODIndex = 0,
-    int32 SectionIndex = 0)
-{
-#if WITH_EDITOR
-    if (!TargetSkel) return false;
-
-    // 1) Create the clothing asset in Content (Editor-only)
-    // Try to use an existing Chaos cloth factory if available (plugin: ChaosClothAssetEditor / ChaosClothAssetTools)
-    UObject* NewAsset = nullptr;
-    const FString PackageName = ClothAssetPackagePath;
-    const FString AssetName = FPackageName::GetShortName(PackageName);
-
-    // Create package
-    UPackage* Package = CreatePackage(*PackageName);
-    Package->FullyLoad();
-
-    // Try to find an appropriate factory (ChaosClothAssetFactory) via AssetTools
-    UFactory* Factory = nullptr;
-    {
-        // This is the pattern: the editor plugin usually exposes a factory called ChaosClothAssetFactory.
-        // If you have that plugin, you can instantiate it directly:
-        // #include "ClothAssetFactory.h"  (from ChaosClothAssetTools)
-        // Factory = NewObject<UChaosClothAssetFactory>(GetTransientPackage());
-
-        // Fallback: create a generic UObject asset and cast later (not ideal)
-    }
-
-    // Preferred: use AssetTools to create asset with factory (if you have the factory)
-    if (Factory)
-    {
-        FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
-        NewAsset = AssetToolsModule.Get().CreateAsset(AssetName, FPackageName::GetLongPackagePath(PackageName), UClothingAssetCommon::StaticClass(), Factory);
-    }
-    else
-    {
-        // Fallback: create a blank clothing asset object in package (you will need to fill it)
-        NewAsset = NewObject<UClothingAssetCommon>(Package, UClothingAssetCommon::StaticClass(), *AssetName, RF_Public | RF_Standalone);
-        if (NewAsset)
-        {
-            FAssetRegistryModule::AssetCreated(NewAsset);
-            Package->MarkPackageDirty();
-            // Save package to disk so it shows in Content Browser:
-            FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
-            UPackage::SavePackage(Package, NewAsset, RF_Public | RF_Standalone, *PackageFileName, GError, nullptr, true, true, SAVE_None);
-        }
-    }
-
-    // // // UClothingAssetCommon* NewClothingAsset = Cast<UClothingAssetCommon>(NewAsset);
-    // UClothingAssetCommon* NewClothingAsset = NewObject<UClothingAssetCommon>(
-    // TargetSkel, // Outer must be the skeletal mesh!
-    // *FPaths::GetBaseFilename(ClothAssetPackagePath),
-    // RF_Public | RF_Standalone);
-    
-    // if (!NewClothingAsset)
-    // {
-    //     UE_LOG(LogTemp, Warning, TEXT("Failed to create ClothingAsset object at %s"), *ClothAssetPackagePath);
-    //     return false;
-    // }
-    //
-    // // 2) Add clothing asset to the skeletal mesh (register it)
-    // // TargetSkel->AddClothingAsset(NewClothingAsset);
-    //
-    // // 3) Bind clothing asset to the skeletal mesh LOD/section
-    // // AssetLodIndex is the LOD of the clothing asset you want to use (usually 0)
-    // int32 AssetLodIndex = 0;
-    // //bool bBound = false;
-    //
-    // NewClothingAsset->Modify();
-    // TargetSkel->Modify();
-    //
-    //
-    // // BindToSkeletalMesh builds sim-skinning weights. It returns void, but will populate the asset's data.
-    // // register the clothing asset with the skeletal mesh (sets the owner/mapping)
-    // TargetSkel->AddClothingAsset(NewClothingAsset);
-    //
-    // // then bind (this should now succeed)
-    // bool bBound = NewClothingAsset->BindToSkeletalMesh(TargetSkel, MeshLODIndex, SectionIndex, AssetLodIndex);
-    //
-    // if (!bBound)
-    // {
-    //     UE_LOG(LogTemp, Warning, TEXT("BindToSkeletalMesh failed for %s (LOD %d Section %d)"), *TargetSkel->GetName(), MeshLODIndex, SectionIndex);
-    //     // examine Debug / reasons such as degenerate triangles, already mapped LOD, etc.
-    // }
-    //
-    //
-    //
-    // // 4) Invalidate cached data and save packages
-    // NewClothingAsset->InvalidateAllCachedData();
-    // NewClothingAsset->MarkPackageDirty();
-    // TargetSkel->MarkPackageDirty();
-    //
-    // // Register asset in the Asset Registry (if newly created)
-    // FAssetRegistryModule::AssetCreated(NewClothingAsset);
-
-
-    return true;
-#else
-    return false;
-#endif
-}
+// bool FClothSimSettings::CreateAndBindClothingAssetForSkeletalMesh(
+//     USkeletalMesh* TargetSkel,
+//     const FString& ClothAssetPackagePath, // "/Game/Cloth/MyClothAsset"
+//     int32 MeshLODIndex = 0,
+//     int32 SectionIndex = 0)
+// {
+// #if WITH_EDITOR
+//     if (!TargetSkel) return false;
+//
+//     // 1) Create the clothing asset in Content (Editor-only)
+//     // Try to use an existing Chaos cloth factory if available (plugin: ChaosClothAssetEditor / ChaosClothAssetTools)
+//     UObject* NewAsset = nullptr;
+//     const FString PackageName = ClothAssetPackagePath;
+//     const FString AssetName = FPackageName::GetShortName(PackageName);
+//
+//     // Create package
+//     UPackage* Package = CreatePackage(*PackageName);
+//     Package->FullyLoad();
+//
+//     // Try to find an appropriate factory (ChaosClothAssetFactory) via AssetTools
+//     UFactory* Factory = nullptr;
+//     {
+//         // This is the pattern: the editor plugin usually exposes a factory called ChaosClothAssetFactory.
+//         // If you have that plugin, you can instantiate it directly:
+//         // #include "ClothAssetFactory.h"  (from ChaosClothAssetTools)
+//         // Factory = NewObject<UChaosClothAssetFactory>(GetTransientPackage());
+//
+//         // Fallback: create a generic UObject asset and cast later (not ideal)
+//     }
+//
+//     // Preferred: use AssetTools to create asset with factory (if you have the factory)
+//     if (Factory)
+//     {
+//         FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+//         NewAsset = AssetToolsModule.Get().CreateAsset(AssetName, FPackageName::GetLongPackagePath(PackageName), UClothingAssetCommon::StaticClass(), Factory);
+//     }
+//     else
+//     {
+//         // Fallback: create a blank clothing asset object in package (you will need to fill it)
+//         NewAsset = NewObject<UClothingAssetCommon>(Package, UClothingAssetCommon::StaticClass(), *AssetName, RF_Public | RF_Standalone);
+//         if (NewAsset)
+//         {
+//             FAssetRegistryModule::AssetCreated(NewAsset);
+//             Package->MarkPackageDirty();
+//             // Save package to disk so it shows in Content Browser:
+//             FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
+//             UPackage::SavePackage(Package, NewAsset, RF_Public | RF_Standalone, *PackageFileName, GError, nullptr, true, true, SAVE_None);
+//         }
+//     }
+//
+//    
+//
+//
+//     return true;
+// #else
+//     return false;
+// #endif
+// }

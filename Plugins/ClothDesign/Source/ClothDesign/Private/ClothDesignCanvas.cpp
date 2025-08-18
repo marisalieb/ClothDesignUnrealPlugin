@@ -472,7 +472,7 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& Geometry, const FKeyEvent&
 	
 	if (CurrentMode == EClothEditorMode::Select)
 	{
-		if (Key == EKeys::T) // so hold down while editing the tangent
+		if (Key == EKeys::S) // so hold down while editing the tangent
 		{
 			bSeparateTangents = true;
 			return FReply::Handled();
@@ -833,7 +833,7 @@ void SClothDesignCanvas::GenerateMeshesClick()
 	SewingManager.SpawnedPatternActors.Empty();
 	
 	TArray<FDynamicMesh3> AllMeshes;
-	CanvasMesh CanvasMesh;
+	FCanvasMesh CanvasMesh;
 
 	CanvasMesh.TriangulateAndBuildAllMeshes(
 		CompletedShapes,

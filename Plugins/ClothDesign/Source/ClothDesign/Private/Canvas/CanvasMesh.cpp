@@ -7,7 +7,7 @@
 
 
 // 1) Helper: even–odd rule point-in-polygon test
-bool CanvasMesh::IsPointInPolygon(
+bool FCanvasMesh::IsPointInPolygon(
 	const FVector2f& Test, 
 	const TArray<FVector2f>& Poly
 ) {
@@ -28,7 +28,7 @@ bool CanvasMesh::IsPointInPolygon(
 }
 
 
-void CanvasMesh::SampleShapeCurve(
+void FCanvasMesh::SampleShapeCurve(
 	const FInterpCurve<FVector2D>& Shape,
 	bool bRecordSeam,
 	int32 StartPointIdx2D,
@@ -81,7 +81,7 @@ void CanvasMesh::SampleShapeCurve(
 	}
 }
 
-void CanvasMesh::AddGridInteriorPoints(
+void FCanvasMesh::AddGridInteriorPoints(
 	TArray<FVector2f>& PolyVerts,
 	int32 OriginalBoundaryCount,
 	TArray<int32>& OutVertexIDs,
@@ -136,7 +136,7 @@ void CanvasMesh::AddGridInteriorPoints(
 	}
 }
 
-void CanvasMesh::BuildBoundaryEdges(
+void FCanvasMesh::BuildBoundaryEdges(
 	int32 OriginalBoundaryCount,
 	TArray<UE::Geometry::FIndex2i>& OutBoundaryEdges)
 {
@@ -152,7 +152,7 @@ void CanvasMesh::BuildBoundaryEdges(
 	}
 }
 
-void CanvasMesh::RunConstrainedDelaunay(
+void FCanvasMesh::RunConstrainedDelaunay(
 	const TArray<FVector2f>& PolyVerts,
 	const TArray<UE::Geometry::FIndex2i>& BoundaryEdges,
 	UE::Geometry::TConstrainedDelaunay2<float>& OutCDT)
@@ -181,7 +181,7 @@ void CanvasMesh::RunConstrainedDelaunay(
 	
 }
 
-void CanvasMesh::ConvertCDTToDynamicMesh(
+void FCanvasMesh::ConvertCDTToDynamicMesh(
 	const UE::Geometry::TConstrainedDelaunay2<float>& CDT,
 	FDynamicMesh3& OutMesh,
 	TArray<int32>& OutPolyIndexToVID)
@@ -213,7 +213,7 @@ void CanvasMesh::ConvertCDTToDynamicMesh(
 	}
 }
 
-void CanvasMesh::ExtractVerticesAndIndices(
+void FCanvasMesh::ExtractVerticesAndIndices(
 	const FDynamicMesh3& OutMesh,
 	TArray<FVector>& OutVertices,
 	TArray<int32>& OutIndices)
@@ -236,7 +236,7 @@ void CanvasMesh::ExtractVerticesAndIndices(
 }
 
 
-void CanvasMesh::CreateProceduralMesh(
+void FCanvasMesh::CreateProceduralMesh(
 	const TArray<FVector>& Vertices,
 	const TArray<int32>& Indices,
 	FDynamicMesh3&& DynamicMesh,
@@ -327,7 +327,7 @@ void CanvasMesh::CreateProceduralMesh(
 
 
 // second version but with steiner points, grid spaced constrained delaunay
-void CanvasMesh::TriangulateAndBuildMesh(
+void FCanvasMesh::TriangulateAndBuildMesh(
 	const FInterpCurve<FVector2D>& Shape,
 	bool bRecordSeam ,
 	int32 StartPointIdx2D,
@@ -451,7 +451,7 @@ void CanvasMesh::TriangulateAndBuildMesh(
 
 
 
-void CanvasMesh::TriangulateAndBuildAllMeshes(
+void FCanvasMesh::TriangulateAndBuildAllMeshes(
 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
 	const FInterpCurve<FVector2D>& CurvePoints,
 	TArray<FDynamicMesh3>& OutMeshes,

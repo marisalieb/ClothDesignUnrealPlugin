@@ -35,7 +35,7 @@ enum class ESeamClickState : uint8
 };
 
 
-struct FCanvasSewing
+class FCanvasSewing
 {
 public:
 	TArray<FSeamDefinition> SeamDefinitions;

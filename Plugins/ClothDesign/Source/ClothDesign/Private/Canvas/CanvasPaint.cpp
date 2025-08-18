@@ -47,7 +47,9 @@ int32 FCanvasPaint::DrawBackground(
     FSlateBrush Brush;
     Brush.SetResourceObject(Canvas->BackgroundTexture.Get());
     Brush.ImageSize = NativeImageSize;
-    Brush.TintColor = FSlateColor(FLinearColor(1,1,1,.35f)); // opacity
+    // Brush.TintColor = FSlateColor(FLinearColor(1,1,1,.15f)); // opacity
+    Brush.TintColor = FSlateColor(FLinearColor(1,1,1,1)); // fully white
+    FLinearColor DrawTint(1,1,1,0.25f); // actual opacity
 
     FPaintGeometry ImageGeo = Geo.ToPaintGeometry(
             FVector2f(ScreenSize),
@@ -57,7 +59,9 @@ int32 FCanvasPaint::DrawBackground(
         OutDraw,
         Layer,
         ImageGeo,
-        &Brush);
+        &Brush,
+        ESlateDrawEffect::None,
+        DrawTint);
     
     return Layer + 1;
 }

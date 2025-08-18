@@ -68,9 +68,9 @@ struct FClothSimSettings
 	// Put future sim-related settings or functions here,
 	// like setting collision flags on the cloth asset
 
-	bool CreateAndBindClothingAssetForSkeletalMesh(
-		USkeletalMesh* TargetSkel,
-		const FString& ClothAssetPackagePath, // "/Game/Cloth/MyClothAsset"
-		int32 MeshLODIndex,
-		int32 SectionIndex);
+	// bool CreateAndBindClothingAssetForSkeletalMesh(
+	// 	USkeletalMesh* TargetSkel,
+	// 	const FString& ClothAssetPackagePath, // "/Game/Cloth/MyClothAsset"
+	// 	int32 MeshLODIndex,
+	// 	int32 SectionIndex);
 };

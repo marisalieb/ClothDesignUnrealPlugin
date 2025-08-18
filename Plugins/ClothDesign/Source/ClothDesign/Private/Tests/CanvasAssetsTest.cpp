@@ -1,34 +1,112 @@
-// // CanvasUtilsTests.cpp
-// #include "Misc/AutomationTest.h"
-// #include "Containers/Array.h"
-// #include "Math/Vector2D.h"
-// #include "Math/UnrealMathUtility.h"
-//
-// // Replace these includes with the correct paths in the project:
-// #include "PatternSewingConstraint.h"
-//
-//
-// IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPatternSewingConstraint_DefaultsTest, "Project.PatternSewingConstraint.Defaults",
-// 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-//
-// bool FPatternSewingConstraint_DefaultsTest::RunTest(const FString& Parameters)
-// {
-// 	FPatternSewingConstraint Constraint;
-//
-// 	// // By default, UObject* properties should be nullptr
-// 	// TestNull(TEXT("MeshA should be null by default"), Constraint.MeshA);
-// 	// TestNull(TEXT("MeshB should be null by default"), Constraint.MeshB);
-// 	//
-// 	// // Integers default to zero
-// 	// TestEqual(TEXT("VertexIndexA should default to 0"), Constraint.VertexIndexA, 0);
-// 	// TestEqual(TEXT("VertexIndexB should default to 0"), Constraint.VertexIndexB, 0);
-// 	//
-// 	// // Float default is 0.0 unless initialized otherwise
-// 	// TestEqual(TEXT("Stiffness should default to 0.0f"), Constraint.Stiffness, 0.0f);
-//
-// 	// Arrays should start empty
-// 	TestTrue(TEXT("ScreenPointsA should be empty"), Constraint.ScreenPointsA.Num() == 0);
-// 	TestTrue(TEXT("ScreenPointsB should be empty"), Constraint.ScreenPointsB.Num() == 0);
-//
-// 	return true;
-// }
+// CanvasAssetsTests.cpp
+
+#include "Misc/AutomationTest.h"
+#include "Canvas/CanvasAssets.h"
+#include "ClothShapeAsset.h"
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveShapeAsset_BadPackage, 
+    "CanvasAssets.SaveShapeAsset.BadPackage", 
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FSaveShapeAsset_BadPackage::RunTest(const FString& Parameters)
+{
+    // Passing nonsense path should fail gracefully
+    TArray<FInterpCurve<FVector2D>> Shapes;
+    TArray<TArray<bool>> Flags;
+    FInterpCurve<FVector2D> Curve;
+    TArray<bool> Beziers;
+
+    bool bResult = FCanvasAssets::SaveShapeAsset(
+                  TEXT("/Engine/Invalid:Path"), // illegal colon
+        TEXT("TestAsset"),
+        Shapes, Flags, Curve, Beziers);
+
+    TestFalse("Invalid package should not save", bResult);
+    return true;
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveAndLoad_RoundTrip, 
+    "CanvasAssets.SaveAndLoad.RoundTrip", 
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FSaveAndLoad_RoundTrip::RunTest(const FString& Parameters)
+{
+    // Minimal data
+    FInterpCurve<FVector2D> Curve;
+    Curve.AddPoint(0.f, FVector2D(10, 20));
+    Curve.AddPoint(1.f, FVector2D(30, 40));
+
+    TArray<FInterpCurve<FVector2D>> Shapes;
+    TArray<TArray<bool>> Flags;
+    {
+        FInterpCurve<FVector2D> Shape;
+        Shape.AddPoint(0.f, FVector2D(5,5));
+        Shape.AddPoint(1.f, FVector2D(15,15));
+        Shapes.Add(Shape);
+
+        TArray<bool> ShapeFlags;
+        ShapeFlags.Add(true);
+        ShapeFlags.Add(false);
+        Flags.Add(ShapeFlags);
+    }
+
+    TArray<bool> Beziers;
+    Beziers.Add(true);
+    Beziers.Add(false);
+
+    bool bSaved = FCanvasAssets::SaveShapeAsset(
+        TEXT("UnitTest"), 
+        TEXT("RoundTripAsset"),
+        Shapes, Flags, Curve, Beziers);
+
+    TestTrue("Asset should save successfully", bSaved);
+
+    // Load it back
+    UClothShapeAsset* Loaded = FindObject<UClothShapeAsset>(
+        ANY_PACKAGE, TEXT("RoundTripAsset"));
+    TestNotNull("Asset should exist after save", Loaded);
+
+    FCanvasState State;
+    bool bLoaded = FCanvasAssets::LoadCanvasState(Loaded, State);
+    TestTrue("Should load state", bLoaded);
+    TestEqual("Loaded one completed shape", State.CompletedShapes.Num(), 1);
+    TestEqual("Loaded curve points", State.CurvePoints.Points.Num(), 2);
+
+    return true;
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLoadCanvasState_NullAsset, 
+    "CanvasAssets.LoadCanvasState.NullAsset", 
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FLoadCanvasState_NullAsset::RunTest(const FString& Parameters)
+{
+    FCanvasState Dummy;
+    bool bLoaded = FCanvasAssets::LoadCanvasState(nullptr, Dummy);
+    TestFalse("Null input should fail", bLoaded);
+    return true;
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FAssetManager_Selection, 
+    "CanvasAssets.AssetManager.Selection", 
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FAssetManager_Selection::RunTest(const FString& Parameters)
+{
+    FCanvasAssetManager Manager;
+    FCanvasState Dummy;
+
+    // No asset selected
+    TestEqual("Path should be empty when nothing selected", 
+        Manager.GetSelectedShapeAssetPath(), FString());
+
+    // Fake asset data that isn't UClothShapeAsset should fail
+    FAssetData FakeData;
+    bool bResult = Manager.OnShapeAssetSelected(FakeData, Dummy);
+    TestFalse("Non cloth asset should fail", bResult);
+
+    return true;
+}

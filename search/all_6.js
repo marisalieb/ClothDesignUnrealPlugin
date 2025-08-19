@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['lastseamvertexids_0',['LastSeamVertexIDs',['../classAClothPatternMeshActor.html#a1f37aa6fee0ce0369d17045b83982334',1,'AClothPatternMeshActor']]]
+  ['sclothdesigncanvas_0',['SClothDesignCanvas',['../classSClothDesignCanvas.html',1,'']]],
+  ['shutdown_1',['Shutdown',['../classFClothDesignStyle.html#acd583b67ae46db9e904294943283ee1e',1,'FClothDesignStyle']]],
+  ['startupmodule_2',['StartupModule',['../classFClothDesignModule.html#a9366364045bcc30c8c43c17a8025cf1c',1,'FClothDesignModule']]]
 ];

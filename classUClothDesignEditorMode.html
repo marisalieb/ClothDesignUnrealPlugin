@@ -98,8 +98,6 @@ $(document).ready(function(){initNavTree('classUClothDesignEditorMode.html','');
   <div class="headertitle"><div class="title">UClothDesignEditorMode Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="ClothDesignEditorMode_8h_source.html">ClothDesignEditorMode.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for UClothDesignEditorMode:</div>
 <div class="dyncontent">
@@ -117,28 +115,29 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>ActorSelectio
 <tr class="memitem:a920992d571784e7e614c6b859e73560a" id="r_a920992d571784e7e614c6b859e73560a"><td class="memItemLeft" align="right" valign="top"><a id="a920992d571784e7e614c6b859e73560a" name="a920992d571784e7e614c6b859e73560a"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>CreateToolkit</b> () override</td></tr>
 <tr class="separator:a920992d571784e7e614c6b859e73560a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab429ac65c2500774c1902ff4741c64cc" id="r_ab429ac65c2500774c1902ff4741c64cc"><td class="memItemLeft" align="right" valign="top"><a id="ab429ac65c2500774c1902ff4741c64cc" name="ab429ac65c2500774c1902ff4741c64cc"></a>
-virtual TMap&lt; FName, TArray&lt; TSharedPtr&lt; FUICommandInfo &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetModeCommands</b> () const</td></tr>
-<tr class="separator:ab429ac65c2500774c1902ff4741c64cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a593ef9143da8d0f36b315cb56d196986" id="r_a593ef9143da8d0f36b315cb56d196986"><td class="memItemLeft" align="right" valign="top"><a id="a593ef9143da8d0f36b315cb56d196986" name="a593ef9143da8d0f36b315cb56d196986"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>UsesTransformWidget</b> () const</td></tr>
-<tr class="separator:a593ef9143da8d0f36b315cb56d196986"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fb543bd258d490eb2ac8bf74528e9e3" id="r_a1fb543bd258d490eb2ac8bf74528e9e3"><td class="memItemLeft" align="right" valign="top"><a id="a1fb543bd258d490eb2ac8bf74528e9e3" name="a1fb543bd258d490eb2ac8bf74528e9e3"></a>
+virtual TMap&lt; FName, TArray&lt; TSharedPtr&lt; FUICommandInfo &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetModeCommands</b> () const override</td></tr>
+<tr class="separator:a1fb543bd258d490eb2ac8bf74528e9e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4dd0095e8fd2380ad5c2ca205991ddf" id="r_ac4dd0095e8fd2380ad5c2ca205991ddf"><td class="memItemLeft" align="right" valign="top"><a id="ac4dd0095e8fd2380ad5c2ca205991ddf" name="ac4dd0095e8fd2380ad5c2ca205991ddf"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>UsesTransformWidget</b> (UE::Widget::EWidgetMode CheckMode) const override</td></tr>
+<tr class="separator:ac4dd0095e8fd2380ad5c2ca205991ddf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac09981b7ba8a9d1bd49431c2a8592eae" id="r_ac09981b7ba8a9d1bd49431c2a8592eae"><td class="memItemLeft" align="right" valign="top"><a id="ac09981b7ba8a9d1bd49431c2a8592eae" name="ac09981b7ba8a9d1bd49431c2a8592eae"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>ShouldDrawWidget</b> () const override</td></tr>
+<tr class="separator:ac09981b7ba8a9d1bd49431c2a8592eae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a5742e8e661ad0aa80ce0d5e9a495ef" id="r_a8a5742e8e661ad0aa80ce0d5e9a495ef"><td class="memItemLeft" align="right" valign="top"><a id="a8a5742e8e661ad0aa80ce0d5e9a495ef" name="a8a5742e8e661ad0aa80ce0d5e9a495ef"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>ShowModeWidgets</b> () const override</td></tr>
+<tr class="separator:a8a5742e8e661ad0aa80ce0d5e9a495ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac99dc1ce058ad8ca943ba34362ff17e8" id="r_ac99dc1ce058ad8ca943ba34362ff17e8"><td class="memItemLeft" align="right" valign="top"><a id="ac99dc1ce058ad8ca943ba34362ff17e8" name="ac99dc1ce058ad8ca943ba34362ff17e8"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>CanCycleWidgetMode</b> () const override</td></tr>
+<tr class="separator:ac99dc1ce058ad8ca943ba34362ff17e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:ac3b049a6d1f2c8287eb7ebd2f47c8879" id="r_ac3b049a6d1f2c8287eb7ebd2f47c8879"><td class="memItemLeft" align="right" valign="top"><a id="ac3b049a6d1f2c8287eb7ebd2f47c8879" name="ac3b049a6d1f2c8287eb7ebd2f47c8879"></a>
 static const FEditorModeID&#160;</td><td class="memItemRight" valign="bottom"><b>EM_ClothDesignEditorModeId</b> = TEXT(&quot;EM_ClothDesignEditorMode&quot;)</td></tr>
 <tr class="separator:ac3b049a6d1f2c8287eb7ebd2f47c8879"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab03992313698cc973daa712e17cf2f21" id="r_ab03992313698cc973daa712e17cf2f21"><td class="memItemLeft" align="right" valign="top"><a id="ab03992313698cc973daa712e17cf2f21" name="ab03992313698cc973daa712e17cf2f21"></a>
-static FString&#160;</td><td class="memItemRight" valign="bottom"><b>SimpleToolName</b> = TEXT(&quot;ClothDesign_ActorInfoTool&quot;)</td></tr>
-<tr class="separator:ab03992313698cc973daa712e17cf2f21"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d3ac17ed05590402c37be34b4b5db2b" id="r_a9d3ac17ed05590402c37be34b4b5db2b"><td class="memItemLeft" align="right" valign="top"><a id="a9d3ac17ed05590402c37be34b4b5db2b" name="a9d3ac17ed05590402c37be34b4b5db2b"></a>
-static FString&#160;</td><td class="memItemRight" valign="bottom"><b>InteractiveToolName</b> = TEXT(&quot;ClothDesign_MeasureDistanceTool&quot;)</td></tr>
-<tr class="separator:a9d3ac17ed05590402c37be34b4b5db2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This class provides an example of how to extend a UEdMode to add some simple tools using the InteractiveTools framework. The various UEdMode input event handlers (see UEdMode.h) forward events to a UEdModeInteractiveToolsContext instance, which has all the logic for interacting with the InputRouter, ToolManager, etc. The functions provided here are the minimum to get started inserting some custom behavior. Take a look at the UEdMode markup for more extensibility options. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a362b63c16d276796091f5b3aa47ad2d0" name="a362b63c16d276796091f5b3aa47ad2d0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a362b63c16d276796091f5b3aa47ad2d0">&#9670;&#160;</a></span>Enter()</h2>
 

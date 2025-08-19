@@ -97,123 +97,22 @@ $(document).ready(function(){initNavTree('classFClothDesignStyle.html',''); init
   <div class="headertitle"><div class="title">FClothDesignStyle Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>Manages the custom Slate style set used for the Cloth Design editor UI.  
- <a href="classFClothDesignStyle.html#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="ClothDesignStyle_8h_source.html">ClothDesignStyle.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a2efd875883feba692df7f6e7a2e560e0" id="r_a2efd875883feba692df7f6e7a2e560e0"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignStyle.html#a2efd875883feba692df7f6e7a2e560e0">Initialize</a> ()</td></tr>
-<tr class="memdesc:a2efd875883feba692df7f6e7a2e560e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the style set if it has not been created already.  <br /></td></tr>
+<tr class="memitem:a2efd875883feba692df7f6e7a2e560e0" id="r_a2efd875883feba692df7f6e7a2e560e0"><td class="memItemLeft" align="right" valign="top"><a id="a2efd875883feba692df7f6e7a2e560e0" name="a2efd875883feba692df7f6e7a2e560e0"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Initialize</b> ()</td></tr>
 <tr class="separator:a2efd875883feba692df7f6e7a2e560e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd583b67ae46db9e904294943283ee1e" id="r_acd583b67ae46db9e904294943283ee1e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignStyle.html#acd583b67ae46db9e904294943283ee1e">Shutdown</a> ()</td></tr>
-<tr class="memdesc:acd583b67ae46db9e904294943283ee1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shuts down the style set and unregisters it from the Slate style registry.  <br /></td></tr>
 <tr class="separator:acd583b67ae46db9e904294943283ee1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef86104cce93deb4045afee7dc89bd51" id="r_aef86104cce93deb4045afee7dc89bd51"><td class="memItemLeft" align="right" valign="top">static const ISlateStyle &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignStyle.html#aef86104cce93deb4045afee7dc89bd51">Get</a> ()</td></tr>
-<tr class="memdesc:aef86104cce93deb4045afee7dc89bd51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the current Slate style instance.  <br /></td></tr>
+<tr class="memitem:aef86104cce93deb4045afee7dc89bd51" id="r_aef86104cce93deb4045afee7dc89bd51"><td class="memItemLeft" align="right" valign="top"><a id="aef86104cce93deb4045afee7dc89bd51" name="aef86104cce93deb4045afee7dc89bd51"></a>
+static const ISlateStyle &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>Get</b> ()</td></tr>
 <tr class="separator:aef86104cce93deb4045afee7dc89bd51"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e0efcba192813d33da1304efa0fffc1" id="r_a7e0efcba192813d33da1304efa0fffc1"><td class="memItemLeft" align="right" valign="top">static FName&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignStyle.html#a7e0efcba192813d33da1304efa0fffc1">GetStyleSetName</a> ()</td></tr>
-<tr class="memdesc:a7e0efcba192813d33da1304efa0fffc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the FName identifier of this style set.  <br /></td></tr>
+<tr class="memitem:a7e0efcba192813d33da1304efa0fffc1" id="r_a7e0efcba192813d33da1304efa0fffc1"><td class="memItemLeft" align="right" valign="top"><a id="a7e0efcba192813d33da1304efa0fffc1" name="a7e0efcba192813d33da1304efa0fffc1"></a>
+static FName&#160;</td><td class="memItemRight" valign="bottom"><b>GetStyleSetName</b> ()</td></tr>
 <tr class="separator:a7e0efcba192813d33da1304efa0fffc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Manages the custom Slate style set used for the Cloth Design editor UI. </p>
-<p>This class is responsible for registering, initializing, and providing access to a centralized style set for Slate widgets within the Cloth Design editor module. The style set contains brushes, colors, fonts, and other visual resources.</p>
-<p>The style is implemented as a singleton-like static instance to ensure it is only loaded and registered once during the module's lifetime.</p>
-<p>Typical usage: </p><div class="fragment"><div class="line"><a class="code hl_function" href="classFClothDesignStyle.html#a2efd875883feba692df7f6e7a2e560e0">FClothDesignStyle::Initialize</a>();</div>
-<div class="line"><span class="keyword">const</span> ISlateStyle&amp; Style = <a class="code hl_function" href="classFClothDesignStyle.html#aef86104cce93deb4045afee7dc89bd51">FClothDesignStyle::Get</a>();</div>
-<div class="line"><a class="code hl_function" href="classFClothDesignStyle.html#acd583b67ae46db9e904294943283ee1e">FClothDesignStyle::Shutdown</a>();</div>
-<div class="ttc" id="aclassFClothDesignStyle_html_a2efd875883feba692df7f6e7a2e560e0"><div class="ttname"><a href="classFClothDesignStyle.html#a2efd875883feba692df7f6e7a2e560e0">FClothDesignStyle::Initialize</a></div><div class="ttdeci">static void Initialize()</div><div class="ttdoc">Initializes the style set if it has not been created already.</div><div class="ttdef"><b>Definition</b> ClothDesignStyle.cpp:18</div></div>
-<div class="ttc" id="aclassFClothDesignStyle_html_acd583b67ae46db9e904294943283ee1e"><div class="ttname"><a href="classFClothDesignStyle.html#acd583b67ae46db9e904294943283ee1e">FClothDesignStyle::Shutdown</a></div><div class="ttdeci">static void Shutdown()</div><div class="ttdoc">Shuts down the style set and unregisters it from the Slate style registry.</div><div class="ttdef"><b>Definition</b> ClothDesignStyle.cpp:37</div></div>
-<div class="ttc" id="aclassFClothDesignStyle_html_aef86104cce93deb4045afee7dc89bd51"><div class="ttname"><a href="classFClothDesignStyle.html#aef86104cce93deb4045afee7dc89bd51">FClothDesignStyle::Get</a></div><div class="ttdeci">static const ISlateStyle &amp; Get()</div><div class="ttdoc">Retrieves the current Slate style instance.</div><div class="ttdef"><b>Definition</b> ClothDesignStyle.cpp:53</div></div>
-</div><!-- fragment --> </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="aef86104cce93deb4045afee7dc89bd51" name="aef86104cce93deb4045afee7dc89bd51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef86104cce93deb4045afee7dc89bd51">&#9670;&#160;</a></span>Get()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const ISlateStyle &amp; FClothDesignStyle::Get </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Retrieves the current Slate style instance. </p>
-<dl class="section return"><dt>Returns</dt><dd>A constant reference to the active style set. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This should only be called after <a class="el" href="classFClothDesignStyle.html#a2efd875883feba692df7f6e7a2e560e0" title="Initializes the style set if it has not been created already.">Initialize()</a>. </dd></dl>
-
-</div>
-</div>
-<a id="a7e0efcba192813d33da1304efa0fffc1" name="a7e0efcba192813d33da1304efa0fffc1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e0efcba192813d33da1304efa0fffc1">&#9670;&#160;</a></span>GetStyleSetName()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">FName FClothDesignStyle::GetStyleSetName </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the FName identifier of this style set. </p>
-<dl class="section return"><dt>Returns</dt><dd>The name used to register and look up the style set. </dd></dl>
-
-</div>
-</div>
-<a id="a2efd875883feba692df7f6e7a2e560e0" name="a2efd875883feba692df7f6e7a2e560e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2efd875883feba692df7f6e7a2e560e0">&#9670;&#160;</a></span>Initialize()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void FClothDesignStyle::Initialize </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Initializes the style set if it has not been created already. </p>
-<p>Registers the style set with the Slate style registry, making its resources available to Slate widgets. </p>
-
-</div>
-</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="acd583b67ae46db9e904294943283ee1e" name="acd583b67ae46db9e904294943283ee1e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acd583b67ae46db9e904294943283ee1e">&#9670;&#160;</a></span>Shutdown()</h2>
 
@@ -236,9 +135,7 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Shuts down the style set and unregisters it from the Slate style registry. </p>
-<p>This should be called during module shutdown to free resources. </p>
+<p>ICON FROM : <a href="https://www.flaticon.com/free-icon/clothing-hanger_18409">https://www.flaticon.com/free-icon/clothing-hanger_18409</a> </p>
 
 </div>
 </div>

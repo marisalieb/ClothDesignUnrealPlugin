@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['onspawn2dwindowtab_0',['OnSpawn2DWindowTab',['../classFClothDesignModule.html#a07af7c551ccac154cc8b7b966f96e8a1',1,'FClothDesignModule']]],
-  ['ontabactivated_1',['OnTabActivated',['../classFClothDesignModule.html#ac6a47ad5ce171385bd8f7ecb2b5d3395',1,'FClothDesignModule']]]
+  ['shutdown_0',['Shutdown',['../classFClothDesignStyle.html#acd583b67ae46db9e904294943283ee1e',1,'FClothDesignStyle']]],
+  ['startupmodule_1',['StartupModule',['../classFClothDesignModule.html#a9366364045bcc30c8c43c17a8025cf1c',1,'FClothDesignModule']]]
 ];

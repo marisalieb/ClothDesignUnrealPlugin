@@ -1,24 +1,21 @@
 var indexSectionsWithContent =
 {
-  0: "adefgilmostuv",
+  0: "acefgisu",
   1: "afsu",
-  2: "aegios",
-  3: "dlmstv"
+  2: "cegis"
 };
 
 var indexSectionNames =
 {
   0: "all",
   1: "classes",
-  2: "functions",
-  3: "variables"
+  2: "functions"
 };
 
 var indexSectionLabels =
 {
   0: "All",
   1: "Classes",
-  2: "Functions",
-  3: "Variables"
+  2: "Functions"
 };
 

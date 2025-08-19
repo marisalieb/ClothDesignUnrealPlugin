@@ -1,16 +1,31 @@
 var hierarchy =
 [
     [ "AActor", null, [
-      [ "AClothPatternMeshActor", "classAClothPatternMeshActor.html", null ]
+      [ "APatternMesh", "classAPatternMesh.html", null ]
     ] ],
+    [ "FCanvasAssetManager", "structFCanvasAssetManager.html", null ],
+    [ "FCanvasAssets", "structFCanvasAssets.html", null ],
+    [ "FCanvasInputHandler", "structFCanvasInputHandler.html", null ],
+    [ "FCanvasMesh", "structFCanvasMesh.html", null ],
+    [ "FCanvasPaint", "structFCanvasPaint.html", null ],
+    [ "FCanvasPatternMerge", "structFCanvasPatternMerge.html", null ],
+    [ "FCanvasSewing", "classFCanvasSewing.html", null ],
     [ "FCanvasState", "structFCanvasState.html", null ],
-    [ "SClothDesignCanvas::FClickTarget", "structSClothDesignCanvas_1_1FClickTarget.html", null ],
+    [ "FCanvasUtils", "structFCanvasUtils.html", null ],
+    [ "FClickTarget", "structFClickTarget.html", null ],
     [ "FClothDesignStyle", "classFClothDesignStyle.html", null ],
+    [ "FClothPhysicalConfig", "structFClothPhysicalConfig.html", null ],
+    [ "FClothSimSettings", "structFClothSimSettings.html", null ],
+    [ "FCurvePointData", "structFCurvePointData.html", null ],
+    [ "FEdgeIndices", "structFEdgeIndices.html", null ],
+    [ "FLoadedShapeData", "structFLoadedShapeData.html", null ],
     [ "FModeToolkit", null, [
-      [ "FClothDesignEditorModeToolkit", "classFClothDesignEditorModeToolkit.html", null ]
+      [ "FClothDesignToolkit", "classFClothDesignToolkit.html", null ]
     ] ],
     [ "FPatternSewingConstraint", "structFPatternSewingConstraint.html", null ],
-    [ "SClothDesignCanvas::FSeamDefinition", "structSClothDesignCanvas_1_1FSeamDefinition.html", null ],
+    [ "FPresetItem", "structFPresetItem.html", null ],
+    [ "FSeamDefinition", "structFSeamDefinition.html", null ],
+    [ "FShapeData", "structFShapeData.html", null ],
     [ "IModuleInterface", null, [
       [ "FClothDesignModule", "classFClothDesignModule.html", null ]
     ] ],
@@ -18,9 +33,12 @@ var hierarchy =
       [ "SClothDesignCanvas", "classSClothDesignCanvas.html", null ]
     ] ],
     [ "TCommands", null, [
-      [ "FClothDesignEditorModeCommands", "classFClothDesignEditorModeCommands.html", null ]
+      [ "FClothDesignCommands", "classFClothDesignCommands.html", null ]
     ] ],
-    [ "UEdMode", null, [
+    [ "UBaseLegacyWidgetEdMode", null, [
       [ "UClothDesignEditorMode", "classUClothDesignEditorMode.html", null ]
+    ] ],
+    [ "UDataAsset", null, [
+      [ "UClothShapeAsset", "classUClothShapeAsset.html", null ]
     ] ]
 ];

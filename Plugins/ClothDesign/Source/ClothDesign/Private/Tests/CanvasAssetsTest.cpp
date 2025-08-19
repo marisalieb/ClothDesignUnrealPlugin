@@ -57,14 +57,14 @@ bool FSaveAndLoad_RoundTrip::RunTest(const FString& Parameters)
 
     bool bSaved = FCanvasAssets::SaveShapeAsset(
         TEXT("UnitTest"), 
-        TEXT("RoundTripAsset"),
+        TEXT("TestingAsset"),
         Shapes, Flags, Curve, Beziers);
 
     TestTrue("Asset should save successfully", bSaved);
 
     // Load it back
     UClothShapeAsset* Loaded = FindObject<UClothShapeAsset>(
-        ANY_PACKAGE, TEXT("RoundTripAsset"));
+        GetTransientPackage(), TEXT("TestingAsset"));
     TestNotNull("Asset should exist after save", Loaded);
 
     FCanvasState State;

@@ -9,7 +9,14 @@ USTRUCT()
 struct FPatternSewingConstraint
 {
 	GENERATED_BODY()
-
+	
+	FPatternSewingConstraint():
+		MeshA(nullptr),
+		VertexIndexA(0),
+		MeshB(nullptr),
+		VertexIndexB(0)
+		{}
+	
 	UPROPERTY()
 	UProceduralMeshComponent* MeshA;
 

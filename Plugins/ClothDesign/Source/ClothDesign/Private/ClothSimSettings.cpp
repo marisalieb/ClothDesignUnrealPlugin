@@ -1,24 +1,15 @@
 #include "ClothSimSettings.h"
 
 #include "Components/SkeletalMeshComponent.h"
-#include "ChaosCloth/ChaosClothingSimulationInteractor.h"
-#include "ClothingSimulationInteractor.h"
-#include "Components/SkeletalMeshComponent.h"                 // USkeletalMeshComponent
-// #include "ClothingSystemRuntimeInterface/Public/ClothingSimulationInteractor.h" // UClothingSimulationInteractor
-// #include "ClothingSystemRuntimeInterface/Public/ClothingAssetBase.h" // UClothingAssetBase
+#include "Components/SkeletalMeshComponent.h"              
 #include "ClothingAssetBase.h"
-#include "ClothingAsset.h" // ClothingSystemRuntimeCommon/Public/ClothingAsset.h
+#include "ClothingAsset.h"
 #include "ChaosCloth/ChaosClothConfig.h"
-#include "AssetToolsModule.h"
-#include "IAssetTools.h"
 #include "Factories/Factory.h"
-#include "ClothingAssetBase.h"          // UClothingAssetBase / UClothingAssetCommon
-#include "ChaosCloth/ChaosClothConfig.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/SkeletalMesh.h"
 #include "Editor.h"
-#include "PackageTools.h"
-#include "AssetRegistry/AssetRegistryModule.h"
+
 
 
 
@@ -138,65 +129,3 @@ void FClothSimSettings::ApplyPresetToCloth(USkeletalMeshComponent* SkelComp, con
 #endif
 }
 
-
-
-
-
-// bool FClothSimSettings::CreateAndBindClothingAssetForSkeletalMesh(
-//     USkeletalMesh* TargetSkel,
-//     const FString& ClothAssetPackagePath, // "/Game/Cloth/MyClothAsset"
-//     int32 MeshLODIndex = 0,
-//     int32 SectionIndex = 0)
-// {
-// #if WITH_EDITOR
-//     if (!TargetSkel) return false;
-//
-//     // 1) Create the clothing asset in Content (Editor-only)
-//     // Try to use an existing Chaos cloth factory if available (plugin: ChaosClothAssetEditor / ChaosClothAssetTools)
-//     UObject* NewAsset = nullptr;
-//     const FString PackageName = ClothAssetPackagePath;
-//     const FString AssetName = FPackageName::GetShortName(PackageName);
-//
-//     // Create package
-//     UPackage* Package = CreatePackage(*PackageName);
-//     Package->FullyLoad();
-//
-//     // Try to find an appropriate factory (ChaosClothAssetFactory) via AssetTools
-//     UFactory* Factory = nullptr;
-//     {
-//         // This is the pattern: the editor plugin usually exposes a factory called ChaosClothAssetFactory.
-//         // If you have that plugin, you can instantiate it directly:
-//         // #include "ClothAssetFactory.h"  (from ChaosClothAssetTools)
-//         // Factory = NewObject<UChaosClothAssetFactory>(GetTransientPackage());
-//
-//         // Fallback: create a generic UObject asset and cast later (not ideal)
-//     }
-//
-//     // Preferred: use AssetTools to create asset with factory (if you have the factory)
-//     if (Factory)
-//     {
-//         FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
-//         NewAsset = AssetToolsModule.Get().CreateAsset(AssetName, FPackageName::GetLongPackagePath(PackageName), UClothingAssetCommon::StaticClass(), Factory);
-//     }
-//     else
-//     {
-//         // Fallback: create a blank clothing asset object in package (you will need to fill it)
-//         NewAsset = NewObject<UClothingAssetCommon>(Package, UClothingAssetCommon::StaticClass(), *AssetName, RF_Public | RF_Standalone);
-//         if (NewAsset)
-//         {
-//             FAssetRegistryModule::AssetCreated(NewAsset);
-//             Package->MarkPackageDirty();
-//             // Save package to disk so it shows in Content Browser:
-//             FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
-//             UPackage::SavePackage(Package, NewAsset, RF_Public | RF_Standalone, *PackageFileName, GError, nullptr, true, true, SAVE_None);
-//         }
-//     }
-//
-//    
-//
-//
-//     return true;
-// #else
-//     return false;
-// #endif
-// }

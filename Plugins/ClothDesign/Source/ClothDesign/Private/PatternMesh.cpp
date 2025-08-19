@@ -15,3 +15,4 @@ APatternMesh::APatternMesh()
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	
 }
+

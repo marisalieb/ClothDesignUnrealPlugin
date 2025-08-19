@@ -49,7 +49,6 @@ struct FClothPhysicalConfig
 struct FClothSimSettings
 {
 	FClothSimSettings(); // ctor declared here (define in .cpp)
-
 	
 	EClothPreset SelectedPreset = EClothPreset::Custom;
 	
@@ -60,17 +59,11 @@ struct FClothSimSettings
 	TArray<TSharedPtr<FPresetItem>> PresetOptions;
 	
 	//void ApplyPresetToCloth(USkeletalMeshComponent* SkelComp, const FClothPhysicalConfig& Preset);
-	void ApplyPresetToCloth(USkeletalMeshComponent* SkelComp, const FClothPhysicalConfig& Preset, EClothPreset SelectedPreset) const;
-
+	void ApplyPresetToCloth(
+		USkeletalMeshComponent* SkelComp,
+		const FClothPhysicalConfig& Preset,
+		EClothPreset SelectedPreset) const;
 
 	static void SetClothCollisionFlags(USkeletalMeshComponent* SkelComp);
-
-	// Put future sim-related settings or functions here,
-	// like setting collision flags on the cloth asset
-
-	// bool CreateAndBindClothingAssetForSkeletalMesh(
-	// 	USkeletalMesh* TargetSkel,
-	// 	const FString& ClothAssetPackagePath, // "/Game/Cloth/MyClothAsset"
-	// 	int32 MeshLODIndex,
-	// 	int32 SectionIndex);
+	
 };

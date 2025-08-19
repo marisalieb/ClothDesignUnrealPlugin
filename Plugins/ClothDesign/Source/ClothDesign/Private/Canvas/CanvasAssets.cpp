@@ -216,7 +216,7 @@ bool FCanvasAssets::LoadCanvasState(UClothShapeAsset* ClothAsset, FCanvasState& 
     // reset selection / pan / zoom to defaults
     OutState.SelectedPointIndex = INDEX_NONE;
     OutState.PanOffset          = FVector2D::ZeroVector;
-    OutState.ZoomFactor         = 1.0f;
+    OutState.ZoomFactor         = 5.0f;
 
     return true;
 }

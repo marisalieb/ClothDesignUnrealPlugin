@@ -105,13 +105,7 @@ FReply FClothDesignToolkit::OnOpen2DWindowClicked()
 	return FReply::Handled();
 }
 
-// // helper functions to improve readability of the main ui init function
-// TSharedRef<SWidget> FClothDesignToolkit::MakeOpen2DButton()
-// {
-// 	return SNew(SButton)
-// 		.Text(FText::FromString("Open 2D Editor"))
-// 		.OnClicked(FOnClicked::CreateSP(this, &FClothDesignToolkit::OnOpen2DWindowClicked));
-// }
+
 TSharedRef<SWidget> FClothDesignToolkit::MakeOpen2DButton()
 {
 	return SNew(SButton)
@@ -345,30 +339,7 @@ FString FClothDesignToolkit::GetSelectedTextileMaterialPath() const
 	return SelectedTextileMaterial.IsValid() ? SelectedTextileMaterial->GetPathName() : FString();
 }
 
-// void FClothDesignToolkit::OnTextileMaterialSelected(const FAssetData& AssetData)
-// {
-// 	SelectedTextileMaterial = Cast<UMaterialInterface>(AssetData.GetAsset());
-// }
 
-
-
-// void FClothDesignToolkit::SetSimFlags(USkeletalMeshComponent* SkelComp)
-// {
-// 	if (!SkelComp) return;
-//
-// 	SkelComp->Modify();                      // for undo/redo
-// 	SkelComp->bCollideWithEnvironment = true;
-// 	SkelComp->bForceCollisionUpdate = true;
-//
-// 	// SkelComp->UpdateClothCollision();
-// 	SkelComp->MarkRenderStateDirty();
-// 	SkelComp->RecreatePhysicsState();
-//
-// #if WITH_EDITOR
-// 	SkelComp->PostEditChange();
-// #endif
-// 	
-// }
 
 
 #if WITH_EDITOR

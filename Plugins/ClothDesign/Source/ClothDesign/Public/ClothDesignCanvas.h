@@ -136,6 +136,7 @@ public:
 	int32 SelectedSeamIndex = INDEX_NONE;
 
 private:
+	
 	FGeometry LastGeometry;
 	
 	// for save load managing 
@@ -148,6 +149,7 @@ private:
 
 	void RestoreCanvasState(const FCanvasState& State);
 
+	friend class FClothCanvas_StateRoundtripTest;
 
 	
 

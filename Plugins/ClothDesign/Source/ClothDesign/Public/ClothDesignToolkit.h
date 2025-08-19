@@ -4,7 +4,6 @@
 #include "ClothDesignEditorMode.h"
 #include "GameFramework/Actor.h"
 #include "ClothSimSettings.h" 
-#include "ContentBrowserDelegates.h"
 
 
 class FClothDesignToolkit : public FModeToolkit
@@ -23,7 +22,8 @@ public:
 	// custom UI
 	virtual TSharedPtr<SWidget> GetInlineContent() const override;
 
-	
+	friend class FClothDesignToolkitTestHelper;
+
 private:
 	TSharedPtr<SWidget> ToolkitWidget;
 	TSharedPtr<FUICommandList> ToolkitCommandList;

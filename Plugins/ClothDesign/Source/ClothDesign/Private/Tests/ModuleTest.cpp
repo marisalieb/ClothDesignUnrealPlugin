@@ -5,7 +5,7 @@
 
 
 
-
+// since it's mostly a UI class, I didn't test a lot and just verified the output visually
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FClothDesignModuleButtonTest,
 	"ClothDesignModule.ButtonClicks",
@@ -18,7 +18,7 @@ bool FClothDesignModuleButtonTest::RunTest(const FString& Parameters)
 	
 	Module.CanvasWidget = SNew(SClothDesignCanvas);
 	
-	// Directly call private functions because friend
+	// Directly call private functions because it's a friend class
 	Module.OnGenerateMeshClicked();
 	Module.OnSewingClicked();
 	Module.OnMergeMeshesClicked();

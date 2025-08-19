@@ -35,6 +35,11 @@ FCanvasPatternMerge::FCanvasPatternMerge(
     , AllSeamsRef(InAllSeams)
 {}
 
+// Define the static test arrays
+TArray<TWeakObjectPtr<APatternMesh>> FCanvasPatternMerge::TestActors;
+TArray<FPatternSewingConstraint> FCanvasPatternMerge::TestSeams;
+
+
 void FCanvasPatternMerge::BuildActorListAndIndexMap(
     TArray<APatternMesh*>& OutActors,
     TMap<APatternMesh*, int32>& OutMap) const

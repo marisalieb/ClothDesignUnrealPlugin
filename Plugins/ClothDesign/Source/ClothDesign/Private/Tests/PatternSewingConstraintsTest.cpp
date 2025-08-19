@@ -8,7 +8,7 @@
 #include "PatternSewingConstraint.h"
 
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPatternSewingConstraint_DefaultsTest, "Project.PatternSewingConstraint.Defaults",
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPatternSewingConstraint_DefaultsTest, "PatternSewingConstraint.Defaults",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FPatternSewingConstraint_DefaultsTest::RunTest(const FString& Parameters)

@@ -68,6 +68,8 @@ public:
 
 	void AddPreviewPoint(int32 ShapeIndex, int32 PointIndex);
 
+	friend class FCanvasSewingTestHelper;
+
 	
 private:
 	static void AlignSeamMeshes(APatternMesh* A, APatternMesh* B);

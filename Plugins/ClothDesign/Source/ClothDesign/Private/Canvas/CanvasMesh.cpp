@@ -462,7 +462,7 @@ void FCanvasMesh::TriangulateAndBuildAllMeshes(
 	{
 		FDynamicMesh3 Mesh;
 		TArray<int32> SeamVerts;
-		TArray<int32> DummySeamVerts;
+		TArray<int32> TempSeamVerts;
 
 		TriangulateAndBuildMesh(
 			Shape,
@@ -470,7 +470,7 @@ void FCanvasMesh::TriangulateAndBuildAllMeshes(
 			0, 0,
 			SeamVerts,
 			Mesh,
-			DummySeamVerts,
+			TempSeamVerts,
 			OutSpawnedActors);
 		
 		OutMeshes.Add(Mesh);
@@ -480,7 +480,7 @@ void FCanvasMesh::TriangulateAndBuildAllMeshes(
 	{
 		FDynamicMesh3 Mesh;
 		TArray<int32> SeamVerts;
-		TArray<int32> DummySeamVerts;
+		TArray<int32> TempSeamVerts;
 
 		TriangulateAndBuildMesh(
 			CurvePoints,
@@ -488,7 +488,7 @@ void FCanvasMesh::TriangulateAndBuildAllMeshes(
 			0, 0,
 			SeamVerts,
 			Mesh,
-			DummySeamVerts,
+			TempSeamVerts,
 			OutSpawnedActors);
 		
 		OutMeshes.Add(Mesh);

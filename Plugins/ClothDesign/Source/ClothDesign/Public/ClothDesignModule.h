@@ -15,7 +15,9 @@ public:
 	static const FName TwoDTabName;
 	void Spawn2DWindow();
 
+
 private:
+	friend class FClothDesignModuleButtonTest;
 	TSharedPtr<FUICommandList> PluginCommands;
 	
 	TSharedPtr<SClothDesignCanvas> CanvasWidget;

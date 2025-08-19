@@ -1,153 +1,106 @@
-// // CanvasUtilsTests.cpp
-// #include "Misc/AutomationTest.h"
-// #include "Containers/Array.h"
-// #include "Math/Vector2D.h"
-// #include "Math/UnrealMathUtility.h"
-//
-// // Replace these includes with the correct paths in the project:
-// #include "Canvas/CanvasUtils.h"
-// #include "Canvas/CanvasState.h"
-//
-//
-// IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasUtils_UndoRedoTest, "Project.CanvasUtils.UndoRedo",
-// 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-//
-// bool FCanvasUtils_UndoRedoTest::RunTest(const FString& Parameters)
-// {
-// 	// Prepare stacks and a current state
-// 	TArray<FCanvasState> UndoStack;
-// 	TArray<FCanvasState> RedoStack;
-// 	FCanvasState Current;
-// 	Current.SelectedPointIndex = 5;
-// 	Current.PanOffset = FVector2D(10.f, 20.f);
-// 	Current.ZoomFactor = 2.0f;
-//
-// 	// Save a copy to compare later
-// 	FCanvasState Saved = Current;
-//
-// 	// Call SaveStateForUndo
-// 	FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, Current);
-//
-// 	TestTrue(TEXT("UndoStack should have one entry after SaveStateForUndo"), UndoStack.Num() == 1);
-// 	TestTrue(TEXT("RedoStack should be empty after SaveStateForUndo"), RedoStack.Num() == 0);
-// 	TestTrue(TEXT("Saved state equals top of UndoStack"), UndoStack[0] == Saved);
-//
-// 	// Modify Current then Undo
-// 	Current.SelectedPointIndex = 2;
-// 	bool bUndo = FCanvasUtils::Undo(UndoStack, RedoStack, Current);
-//
-// 	TestTrue(TEXT("Undo should succeed when UndoStack not empty"), bUndo);
-// 	TestTrue(TEXT("RedoStack should now contain previous Current"), RedoStack.Num() == 1);
-// 	TestTrue(TEXT("Current should equal saved state after undo"), Current == Saved);
-//
-// 	// Undo again -> should fail because UndoStack is empty now
-// 	bool bUndoWhenEmpty = FCanvasUtils::Undo(UndoStack, RedoStack, Current);
-// 	TestFalse(TEXT("Undo should fail when UndoStack is empty"), bUndoWhenEmpty);
-//
-// 	// Redo (we have one item in RedoStack from earlier)
-// 	bool bRedo = FCanvasUtils::Redo(UndoStack, RedoStack, Current);
-// 	TestTrue(TEXT("Redo should succeed when RedoStack not empty"), bRedo);
-// 	TestTrue(TEXT("UndoStack should have one entry after redo"), UndoStack.Num() == 1);
-//
-// 	// Redo again -> should fail (RedoStack now empty)
-// 	bool bRedoWhenEmpty = FCanvasUtils::Redo(UndoStack, RedoStack, Current);
-// 	TestFalse(TEXT("Redo should fail when RedoStack is empty"), bRedoWhenEmpty);
-//
-// 	return true;
-// }
-//
-//
-//
-// IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasUtils_RecalculateNTangentsTest, "Project.CanvasUtils.RecalculateNTangents",
-// 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-//
-// bool FCanvasUtils_RecalculateNTangentsTest::RunTest(const FString& Parameters)
-// {
-// 	// Build a simple 3-point non-bezier curve:
-// 	// A = (0,0), B = (1,2), C = (2,0)
-// 	FInterpCurve<FVector2D> Curve;
-// 	Curve.Points.AddDefaulted(); // point 0
-// 	Curve.Points.AddDefaulted(); // point 1
-// 	Curve.Points.AddDefaulted(); // point 2
-//
-// 	Curve.Points[0].OutVal = FVector2D(0.f, 0.f);
-// 	Curve.Points[1].OutVal = FVector2D(1.f, 2.f);
-// 	Curve.Points[2].OutVal = FVector2D(2.f, 0.f);
-//
-// 	// All points are N-points (not bezier)
-// 	TArray<bool> bBezierFlags;
-// 	bBezierFlags.Init(false, Curve.Points.Num());
-//
-// 	// Call function under test
-// 	FCanvasUtils::RecalculateNTangents(Curve, bBezierFlags);
-//
-// 	// Expected tangents:
-// 	// p0: Arrive = (0,0), Leave = (B-A)*0.5 = (0.5, 1)
-// 	// p1: Arrive = (B-A)*0.5 = (0.5, 1), Leave = (C-B)*0.5 = (0.5, -1)
-// 	// p2: Arrive = (C-B)*0.5 = (0.5, -1), Leave = (0,0)
-// 	const float Tolerance = KINDA_SMALL_NUMBER;
-//
-// 	TestTrue(TEXT("Point 0 arrive should be zero"), Curve.Points[0].ArriveTangent.Equals(FVector2D::ZeroVector, Tolerance));
-// 	TestTrue(TEXT("Point 0 leave should be (0.5,1)"), Curve.Points[0].LeaveTangent.Equals(FVector2D(0.5f, 1.0f), Tolerance));
-//
-// 	TestTrue(TEXT("Point 1 arrive should be (0.5,1)"), Curve.Points[1].ArriveTangent.Equals(FVector2D(0.5f, 1.0f), Tolerance));
-// 	TestTrue(TEXT("Point 1 leave should be (0.5,-1)"), Curve.Points[1].LeaveTangent.Equals(FVector2D(0.5f, -1.0f), Tolerance));
-//
-// 	TestTrue(TEXT("Point 2 arrive should be (0.5,-1)"), Curve.Points[2].ArriveTangent.Equals(FVector2D(0.5f, -1.0f), Tolerance));
-// 	TestTrue(TEXT("Point 2 leave should be zero"), Curve.Points[2].LeaveTangent.Equals(FVector2D::ZeroVector, Tolerance));
-//
-// 	return true;
-// }
-//
-// // // ---------- Undo/Redo tests ----------
-// // IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasUndoRedoTest, "Project.Canvas.UndoRedo.Basic",
-// //     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-// //
-// // bool FCanvasUndoRedoTest::RunTest(const FString& Parameters)
-// // {
-// //     // Prepare stacks and initial current state
-// //     TArray<FCanvasState> UndoStack;
-// //     TArray<FCanvasState> RedoStack;
-// //
-// //     FCanvasState InitialState;
-// //     InitialState.SelectedPointIndex = 5;
-// //     InitialState.PanOffset = FVector2D(10.f, 20.f);
-// //     InitialState.ZoomFactor = 1.0f;
-// //
-// //     // Save the initial state for undo -- should push onto Undo and clear Redo
-// //     FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, InitialState);
-// //
-// //     TestTrue(TEXT("Undo stack should contain one element after SaveStateForUndo"), UndoStack.Num() == 1);
-// //     TestTrue(TEXT("Redo stack should be empty after SaveStateForUndo"), RedoStack.Num() == 0);
-// //
-// //     // Change current state to simulate user making an edit
-// //     FCanvasState EditedState = InitialState;
-// //     EditedState.ZoomFactor = 2.5f;
-// //     EditedState.SelectedPointIndex = 7;
-// //
-// //     // Perform Undo: should push EditedState into Redo and pop InitialState back into Current
-// //     bool bUndid = FCanvasUtils::Undo(UndoStack, RedoStack, EditedState);
-// //     TestTrue(TEXT("Undo should succeed when UndoStack not empty"), bUndid);
-// //     TestTrue(TEXT("After Undo, current state's ZoomFactor should equal initial state's ZoomFactor"),
-// //              FMath::IsNearlyEqual(EditedState.ZoomFactor, 1.0f));
-// //
-// //     TestTrue(TEXT("Redo stack should contain one element after Undo"), RedoStack.Num() == 1);
-// //     TestTrue(TEXT("Undo stack should be empty after Undo (because we popped)"), UndoStack.Num() == 0);
-// //
-// //     // Now Redo: should restore EditedState and re-add current (InitialState) into Undo
-// //     bool bRedid = FCanvasUtils::Redo(UndoStack, RedoStack, EditedState);
-// //     TestTrue(TEXT("Redo should succeed when RedoStack not empty"), bRedid);
-// //     TestTrue(TEXT("After Redo, current state's ZoomFactor should equal edited state's ZoomFactor"),
-// //              FMath::IsNearlyEqual(EditedState.ZoomFactor, 2.5f));
-// //
-// //     TestTrue(TEXT("Undo stack should contain one element after Redo"), UndoStack.Num() == 1);
-// //     TestTrue(TEXT("Redo stack should be empty after Redo"), RedoStack.Num() == 0);
-// //
-// //     // Undo when UndoStack is empty should return false
-// //     UndoStack.Empty();
-// //     FCanvasState DummyState = EditedState;
-// //     TestFalse(TEXT("Undo should return false when UndoStack is empty"), FCanvasUtils::Undo(UndoStack, RedoStack, DummyState));
-// //
-// //     // Redo when RedoStack is empty should return false
-// //     RedoStack.Empty();
-// //     TestFalse(TEXT("Redo should return false when RedoStack is empty"), F
+#include "Misc/AutomationTest.h"
+#include "Canvas/CanvasUtils.h"
+#include "DynamicMesh/DynamicMesh3.h"
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasUtilsUndoRedoTest, 
+    "CanvasUtils.UndoRedo", 
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FCanvasUtilsUndoRedoTest::RunTest(const FString& Parameters)
+{
+    TArray<FCanvasState> UndoStack;
+    TArray<FCanvasState> RedoStack;
+    FCanvasState Current;
+
+    // Initialize Current state
+    Current.SelectedPointIndex = 5;
+    Current.ZoomFactor = 1.5f;
+    Current.PanOffset = FVector2D(10, 20);
+
+    // Save state
+    FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, Current);
+
+    TestEqual(TEXT("Undo stack should have 1 item"), UndoStack.Num(), 1);
+    TestEqual(TEXT("Redo stack should be empty"), RedoStack.Num(), 0);
+
+    // Change current state
+    Current.SelectedPointIndex = 7;
+
+    // Undo
+    bool bUndid = FCanvasUtils::Undo(UndoStack, RedoStack, Current);
+    TestTrue(TEXT("Undo should succeed"), bUndid);
+    TestEqual(TEXT("Current state restored SelectedPointIndex"), Current.SelectedPointIndex, 5);
+    TestEqual(TEXT("Redo stack should have 1 item"), RedoStack.Num(), 1);
+
+    // Redo
+    bool bRedid = FCanvasUtils::Redo(UndoStack, RedoStack, Current);
+    TestTrue(TEXT("Redo should succeed"), bRedid);
+    TestEqual(TEXT("Current state restored SelectedPointIndex after redo"), Current.SelectedPointIndex, 7);
+    TestEqual(TEXT("Undo stack should have 1 item again"), UndoStack.Num(), 1);
+
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasUtilsRecalculateTangentsTest, 
+    "CanvasUtils.RecalculateNTangents", 
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FCanvasUtilsRecalculateTangentsTest::RunTest(const FString& Parameters)
+{
+    FInterpCurve<FVector2D> Curve;
+    TArray<bool> bBezierFlags;
+
+    // Add points explicitly
+    Curve.Points.Add(FInterpCurvePoint<FVector2D>(0.0f, FVector2D(0,0), FVector2D::ZeroVector, FVector2D::ZeroVector, CIM_Linear));
+    Curve.Points.Add(FInterpCurvePoint<FVector2D>(1.0f, FVector2D(1,1), FVector2D::ZeroVector, FVector2D::ZeroVector, CIM_Linear));
+    Curve.Points.Add(FInterpCurvePoint<FVector2D>(2.0f, FVector2D(2,0), FVector2D::ZeroVector, FVector2D::ZeroVector, CIM_Linear));
+
+    bBezierFlags.Init(false, 3);
+
+    FCanvasUtils::RecalculateNTangents(Curve, bBezierFlags);
+
+    // Test that tangents are computed
+    TestTrue(TEXT("Point 0 ArriveTangent should be zero"), Curve.Points[0].ArriveTangent.IsNearlyZero());
+    TestTrue(TEXT("Point 0 LeaveTangent should be half the vector to next"), 
+        Curve.Points[0].LeaveTangent.Equals((FVector2D(1,1)-FVector2D(0,0))*0.5f));
+
+    TestTrue(TEXT("Point 1 ArriveTangent should be half the vector from prev"), 
+        Curve.Points[1].ArriveTangent.Equals((FVector2D(1,1)-FVector2D(0,0))*0.5f));
+    TestTrue(TEXT("Point 1 LeaveTangent should be half the vector to next"), 
+        Curve.Points[1].LeaveTangent.Equals((FVector2D(2,0)-FVector2D(1,1))*0.5f));
+
+    TestTrue(TEXT("Point 2 LeaveTangent should be zero"), Curve.Points[2].LeaveTangent.IsNearlyZero());
+
+    return true;
+}
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasUtilsCentroidAndTranslateTest,
+    "CanvasUtils.MeshCentroidTranslate",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FCanvasUtilsCentroidAndTranslateTest::RunTest(const FString& Parameters)
+{
+    UE::Geometry::FDynamicMesh3 Mesh;
+
+    // Create a simple triangle mesh
+    int v0 = Mesh.AppendVertex(FVector3d(0,0,0));
+    int v1 = Mesh.AppendVertex(FVector3d(1,0,0));
+    int v2 = Mesh.AppendVertex(FVector3d(0,1,0));
+    Mesh.AppendTriangle(v0,v1,v2);
+
+    FVector3d Centroid = FCanvasUtils::ComputeAreaWeightedCentroid(Mesh);
+    TestTrue(TEXT("Centroid approximately correct"), Centroid.Equals(FVector3d(1.0/3, 1.0/3, 0), 1e-5));
+
+    TArray<FVector> Vertices;
+    Vertices.Add(FVector(1,1,0));
+    FCanvasUtils::CenterMeshVerticesToOrigin(Vertices, FVector(1,1,0));
+    TestTrue(TEXT("Vertices centered to origin"), Vertices[0].IsNearlyZero());
+
+    // Translate dynamic mesh by offset
+    FCanvasUtils::TranslateDynamicMeshBy(Mesh, Centroid);
+    FVector3d NewCentroid = FCanvasUtils::ComputeAreaWeightedCentroid(Mesh);
+    TestTrue(TEXT("Translated mesh centroid at origin"), NewCentroid.IsNearlyZero());
+
+    return true;
+}

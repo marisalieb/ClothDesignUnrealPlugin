@@ -83,8 +83,8 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLoadCanvasState_NullAsset,
 
 bool FLoadCanvasState_NullAsset::RunTest(const FString& Parameters)
 {
-    FCanvasState Dummy;
-    bool bLoaded = FCanvasAssets::LoadCanvasState(nullptr, Dummy);
+    FCanvasState Test;
+    bool bLoaded = FCanvasAssets::LoadCanvasState(nullptr, Test);
     TestFalse("Null input should fail", bLoaded);
     return true;
 }
@@ -97,7 +97,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FAssetManager_Selection,
 bool FAssetManager_Selection::RunTest(const FString& Parameters)
 {
     FCanvasAssetManager Manager;
-    FCanvasState Dummy;
+    FCanvasState Test;
 
     // No asset selected
     TestEqual("Path should be empty when nothing selected", 
@@ -105,7 +105,7 @@ bool FAssetManager_Selection::RunTest(const FString& Parameters)
 
     // Fake asset data that isn't UClothShapeAsset should fail
     FAssetData FakeData;
-    bool bResult = Manager.OnShapeAssetSelected(FakeData, Dummy);
+    bool bResult = Manager.OnShapeAssetSelected(FakeData, Test);
     TestFalse("Non cloth asset should fail", bResult);
 
     return true;

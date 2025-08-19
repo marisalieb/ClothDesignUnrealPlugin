@@ -14,6 +14,8 @@ struct FPatternSewingConstraint;
 struct FCanvasPatternMerge
 {
 public:
+
+
     // Constructor takes references so modifications are reflected to caller
     FCanvasPatternMerge(
         TArray<TWeakObjectPtr<APatternMesh>>& InSpawnedActors,
@@ -22,11 +24,23 @@ public:
     // Top-level call: find sewn groups and merge them where safe.
     void MergeSewnGroups() const;
 
+
+    
+    // Test-only constructor that binds to test arrays
+    FCanvasPatternMerge()
+        : SpawnedActorsRef(TestActors), AllSeamsRef(TestSeams) {}
+    static TArray<TWeakObjectPtr<APatternMesh>> TestActors;
+    static TArray<FPatternSewingConstraint> TestSeams;
+    friend class FCanvasPatternMergeTests;
+
+    
 private:
     // References to caller-owned containers
     TArray<TWeakObjectPtr<APatternMesh>>& SpawnedActorsRef;
     TArray<FPatternSewingConstraint>& AllSeamsRef;
 
+
+    
     void BuildActorListAndIndexMap(
         TArray<APatternMesh*>& OutActors,
         TMap<APatternMesh*,
@@ -49,10 +63,10 @@ private:
     static bool MergeComponentToDynamicMesh(
         const TArray<int32>& Component,
         const TArray<APatternMesh*>& Actors,
-        UE::Geometry::FDynamicMesh3& OutMerged);
+        FDynamicMesh3& OutMerged);
 
     static APatternMesh* SpawnMergedActorFromDynamicMesh(
-        UE::Geometry::FDynamicMesh3&& MergedMesh);
+        FDynamicMesh3&& MergedMesh);
 
     void ReplaceActorsWithMerged(
         const TArray<int32>& Component,

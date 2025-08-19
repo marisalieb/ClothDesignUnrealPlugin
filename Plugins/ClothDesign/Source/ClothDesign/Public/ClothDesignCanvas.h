@@ -21,8 +21,8 @@ public:
 	
 	virtual bool SupportsKeyboardFocus() const override { return true; }
 
-	FVector2D TransformPoint(const FVector2D& Point) const;
-	FVector2D InverseTransformPoint(const FVector2D& ScreenPoint) const;
+	virtual FVector2D TransformPoint(const FVector2D& Point) const; // virtual for canvaspaint tests
+	virtual FVector2D InverseTransformPoint(const FVector2D& ScreenPoint) const;
 
 	// // --- Drawing logic ---
 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,

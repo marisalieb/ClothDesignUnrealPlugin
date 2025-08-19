@@ -7,7 +7,7 @@
 #include "Canvas/CanvasState.h"
 
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasState_EqualityTest, "Project.CanvasState.Equality",
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasState_EqualityTest, "CanvasState.Equality",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FCanvasState_EqualityTest::RunTest(const FString& Parameters)

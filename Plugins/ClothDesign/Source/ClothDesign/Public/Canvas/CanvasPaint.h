@@ -12,6 +12,7 @@ struct FCanvasPaint
 {
 	SClothDesignCanvas* Canvas;
 
+	FCanvasPaint() = default;
 	FCanvasPaint(SClothDesignCanvas* InCanvas) : Canvas(InCanvas) {}
 	
 	int32 DrawBackground(

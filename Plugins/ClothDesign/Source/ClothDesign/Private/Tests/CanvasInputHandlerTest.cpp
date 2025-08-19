@@ -4,13 +4,13 @@
 #include "ClothDesignCanvas.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FInputHandler_PanSetsFlag,
-    "Canvas.InputHandler.PanSetsFlag",
+    "CanvasInputHandler.PanSetsFlag",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FInputHandler_PanSetsFlag::RunTest(const FString& Parameters)
 {
-    SClothDesignCanvas DummyCanvas;
-    FCanvasInputHandler Handler(&DummyCanvas);
+    SClothDesignCanvas TestCanvas;
+    FCanvasInputHandler Handler(&TestCanvas);
 
     TSet<FKey> PressedButtons;
     PressedButtons.Add(EKeys::LeftMouseButton);
@@ -28,20 +28,20 @@ bool FInputHandler_PanSetsFlag::RunTest(const FString& Parameters)
     
     Handler.HandlePan(FakeMouse);
 
-    TestTrue("Canvas should be panning", DummyCanvas.bIsPanning);
-    TestEqual("Last mouse position stored", DummyCanvas.LastMousePos, FVector2D(50, 60));
+    TestTrue("Canvas should be panning", TestCanvas.bIsPanning);
+    TestEqual("Last mouse position stored", TestCanvas.LastMousePos, FVector2D(50, 60));
     return true;
 }
 
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FInputHandler_DrawAddsPoint,
-    "Canvas.InputHandler.DrawAddsPoint",
+    "CanvasInputHandler.DrawAddsPoint",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FInputHandler_DrawAddsPoint::RunTest(const FString& Parameters)
 {
-    SClothDesignCanvas DummyCanvas;
-    FCanvasInputHandler Handler(&DummyCanvas);
+    SClothDesignCanvas TestCanvas;
+    FCanvasInputHandler Handler(&TestCanvas);
 
     // Simulate click at (10,20)
     //FGeometry Geo;
@@ -69,50 +69,50 @@ bool FInputHandler_DrawAddsPoint::RunTest(const FString& Parameters)
 
     // Convert manually to expected point
     FVector2D Local = Geo.AbsoluteToLocal(Mouse.GetScreenSpacePosition());
-    FVector2D Expected = Local / DummyCanvas.ZoomFactor;
+    FVector2D Expected = Local / TestCanvas.ZoomFactor;
     
-    TestEqual("Curve should have 1 point", DummyCanvas.CurvePoints.Points.Num(), 1);
-    TestEqual("Point position stored", DummyCanvas.CurvePoints.Points[0].OutVal, Expected);
+    TestEqual("Curve should have 1 point", TestCanvas.CurvePoints.Points.Num(), 1);
+    TestEqual("Point position stored", TestCanvas.CurvePoints.Points[0].OutVal, Expected);
     return true;
 }
 
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FInputHandler_SewNoPoint,
-    "Canvas.InputHandler.SewNoPoint",
+    "CanvasInputHandler.SewNoPoint",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FInputHandler_SewNoPoint::RunTest(const FString& Parameters)
 {
-    SClothDesignCanvas DummyCanvas;
-    DummyCanvas.ZoomFactor = 1.f;
-    FCanvasInputHandler Handler(&DummyCanvas);
+    SClothDesignCanvas TestCanvas;
+    TestCanvas.ZoomFactor = 1.f;
+    FCanvasInputHandler Handler(&TestCanvas);
 
     // Click far from any point
     FReply Reply = Handler.HandleSew(FVector2D(999,999));
 
-    TestEqual("SeamClickState should remain None", (int32)DummyCanvas.GetSewingManager().SeamClickState, (int32)ESeamClickState::None);
+    TestEqual("SeamClickState should remain None", (int32)TestCanvas.GetSewingManager().SeamClickState, (int32)ESeamClickState::None);
     return true;
 }
 
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FInputHandler_SelectPoint,
-    "Canvas.InputHandler.SelectPoint",
+    "CanvasInputHandler.SelectPoint",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FInputHandler_SelectPoint::RunTest(const FString& Parameters)
 {
-    SClothDesignCanvas DummyCanvas;
+    SClothDesignCanvas TestCanvas;
     FInterpCurvePoint<FVector2D> Pt;
     Pt.OutVal = FVector2D(5,5);
-    DummyCanvas.CurvePoints.Points.Add(Pt);
+    TestCanvas.CurvePoints.Points.Add(Pt);
 
-    FCanvasInputHandler Handler(&DummyCanvas);
+    FCanvasInputHandler Handler(&TestCanvas);
 
     // Click near the point
     Handler.HandleSelect(FVector2D(5,5));
 
-    TestTrue("Canvas should mark a point selected", DummyCanvas.bIsShapeSelected);
-    TestEqual("SelectedPointIndex should be 0", DummyCanvas.SelectedPointIndex, 0);
+    TestTrue("Canvas should mark a point selected", TestCanvas.bIsShapeSelected);
+    TestEqual("SelectedPointIndex should be 0", TestCanvas.SelectedPointIndex, 0);
     return true;
 }
 

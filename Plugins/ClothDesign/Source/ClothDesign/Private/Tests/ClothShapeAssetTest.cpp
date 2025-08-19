@@ -3,7 +3,7 @@
 
 // --- Test defaults for FCurvePointData ---
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCurvePointData_DefaultsTest, 
-    "Project.ClothShapeAsset.FCurvePointData.Defaults", 
+    "ClothShapeAsset.FCurvePointData.Defaults", 
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FCurvePointData_DefaultsTest::RunTest(const FString& Parameters)
@@ -21,7 +21,7 @@ bool FCurvePointData_DefaultsTest::RunTest(const FString& Parameters)
 
 // --- Test defaults for FShapeData ---
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FShapeData_DefaultsTest, 
-    "Project.ClothShapeAsset.FShapeData.Defaults", 
+    "ClothShapeAsset.FShapeData.Defaults", 
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FShapeData_DefaultsTest::RunTest(const FString& Parameters)
@@ -33,7 +33,7 @@ bool FShapeData_DefaultsTest::RunTest(const FString& Parameters)
 
 // --- Test defaults for UClothShapeAsset ---
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(UClothShapeAsset_DefaultsTest, 
-    "Project.ClothShapeAsset.UClothShapeAsset.Defaults", 
+    "ClothShapeAsset.UClothShapeAsset.Defaults", 
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool UClothShapeAsset_DefaultsTest::RunTest(const FString& Parameters)
@@ -49,7 +49,7 @@ bool UClothShapeAsset_DefaultsTest::RunTest(const FString& Parameters)
 
 // --- Example: Adding and reading data ---
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(UClothShapeAsset_AddDataTest, 
-    "Project.ClothShapeAsset.UClothShapeAsset.AddData", 
+    "ClothShapeAsset.UClothShapeAsset.AddData", 
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool UClothShapeAsset_AddDataTest::RunTest(const FString& Parameters)

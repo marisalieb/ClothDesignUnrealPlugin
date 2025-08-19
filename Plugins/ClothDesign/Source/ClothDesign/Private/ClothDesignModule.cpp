@@ -1,19 +1,22 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "ClothDesignModule.h"
-#include "ClothDesignEditorModeCommands.h"
-#include "SClothDesignCanvas.h"
-#include "ClothDesignStyle.h"
-#include "EditorModeManager.h"
-#include "ClothDesignEditorMode.h"
-#include "EditorModeRegistry.h"
+#include "ClothDesignCommands.h"
+#include "ClothDesignCanvas.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Tickable.h"
 #include "Containers/Ticker.h"
 #include "PropertyCustomizationHelpers.h"
-#include "ContentBrowserModule.h"
-#include "IContentBrowserSingleton.h"
+#include "Widgets/Input/SNumericEntryBox.h"
+#include "EditorModeRegistry.h"
+#include "ClothDesignEditorMode.h"
+#include "ClothDesignStyle.h"
+
+// This file was started using the Unreal Engine 5.5 Editor Mode C++ template.
+// This template can be created directly in Unreal Engine in the plugins section.
+//
+// The template code has been modified and extended for this project.
+// The unmodified template code is included at the bottom of the file for reference.
 
 #define LOCTEXT_NAMESPACE "ClothDesignModule"
 
@@ -22,63 +25,50 @@ const FName FClothDesignModule::TwoDTabName(TEXT("TwoDWindowTab"));
 
 void FClothDesignModule::StartupModule()
 {
+	FClothDesignStyle::Initialize();
 
-	// This code will execute after module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-
-	FClothDesignEditorModeCommands::Register();
+	// This code will execute after the module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+	FClothDesignCommands::Register();
+	
 	PluginCommands = MakeShareable(new FUICommandList);
 	PluginCommands->MapAction(
-	  FClothDesignEditorModeCommands::Get().Open2DWindow,
+	  FClothDesignCommands::Get().Open2DWindow,
 	  FExecuteAction::CreateRaw(this, &FClothDesignModule::Spawn2DWindow),
 	  FCanExecuteAction()
 	);
 	
-	if (!FClothDesignEditorModeCommands::Get().Open2DWindow.IsValid())
+	if (!FClothDesignCommands::Get().Open2DWindow.IsValid())
 	{
 		UE_LOG(LogTemp, Error, TEXT("Open2DWindow command NOT valid after Register()!"));
 	}
 	
-	// UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FYourEditorModeModule::RegisterMenus));
-
 	// static const FName TwoDTabName("TwoDWindowTab");
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(TwoDTabName,
 	  FOnSpawnTab::CreateRaw(this, &FClothDesignModule::OnSpawn2DWindowTab))
-	  .SetDisplayName(LOCTEXT("TwoDTabTitle", "2D Editor"))
+	  .SetDisplayName(LOCTEXT("TwoDTabTitle", "ClothDesign 2D Editor"))
 	  .SetMenuType(ETabSpawnerMenuType::Hidden);
 
-
+	
 }
 
 void FClothDesignModule::ShutdownModule()
 {
-
-	
 	// This function may be called during shutdown to clean up module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
-
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(TwoDTabName);
 	UToolMenus::UnregisterOwner(this);
 
-	FClothDesignEditorModeCommands::Unregister();
-	
+	FClothDesignCommands::Unregister();
+	FClothDesignStyle::Shutdown();
+
 }
+
 
 
 void FClothDesignModule::Spawn2DWindow()
 {
 	FGlobalTabmanager::Get()->TryInvokeTab(FName("TwoDWindowTab"));
 }
-
-
-// TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
-// {
-// 	return SNew(SDockTab)
-// 		.TabRole(ETabRole::NomadTab)
-// 		[
-// 			SNew(SClothDesignCanvas) 
-// 		];
-// }
-
 
 void FClothDesignModule::OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivationCause ActivationCause)
 {
@@ -88,164 +78,369 @@ void FClothDesignModule::OnTabActivated(TSharedPtr<SDockTab> Tab, ETabActivation
 	}
 }
 
-TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
+TSharedRef<SWidget> FClothDesignModule::MakeObjectPicker(
+	const FText& LabelText,
+	const UClass* AllowedClass,
+	TFunction<FString()> GetPath,
+	TFunction<void(const FAssetData&)> OnChanged)
 {
-	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
-	// SNew(SDockTab)
-		.TabRole(ETabRole::NomadTab)
+	return SNew(SHorizontalBox)
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
+		.Padding(4)
+		[
+			SNew(STextBlock).Text(LabelText)
+		]
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
+		.Padding(4)
+		[
+			SNew(SObjectPropertyEntryBox)
+			.AllowedClass(AllowedClass)
+			.ObjectPath_Lambda(MoveTemp(GetPath))
+			.OnObjectChanged_Lambda([this, OnChanged](const FAssetData& Asset)
+			{
+				OnChanged(Asset);
+			})
+		];
+}
+
+
+TSharedRef<SWidget> FClothDesignModule::MakeBackgroundControls()
+{
+    return SNew(SExpandableArea)
+        .AreaTitle(LOCTEXT("BackgroundImageSection", "Background Image"))
+        .InitiallyCollapsed(true) // starts hidden
+        .BodyContent()
+        [
+            SNew(SVerticalBox)
+
+            // === Image picker ===
+            + SVerticalBox::Slot()
+            .AutoHeight()
+            .Padding(2)
+            [
+                SNew(SHorizontalBox)
+                + SHorizontalBox::Slot().AutoWidth().Padding(4)
+                [
+                    SNew(STextBlock).Text(LOCTEXT("BGImageLabel", "Image:"))
+                ]
+                + SHorizontalBox::Slot().AutoWidth().Padding(4)
+                [
+                    SNew(SObjectPropertyEntryBox)
+                    .AllowedClass(UTexture2D::StaticClass())
+                    .ObjectPath_Lambda([this]() {
+                        return CanvasWidget.IsValid()
+                            ? CanvasWidget->GetSelectedTexturePath()
+                            : FString();
+                    })
+                    .OnObjectChanged_Lambda([this](const FAssetData& Asset) {
+                        if (CanvasWidget.IsValid())
+                            CanvasWidget->OnBackgroundTextureSelected(Asset);
+                    })
+                ]
+            ]
+
+            // === Scale control ===
+            + SVerticalBox::Slot()
+            .AutoHeight()
+            .Padding(2)
+            [
+                SNew(SHorizontalBox)
+                + SHorizontalBox::Slot().AutoWidth().Padding(4)
+                [
+                    SNew(STextBlock).Text(LOCTEXT("BGScaleLabel", "Image Scale:"))
+                ]
+                + SHorizontalBox::Slot().AutoWidth().Padding(4)
+                [
+                    SNew(SNumericEntryBox<float>)
+                    .Value_Lambda([this]() {
+                        return CanvasWidget.IsValid()
+                            ? CanvasWidget->GetBackgroundImageScale()
+                            : TOptional<float>();
+                    })
+                    .OnValueChanged_Lambda([this](float NewVal) {
+                        if (CanvasWidget.IsValid())
+                            CanvasWidget->OnBackgroundImageScaleChanged(NewVal);
+                    })
+                    .MinValue(0.01f).MaxValue(10.0f)
+                    .AllowSpin(true)
+                ]
+            ]
+        ];
+}
+
+
+
+TSharedRef<SWidget> FClothDesignModule::MakeLoadSavePanel()
+{
+    return SNew(SExpandableArea)
+        .AreaTitle(LOCTEXT("LoadSaveSection", "Save / Load"))
+        .InitiallyCollapsed(true)
+        .BodyContent()
+        [
+
+                SNew(SVerticalBox)
+
+                + SVerticalBox::Slot().AutoHeight().Padding(2)
+                [
+                    MakeObjectPicker(
+                        LOCTEXT("LoadLabel", "Load:"),
+                        UClothShapeAsset::StaticClass(),
+                        [this]() { return CanvasWidget->GetSelectedShapeAssetPath(); },
+                        [this](auto Asset) { CanvasWidget->OnShapeAssetSelected(Asset); }
+                    )
+                ]
+                
+                + SVerticalBox::Slot().AutoHeight().Padding(4)
+                [
+                    SNew(SHorizontalBox)
+                    + SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
+                    [
+                        SNew(STextBlock).Text(LOCTEXT("SaveAsLabel", "Save As:"))
+                    ]
+                    + SHorizontalBox::Slot().FillWidth(1.f).Padding(4,0)
+                    [
+                        SNew(SEditableTextBox)
+                        .Text_Lambda([this]() { return FText::FromString(CurrentSaveName); })
+                        .OnTextCommitted_Lambda([this](auto NewText, ETextCommit::Type) {
+                            CurrentSaveName = NewText.ToString();
+                        })
+                    ]
+                ]
+                + SVerticalBox::Slot()
+		        .AutoHeight()
+		        .Padding(10)
+		        .HAlign(HAlign_Left)
+                [
+                    SNew(SBox).WidthOverride(250.f)
+                    [
+                        SNew(SButton)
+                        .Text(LOCTEXT("SaveBtn", "Save"))
+                        .OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSaveClicked))
+                    ]
+                ]
+        ];
+}
+
+TSharedRef<SWidget> FClothDesignModule::MakeActionButtons()
+{
+	return SNew(SBorder)
+		.BorderImage(FAppStyle::Get().GetBrush("ToolPanel.GroupBorder"))
+		.Padding(8)
 		[
 			SNew(SVerticalBox)
 
-			// Button
+			// Generate Mesh
 			+ SVerticalBox::Slot()
 			.AutoHeight()
 			.Padding(10)
-			.HAlign(HAlign_Left) // Optional: Align button to the left
+			.HAlign(HAlign_Left)
 			[
 				SNew(SBox)
-				.WidthOverride(150.f) // Set desired fixed width here
+				.WidthOverride(250.f)
 				[
 					SNew(SButton)
-					.Text(FText::FromString("Generate Mesh"))
+					.Text(LOCTEXT("GenerateMeshBtn", "Generate Mesh"))
 					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
 				]
 			]
-			
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.Padding(2)
-			[
-				SNew(SHorizontalBox)
-			
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(4)
-				[
-					SNew(STextBlock)
-					.Text(FText::FromString("Background Image:"))
-				]
-			
-				// + SHorizontalBox::Slot()
-				// .AutoWidth()
-				// .Padding(4)
-				// [
-				// 	SNew(SObjectPropertyEntryBox)
-				// 	.AllowedClass(UTexture2D::StaticClass())
-				// 	.ObjectPath(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::GetSelectedTexturePath)
-				// 	.OnObjectChanged(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::OnBackgroundTextureSelected)
-				// ]
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(4)
-				[
-					SNew(SObjectPropertyEntryBox)
-					.AllowedClass(UTexture2D::StaticClass())
-					.ObjectPath_Lambda([this]()
-					{
-						if (this->CanvasWidget.IsValid())
-						{
-							return this->CanvasWidget->GetSelectedTexturePath();
-						}
-						return FString();
-					})
-					.OnObjectChanged_Lambda([this](const FAssetData& AssetData)
-					{
-						if (this->CanvasWidget.IsValid())
-						{
-							this->CanvasWidget->OnBackgroundTextureSelected(AssetData);
-						}
-					})
-				]
 
-			]
-			
-			+ SVerticalBox::Slot()
-			.AutoHeight()
-			.Padding(2)
-			[
-				SNew(SHorizontalBox)
-			
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(4)
-				[
-					SNew(STextBlock)
-					.Text(FText::FromString(TEXT("Background Image Scale:")))
-				]
-			
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(4)
-				[
-					SNew(SNumericEntryBox<float>)
-					
-					// .Value(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::GetBackgroundImageScale)
-					// .OnValueChanged(CanvasWidget.ToSharedRef(), &SClothDesignCanvas::OnBackgroundImageScaleChanged)
-					// .Value_Lambda([this]() -> TOptional<float>
-					// {
-					// 	return CanvasWidget.IsValid() ? CanvasWidget->GetBackgroundImageScale() : 1.0f;
-					// })
-					// .OnValueChanged_Lambda([this](float NewValue)
-					// {
-					// 	if (CanvasWidget.IsValid())
-					// 	{
-					// 		CanvasWidget->OnBackgroundImageScaleChanged(NewValue);
-					// 	}
-					// })
-					.Value_Lambda([this]() -> TOptional<float>
-						{
-							if (CanvasWidget.IsValid())
-							{
-								return CanvasWidget->GetBackgroundImageScale();
-							}
-							return TOptional<float>();
-						})
-						.OnValueChanged_Lambda([this](float NewValue)
-						{
-							if (CanvasWidget.IsValid())
-							{
-								CanvasWidget->OnBackgroundImageScaleChanged(NewValue);
-							}
-						})
-					
-					.MinValue(0.1f)
-					.MaxValue(10.0f)
-					.MinSliderValue(0.1f)
-					.MaxSliderValue(10.0f)
-					.AllowSpin(true)
-					.LabelPadding(FMargin(0))
-				]
-			]
-
-			// sewing Button
+			// Sewing
 			+ SVerticalBox::Slot()
 			.AutoHeight()
 			.Padding(10)
-			.HAlign(HAlign_Left) // Optional: Align button to the left
+			.HAlign(HAlign_Left)
 			[
 				SNew(SBox)
-				.WidthOverride(150.f) // Set desired fixed width here
+				.WidthOverride(250.f)
 				[
 					SNew(SButton)
-					.Text(FText::FromString("Sewing"))
+					.Text(LOCTEXT("SewingBtn", "Sewing"))
 					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnSewingClicked))
 				]
 			]
-
-
-			
-			// Canvas
+			// Merge meshes
 			+ SVerticalBox::Slot()
-			.FillHeight(1.0f)
+			.AutoHeight()
+			.Padding(10)
+			.HAlign(HAlign_Left)
 			[
-				SAssignNew(CanvasWidget, SClothDesignCanvas)
+				SNew(SBox)
+				.WidthOverride(250.f)
+				[
+					SNew(SButton)
+					.Text(LOCTEXT("MergeMeshesBtn", "Merge Meshes"))
+					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnMergeMeshesClicked))
+				]
 			]
-			
 
 		];
+}
+
+TSharedRef<SWidget> FClothDesignModule::MakeClearButtons()
+{
+	return SNew(SVerticalBox)
+		
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.Padding(6)
+		[
+			// SNew(SBorder)
+			// .BorderImage(FAppStyle::Get().GetBrush("ToolPanel.GroupBorder"))
+			// .Padding(8)
+			// [
+				SNew(SVerticalBox)
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(10)
+				.HAlign(HAlign_Left) // Optional: Align button to the left
+				[
+					SNew(SBox)
+					.WidthOverride(250.f) // Set desired fixed width here
+					[
+						SNew(SButton)
+						.Text(FText::FromString("Clear All"))
+						.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnClearClicked))
+					]
+				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(10)
+				.HAlign(HAlign_Left) // Optional: Align button to the left
+				[
+					SNew(SBox)
+					.WidthOverride(250.f) // Set desired fixed width here
+					[
+						SNew(SButton)
+						.Text(FText::FromString("Clear Sewing"))
+						.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnClearSewingClicked))
+					]
+				]
+			// ]
+		];
 	
+}
+
+TSharedRef<SWidget> FClothDesignModule::MakeModeButton(
+		SClothDesignCanvas::EClothEditorMode InMode,
+		const FText& InLabel)
+{
+	return SNew(SButton)
+		.ButtonColorAndOpacity(
+			TAttribute<FSlateColor>::CreateLambda([this, InMode]() {
+				return GetModeButtonColor(InMode);
+			}))
+		.OnClicked_Lambda([this, InMode]() {
+			if (CanvasWidget.IsValid())
+			{
+				CanvasWidget->OnModeButtonClicked(InMode);
+			}
+			return FReply::Handled();
+		})
+		.ContentPadding(FMargin(10, 5))
+		[
+			SNew(STextBlock)
+			.Text(InLabel)
+			.Font(FCoreStyle::GetDefaultFontStyle("Roboto", 11))
+		];
+}
+
+
+TSharedRef<SWidget> FClothDesignModule::MakeModeToolbar()
+{
+	return SNew(SHorizontalBox)
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth().Padding(5)
+		[
+			MakeModeButton(
+				SClothDesignCanvas::EClothEditorMode::Draw,
+				LOCTEXT("Mode_Draw", "Draw")
+			)
+		]
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth().Padding(5)
+		[
+			MakeModeButton(
+				SClothDesignCanvas::EClothEditorMode::Select,
+				LOCTEXT("Mode_Edit", "Edit")
+			)
+		]
+
+		+ SHorizontalBox::Slot()
+		.AutoWidth().Padding(5)
+		[
+			MakeModeButton(
+				SClothDesignCanvas::EClothEditorMode::Sew,
+				LOCTEXT("Mode_Sew", "Sew")
+			)
+		];
+}
+
+FSlateColor FClothDesignModule::GetModeButtonColor(SClothDesignCanvas::EClothEditorMode Mode) const
+{
+	if (CanvasWidget.IsValid() && CanvasWidget->GetCurrentMode() == Mode)
+	{
+		return FSlateColor(FLinearColor(0.686f, 1.f, 0.0f, 1.f)); // Highlighted
+	}
+	return FSlateColor(FLinearColor::White); // Default color
+}
+
+
+
+
+
+
+TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
+{
+	SAssignNew(CanvasWidget, SClothDesignCanvas);
+
+	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
+		.TabRole(ETabRole::NomadTab)
+		[
+			SNew(SOverlay)
+
+			+ SOverlay::Slot()  // main layout
+			[
+				SNew(SHorizontalBox)
+
+				+ SHorizontalBox::Slot().AutoWidth()
+				[
+					SNew(SBox).WidthOverride(250.f)
+					[
+						SNew(SVerticalBox)
+
+						+ SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(2) [ MakeBackgroundControls() ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(10)[ MakeActionButtons() ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(6) [ MakeClearButtons() ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
+						+ SVerticalBox::Slot().AutoHeight().Padding(6) [ MakeLoadSavePanel() ]
+					]
+				]
+
+				+ SHorizontalBox::Slot().FillWidth(1.0f)
+				[
+					CanvasWidget.ToSharedRef()
+				]
+			]
+
+			+ SOverlay::Slot()  // top-right toolbar
+			.VAlign(VAlign_Top).HAlign(HAlign_Right).Padding(10)
+			[
+				MakeModeToolbar()
+			]
+		];
+
 	// Delay focus until next tick/frame to ensure UI is ready
-	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this, NewTab](float DeltaTime)
+	//FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this, NewTab](float DeltaTime)
+	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this](float)
 	{
 		if (CanvasWidget.IsValid())
 		{
@@ -255,54 +450,104 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 	}));
 	
 	return NewTab;
-	
 }
+
+
 
 
 FReply FClothDesignModule::OnGenerateMeshClicked()
 {
 	if (CanvasWidget.IsValid())
 	{
-		//CanvasWidget->TriangulateAndBuildMesh();
-		// CanvasWidget->TriangulateAndBuildAllMeshes();
-		//CanvasWidget->BuildAndAlignClickedSeam(); MergeLastTwoMeshes
-		CanvasWidget->MergeLastTwoMeshes();
-		// CanvasWidget->MergeAndWeldLastTwoMeshes();
-
+		CanvasWidget->GenerateMeshesClick();
 	}
 	return FReply::Handled();
 }
+
+
 
 FReply FClothDesignModule::OnSewingClicked()
 {
 	if (CanvasWidget.IsValid())
 	{
-		//CanvasWidget->TriangulateAndBuildMesh();
-		// CanvasWidget->SewingStart();
-		CanvasWidget->BuildAndAlignClickedSeam();
+		CanvasWidget->SewingClick();
+	}
+	return FReply::Handled();
+}
 
+FReply FClothDesignModule::OnMergeMeshesClicked()
+{
+	if (CanvasWidget.IsValid())
+	{
+		CanvasWidget->MergeClick();
+	}
+	return FReply::Handled();
+}
+
+FReply FClothDesignModule::OnSaveClicked()
+{
+	if (CanvasWidget.IsValid())
+	{
+		CanvasWidget->SaveClick(CurrentSaveName);
 	}
 	return FReply::Handled();
 }
 
 
 
+FReply FClothDesignModule::OnClearClicked()
+{
+	// ClearAllShapeData
+	if (CanvasWidget.IsValid())
+	{
+		CanvasWidget->ClearAllShapeData();
+	}
+	return FReply::Handled();
+}
 
-// TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs& Args)
-// {
-// 	return SNew(SDockTab)
-// 	  .TabRole(ETabRole::NomadTab)
-// 	  [
-// 		SNew(SBox)
-// 		.HAlign(HAlign_Center)
-// 		.VAlign(VAlign_Center)
-// 		[
-// 		  SNew(STextBlock)
-// 		  .Text(LOCTEXT("TwoDWindowText", "This is the 2D pattern editor window"))
-// 		]
-// 	  ];
-// }
+FReply FClothDesignModule::OnClearSewingClicked()
+{
+	if (CanvasWidget.IsValid())
+	{
+		CanvasWidget->ClearAllSewing();
+
+	}
+	return FReply::Handled();
+}
+
 
 #undef LOCTEXT_NAMESPACE
 
-IMPLEMENT_MODULE(FClothDesignModule, ClothDesignEditorMode)
+IMPLEMENT_MODULE(FClothDesignModule, ClothDesign)
+
+
+/*
+------------------------------------------
+Original Unreal Engine Template Code
+------------------------------------------
+// Copyright Epic Games, Inc. All Rights Reserved.
+
+#include "NewEditorModeModule.h"
+#include "NewEditorModeEditorModeCommands.h"
+
+#define LOCTEXT_NAMESPACE "NewEditorModeModule"
+
+void FNewEditorModeModule::StartupModule()
+{
+	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+
+	FNewEditorModeEditorModeCommands::Register();
+}
+
+void FNewEditorModeModule::ShutdownModule()
+{
+	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
+	// we call this function before unloading the module.
+
+	FNewEditorModeEditorModeCommands::Unregister();
+}
+
+#undef LOCTEXT_NAMESPACE
+
+IMPLEMENT_MODULE(FNewEditorModeModule, NewEditorModeEditorMode)
+*/

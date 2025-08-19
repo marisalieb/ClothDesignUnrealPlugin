@@ -53,8 +53,69 @@ save before
 in UE to switch between viewports click alt g h j k for the main different ones
 
 
+uproperty:
+, clothdesignintera, simple tool cloth design, a cloth patternmeshactor,
+
+patternsewingconstraints
+uclothshapeasset
+
+
+
+
+
 sources:
 https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/GeometryCore/CompGeom/PolygonTriangulation__Triangulat-/1
 https://dev.epicgames.com/community/learning/tutorials/LZZo/unreal-engine-epic-games-store-chaos-cloth-updates-5-6
 
 https://github.com/jothepro/doxygen-awesome-css?tab=readme-ov-file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------
+
+ensure spawned actors contain actors when meshes are generated
+in the traignulate all meshes section im guessing
+
+where do i put the definition of this in teh triagnulate func: 	
+TArray<int32> PolyIndexToVID; //?
+
+
+You must ensure the SpawnedPatternActors array in FCanvasSewing
+is populated at mesh creation and uses the same ordering as the 
+CompletedShapes array so ShapeIndex references map to the right actor. 
+If you generate meshes in a separate step, have the mesh generation 
+call populate FCanvasSewing::SpawnedPatternActors (or provide a 
+registration API).
+
+If you spawn actors from multiple places, centralize actor 
+registration into one manager or call 
+FCanvasSewing::RegisterSpawnedActor(TWeakObjectPtr<APatternMesh>) 
+at creation time.
+
+If your seam endpoints are not on the same shape boundary 
+order/orientation (A vs B reversed), you may need to reverse 
+the index sequence or reverse SeamVIDsB before alignment so 
+corresponding samples pair in the correct order.
+
+
+
+----------
+
+
+FPatternSewingConstraint (your Unreal USTRUCT) which stores mesh components, vertex indices, stiffness, and screen points — used at runtime for physics/sewing constraints.
+
+FSeamDefinition (my suggestion), which just stores the indices of shapes and edges for bookkeeping multiple seams in your canvas editor.
+
+

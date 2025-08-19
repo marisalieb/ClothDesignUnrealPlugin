@@ -1,4 +1,5 @@
 {
+	"_Note": "...",
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
@@ -28,6 +29,22 @@
 		},
 		{
 			"Name": "ProceduralMeshComponent",
+			"Enabled": true
+		},
+		{
+			"Name": "GeometryScripting",
+			"Enabled": true
+		},
+		{
+			"Name": "EditorScriptingUtilities",
+			"Enabled": true
+		},
+		{
+			"Name": "MeshModelingToolset",
+			"Enabled": true
+		},
+		{
+			"Name": "ChaosCloth",
 			"Enabled": true
 		}
 	]

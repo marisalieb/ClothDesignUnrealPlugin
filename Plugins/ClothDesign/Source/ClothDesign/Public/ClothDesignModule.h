@@ -17,7 +17,6 @@ public:
 
 
 private:
-	friend class FClothDesignModuleButtonTest;
 	TSharedPtr<FUICommandList> PluginCommands;
 	
 	TSharedPtr<SClothDesignCanvas> CanvasWidget;
@@ -39,7 +38,8 @@ private:
 			const FText& InLabel);
 	TSharedRef<SWidget> MakeModeToolbar();
 	FSlateColor GetModeButtonColor(SClothDesignCanvas::EClothEditorMode Mode) const;
-	
+	TSharedRef<SWidget> MakeModeReminderBox();
+
 	TSharedRef<SDockTab> OnSpawn2DWindowTab(const FSpawnTabArgs& Args);
 	FReply OnGenerateMeshClicked();
 	FReply OnSewingClicked();
@@ -47,5 +47,11 @@ private:
 	FReply OnSaveClicked();
 	FReply OnClearClicked(); 
 	FReply OnClearSewingClicked(); 
+
+	static bool CheckSkeletonAssetExists();
+	// bool CheckSkeletonAssetExists(bool bSimulateMissing /*=false*/);
+
+	
+	friend class FClothDesignModuleButtonTest;
 
 };

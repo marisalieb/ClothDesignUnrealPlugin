@@ -99,7 +99,7 @@ TSharedPtr<SWidget> FClothDesignToolkit::GetInlineContent() const
 
 FReply FClothDesignToolkit::OnOpen2DWindowClicked()
 {
-	static const FName TwoDTabName("TwoDWindowTab"); // change name here
+	static const FName TwoDTabName("TwoDWindowTab");
 
 	FGlobalTabmanager::Get()->TryInvokeTab(TwoDTabName);
 	return FReply::Handled();

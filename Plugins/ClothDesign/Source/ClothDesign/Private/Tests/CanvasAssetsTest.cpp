@@ -27,7 +27,7 @@ bool FSaveShapeAsset_BadPackage::RunTest(const FString& Parameters)
 
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveAndLoad_RoundTrip, 
-    "CanvasAssets.SaveAndLoad.RoundTrip", 
+    "CanvasAssets.SaveAndLoad", 
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FSaveAndLoad_RoundTrip::RunTest(const FString& Parameters)
@@ -63,8 +63,12 @@ bool FSaveAndLoad_RoundTrip::RunTest(const FString& Parameters)
     TestTrue("Asset should save successfully", bSaved);
 
     // Load it back
-    UClothShapeAsset* Loaded = FindObject<UClothShapeAsset>(
-        GetTransientPackage(), TEXT("TestingAsset"));
+    // UClothShapeAsset* Loaded = FindObject<UClothShapeAsset>(
+    //     GetTransientPackage(), TEXT("TestingAsset"));
+    UClothShapeAsset* Loaded = LoadObject<UClothShapeAsset>(
+    nullptr, TEXT("/Game/ClothDesign/UnitTest/TestingAsset.TestingAsset"));
+
+    
     TestNotNull("Asset should exist after save", Loaded);
 
     FCanvasState State;

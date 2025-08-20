@@ -31,7 +31,6 @@ public:
         : SpawnedActorsRef(TestActors), AllSeamsRef(TestSeams) {}
     static TArray<TWeakObjectPtr<APatternMesh>> TestActors;
     static TArray<FPatternSewingConstraint> TestSeams;
-    friend class FCanvasPatternMergeTests;
 
     
 private:
@@ -77,6 +76,10 @@ private:
         const TArray<int32>& Component,
         const TMap<APatternMesh*,int32>& ActorToIndex) const;
     
-    static USkeletalMesh* CreateSkeletalFromFDynamicMesh(UDynamicMesh* DynMesh, const FString& AssetPathAndName);
+    static USkeletalMesh* CreateSkeletalFromFDynamicMesh(
+        UDynamicMesh* DynMesh,
+        const FString& AssetPathAndName);
+
+    friend class FCanvasPatternMergeTests;
 
 };

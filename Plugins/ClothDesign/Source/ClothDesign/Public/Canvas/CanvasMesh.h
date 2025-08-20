@@ -5,19 +5,21 @@
 #include "MeshOpPreviewHelpers.h" 
 
 
+class SClothDesignCanvas;
+
 struct FCanvasMesh
 {
 	
 public:
 	static void TriangulateAndBuildAllMeshes(
 		const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-		const FInterpCurve<FVector2D>& CurvePoints,
 		TArray<FDynamicMesh3>& OutMeshes,
 		TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors);
 
-	friend class FCanvasMeshTests;
 	
 private:
+	SClothDesignCanvas* Canvas;
+
 	static bool IsPointInPolygon(
 		const FVector2f& Test, 
 		const TArray<FVector2f>& Poly);
@@ -79,6 +81,9 @@ private:
 		FDynamicMesh3& LastBuiltMesh,
 		TArray<int32>& LastBuiltSeamVertexIDs,
 	    TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors);
+
+	friend class FCanvasMeshTests;
+
 };
 
 

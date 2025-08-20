@@ -22,7 +22,6 @@ public:
 	// custom UI
 	virtual TSharedPtr<SWidget> GetInlineContent() const override;
 
-	friend class FClothDesignToolkitTestHelper;
 
 private:
 	TSharedPtr<SWidget> ToolkitWidget;
@@ -71,8 +70,10 @@ private:
 
 	FText GetPresetDisplayName(EClothPreset Preset);
 	void ForEachComponentUsingSelectedMesh(TFunctionRef<void(USkeletalMeshComponent*)> Fn);
+	
 
 	//static void SetClothCollisionFlags(USkeletalMeshComponent* SkelComp);
+	friend class FClothDesignToolkitTest;
 
 };
 

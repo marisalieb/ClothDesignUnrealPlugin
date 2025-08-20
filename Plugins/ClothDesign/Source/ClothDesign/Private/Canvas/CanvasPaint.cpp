@@ -9,6 +9,8 @@ const FLinearColor FCanvasPaint::GridColour(0.215f, 0.215f, 0.215f, 0.6f);
 const FLinearColor FCanvasPaint::GridColourSmall(0.081f, 0.081f, 0.081f, 0.4f);
 
 const FLinearColor FCanvasPaint::LineColour(0.6059f, 1.f, 0.0f, 1.f);
+// const FLinearColor FCanvasPaint::CompletedLineColour(0.43229f, 0.54342f, 0.0f, 1.f);
+// const FLinearColor FCanvasPaint::CompletedLineColour(0.326304559f, 0.43405508f, 0.05165f, 1.f);
 const FLinearColor FCanvasPaint::CompletedLineColour(0.26304559f, 0.3405508f, 0.05165f, 1.f);
 
 const FLinearColor FCanvasPaint::PointColour(0.831, .0f, 1.f, 1.f);
@@ -17,8 +19,13 @@ const FLinearColor FCanvasPaint::PostCurrentPointColour(0.263463f, .15208f, 0.56
 const FLinearColor FCanvasPaint::BezierHandleColour(0.43229f, 0.54342f, 0.0f, 1.f);
 const FLinearColor FCanvasPaint::CompletedBezierHandleColour(0.1025f, 0.1288f, 0.0f, 1.f);
 
-const FLinearColor FCanvasPaint::SewingLineColour(0.99, .340f, .0f, .8f);
-const FLinearColor FCanvasPaint::SewingPointColour(1.f, .0f, .0f, 1.f);
+const FLinearColor FCanvasPaint::SewingLineColour(0.831, .0f, 1.f, 1.f);
+const FLinearColor FCanvasPaint::SewingPointColour(0.9f, .0f, .240f, 1.f);
+
+// const FLinearColor FCanvasPaint::SewingLineColour(0.99, .340f, .0f, .8f);
+// const FLinearColor FCanvasPaint::SewingPointColour(1.f, .0f, .0f, 1.f);
+// const FLinearColor FCanvasPaint::SewingLineColour(0.7f, .0f, 1.f, 1.f);
+// const FLinearColor FCanvasPaint::SewingPointColour(0.9f, .0f, .50f, 1.f);
 
 
 int32 FCanvasPaint::DrawBackground(
@@ -126,12 +133,13 @@ int32 FCanvasPaint::DrawGrid(
 }
 
 
+// for highlighting the shapes edge segment that is sewn
 // Return set of segment start indices that lie on the shortest arc from startIdx -> endIdx
 void FCanvasPaint::BuildShortestArcSegments(
     int32 StartIdx, int32 EndIdx,
     int32 NumPts, TSet<int32>& OutSegments)
 {
-    OutSegments.Empty();
+    // OutSegments.Empty();
     if (NumPts <= 1) return;
     if (StartIdx == EndIdx) return;
 
@@ -242,7 +250,7 @@ int32 FCanvasPaint::DrawCompletedShapes(
         {
             int32 seg = NumPts - 1; // treat as segment index seg -> (seg+1)%NumPts == last->0
             bool bThisSegIsSewn = SegmentsToHighlight.Contains(seg);
-            FLinearColor LineCol = bThisSegIsSewn ? FLinearColor::Green : FLinearColor::Black;
+            FLinearColor LineCol = bThisSegIsSewn ? SewingLineColour : FLinearColor::Black;
 
             FVector2D LastPt = Canvas->TransformPoint(Shape.Points.Last().OutVal);
             FVector2D FirstPt = Canvas->TransformPoint(Shape.Points[0].OutVal);
@@ -378,9 +386,7 @@ int FCanvasPaint::DrawFinalisedSeamLines(
 
     const auto& Sewing = Canvas->GetSewingManager();
     const TArray<FSeamDefinition>& Seams = Sewing.SeamDefinitions;
-
-    // color/thickness
-    //const FLinearColor LineCol = FLinearColor(0.0f, 0.6f, 1.0f, 1.0f); // cyan-ish
+    
 
     for (int32 s = 0; s < Seams.Num(); ++s)
     {

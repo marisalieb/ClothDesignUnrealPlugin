@@ -7,12 +7,10 @@
 #include "Engine/World.h"
 #include "Editor.h" 
 #include "Containers/Set.h"
-
 #include "Canvas/CanvasUtils.h"
-#include "ClothSimSettings.h"
-
 #include "DynamicMesh/Operations/MergeCoincidentMeshEdges.h"
 #include "DynamicMesh/MeshNormals.h"
+#include "Misc/MessageDialog.h"
 
 #if WITH_EDITOR
 #include "CoreMinimal.h"
@@ -23,8 +21,7 @@
 #include "Animation/SkeletalMeshActor.h"
 #include "GeometryScript/MeshBoneWeightFunctions.h"
 #include "Subsystems/AssetEditorSubsystem.h"
-#include "Rendering/SkeletalMeshLODModel.h"
-#include "Rendering/SkeletalMeshRenderData.h"
+
 #endif
 
 
@@ -424,6 +421,16 @@ USkeletalMesh* FCanvasPatternMerge::CreateSkeletalFromFDynamicMesh(UDynamicMesh*
     if (!SkeletonAsset)
     {
         UE_LOG(LogTemp, Warning, TEXT("CreateSkeletal: could not load skeleton asset at '/Plugin/...' - please add it to plugin Content"));
+
+        // Show a popup dialog to the user
+        FText DialogText = FText::FromString(
+            "Could not load the skeleton asset.\n"
+            "Please ensure the skeleton was copied into the project's Content folder during installation.");
+          
+        
+        FMessageDialog::Open(EAppMsgType::Ok, DialogText);
+        
+
         return nullptr;
     }
 

@@ -3,6 +3,84 @@
 #include "Canvas/CanvasPatternMerge.h"
 #include "Misc/MessageDialog.h"
 
+// Returns true if the shape index maps to a valid spawned pattern actor.
+bool FCanvasSewing::ValidateMeshForShape(
+    int32 ShapeIndex,
+    const TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors,
+    bool bShowDialog)
+{
+    if (ShapeIndex == INDEX_NONE)
+    {
+        if (bShowDialog)
+        {
+            FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("Invalid shape target.")));
+        }
+        UE_LOG(LogTemp, Warning, TEXT("ValidateMeshForShape: ShapeIndex == INDEX_NONE"));
+        return false;
+    }
+
+    if (!SpawnedPatternActors.IsValidIndex(ShapeIndex))
+    {
+        if (bShowDialog)
+        {
+            FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("No mesh is spawned for the selected shape.")));
+        }
+        UE_LOG(LogTemp, Warning, TEXT("ValidateMeshForShape: SpawnedPatternActors index %d out of range (Num=%d)"),
+               ShapeIndex, SpawnedPatternActors.Num());
+        return false;
+    }
+
+    TWeakObjectPtr<APatternMesh> Weak = SpawnedPatternActors[ShapeIndex];
+    if (!Weak.IsValid() || !Weak.Get())
+    {
+        if (bShowDialog)
+        {
+            FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("The pattern mesh for the selected shape is missing or invalid. Regenerate meshes first.")));
+        }
+        UE_LOG(LogTemp, Warning, TEXT("ValidateMeshForShape: SpawnedPatternActors[%d] is invalid or null"), ShapeIndex);
+        return false;
+    }
+
+	
+    return true;
+}
+
+// Validate both A and B targets are backed by real actors. Returns true if both exist.
+bool FCanvasSewing::ValidateMeshesForTargets(
+    const FClickTarget& AStart,
+    const FClickTarget& BStart,
+    const TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors,
+    bool bShowDialog)
+{
+    bool bAok = ValidateMeshForShape(AStart.ShapeIndex, SpawnedPatternActors, false);
+    bool bBok = ValidateMeshForShape(BStart.ShapeIndex, SpawnedPatternActors, false);
+
+    if (!bAok || !bBok)
+    {
+        if (bShowDialog)
+        {
+            FMessageDialog::Open(EAppMsgType::Ok,
+                FText::FromString(TEXT("Cannot finalise seam: both pattern meshes must exist. Regenerate meshes if necessary.")));
+        }
+        UE_LOG(LogTemp, Warning, TEXT("ValidateMeshesForTargets: MeshA OK=%d MeshB OK=%d (AIndex=%d BIndex=%d)"),
+               bAok, bBok, AStart.ShapeIndex, BStart.ShapeIndex);
+        return false;
+    }
+
+    // Also prevent sewing a mesh to itself (optional)
+    if (AStart.ShapeIndex == BStart.ShapeIndex)
+    {
+        if (bShowDialog)
+        {
+            FMessageDialog::Open(EAppMsgType::Ok,
+                FText::FromString(TEXT("Cannot finalise seam: both targets refer to the same shape/mesh.")));
+        }
+        return false;
+    }
+
+    return true;
+}
+
 
 
 void FCanvasSewing::FinaliseSeamDefinitionByTargets(
@@ -62,6 +140,14 @@ void FCanvasSewing::FinaliseSeamDefinitionByTargets(
 	APatternMesh* MeshA = SpawnedPatternActors.IsValidIndex(AStart.ShapeIndex) ? SpawnedPatternActors[AStart.ShapeIndex].Get() : nullptr;
 	APatternMesh* MeshB = SpawnedPatternActors.IsValidIndex(BStart.ShapeIndex) ? SpawnedPatternActors[BStart.ShapeIndex].Get() : nullptr;
 
+	if (!MeshA || !MeshB)
+	{
+		FMessageDialog::Open(EAppMsgType::Ok,
+			FText::FromString(TEXT("Cannot finalise seam: both pattern meshes must exist!")));
+		return; // exit early
+	}
+
+	
 	UE_LOG(LogTemp, Warning, TEXT("MeshA ptr: %s"), MeshA ? *MeshA->GetName() : TEXT("NULL"));
 	UE_LOG(LogTemp, Warning, TEXT("MeshA->MeshComponent ptr: %s"), MeshA && MeshA->MeshComponent ? *MeshA->MeshComponent->GetName() : TEXT("NULL"));
 
@@ -324,10 +410,19 @@ void FCanvasSewing::BuildAndAlignSeam(
 	
 	if (!Seam.MeshA || !Seam.MeshB)
 	{
+		FString MeshAName = Seam.MeshA ? Seam.MeshA->GetName() : TEXT("NULL");
+		FString MeshBName = Seam.MeshB ? Seam.MeshB->GetName() : TEXT("NULL");
+
 		UE_LOG(LogTemp, Warning, TEXT("BuildAndAlignSeam: seam has null mesh pointers (MeshA=%s MeshB=%s)"),
-			Seam.MeshA ? *Seam.MeshA->GetName() : TEXT("NULL"),
-			Seam.MeshB ? *Seam.MeshB->GetName() : TEXT("NULL"));
-		// Don't show a modal dialog here — just skip this seam
+				*MeshAName, *MeshBName);
+
+		FMessageDialog::Open(
+			EAppMsgType::Ok, 
+	FText::FromString(FString::Printf(TEXT("Cannot build seam: one or both meshes are missing!"))));
+		// UE_LOG(LogTemp, Warning, TEXT("BuildAndAlignSeam: seam has null mesh pointers (MeshA=%s MeshB=%s)"),
+		// 	Seam.MeshA ? *Seam.MeshA->GetName() : TEXT("NULL"),
+		// 	Seam.MeshB ? *Seam.MeshB->GetName() : TEXT("NULL"));
+
 		return;
 	}
 	
@@ -346,7 +441,8 @@ void FCanvasSewing::BuildAndAlignSeam(
 		UE_LOG(LogTemp, Warning, TEXT("BuildAndAlignSeam: could not find spawned actors for seam meshes (A=%s, B=%s)"),
 			Seam.MeshA ? *Seam.MeshA->GetName() : TEXT("NULL"),
 			Seam.MeshB ? *Seam.MeshB->GetName() : TEXT("NULL"));
-		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("Cannot sew: one or more associated mesh actors are missing. Generate meshes first.")));
+		FMessageDialog::Open(EAppMsgType::Ok,
+			FText::FromString(TEXT("Cannot sew: one or more associated mesh actors might be out of date.")));
 		// Skip this seam (actor missing or not spawned)
 		return;
 	}
@@ -463,6 +559,13 @@ void FCanvasSewing::BuildAndAlignSeam(
 
 void FCanvasSewing::BuildAndAlignAllSeams()
 {
+	if (AllDefinedSeams.Num() == 0)
+	{
+		FMessageDialog::Open(EAppMsgType::Ok, 
+			FText::FromString(TEXT("No seams are defined! Use the 'Sew' mode to define them before applying them to the mesh.")));
+		return;
+	}
+	
 	for (const FPatternSewingConstraint& Seam : AllDefinedSeams)
 	{
 		BuildAndAlignSeam(Seam);

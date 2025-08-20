@@ -21,7 +21,11 @@
 #include "Canvas/CanvasUtils.h"
 #include "Canvas/CanvasInputHandler.h"
 #include "Canvas/CanvasMesh.h"
-
+#include "Engine/World.h"
+#include "GameFramework/Actor.h"
+#include "Editor.h"
+#include "Engine/World.h"
+#include "EngineUtils.h"
 
 void SClothDesignCanvas::Construct(const FArguments& InArgs)
 {
@@ -624,12 +628,92 @@ void SClothDesignCanvas::FocusViewportOnPoints()
 	PanOffset = ViewportSize * 0.5f - Center * ZoomFactor;
 }
 
+bool SClothDesignCanvas::AreAtLeastTwoClothMeshesInScene() const
+{
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (!World) return false;
+
+	int32 Count = 0;
+
+	for (TActorIterator<APatternMesh> It(World); It; ++It)
+	{
+		APatternMesh* Actor = *It;
+		if (Actor)
+		{
+			Count++;
+			if (Count >= 2)
+			{
+				return true; // Found at least two, no need to keep iterating
+			}
+		}
+	}
+
+	return false; // Fewer than two found
+}
+
+
+
 FReply SClothDesignCanvas::OnModeButtonClicked(EClothEditorMode NewMode)
 {
 	CurrentMode = NewMode;
 	Invalidate(EInvalidateWidget::Paint);
+	
+	if (NewMode == EClothEditorMode::Select && ModeReminderText.IsValid())
+	{
+		if (AreAtLeastTwoClothMeshesInScene())
+		{
+			ModeReminderText->SetText(FText::FromString("Reminder: regenerate meshes after editing!"));
+			ModeReminderText->SetVisibility(EVisibility::Visible);
+
+			// Hide automatically after 3 seconds
+			FTimerHandle TimerHandle;
+			GWorld->GetTimerManager().SetTimer(TimerHandle, [this]()
+			{
+				if (ModeReminderText.IsValid())
+				{
+					ModeReminderText->SetVisibility(EVisibility::Collapsed);
+				}
+			}, 3.0f, false);
+		}
+	}
+	
+	if (NewMode == EClothEditorMode::Sew && ModeReminderText.IsValid())
+	{
+		if (!AreAtLeastTwoClothMeshesInScene())
+		{
+			ModeReminderText->SetText(FText::FromString("Reminder: generate meshes before starting to sew!"));
+			ModeReminderText->SetVisibility(EVisibility::Visible);
+
+			// Hide automatically after 3 seconds
+			FTimerHandle TimerHandle;
+			GWorld->GetTimerManager().SetTimer(TimerHandle, [this]()
+			{
+				if (ModeReminderText.IsValid())
+				{
+					ModeReminderText->SetVisibility(EVisibility::Collapsed);
+				}
+			}, 3.0f, false);
+		}
+		else
+		{
+			ModeReminderText->SetText(FText::FromString("Reminder: generate edited meshes before starting to sew!"));
+			ModeReminderText->SetVisibility(EVisibility::Visible);
+
+			// Hide automatically after 3 seconds
+			FTimerHandle TimerHandle;
+			GWorld->GetTimerManager().SetTimer(TimerHandle, [this]()
+			{
+				if (ModeReminderText.IsValid())
+				{
+					ModeReminderText->SetVisibility(EVisibility::Collapsed);
+				}
+			}, 3.0f, false);
+		}
+	}
+	
 	return FReply::Handled();
 }
+
 
 
 
@@ -826,31 +910,72 @@ FReply SClothDesignCanvas::SaveClick(const FString& SaveName)
 }
 
 
-
-
-void SClothDesignCanvas::GenerateMeshesClick()
+void SClothDesignCanvas::DeleteOldClothMeshesFromScene()
 {
-	SewingManager.SpawnedPatternActors.Empty();
-	
-	TArray<FDynamicMesh3> AllMeshes;
-	FCanvasMesh CanvasMesh;
+	UWorld* World = GEditor ? GEditor->GetEditorWorldContext().World() : nullptr;
+	if (!World) return;
 
-	CanvasMesh.TriangulateAndBuildAllMeshes(
-		CompletedShapes,
-		CurvePoints,
-		AllMeshes,
-		SewingManager.SpawnedPatternActors);
+	GEditor->BeginTransaction(FText::FromString(TEXT("DeleteActorsOfTypeWithPrefix")));
 
-	for (int i = 0; i < SewingManager.SpawnedPatternActors.Num(); ++i)
+	for (TActorIterator<APatternMesh> It(World); It; ++It)
 	{
-		if (APatternMesh* A = SewingManager.SpawnedPatternActors[i].Get())
+		APatternMesh* Actor = *It;
+		// AActor* Actor = *It;
+		if (Actor) // && Actor->GetName().StartsWith(TEXT("ClothMeshhActor_")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("overall SpawnedActors[%d] = %s"), i, *A->GetName());
+			Actor->Modify();  // make undoable
+			World->DestroyActor(Actor);
+			UE_LOG(LogTemp, Log, TEXT("Deleted old cloth mesh: %s"), *Actor->GetName());
 		}
 	}
 
+	GEditor->EndTransaction();
+}
+
+void SClothDesignCanvas::GenerateMeshesClick()
+{
+	// Delete old meshes first
+	DeleteOldClothMeshesFromScene();
+	SewingManager.SpawnedPatternActors.Empty();
+
+	if (CurvePoints.Points.Num() >= 3)
+	{
+		EAppReturnType::Type Choice = FMessageDialog::Open(
+			EAppMsgType::YesNo,
+			FText::FromString(TEXT("You have an unfinished shape. Finalise it now?"))
+		);
+
+		if (Choice == EAppReturnType::Yes)
+		{
+			FinaliseCurrentShape();
+		}
+
+	}
+
+	TArray<FDynamicMesh3> AllMeshes;
+	FCanvasMesh CanvasMesh;
+	
+	CanvasMesh.TriangulateAndBuildAllMeshes(
+		CompletedShapes,
+		AllMeshes,
+		SewingManager.SpawnedPatternActors);
+	
+	// CanvasMesh.TriangulateAndBuildAllMeshes(
+	// 	this,
+	// 	CompletedShapes,
+	// 	CurvePoints,
+	// 	AllMeshes,
+	// 	SewingManager.SpawnedPatternActors);
+
+	// for (int i = 0; i < SewingManager.SpawnedPatternActors.Num(); ++i)
+	// {
+	// 	if (APatternMesh* A = SewingManager.SpawnedPatternActors[i].Get())
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("overall SpawnedActors[%d] = %s"), i, *A->GetName());
+	// 	}
+	// }
+
 	UE_LOG(LogTemp, Log, TEXT("Built %d meshes"), AllMeshes.Num());
-	// You can inspect AllMeshes[0].TriangleCount(), VertexCount(), etc.
 }
 
 

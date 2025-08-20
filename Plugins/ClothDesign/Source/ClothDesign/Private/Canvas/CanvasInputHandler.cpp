@@ -131,8 +131,22 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
         UE_LOG(LogTemp, Verbose, TEXT("Sew click missed all control points."));
         return FReply::Handled();
     }
-
-
+	
+	// ensure this clicked shape has a spawned mesh - otherwise bail out immediately
+	if (!Canvas->GetSewingManager().ValidateMeshForShape(BestShape, SpawnedPatternActors, true))
+	{
+		return FReply::Handled();
+	}
+	// if the clicked point is on a completed shape, validate that shape has a generated mesh.
+	// If it's an in-progress shape (BestShape == INDEX_NONE), we cannot validate here.
+	if (BestShape != INDEX_NONE)
+	{
+		if (!Canvas->GetSewingManager().ValidateMeshForShape(BestShape, SpawnedPatternActors, true))
+		{
+			// validation showed a dialog; abort and do not record any points or advance state
+			return FReply::Handled();
+		}
+	}
 
 	// If user clicked a point on the in-progress shape
 	if (BestShape == INDEX_NONE)
@@ -226,6 +240,14 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
     	bIsSeamReady = true;
     	Canvas->GetSewingManager().AddPreviewPoint(BestShape, BestPoint);
     	UE_LOG(LogTemp, Log, TEXT("Sew: BEnd   = [%d,%d]"), BestShape, BestPoint);
+
+    	if (!Canvas->GetSewingManager().ValidateMeshesForTargets(AStartTarget, BStartTarget, SpawnedPatternActors, true))
+    	{
+    		// Dialog already shown; abort finalise and reset preview state, keep user in BEnd so they can retry.
+    		Canvas->GetSewingManager().CurrentSeamPreviewPoints.Empty();
+    		SeamClickState = ESeamClickState::None; // or decide appropriate rollback behavior
+    		return FReply::Handled();
+    	}
 
     	
     	// 3) Finalize: now you have (shape,index) for all four clicks

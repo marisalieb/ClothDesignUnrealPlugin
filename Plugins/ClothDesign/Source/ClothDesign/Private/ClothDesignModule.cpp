@@ -64,9 +64,36 @@ void FClothDesignModule::ShutdownModule()
 }
 
 
+bool FClothDesignModule::CheckSkeletonAssetExists()
+{
+	static const FString SkeletonPath = TEXT("/Game/ClothDesign/SkelAsset/SK_ProcMesh.SK_ProcMesh");
+	USkeleton* SkeletonAsset = LoadObject<USkeleton>(nullptr, *SkeletonPath);
+
+	if (!SkeletonAsset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Skeleton asset not found at '%s'"), *SkeletonPath);
+
+		FText DialogText = FText::FromString(
+		"Could not load the skeleton asset.\n"
+		"Please ensure all required files, including the skeleton, were copied into the project's Content folder during installation.");
+		
+		FMessageDialog::Open(EAppMsgType::Ok, DialogText);
+
+		return false;
+	}
+
+	return true;
+}
+
 
 void FClothDesignModule::Spawn2DWindow()
 {
+	if (!CheckSkeletonAssetExists())
+	{
+		// Skeleton missing, do not open the tab
+		return;
+	}
+	
 	FGlobalTabmanager::Get()->TryInvokeTab(FName("TwoDWindowTab"));
 }
 
@@ -243,7 +270,7 @@ TSharedRef<SWidget> FClothDesignModule::MakeActionButtons()
 				.WidthOverride(250.f)
 				[
 					SNew(SButton)
-					.Text(LOCTEXT("GenerateMeshBtn", "Generate Mesh"))
+					.Text(LOCTEXT("GenerateMeshBtn", "Generate meshes"))
 					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
 				]
 			]
@@ -390,6 +417,24 @@ FSlateColor FClothDesignModule::GetModeButtonColor(SClothDesignCanvas::EClothEdi
 	return FSlateColor(FLinearColor::White); // Default color
 }
 
+TSharedRef<SWidget> FClothDesignModule::MakeModeReminderBox()
+{
+	const FLinearColor ReminderColour(0.831, .0f, 1.f, 1.f);
+
+	return SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot()
+		.FillWidth(1.0f)
+		[
+			// Reminder text, initially hidden
+			SAssignNew(CanvasWidget->ModeReminderText, STextBlock)
+			.Text(FText::FromString(""))
+			.Visibility(EVisibility::Collapsed)
+			.ColorAndOpacity(ReminderColour)
+			.Font(FCoreStyle::GetDefaultFontStyle("Roboto", 11))
+
+		];
+
+}
 
 
 
@@ -436,6 +481,14 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 			[
 				MakeModeToolbar()
 			]
+			
+			+ SOverlay::Slot()  // top-right toolbar
+			.VAlign(VAlign_Top).HAlign(HAlign_Left).Padding(FMargin(260, 20, 0, 0))  // Left=300, Top=10, Right=0, Bottom=0
+
+			[
+				MakeModeReminderBox()
+			]
+			
 		];
 
 	// Delay focus until next tick/frame to ensure UI is ready

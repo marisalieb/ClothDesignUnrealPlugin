@@ -125,6 +125,7 @@ public:
 
 
 
+	TSharedPtr<STextBlock> ModeReminderText;
 
 	
 	// other, maybe reorganise??
@@ -148,6 +149,9 @@ private:
 	void FocusViewportOnPoints();
 
 	void RestoreCanvasState(const FCanvasState& State);
+
+	void DeleteOldClothMeshesFromScene();
+	bool AreAtLeastTwoClothMeshesInScene() const;
 
 	friend class FClothCanvas_StateRoundtripTest;
 

@@ -2,7 +2,7 @@
 #include "Canvas/CanvasUtils.h"
 #include "DynamicMesh/DynamicMesh3.h"
 #include "CoreMinimal.h"
-
+#include "ClothDesignCanvas.h"
 
 
 
@@ -453,11 +453,10 @@ void FCanvasMesh::TriangulateAndBuildMesh(
 
 void FCanvasMesh::TriangulateAndBuildAllMeshes(
 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-	const FInterpCurve<FVector2D>& CurvePoints,
 	TArray<FDynamicMesh3>& OutMeshes,
 	TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors)
 {
-
+	
 	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
 	{
 		FDynamicMesh3 Mesh;
@@ -476,23 +475,7 @@ void FCanvasMesh::TriangulateAndBuildAllMeshes(
 		OutMeshes.Add(Mesh);
 	}
 
-	if (CurvePoints.Points.Num() >= 3)
-	{
-		FDynamicMesh3 Mesh;
-		TArray<int32> SeamVerts;
-		TArray<int32> TempSeamVerts;
 
-		TriangulateAndBuildMesh(
-			CurvePoints,
-			false,
-			0, 0,
-			SeamVerts,
-			Mesh,
-			TempSeamVerts,
-			OutSpawnedActors);
-		
-		OutMeshes.Add(Mesh);
-	}
 
 	for (int i = 0; i < OutSpawnedActors.Num(); ++i)
 	{
@@ -502,4 +485,58 @@ void FCanvasMesh::TriangulateAndBuildAllMeshes(
 		}
 	}
 }
+
+
+// void FCanvasMesh::TriangulateAndBuildAllMeshes(
+// 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
+// 	const FInterpCurve<FVector2D>& CurvePoints,
+// 	TArray<FDynamicMesh3>& OutMeshes,
+// 	TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors)
+// {
+// 	// add check for in-progress shapes to finalise them
+//
+// 	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
+// 	{
+// 		FDynamicMesh3 Mesh;
+// 		TArray<int32> SeamVerts;
+// 		TArray<int32> TempSeamVerts;
+//
+// 		TriangulateAndBuildMesh(
+// 			Shape,
+// 			false,
+// 			0, 0,
+// 			SeamVerts,
+// 			Mesh,
+// 			TempSeamVerts,
+// 			OutSpawnedActors);
+// 		
+// 		OutMeshes.Add(Mesh);
+// 	}
+//
+// 	if (CurvePoints.Points.Num() >= 3)
+// 	{
+// 		FDynamicMesh3 Mesh;
+// 		TArray<int32> SeamVerts;
+// 		TArray<int32> TempSeamVerts;
+//
+// 		TriangulateAndBuildMesh(
+// 			CurvePoints,
+// 			false,
+// 			0, 0,
+// 			SeamVerts,
+// 			Mesh,
+// 			TempSeamVerts,
+// 			OutSpawnedActors);
+// 		
+// 		OutMeshes.Add(Mesh);
+// 	}
+//
+// 	for (int i = 0; i < OutSpawnedActors.Num(); ++i)
+// 	{
+// 		if (APatternMesh* A = OutSpawnedActors[i].Get())
+// 		{
+// 			UE_LOG(LogTemp, Warning, TEXT("SpawnedActors[%d] = %s"), i, *A->GetName());
+// 		}
+// 	}
+// }
 

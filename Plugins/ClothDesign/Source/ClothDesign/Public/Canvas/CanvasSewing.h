@@ -68,12 +68,28 @@ public:
 
 	void AddPreviewPoint(int32 ShapeIndex, int32 PointIndex);
 
-	friend class FCanvasSewingTestHelper;
+	// bool ValidateMeshes(
+	// 	const FClickTarget& AStart,
+	// 	const FClickTarget& BStart,
+	// 	const TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors);
 
+	bool ValidateMeshesForTargets(
+		const FClickTarget& AStart,
+		const FClickTarget& BStart,
+		const TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors,
+		bool bShowDialog);
+	
+	bool ValidateMeshForShape(
+		int32 ShapeIndex,
+		const TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors,
+		bool bShowDialog);
 	
 private:
 	static void AlignSeamMeshes(APatternMesh* A, APatternMesh* B);
 
 	void BuildAndAlignSeam(
 		const FPatternSewingConstraint& Seam);
+
+
+	friend class FCanvasSewingTestHelper;
 };

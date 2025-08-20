@@ -1,9 +1,24 @@
 var searchData=
 [
-  ['bendtarget_0',['BEndTarget',['../structFCanvasState.html#a06919a5eaaaf55a1d0214b4805bf9bc9',1,'FCanvasState']]],
-  ['bstarttarget_1',['BStartTarget',['../structFCanvasState.html#afe3c687a0142c9d5008fc8f03e90c6ee',1,'FCanvasState']]],
-  ['buildandalignallseams_2',['BuildAndAlignAllSeams',['../classFCanvasSewing.html#a68e5809fbf2b51f6d139bbbf8c50bb97',1,'FCanvasSewing']]],
-  ['buildsewnpointsets_3',['BuildSewnPointSets',['../classFCanvasSewing.html#af7d241ee73dd0ab92202acb9d06a92b7',1,'FCanvasSewing']]],
-  ['buildshortestarcsegments_4',['BuildShortestArcSegments',['../classFCanvasPaint.html#a38fa0940c6c6dd2b41ede185ae2aa2b3',1,'FCanvasPaint']]],
-  ['busebezierperpoint_5',['busebezierperpoint',['../structFLoadedShapeData.html#af4ee0017673f496b9c936d72d90584a7',1,'FLoadedShapeData::bUseBezierPerPoint'],['../structFCanvasState.html#aedef968ba4d1a88aaef25cffddc4bbed',1,'FCanvasState::bUseBezierPerPoint']]]
+  ['backgroundimagescale_0',['BackgroundImageScale',['../classSClothDesignCanvas.html#a8ec0cf24ca792e95ea93e7c784bfced0',1,'SClothDesignCanvas']]],
+  ['backgroundtexture_1',['BackgroundTexture',['../classSClothDesignCanvas.html#a2cbcff741785835cee91d8718fa19cc9',1,'SClothDesignCanvas']]],
+  ['bendstiffnesslow_2',['BendStiffnessLow',['../structFClothPhysicalConfig.html#ae9af9ddb1358da0cfe08eee0ab8fc8da',1,'FClothPhysicalConfig']]],
+  ['bendtarget_3',['BEndTarget',['../structFCanvasState.html#a06919a5eaaaf55a1d0214b4805bf9bc9',1,'FCanvasState']]],
+  ['bisdragging_4',['bIsDragging',['../classSClothDesignCanvas.html#a0f61b51078e341d72dd7274ef03a8b9b',1,'SClothDesignCanvas']]],
+  ['bisdraggingpoint_5',['bIsDraggingPoint',['../classSClothDesignCanvas.html#a62cf7aad4900150d2ecbde45b46eb622',1,'SClothDesignCanvas']]],
+  ['bisdraggingshape_6',['bIsDraggingShape',['../classSClothDesignCanvas.html#a274587cece09ed62b589e24ac41f137a',1,'SClothDesignCanvas']]],
+  ['bisdraggingtangent_7',['bIsDraggingTangent',['../classSClothDesignCanvas.html#adac521836fe09123922f6fafa7ae3ec7',1,'SClothDesignCanvas']]],
+  ['bispanning_8',['bIsPanning',['../classSClothDesignCanvas.html#a717343e348514ef046e28a0fbcb6bd1a',1,'SClothDesignCanvas']]],
+  ['bisshapeselected_9',['bIsShapeSelected',['../classSClothDesignCanvas.html#a348017e33fd5f8fa334dd33b6f6d7d5d',1,'SClothDesignCanvas']]],
+  ['boundarysamplepoints2d_10',['BoundarySamplePoints2D',['../classAPatternMesh.html#a2165e3559f3f0bdf2a96f06872cfa857',1,'APatternMesh']]],
+  ['boundarysamplevertexids_11',['BoundarySampleVertexIDs',['../classAPatternMesh.html#ad6e2476732e90c20060e22061d073e3e',1,'APatternMesh']]],
+  ['boundarysampleworldpositions_12',['BoundarySampleWorldPositions',['../classAPatternMesh.html#aae65237a5e9e65f063c7bd33d210fd39',1,'APatternMesh']]],
+  ['bseparatetangents_13',['bSeparateTangents',['../classSClothDesignCanvas.html#a1431752aa9a9e3e2eeb0bf10c22b446d',1,'SClothDesignCanvas']]],
+  ['bstarttarget_14',['BStartTarget',['../structFCanvasState.html#afe3c687a0142c9d5008fc8f03e90c6ee',1,'FCanvasState']]],
+  ['buildandalignallseams_15',['BuildAndAlignAllSeams',['../classFCanvasSewing.html#a68e5809fbf2b51f6d139bbbf8c50bb97',1,'FCanvasSewing']]],
+  ['buildsewnpointsets_16',['BuildSewnPointSets',['../classFCanvasSewing.html#af7d241ee73dd0ab92202acb9d06a92b7',1,'FCanvasSewing']]],
+  ['buildshortestarcsegments_17',['BuildShortestArcSegments',['../classFCanvasPaint.html#a38fa0940c6c6dd2b41ede185ae2aa2b3',1,'FCanvasPaint']]],
+  ['busebezier_18',['bUseBezier',['../structFCurvePointData.html#a8cdcaed368d3da0f172fbe7c680d257d',1,'FCurvePointData']]],
+  ['busebezierperpoint_19',['busebezierperpoint',['../structFLoadedShapeData.html#af4ee0017673f496b9c936d72d90584a7',1,'FLoadedShapeData::bUseBezierPerPoint'],['../structFCanvasState.html#aedef968ba4d1a88aaef25cffddc4bbed',1,'FCanvasState::bUseBezierPerPoint'],['../classSClothDesignCanvas.html#ac5b631ed031a8da7216180f5b169c8db',1,'SClothDesignCanvas::bUseBezierPerPoint']]],
+  ['busebezierpoints_20',['bUseBezierPoints',['../classSClothDesignCanvas.html#ac3e8151dc25b607050b155929fd77362',1,'SClothDesignCanvas']]]
 ];

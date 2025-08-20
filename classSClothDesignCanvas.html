@@ -100,6 +100,11 @@ $(document).ready(function(){initNavTree('classSClothDesignCanvas.html',''); ini
   <div class="headertitle"><div class="title">SClothDesignCanvas Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Primary Slate widget for the cloth design canvas.  
+ <a href="classSClothDesignCanvas.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="ClothDesignCanvas_8h_source.html">ClothDesignCanvas.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for SClothDesignCanvas:</div>
 <div class="dyncontent">
@@ -109,15 +114,17 @@ Inheritance diagram for SClothDesignCanvas:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a52130105a63f2d73cb879fad1af11fd4" id="r_a52130105a63f2d73cb879fad1af11fd4"><td class="memItemLeft" align="right" valign="top"><a id="a52130105a63f2d73cb879fad1af11fd4" name="a52130105a63f2d73cb879fad1af11fd4"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>EClothEditorMode</b> { <b>Draw</b>
-, <b>Select</b>
-, <b>Sew</b>
+<tr class="memitem:a52130105a63f2d73cb879fad1af11fd4" id="r_a52130105a63f2d73cb879fad1af11fd4"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a52130105a63f2d73cb879fad1af11fd4">EClothEditorMode</a> { <a class="el" href="classSClothDesignCanvas.html#a52130105a63f2d73cb879fad1af11fd4a2d03c2d5a7ec65ef4619e0582c272ec2">Draw</a>
+, <a class="el" href="classSClothDesignCanvas.html#a52130105a63f2d73cb879fad1af11fd4ae0626222614bdee31951d84c64e5e9ff">Select</a>
+, <a class="el" href="classSClothDesignCanvas.html#a52130105a63f2d73cb879fad1af11fd4ab9a80ec4db2b47dea37ccad94fe441c1">Sew</a>
  }</td></tr>
+<tr class="memdesc:a52130105a63f2d73cb879fad1af11fd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Editor modes supported by the canvas.  <a href="classSClothDesignCanvas.html#a52130105a63f2d73cb879fad1af11fd4">More...</a><br /></td></tr>
 <tr class="separator:a52130105a63f2d73cb879fad1af11fd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13fb058ed866c1e7b997f3ba8c41b096" id="r_a13fb058ed866c1e7b997f3ba8c41b096"><td class="memItemLeft" align="right" valign="top"><a id="a13fb058ed866c1e7b997f3ba8c41b096" name="a13fb058ed866c1e7b997f3ba8c41b096"></a>enum class &#160;</td><td class="memItemRight" valign="bottom"><b>ETangentHandle</b> { <b>None</b>
-, <b>Arrive</b>
-, <b>Leave</b>
+<tr class="memitem:a13fb058ed866c1e7b997f3ba8c41b096" id="r_a13fb058ed866c1e7b997f3ba8c41b096"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a13fb058ed866c1e7b997f3ba8c41b096">ETangentHandle</a> { <a class="el" href="classSClothDesignCanvas.html#a13fb058ed866c1e7b997f3ba8c41b096a6adf97f83acf6453d4a6a4b1070f3754">None</a>
+, <a class="el" href="classSClothDesignCanvas.html#a13fb058ed866c1e7b997f3ba8c41b096ae7143c92498afbde99ac488ac168316e">Arrive</a>
+, <a class="el" href="classSClothDesignCanvas.html#a13fb058ed866c1e7b997f3ba8c41b096aa52945dbe283de2f7e9d63ca3417f36a">Leave</a>
  }</td></tr>
+<tr class="memdesc:a13fb058ed866c1e7b997f3ba8c41b096"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which tangent handle is active when editing a point's Bezier handles.  <a href="classSClothDesignCanvas.html#a13fb058ed866c1e7b997f3ba8c41b096">More...</a><br /></td></tr>
 <tr class="separator:a13fb058ed866c1e7b997f3ba8c41b096"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -125,184 +132,1614 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a575644a29ad2a84150d6e897e16501ca" id="r_a575644a29ad2a84150d6e897e16501ca"><td class="memItemLeft" align="right" valign="top"><a id="a575644a29ad2a84150d6e897e16501ca" name="a575644a29ad2a84150d6e897e16501ca"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>SLATE_BEGIN_ARGS</b> (<a class="el" href="classSClothDesignCanvas.html">SClothDesignCanvas</a>)</td></tr>
 <tr class="separator:a575644a29ad2a84150d6e897e16501ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63da4fd5ec31fe11f047da6513227705" id="r_a63da4fd5ec31fe11f047da6513227705"><td class="memItemLeft" align="right" valign="top"><a id="a63da4fd5ec31fe11f047da6513227705" name="a63da4fd5ec31fe11f047da6513227705"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Construct</b> (const FArguments &amp;InArgs)</td></tr>
+<tr class="memitem:a63da4fd5ec31fe11f047da6513227705" id="r_a63da4fd5ec31fe11f047da6513227705"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a63da4fd5ec31fe11f047da6513227705">Construct</a> (const FArguments &amp;InArgs)</td></tr>
+<tr class="memdesc:a63da4fd5ec31fe11f047da6513227705"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs the canvas widget with Slate arguments.  <br /></td></tr>
 <tr class="separator:a63da4fd5ec31fe11f047da6513227705"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbc1325fd18ee8fb5568bbd2666b6ba6" id="r_afbc1325fd18ee8fb5568bbd2666b6ba6"><td class="memItemLeft" align="right" valign="top"><a id="afbc1325fd18ee8fb5568bbd2666b6ba6" name="afbc1325fd18ee8fb5568bbd2666b6ba6"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>SupportsKeyboardFocus</b> () const override</td></tr>
+<tr class="memitem:afbc1325fd18ee8fb5568bbd2666b6ba6" id="r_afbc1325fd18ee8fb5568bbd2666b6ba6"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#afbc1325fd18ee8fb5568bbd2666b6ba6">SupportsKeyboardFocus</a> () const override</td></tr>
+<tr class="memdesc:afbc1325fd18ee8fb5568bbd2666b6ba6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates this widget can receive keyboard focus.  <br /></td></tr>
 <tr class="separator:afbc1325fd18ee8fb5568bbd2666b6ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f655901c138a2739bfd5616b507fb23" id="r_a2f655901c138a2739bfd5616b507fb23"><td class="memItemLeft" align="right" valign="top"><a id="a2f655901c138a2739bfd5616b507fb23" name="a2f655901c138a2739bfd5616b507fb23"></a>
-virtual FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>TransformPoint</b> (const FVector2D &amp;Point) const</td></tr>
+<tr class="memitem:a2f655901c138a2739bfd5616b507fb23" id="r_a2f655901c138a2739bfd5616b507fb23"><td class="memItemLeft" align="right" valign="top">virtual FVector2D&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a2f655901c138a2739bfd5616b507fb23">TransformPoint</a> (const FVector2D &amp;Point) const</td></tr>
+<tr class="memdesc:a2f655901c138a2739bfd5616b507fb23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transforms a canvas-space point into screen/widget space.  <br /></td></tr>
 <tr class="separator:a2f655901c138a2739bfd5616b507fb23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a554253f9466ef2dba2a93e87762dea38" id="r_a554253f9466ef2dba2a93e87762dea38"><td class="memItemLeft" align="right" valign="top"><a id="a554253f9466ef2dba2a93e87762dea38" name="a554253f9466ef2dba2a93e87762dea38"></a>
-virtual FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>InverseTransformPoint</b> (const FVector2D &amp;ScreenPoint) const</td></tr>
+<tr class="memitem:a554253f9466ef2dba2a93e87762dea38" id="r_a554253f9466ef2dba2a93e87762dea38"><td class="memItemLeft" align="right" valign="top">virtual FVector2D&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a554253f9466ef2dba2a93e87762dea38">InverseTransformPoint</a> (const FVector2D &amp;ScreenPoint) const</td></tr>
+<tr class="memdesc:a554253f9466ef2dba2a93e87762dea38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse of TransformPoint: converts screen space to canvas space.  <br /></td></tr>
 <tr class="separator:a554253f9466ef2dba2a93e87762dea38"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecb383eecebdd144b2a54d04dd35c612" id="r_aecb383eecebdd144b2a54d04dd35c612"><td class="memItemLeft" align="right" valign="top"><a id="aecb383eecebdd144b2a54d04dd35c612" name="aecb383eecebdd144b2a54d04dd35c612"></a>
-virtual int32&#160;</td><td class="memItemRight" valign="bottom"><b>OnPaint</b> (const FPaintArgs &amp;Args, const FGeometry &amp;AllottedGeometry, const FSlateRect &amp;CullingRect, FSlateWindowElementList &amp;OutDrawElements, int32 LayerId, const FWidgetStyle &amp;InWidgetStyle, bool bParentEnabled) const override</td></tr>
+<tr class="memitem:aecb383eecebdd144b2a54d04dd35c612" id="r_aecb383eecebdd144b2a54d04dd35c612"><td class="memItemLeft" align="right" valign="top">virtual int32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#aecb383eecebdd144b2a54d04dd35c612">OnPaint</a> (const FPaintArgs &amp;Args, const FGeometry &amp;AllottedGeometry, const FSlateRect &amp;CullingRect, FSlateWindowElementList &amp;OutDrawElements, int32 LayerId, const FWidgetStyle &amp;InWidgetStyle, bool bParentEnabled) const override</td></tr>
+<tr class="memdesc:aecb383eecebdd144b2a54d04dd35c612"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main Slate paint entry for the widget.  <br /></td></tr>
 <tr class="separator:aecb383eecebdd144b2a54d04dd35c612"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a480e1d6243ba2642a2614ce29d2fcd9d" id="r_a480e1d6243ba2642a2614ce29d2fcd9d"><td class="memItemLeft" align="right" valign="top"><a id="a480e1d6243ba2642a2614ce29d2fcd9d" name="a480e1d6243ba2642a2614ce29d2fcd9d"></a>
-virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnMouseWheel</b> (const FGeometry &amp;Geometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
+<tr class="memitem:a480e1d6243ba2642a2614ce29d2fcd9d" id="r_a480e1d6243ba2642a2614ce29d2fcd9d"><td class="memItemLeft" align="right" valign="top">virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a480e1d6243ba2642a2614ce29d2fcd9d">OnMouseWheel</a> (const FGeometry &amp;Geometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
+<tr class="memdesc:a480e1d6243ba2642a2614ce29d2fcd9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles mouse wheel events for zooming or other context-sensitive actions.  <br /></td></tr>
 <tr class="separator:a480e1d6243ba2642a2614ce29d2fcd9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6e594f4aeeb40cf954d418a2c65e845" id="r_ad6e594f4aeeb40cf954d418a2c65e845"><td class="memItemLeft" align="right" valign="top"><a id="ad6e594f4aeeb40cf954d418a2c65e845" name="ad6e594f4aeeb40cf954d418a2c65e845"></a>
-virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnMouseButtonDown</b> (const FGeometry &amp;Geometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
+<tr class="memitem:ad6e594f4aeeb40cf954d418a2c65e845" id="r_ad6e594f4aeeb40cf954d418a2c65e845"><td class="memItemLeft" align="right" valign="top">virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#ad6e594f4aeeb40cf954d418a2c65e845">OnMouseButtonDown</a> (const FGeometry &amp;Geometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
+<tr class="memdesc:ad6e594f4aeeb40cf954d418a2c65e845"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles mouse button down events (start of click/drag operations).  <br /></td></tr>
 <tr class="separator:ad6e594f4aeeb40cf954d418a2c65e845"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36880fedcdb85fb598a9b23381b5e55e" id="r_a36880fedcdb85fb598a9b23381b5e55e"><td class="memItemLeft" align="right" valign="top"><a id="a36880fedcdb85fb598a9b23381b5e55e" name="a36880fedcdb85fb598a9b23381b5e55e"></a>
-virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnMouseMove</b> (const FGeometry &amp;Geometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
+<tr class="memitem:a36880fedcdb85fb598a9b23381b5e55e" id="r_a36880fedcdb85fb598a9b23381b5e55e"><td class="memItemLeft" align="right" valign="top">virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a36880fedcdb85fb598a9b23381b5e55e">OnMouseMove</a> (const FGeometry &amp;Geometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
+<tr class="memdesc:a36880fedcdb85fb598a9b23381b5e55e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles mouse move events for dragging, previewing and cursor updates.  <br /></td></tr>
 <tr class="separator:a36880fedcdb85fb598a9b23381b5e55e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3885e3a2f879dd37beaaaf08d3b27a3c" id="r_a3885e3a2f879dd37beaaaf08d3b27a3c"><td class="memItemLeft" align="right" valign="top"><a id="a3885e3a2f879dd37beaaaf08d3b27a3c" name="a3885e3a2f879dd37beaaaf08d3b27a3c"></a>
-virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnMouseButtonUp</b> (const FGeometry &amp;Geometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
+<tr class="memitem:a3885e3a2f879dd37beaaaf08d3b27a3c" id="r_a3885e3a2f879dd37beaaaf08d3b27a3c"><td class="memItemLeft" align="right" valign="top">virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a3885e3a2f879dd37beaaaf08d3b27a3c">OnMouseButtonUp</a> (const FGeometry &amp;Geometry, const FPointerEvent &amp;MouseEvent) override</td></tr>
+<tr class="memdesc:a3885e3a2f879dd37beaaaf08d3b27a3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles mouse button up events to finalise clicks or drags.  <br /></td></tr>
 <tr class="separator:a3885e3a2f879dd37beaaaf08d3b27a3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ab38c757b25d518a53172618756cb26" id="r_a6ab38c757b25d518a53172618756cb26"><td class="memItemLeft" align="right" valign="top"><a id="a6ab38c757b25d518a53172618756cb26" name="a6ab38c757b25d518a53172618756cb26"></a>
-virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnKeyDown</b> (const FGeometry &amp;Geometry, const FKeyEvent &amp;InKeyEvent) override</td></tr>
+<tr class="memitem:a6ab38c757b25d518a53172618756cb26" id="r_a6ab38c757b25d518a53172618756cb26"><td class="memItemLeft" align="right" valign="top">virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a6ab38c757b25d518a53172618756cb26">OnKeyDown</a> (const FGeometry &amp;Geometry, const FKeyEvent &amp;InKeyEvent) override</td></tr>
+<tr class="memdesc:a6ab38c757b25d518a53172618756cb26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles key down events for shortcuts and keyboard control.  <br /></td></tr>
 <tr class="separator:a6ab38c757b25d518a53172618756cb26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae4406894c9950f2e431212053ccf5c8b" id="r_ae4406894c9950f2e431212053ccf5c8b"><td class="memItemLeft" align="right" valign="top"><a id="ae4406894c9950f2e431212053ccf5c8b" name="ae4406894c9950f2e431212053ccf5c8b"></a>
-virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnKeyUp</b> (const FGeometry &amp;Geometry, const FKeyEvent &amp;InKeyEvent) override</td></tr>
+<tr class="memitem:ae4406894c9950f2e431212053ccf5c8b" id="r_ae4406894c9950f2e431212053ccf5c8b"><td class="memItemLeft" align="right" valign="top">virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#ae4406894c9950f2e431212053ccf5c8b">OnKeyUp</a> (const FGeometry &amp;Geometry, const FKeyEvent &amp;InKeyEvent) override</td></tr>
+<tr class="memdesc:ae4406894c9950f2e431212053ccf5c8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles key up events.  <br /></td></tr>
 <tr class="separator:ae4406894c9950f2e431212053ccf5c8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2a07a7934d6970bca8f0e3326b77411" id="r_ad2a07a7934d6970bca8f0e3326b77411"><td class="memItemLeft" align="right" valign="top"><a id="ad2a07a7934d6970bca8f0e3326b77411" name="ad2a07a7934d6970bca8f0e3326b77411"></a>
-virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnFocusReceived</b> (const FGeometry &amp;Geometry, const FFocusEvent &amp;InFocusEvent) override</td></tr>
+<tr class="memitem:ad2a07a7934d6970bca8f0e3326b77411" id="r_ad2a07a7934d6970bca8f0e3326b77411"><td class="memItemLeft" align="right" valign="top">virtual FReply&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#ad2a07a7934d6970bca8f0e3326b77411">OnFocusReceived</a> (const FGeometry &amp;Geometry, const FFocusEvent &amp;InFocusEvent) override</td></tr>
+<tr class="memdesc:ad2a07a7934d6970bca8f0e3326b77411"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when the widget receives keyboard focus.  <br /></td></tr>
 <tr class="separator:ad2a07a7934d6970bca8f0e3326b77411"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a280d73bfc68eebb1c40404fa3c2b1969" id="r_a280d73bfc68eebb1c40404fa3c2b1969"><td class="memItemLeft" align="right" valign="top"><a id="a280d73bfc68eebb1c40404fa3c2b1969" name="a280d73bfc68eebb1c40404fa3c2b1969"></a>
-FReply&#160;</td><td class="memItemRight" valign="bottom"><b>OnModeButtonClicked</b> (EClothEditorMode NewMode)</td></tr>
+<tr class="memitem:a280d73bfc68eebb1c40404fa3c2b1969" id="r_a280d73bfc68eebb1c40404fa3c2b1969"><td class="memItemLeft" align="right" valign="top">FReply&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a280d73bfc68eebb1c40404fa3c2b1969">OnModeButtonClicked</a> (<a class="el" href="classSClothDesignCanvas.html#a52130105a63f2d73cb879fad1af11fd4">EClothEditorMode</a> NewMode)</td></tr>
+<tr class="memdesc:a280d73bfc68eebb1c40404fa3c2b1969"><td class="mdescLeft">&#160;</td><td class="mdescRight">Switches the canvas to a different editor mode.  <br /></td></tr>
 <tr class="separator:a280d73bfc68eebb1c40404fa3c2b1969"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3db6cf586a25139655939aac080c5471" id="r_a3db6cf586a25139655939aac080c5471"><td class="memItemLeft" align="right" valign="top"><a id="a3db6cf586a25139655939aac080c5471" name="a3db6cf586a25139655939aac080c5471"></a>
-<a class="el" href="structFCanvasState.html">FCanvasState</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GetCurrentCanvasState</b> () const</td></tr>
+<tr class="memitem:a3db6cf586a25139655939aac080c5471" id="r_a3db6cf586a25139655939aac080c5471"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFCanvasState.html">FCanvasState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a3db6cf586a25139655939aac080c5471">GetCurrentCanvasState</a> () const</td></tr>
+<tr class="memdesc:a3db6cf586a25139655939aac080c5471"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a copy of the current canvas state.  <br /></td></tr>
 <tr class="separator:a3db6cf586a25139655939aac080c5471"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09387db29555c2470734baa9bf88a960" id="r_a09387db29555c2470734baa9bf88a960"><td class="memItemLeft" align="right" valign="top"><a id="a09387db29555c2470734baa9bf88a960" name="a09387db29555c2470734baa9bf88a960"></a>
-FString&#160;</td><td class="memItemRight" valign="bottom"><b>GetSelectedTexturePath</b> () const</td></tr>
+<tr class="memitem:a09387db29555c2470734baa9bf88a960" id="r_a09387db29555c2470734baa9bf88a960"><td class="memItemLeft" align="right" valign="top">FString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a09387db29555c2470734baa9bf88a960">GetSelectedTexturePath</a> () const</td></tr>
+<tr class="memdesc:a09387db29555c2470734baa9bf88a960"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the file path of the selected background texture.  <br /></td></tr>
 <tr class="separator:a09387db29555c2470734baa9bf88a960"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b3c10c3315cb1ae52cf8a9529df97b4" id="r_a7b3c10c3315cb1ae52cf8a9529df97b4"><td class="memItemLeft" align="right" valign="top"><a id="a7b3c10c3315cb1ae52cf8a9529df97b4" name="a7b3c10c3315cb1ae52cf8a9529df97b4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>OnBackgroundTextureSelected</b> (const FAssetData &amp;AssetData)</td></tr>
+<tr class="memitem:a7b3c10c3315cb1ae52cf8a9529df97b4" id="r_a7b3c10c3315cb1ae52cf8a9529df97b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a7b3c10c3315cb1ae52cf8a9529df97b4">OnBackgroundTextureSelected</a> (const FAssetData &amp;AssetData)</td></tr>
+<tr class="memdesc:a7b3c10c3315cb1ae52cf8a9529df97b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback invoked when a background texture is chosen by the user.  <br /></td></tr>
 <tr class="separator:a7b3c10c3315cb1ae52cf8a9529df97b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33213dd142f7f5ddd7779484f5a147b1" id="r_a33213dd142f7f5ddd7779484f5a147b1"><td class="memItemLeft" align="right" valign="top"><a id="a33213dd142f7f5ddd7779484f5a147b1" name="a33213dd142f7f5ddd7779484f5a147b1"></a>
-TOptional&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetBackgroundImageScale</b> () const</td></tr>
+<tr class="memitem:a33213dd142f7f5ddd7779484f5a147b1" id="r_a33213dd142f7f5ddd7779484f5a147b1"><td class="memItemLeft" align="right" valign="top">TOptional&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a33213dd142f7f5ddd7779484f5a147b1">GetBackgroundImageScale</a> () const</td></tr>
+<tr class="memdesc:a33213dd142f7f5ddd7779484f5a147b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current scale applied to the background image.  <br /></td></tr>
 <tr class="separator:a33213dd142f7f5ddd7779484f5a147b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a043334f2e2c4fbf04d5e9130dc2756fa" id="r_a043334f2e2c4fbf04d5e9130dc2756fa"><td class="memItemLeft" align="right" valign="top"><a id="a043334f2e2c4fbf04d5e9130dc2756fa" name="a043334f2e2c4fbf04d5e9130dc2756fa"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>OnBackgroundImageScaleChanged</b> (float NewScale)</td></tr>
+<tr class="memitem:a043334f2e2c4fbf04d5e9130dc2756fa" id="r_a043334f2e2c4fbf04d5e9130dc2756fa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a043334f2e2c4fbf04d5e9130dc2756fa">OnBackgroundImageScaleChanged</a> (float NewScale)</td></tr>
+<tr class="memdesc:a043334f2e2c4fbf04d5e9130dc2756fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the background image scale.  <br /></td></tr>
 <tr class="separator:a043334f2e2c4fbf04d5e9130dc2756fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45e1bb4c77f9252b08fbc1af5945a071" id="r_a45e1bb4c77f9252b08fbc1af5945a071"><td class="memItemLeft" align="right" valign="top"><a id="a45e1bb4c77f9252b08fbc1af5945a071" name="a45e1bb4c77f9252b08fbc1af5945a071"></a>
-FString&#160;</td><td class="memItemRight" valign="bottom"><b>GetSelectedShapeAssetPath</b> () const</td></tr>
+<tr class="memitem:a45e1bb4c77f9252b08fbc1af5945a071" id="r_a45e1bb4c77f9252b08fbc1af5945a071"><td class="memItemLeft" align="right" valign="top">FString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a45e1bb4c77f9252b08fbc1af5945a071">GetSelectedShapeAssetPath</a> () const</td></tr>
+<tr class="memdesc:a45e1bb4c77f9252b08fbc1af5945a071"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the path of the selected shape asset.  <br /></td></tr>
 <tr class="separator:a45e1bb4c77f9252b08fbc1af5945a071"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67ca4fd4caea182aca7f17458b8dd840" id="r_a67ca4fd4caea182aca7f17458b8dd840"><td class="memItemLeft" align="right" valign="top"><a id="a67ca4fd4caea182aca7f17458b8dd840" name="a67ca4fd4caea182aca7f17458b8dd840"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>OnShapeAssetSelected</b> (const FAssetData &amp;AssetData)</td></tr>
+<tr class="memitem:a67ca4fd4caea182aca7f17458b8dd840" id="r_a67ca4fd4caea182aca7f17458b8dd840"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a67ca4fd4caea182aca7f17458b8dd840">OnShapeAssetSelected</a> (const FAssetData &amp;AssetData)</td></tr>
+<tr class="memdesc:a67ca4fd4caea182aca7f17458b8dd840"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoked when a shape asset is selected from the content browser.  <br /></td></tr>
 <tr class="separator:a67ca4fd4caea182aca7f17458b8dd840"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a123446466db1d4d7f0ef64be6d5cd707" id="r_a123446466db1d4d7f0ef64be6d5cd707"><td class="memItemLeft" align="right" valign="top"><a id="a123446466db1d4d7f0ef64be6d5cd707" name="a123446466db1d4d7f0ef64be6d5cd707"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>ClearAllShapeData</b> ()</td></tr>
+<tr class="memitem:a123446466db1d4d7f0ef64be6d5cd707" id="r_a123446466db1d4d7f0ef64be6d5cd707"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a123446466db1d4d7f0ef64be6d5cd707">ClearAllShapeData</a> ()</td></tr>
+<tr class="memdesc:a123446466db1d4d7f0ef64be6d5cd707"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all shape-related data from the canvas.  <br /></td></tr>
 <tr class="separator:a123446466db1d4d7f0ef64be6d5cd707"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5c9a13df2306e4a0c6bdec4204f0c79" id="r_aa5c9a13df2306e4a0c6bdec4204f0c79"><td class="memItemLeft" align="right" valign="top"><a id="aa5c9a13df2306e4a0c6bdec4204f0c79" name="aa5c9a13df2306e4a0c6bdec4204f0c79"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SewingClick</b> ()</td></tr>
+<tr class="memitem:aa5c9a13df2306e4a0c6bdec4204f0c79" id="r_aa5c9a13df2306e4a0c6bdec4204f0c79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#aa5c9a13df2306e4a0c6bdec4204f0c79">SewingClick</a> ()</td></tr>
 <tr class="separator:aa5c9a13df2306e4a0c6bdec4204f0c79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a886be65af485900bf807c83d14a0c793" id="r_a886be65af485900bf807c83d14a0c793"><td class="memItemLeft" align="right" valign="top"><a id="a886be65af485900bf807c83d14a0c793" name="a886be65af485900bf807c83d14a0c793"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>MergeClick</b> ()</td></tr>
+<tr class="memitem:a886be65af485900bf807c83d14a0c793" id="r_a886be65af485900bf807c83d14a0c793"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a886be65af485900bf807c83d14a0c793">MergeClick</a> ()</td></tr>
 <tr class="separator:a886be65af485900bf807c83d14a0c793"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0924de201435f309bd2f40321bd8d97d" id="r_a0924de201435f309bd2f40321bd8d97d"><td class="memItemLeft" align="right" valign="top"><a id="a0924de201435f309bd2f40321bd8d97d" name="a0924de201435f309bd2f40321bd8d97d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>ClearAllSewing</b> ()</td></tr>
+<tr class="memitem:a0924de201435f309bd2f40321bd8d97d" id="r_a0924de201435f309bd2f40321bd8d97d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a0924de201435f309bd2f40321bd8d97d">ClearAllSewing</a> ()</td></tr>
 <tr class="separator:a0924de201435f309bd2f40321bd8d97d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0346e8f42285a965aaac61c871a3ff8f" id="r_a0346e8f42285a965aaac61c871a3ff8f"><td class="memItemLeft" align="right" valign="top"><a id="a0346e8f42285a965aaac61c871a3ff8f" name="a0346e8f42285a965aaac61c871a3ff8f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>GenerateMeshesClick</b> ()</td></tr>
+<tr class="memitem:a0346e8f42285a965aaac61c871a3ff8f" id="r_a0346e8f42285a965aaac61c871a3ff8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a0346e8f42285a965aaac61c871a3ff8f">GenerateMeshesClick</a> ()</td></tr>
 <tr class="separator:a0346e8f42285a965aaac61c871a3ff8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a954063a4059e6ab741a94d66b3982323" id="r_a954063a4059e6ab741a94d66b3982323"><td class="memItemLeft" align="right" valign="top"><a id="a954063a4059e6ab741a94d66b3982323" name="a954063a4059e6ab741a94d66b3982323"></a>
-FReply&#160;</td><td class="memItemRight" valign="bottom"><b>SaveClick</b> (const FString &amp;SaveName)</td></tr>
+<tr class="memitem:a954063a4059e6ab741a94d66b3982323" id="r_a954063a4059e6ab741a94d66b3982323"><td class="memItemLeft" align="right" valign="top">FReply&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a954063a4059e6ab741a94d66b3982323">SaveClick</a> (const FString &amp;SaveName)</td></tr>
+<tr class="memdesc:a954063a4059e6ab741a94d66b3982323"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the current canvas state under the given name.  <br /></td></tr>
 <tr class="separator:a954063a4059e6ab741a94d66b3982323"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47d066ca0797fd7ff8dc80e877a9de9d" id="r_a47d066ca0797fd7ff8dc80e877a9de9d"><td class="memItemLeft" align="right" valign="top"><a id="a47d066ca0797fd7ff8dc80e877a9de9d" name="a47d066ca0797fd7ff8dc80e877a9de9d"></a>
-EClothEditorMode&#160;</td><td class="memItemRight" valign="bottom"><b>GetCurrentMode</b> () const</td></tr>
+<tr class="memitem:a47d066ca0797fd7ff8dc80e877a9de9d" id="r_a47d066ca0797fd7ff8dc80e877a9de9d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSClothDesignCanvas.html#a52130105a63f2d73cb879fad1af11fd4">EClothEditorMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a47d066ca0797fd7ff8dc80e877a9de9d">GetCurrentMode</a> () const</td></tr>
+<tr class="memdesc:a47d066ca0797fd7ff8dc80e877a9de9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the editor's current mode (draw/select/sew).  <br /></td></tr>
 <tr class="separator:a47d066ca0797fd7ff8dc80e877a9de9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a764cac01236766e076a42d7943f0d676" id="r_a764cac01236766e076a42d7943f0d676"><td class="memItemLeft" align="right" valign="top"><a id="a764cac01236766e076a42d7943f0d676" name="a764cac01236766e076a42d7943f0d676"></a>
-<a class="el" href="classFCanvasSewing.html">FCanvasSewing</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetSewingManager</b> ()</td></tr>
+<tr class="memitem:a764cac01236766e076a42d7943f0d676" id="r_a764cac01236766e076a42d7943f0d676"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classFCanvasSewing.html">FCanvasSewing</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a764cac01236766e076a42d7943f0d676">GetSewingManager</a> ()</td></tr>
 <tr class="separator:a764cac01236766e076a42d7943f0d676"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a220a3b6ebe0476acf11d35dc19a5511b" id="r_a220a3b6ebe0476acf11d35dc19a5511b"><td class="memItemLeft" align="right" valign="top"><a id="a220a3b6ebe0476acf11d35dc19a5511b" name="a220a3b6ebe0476acf11d35dc19a5511b"></a>
 const <a class="el" href="classFCanvasSewing.html">FCanvasSewing</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetSewingManager</b> () const</td></tr>
 <tr class="separator:a220a3b6ebe0476acf11d35dc19a5511b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2354ca688a65ef411bb02cc008756de5" id="r_a2354ca688a65ef411bb02cc008756de5"><td class="memItemLeft" align="right" valign="top"><a id="a2354ca688a65ef411bb02cc008756de5" name="a2354ca688a65ef411bb02cc008756de5"></a>
-int32&#160;</td><td class="memItemRight" valign="bottom"><b>FinaliseCurrentShape</b> (bool bGenerateNow=false, TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; *OutSpawnedActors=nullptr)</td></tr>
+<tr class="memitem:a2354ca688a65ef411bb02cc008756de5" id="r_a2354ca688a65ef411bb02cc008756de5"><td class="memItemLeft" align="right" valign="top">int32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a2354ca688a65ef411bb02cc008756de5">FinaliseCurrentShape</a> (bool bGenerateNow=false, TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; *OutSpawnedActors=nullptr)</td></tr>
+<tr class="memdesc:a2354ca688a65ef411bb02cc008756de5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalises the current shape, optionally generating its mesh immediately.  <br /></td></tr>
 <tr class="separator:a2354ca688a65ef411bb02cc008756de5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97a66256aeca2f54523914777901f0ab" id="r_a97a66256aeca2f54523914777901f0ab"><td class="memItemLeft" align="right" valign="top"><a id="a97a66256aeca2f54523914777901f0ab" name="a97a66256aeca2f54523914777901f0ab"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>UpdateSewnPointSets</b> ()</td></tr>
+<tr class="memitem:a97a66256aeca2f54523914777901f0ab" id="r_a97a66256aeca2f54523914777901f0ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a97a66256aeca2f54523914777901f0ab">UpdateSewnPointSets</a> ()</td></tr>
+<tr class="memdesc:a97a66256aeca2f54523914777901f0ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recomputes sewn point sets from seam definitions and current shape data.  <br /></td></tr>
 <tr class="separator:a97a66256aeca2f54523914777901f0ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:acf05f13f530ae2f8ffac07a88b44d0e0" id="r_acf05f13f530ae2f8ffac07a88b44d0e0"><td class="memItemLeft" align="right" valign="top"><a id="acf05f13f530ae2f8ffac07a88b44d0e0" name="acf05f13f530ae2f8ffac07a88b44d0e0"></a>
-TArray&lt; <a class="el" href="structFCanvasState.html">FCanvasState</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>UndoStack</b></td></tr>
+<tr class="memitem:acf05f13f530ae2f8ffac07a88b44d0e0" id="r_acf05f13f530ae2f8ffac07a88b44d0e0"><td class="memItemLeft" align="right" valign="top">TArray&lt; <a class="el" href="structFCanvasState.html">FCanvasState</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#acf05f13f530ae2f8ffac07a88b44d0e0">UndoStack</a></td></tr>
 <tr class="separator:acf05f13f530ae2f8ffac07a88b44d0e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a801cfde007e90506c08b0c3197044f0a" id="r_a801cfde007e90506c08b0c3197044f0a"><td class="memItemLeft" align="right" valign="top"><a id="a801cfde007e90506c08b0c3197044f0a" name="a801cfde007e90506c08b0c3197044f0a"></a>
-TArray&lt; <a class="el" href="structFCanvasState.html">FCanvasState</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>RedoStack</b></td></tr>
+<tr class="memitem:a801cfde007e90506c08b0c3197044f0a" id="r_a801cfde007e90506c08b0c3197044f0a"><td class="memItemLeft" align="right" valign="top">TArray&lt; <a class="el" href="structFCanvasState.html">FCanvasState</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a801cfde007e90506c08b0c3197044f0a">RedoStack</a></td></tr>
 <tr class="separator:a801cfde007e90506c08b0c3197044f0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1431752aa9a9e3e2eeb0bf10c22b446d" id="r_a1431752aa9a9e3e2eeb0bf10c22b446d"><td class="memItemLeft" align="right" valign="top"><a id="a1431752aa9a9e3e2eeb0bf10c22b446d" name="a1431752aa9a9e3e2eeb0bf10c22b446d"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>bSeparateTangents</b> = false</td></tr>
+<tr class="memitem:a1431752aa9a9e3e2eeb0bf10c22b446d" id="r_a1431752aa9a9e3e2eeb0bf10c22b446d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a1431752aa9a9e3e2eeb0bf10c22b446d">bSeparateTangents</a> = false</td></tr>
 <tr class="separator:a1431752aa9a9e3e2eeb0bf10c22b446d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53a7416be572a71b39fb3c16c975d8c8" id="r_a53a7416be572a71b39fb3c16c975d8c8"><td class="memItemLeft" align="right" valign="top"><a id="a53a7416be572a71b39fb3c16c975d8c8" name="a53a7416be572a71b39fb3c16c975d8c8"></a>
-ETangentHandle&#160;</td><td class="memItemRight" valign="bottom"><b>SelectedTangentHandle</b> = ETangentHandle::None</td></tr>
+<tr class="memitem:a53a7416be572a71b39fb3c16c975d8c8" id="r_a53a7416be572a71b39fb3c16c975d8c8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSClothDesignCanvas.html#a13fb058ed866c1e7b997f3ba8c41b096">ETangentHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a53a7416be572a71b39fb3c16c975d8c8">SelectedTangentHandle</a> = <a class="el" href="classSClothDesignCanvas.html#a13fb058ed866c1e7b997f3ba8c41b096a6adf97f83acf6453d4a6a4b1070f3754">ETangentHandle::None</a></td></tr>
 <tr class="separator:a53a7416be572a71b39fb3c16c975d8c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2cbcff741785835cee91d8718fa19cc9" id="r_a2cbcff741785835cee91d8718fa19cc9"><td class="memItemLeft" align="right" valign="top"><a id="a2cbcff741785835cee91d8718fa19cc9" name="a2cbcff741785835cee91d8718fa19cc9"></a>
-TWeakObjectPtr&lt; UTexture2D &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>BackgroundTexture</b></td></tr>
+<tr class="memitem:a2cbcff741785835cee91d8718fa19cc9" id="r_a2cbcff741785835cee91d8718fa19cc9"><td class="memItemLeft" align="right" valign="top">TWeakObjectPtr&lt; UTexture2D &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a2cbcff741785835cee91d8718fa19cc9">BackgroundTexture</a></td></tr>
 <tr class="separator:a2cbcff741785835cee91d8718fa19cc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5d18928680ebfe5e589466092992b65" id="r_ab5d18928680ebfe5e589466092992b65"><td class="memItemLeft" align="right" valign="top"><a id="ab5d18928680ebfe5e589466092992b65" name="ab5d18928680ebfe5e589466092992b65"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>ZoomFactor</b> = 5.0f</td></tr>
+<tr class="memitem:ab5d18928680ebfe5e589466092992b65" id="r_ab5d18928680ebfe5e589466092992b65"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#ab5d18928680ebfe5e589466092992b65">ZoomFactor</a> = 5.0f</td></tr>
 <tr class="separator:ab5d18928680ebfe5e589466092992b65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37c3f1edfa2fd456ae8b1d76b88b2040" id="r_a37c3f1edfa2fd456ae8b1d76b88b2040"><td class="memItemLeft" align="right" valign="top"><a id="a37c3f1edfa2fd456ae8b1d76b88b2040" name="a37c3f1edfa2fd456ae8b1d76b88b2040"></a>
-FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>PanOffset</b> = FVector2D::ZeroVector</td></tr>
+<tr class="memitem:a37c3f1edfa2fd456ae8b1d76b88b2040" id="r_a37c3f1edfa2fd456ae8b1d76b88b2040"><td class="memItemLeft" align="right" valign="top">FVector2D&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a37c3f1edfa2fd456ae8b1d76b88b2040">PanOffset</a> = FVector2D::ZeroVector</td></tr>
 <tr class="separator:a37c3f1edfa2fd456ae8b1d76b88b2040"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac214b0a982ee6f520981ddaa86461704" id="r_ac214b0a982ee6f520981ddaa86461704"><td class="memItemLeft" align="right" valign="top"><a id="ac214b0a982ee6f520981ddaa86461704" name="ac214b0a982ee6f520981ddaa86461704"></a>
-int32&#160;</td><td class="memItemRight" valign="bottom"><b>SelectedPointIndex</b> = INDEX_NONE</td></tr>
+<tr class="memitem:ac214b0a982ee6f520981ddaa86461704" id="r_ac214b0a982ee6f520981ddaa86461704"><td class="memItemLeft" align="right" valign="top">int32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#ac214b0a982ee6f520981ddaa86461704">SelectedPointIndex</a> = INDEX_NONE</td></tr>
 <tr class="separator:ac214b0a982ee6f520981ddaa86461704"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e660ced6d6ca94f1b0b159c69df0c55" id="r_a7e660ced6d6ca94f1b0b159c69df0c55"><td class="memItemLeft" align="right" valign="top"><a id="a7e660ced6d6ca94f1b0b159c69df0c55" name="a7e660ced6d6ca94f1b0b159c69df0c55"></a>
-int32&#160;</td><td class="memItemRight" valign="bottom"><b>SelectedShapeIndex</b> = INDEX_NONE</td></tr>
+<tr class="memitem:a7e660ced6d6ca94f1b0b159c69df0c55" id="r_a7e660ced6d6ca94f1b0b159c69df0c55"><td class="memItemLeft" align="right" valign="top">int32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a7e660ced6d6ca94f1b0b159c69df0c55">SelectedShapeIndex</a> = INDEX_NONE</td></tr>
 <tr class="separator:a7e660ced6d6ca94f1b0b159c69df0c55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c21e63c0727d0b087addbfb0535ac81" id="r_a6c21e63c0727d0b087addbfb0535ac81"><td class="memItemLeft" align="right" valign="top"><a id="a6c21e63c0727d0b087addbfb0535ac81" name="a6c21e63c0727d0b087addbfb0535ac81"></a>
-FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>LastMousePos</b> = FVector2D::ZeroVector</td></tr>
+<tr class="memitem:a6c21e63c0727d0b087addbfb0535ac81" id="r_a6c21e63c0727d0b087addbfb0535ac81"><td class="memItemLeft" align="right" valign="top">FVector2D&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a6c21e63c0727d0b087addbfb0535ac81">LastMousePos</a> = FVector2D::ZeroVector</td></tr>
 <tr class="separator:a6c21e63c0727d0b087addbfb0535ac81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62cf7aad4900150d2ecbde45b46eb622" id="r_a62cf7aad4900150d2ecbde45b46eb622"><td class="memItemLeft" align="right" valign="top"><a id="a62cf7aad4900150d2ecbde45b46eb622" name="a62cf7aad4900150d2ecbde45b46eb622"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>bIsDraggingPoint</b> = false</td></tr>
+<tr class="memitem:a62cf7aad4900150d2ecbde45b46eb622" id="r_a62cf7aad4900150d2ecbde45b46eb622"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a62cf7aad4900150d2ecbde45b46eb622">bIsDraggingPoint</a> = false</td></tr>
 <tr class="separator:a62cf7aad4900150d2ecbde45b46eb622"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a274587cece09ed62b589e24ac41f137a" id="r_a274587cece09ed62b589e24ac41f137a"><td class="memItemLeft" align="right" valign="top"><a id="a274587cece09ed62b589e24ac41f137a" name="a274587cece09ed62b589e24ac41f137a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>bIsDraggingShape</b> = false</td></tr>
+<tr class="memitem:a274587cece09ed62b589e24ac41f137a" id="r_a274587cece09ed62b589e24ac41f137a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a274587cece09ed62b589e24ac41f137a">bIsDraggingShape</a> = false</td></tr>
 <tr class="separator:a274587cece09ed62b589e24ac41f137a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adac521836fe09123922f6fafa7ae3ec7" id="r_adac521836fe09123922f6fafa7ae3ec7"><td class="memItemLeft" align="right" valign="top"><a id="adac521836fe09123922f6fafa7ae3ec7" name="adac521836fe09123922f6fafa7ae3ec7"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>bIsDraggingTangent</b> = false</td></tr>
+<tr class="memitem:adac521836fe09123922f6fafa7ae3ec7" id="r_adac521836fe09123922f6fafa7ae3ec7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#adac521836fe09123922f6fafa7ae3ec7">bIsDraggingTangent</a> = false</td></tr>
 <tr class="separator:adac521836fe09123922f6fafa7ae3ec7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a348017e33fd5f8fa334dd33b6f6d7d5d" id="r_a348017e33fd5f8fa334dd33b6f6d7d5d"><td class="memItemLeft" align="right" valign="top"><a id="a348017e33fd5f8fa334dd33b6f6d7d5d" name="a348017e33fd5f8fa334dd33b6f6d7d5d"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>bIsShapeSelected</b> = false</td></tr>
+<tr class="memitem:a348017e33fd5f8fa334dd33b6f6d7d5d" id="r_a348017e33fd5f8fa334dd33b6f6d7d5d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a348017e33fd5f8fa334dd33b6f6d7d5d">bIsShapeSelected</a> = false</td></tr>
 <tr class="separator:a348017e33fd5f8fa334dd33b6f6d7d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f61b51078e341d72dd7274ef03a8b9b" id="r_a0f61b51078e341d72dd7274ef03a8b9b"><td class="memItemLeft" align="right" valign="top"><a id="a0f61b51078e341d72dd7274ef03a8b9b" name="a0f61b51078e341d72dd7274ef03a8b9b"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>bIsDragging</b> = false</td></tr>
+<tr class="memitem:a0f61b51078e341d72dd7274ef03a8b9b" id="r_a0f61b51078e341d72dd7274ef03a8b9b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a0f61b51078e341d72dd7274ef03a8b9b">bIsDragging</a> = false</td></tr>
 <tr class="separator:a0f61b51078e341d72dd7274ef03a8b9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a717343e348514ef046e28a0fbcb6bd1a" id="r_a717343e348514ef046e28a0fbcb6bd1a"><td class="memItemLeft" align="right" valign="top"><a id="a717343e348514ef046e28a0fbcb6bd1a" name="a717343e348514ef046e28a0fbcb6bd1a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>bIsPanning</b> = false</td></tr>
+<tr class="memitem:a717343e348514ef046e28a0fbcb6bd1a" id="r_a717343e348514ef046e28a0fbcb6bd1a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a717343e348514ef046e28a0fbcb6bd1a">bIsPanning</a> = false</td></tr>
 <tr class="separator:a717343e348514ef046e28a0fbcb6bd1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ec0cf24ca792e95ea93e7c784bfced0" id="r_a8ec0cf24ca792e95ea93e7c784bfced0"><td class="memItemLeft" align="right" valign="top"><a id="a8ec0cf24ca792e95ea93e7c784bfced0" name="a8ec0cf24ca792e95ea93e7c784bfced0"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>BackgroundImageScale</b> = 1.0f</td></tr>
+<tr class="memitem:a8ec0cf24ca792e95ea93e7c784bfced0" id="r_a8ec0cf24ca792e95ea93e7c784bfced0"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a8ec0cf24ca792e95ea93e7c784bfced0">BackgroundImageScale</a> = 1.0f</td></tr>
 <tr class="separator:a8ec0cf24ca792e95ea93e7c784bfced0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89c8df277aed2f6a1d83ce5a4f55fbe7" id="r_a89c8df277aed2f6a1d83ce5a4f55fbe7"><td class="memItemLeft" align="right" valign="top"><a id="a89c8df277aed2f6a1d83ce5a4f55fbe7" name="a89c8df277aed2f6a1d83ce5a4f55fbe7"></a>
-FInterpCurve&lt; FVector2D &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CurvePoints</b></td></tr>
+<tr class="memitem:a89c8df277aed2f6a1d83ce5a4f55fbe7" id="r_a89c8df277aed2f6a1d83ce5a4f55fbe7"><td class="memItemLeft" align="right" valign="top">FInterpCurve&lt; FVector2D &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a89c8df277aed2f6a1d83ce5a4f55fbe7">CurvePoints</a></td></tr>
 <tr class="separator:a89c8df277aed2f6a1d83ce5a4f55fbe7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac581344a87848ba382435958b3766f3b" id="r_ac581344a87848ba382435958b3766f3b"><td class="memItemLeft" align="right" valign="top"><a id="ac581344a87848ba382435958b3766f3b" name="ac581344a87848ba382435958b3766f3b"></a>
-TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CompletedShapes</b></td></tr>
+<tr class="memitem:ac581344a87848ba382435958b3766f3b" id="r_ac581344a87848ba382435958b3766f3b"><td class="memItemLeft" align="right" valign="top">TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#ac581344a87848ba382435958b3766f3b">CompletedShapes</a></td></tr>
 <tr class="separator:ac581344a87848ba382435958b3766f3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5b631ed031a8da7216180f5b169c8db" id="r_ac5b631ed031a8da7216180f5b169c8db"><td class="memItemLeft" align="right" valign="top"><a id="ac5b631ed031a8da7216180f5b169c8db" name="ac5b631ed031a8da7216180f5b169c8db"></a>
-TArray&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>bUseBezierPerPoint</b></td></tr>
+<tr class="memitem:ac5b631ed031a8da7216180f5b169c8db" id="r_ac5b631ed031a8da7216180f5b169c8db"><td class="memItemLeft" align="right" valign="top">TArray&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#ac5b631ed031a8da7216180f5b169c8db">bUseBezierPerPoint</a></td></tr>
 <tr class="separator:ac5b631ed031a8da7216180f5b169c8db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbb7996deea4f5c5e3f75afb471d1ab6" id="r_acbb7996deea4f5c5e3f75afb471d1ab6"><td class="memItemLeft" align="right" valign="top"><a id="acbb7996deea4f5c5e3f75afb471d1ab6" name="acbb7996deea4f5c5e3f75afb471d1ab6"></a>
-TArray&lt; TArray&lt; bool &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CompletedBezierFlags</b></td></tr>
+<tr class="memitem:acbb7996deea4f5c5e3f75afb471d1ab6" id="r_acbb7996deea4f5c5e3f75afb471d1ab6"><td class="memItemLeft" align="right" valign="top">TArray&lt; TArray&lt; bool &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#acbb7996deea4f5c5e3f75afb471d1ab6">CompletedBezierFlags</a></td></tr>
 <tr class="separator:acbb7996deea4f5c5e3f75afb471d1ab6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3e8151dc25b607050b155929fd77362" id="r_ac3e8151dc25b607050b155929fd77362"><td class="memItemLeft" align="right" valign="top"><a id="ac3e8151dc25b607050b155929fd77362" name="ac3e8151dc25b607050b155929fd77362"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>bUseBezierPoints</b> = true</td></tr>
+<tr class="memitem:ac3e8151dc25b607050b155929fd77362" id="r_ac3e8151dc25b607050b155929fd77362"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#ac3e8151dc25b607050b155929fd77362">bUseBezierPoints</a> = true</td></tr>
 <tr class="separator:ac3e8151dc25b607050b155929fd77362"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c7e15e1e783eddff25fa1e976f0820e" id="r_a0c7e15e1e783eddff25fa1e976f0820e"><td class="memItemLeft" align="right" valign="top"><a id="a0c7e15e1e783eddff25fa1e976f0820e" name="a0c7e15e1e783eddff25fa1e976f0820e"></a>
-TSharedPtr&lt; STextBlock &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ModeReminderText</b></td></tr>
+<tr class="memitem:a0c7e15e1e783eddff25fa1e976f0820e" id="r_a0c7e15e1e783eddff25fa1e976f0820e"><td class="memItemLeft" align="right" valign="top">TSharedPtr&lt; STextBlock &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a0c7e15e1e783eddff25fa1e976f0820e">ModeReminderText</a></td></tr>
 <tr class="separator:a0c7e15e1e783eddff25fa1e976f0820e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ace142d551a6da3f2ee355f59f94f4b" id="r_a3ace142d551a6da3f2ee355f59f94f4b"><td class="memItemLeft" align="right" valign="top"><a id="a3ace142d551a6da3f2ee355f59f94f4b" name="a3ace142d551a6da3f2ee355f59f94f4b"></a>
-TMap&lt; int32, TSet&lt; int32 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SewnPointIndicesPerShape</b></td></tr>
+<tr class="memitem:a3ace142d551a6da3f2ee355f59f94f4b" id="r_a3ace142d551a6da3f2ee355f59f94f4b"><td class="memItemLeft" align="right" valign="top">TMap&lt; int32, TSet&lt; int32 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a3ace142d551a6da3f2ee355f59f94f4b">SewnPointIndicesPerShape</a></td></tr>
 <tr class="separator:a3ace142d551a6da3f2ee355f59f94f4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d5eced84df98b0b6f694cbd032f84ed" id="r_a0d5eced84df98b0b6f694cbd032f84ed"><td class="memItemLeft" align="right" valign="top"><a id="a0d5eced84df98b0b6f694cbd032f84ed" name="a0d5eced84df98b0b6f694cbd032f84ed"></a>
-int32&#160;</td><td class="memItemRight" valign="bottom"><b>SelectedSeamIndex</b> = INDEX_NONE</td></tr>
+<tr class="memitem:a0d5eced84df98b0b6f694cbd032f84ed" id="r_a0d5eced84df98b0b6f694cbd032f84ed"><td class="memItemLeft" align="right" valign="top">int32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a0d5eced84df98b0b6f694cbd032f84ed">SelectedSeamIndex</a> = INDEX_NONE</td></tr>
 <tr class="separator:a0d5eced84df98b0b6f694cbd032f84ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:aef4506f4281613a43908fa74dcac91de" id="r_aef4506f4281613a43908fa74dcac91de"><td class="memItemLeft" align="right" valign="top"><a id="aef4506f4281613a43908fa74dcac91de" name="aef4506f4281613a43908fa74dcac91de"></a>
-class&#160;</td><td class="memItemRight" valign="bottom"><b>FClothCanvas_StateRoundtripTest</b></td></tr>
+<tr class="memitem:aef4506f4281613a43908fa74dcac91de" id="r_aef4506f4281613a43908fa74dcac91de"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#aef4506f4281613a43908fa74dcac91de">FClothCanvas_StateRoundtripTest</a></td></tr>
 <tr class="separator:aef4506f4281613a43908fa74dcac91de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Primary Slate widget for the cloth design canvas. </p>
+<p>This widget encapsulates the entire interactive canvas used to draw shapes, define seams, preview sewing, and generate meshes. It centralises input handling, rendering, and state management so the editor UI and underlying geometry remain consistent and testable.</p>
+<dl class="section note"><dt>Note</dt><dd>Thesis reference: See Chapter 4.x for the canvas interaction and rendering rationale. </dd></dl>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="a52130105a63f2d73cb879fad1af11fd4" name="a52130105a63f2d73cb879fad1af11fd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52130105a63f2d73cb879fad1af11fd4">&#9670;&#160;</a></span>EClothEditorMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="classSClothDesignCanvas.html#a52130105a63f2d73cb879fad1af11fd4">SClothDesignCanvas::EClothEditorMode</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Editor modes supported by the canvas. </p>
+<p>Modes define high-level input semantics (drawing, selecting/editing, sewing), which control how input events are interpreted. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a52130105a63f2d73cb879fad1af11fd4a2d03c2d5a7ec65ef4619e0582c272ec2" name="a52130105a63f2d73cb879fad1af11fd4a2d03c2d5a7ec65ef4619e0582c272ec2"></a>Draw&#160;</td><td class="fielddoc"><p>Drawing new shapes and editing current curve. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a52130105a63f2d73cb879fad1af11fd4ae0626222614bdee31951d84c64e5e9ff" name="a52130105a63f2d73cb879fad1af11fd4ae0626222614bdee31951d84c64e5e9ff"></a>Select&#160;</td><td class="fielddoc"><p>Selection/edit mode (labelled "edit" in the UI). </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a52130105a63f2d73cb879fad1af11fd4ab9a80ec4db2b47dea37ccad94fe441c1" name="a52130105a63f2d73cb879fad1af11fd4ab9a80ec4db2b47dea37ccad94fe441c1"></a>Sew&#160;</td><td class="fielddoc"><p>Sewing mode for defining seams between shapes. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="a13fb058ed866c1e7b997f3ba8c41b096" name="a13fb058ed866c1e7b997f3ba8c41b096"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13fb058ed866c1e7b997f3ba8c41b096">&#9670;&#160;</a></span>ETangentHandle</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="classSClothDesignCanvas.html#a13fb058ed866c1e7b997f3ba8c41b096">SClothDesignCanvas::ETangentHandle</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Which tangent handle is active when editing a point's Bezier handles. </p>
+<p>Allows the editor to support separate arrival/leave handles or linked tangents. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a13fb058ed866c1e7b997f3ba8c41b096a6adf97f83acf6453d4a6a4b1070f3754" name="a13fb058ed866c1e7b997f3ba8c41b096a6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"><p>No tangent handle selected. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a13fb058ed866c1e7b997f3ba8c41b096ae7143c92498afbde99ac488ac168316e" name="a13fb058ed866c1e7b997f3ba8c41b096ae7143c92498afbde99ac488ac168316e"></a>Arrive&#160;</td><td class="fielddoc"><p>The incoming tangent handle. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a13fb058ed866c1e7b997f3ba8c41b096aa52945dbe283de2f7e9d63ca3417f36a" name="a13fb058ed866c1e7b997f3ba8c41b096aa52945dbe283de2f7e9d63ca3417f36a"></a>Leave&#160;</td><td class="fielddoc"><p>The outgoing tangent handle. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a0924de201435f309bd2f40321bd8d97d" name="a0924de201435f309bd2f40321bd8d97d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0924de201435f309bd2f40321bd8d97d">&#9670;&#160;</a></span>ClearAllSewing()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SClothDesignCanvas::ClearAllSewing </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Clears all sewing data (UI button callback). </p>
+
+</div>
+</div>
+<a id="a123446466db1d4d7f0ef64be6d5cd707" name="a123446466db1d4d7f0ef64be6d5cd707"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a123446466db1d4d7f0ef64be6d5cd707">&#9670;&#160;</a></span>ClearAllShapeData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SClothDesignCanvas::ClearAllShapeData </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clears all shape-related data from the canvas. </p>
+<p>Resets the canvas to an empty drawing state without removing user preferences. </p>
+
+</div>
+</div>
+<a id="a63da4fd5ec31fe11f047da6513227705" name="a63da4fd5ec31fe11f047da6513227705"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63da4fd5ec31fe11f047da6513227705">&#9670;&#160;</a></span>Construct()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SClothDesignCanvas::Construct </td>
+          <td>(</td>
+          <td class="paramtype">const FArguments &amp;&#160;</td>
+          <td class="paramname"><em>InArgs</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Constructs the canvas widget with Slate arguments. </p>
+<p>The construct function initialises the widget, binds callbacks and prepares internal state so the canvas is ready to render and receive input.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">InArgs</td><td>Slate construction arguments. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2354ca688a65ef411bb02cc008756de5" name="a2354ca688a65ef411bb02cc008756de5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2354ca688a65ef411bb02cc008756de5">&#9670;&#160;</a></span>FinaliseCurrentShape()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32 SClothDesignCanvas::FinaliseCurrentShape </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>bGenerateNow</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; *&#160;</td>
+          <td class="paramname"><em>OutSpawnedActors</em> = <code>nullptr</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Finalises the current shape, optionally generating its mesh immediately. </p>
+<p>Moving the finalise logic into a single function ensures finalisation is consistent whether triggered by UI or programmatic flows.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bGenerateNow</td><td>If true, immediately generate meshes from the finalised shape. </td></tr>
+    <tr><td class="paramname">OutSpawnedActors</td><td>Optional pointer to receive spawned pattern actors from generation. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Index of the finalised shape within CompletedShapes, or INDEX_NONE on failure. </dd></dl>
+
+</div>
+</div>
+<a id="a0346e8f42285a965aaac61c871a3ff8f" name="a0346e8f42285a965aaac61c871a3ff8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0346e8f42285a965aaac61c871a3ff8f">&#9670;&#160;</a></span>GenerateMeshesClick()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SClothDesignCanvas::GenerateMeshesClick </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Generates meshes for completed shapes (UI button callback). </p>
+
+</div>
+</div>
+<a id="a33213dd142f7f5ddd7779484f5a147b1" name="a33213dd142f7f5ddd7779484f5a147b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33213dd142f7f5ddd7779484f5a147b1">&#9670;&#160;</a></span>GetBackgroundImageScale()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TOptional&lt; float &gt; SClothDesignCanvas::GetBackgroundImageScale </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the current scale applied to the background image. </p>
+<p>Used for rendering and for persisting image scale with the canvas state.</p>
+<dl class="section return"><dt>Returns</dt><dd>Optional float containing the scale; empty optional if not applicable. </dd></dl>
+
+</div>
+</div>
+<a id="a3db6cf586a25139655939aac080c5471" name="a3db6cf586a25139655939aac080c5471"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3db6cf586a25139655939aac080c5471">&#9670;&#160;</a></span>GetCurrentCanvasState()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structFCanvasState.html">FCanvasState</a> SClothDesignCanvas::GetCurrentCanvasState </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a copy of the current canvas state. </p>
+<p>Used by undo/redo code and by save/load operations so callers obtain a serialisable snapshot rather than relying on scattered member reads.</p>
+<dl class="section return"><dt>Returns</dt><dd>A copy of the current <a class="el" href="structFCanvasState.html" title="Represents the complete state of the cloth design canvas at a given moment.">FCanvasState</a>. </dd></dl>
+
+</div>
+</div>
+<a id="a47d066ca0797fd7ff8dc80e877a9de9d" name="a47d066ca0797fd7ff8dc80e877a9de9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47d066ca0797fd7ff8dc80e877a9de9d">&#9670;&#160;</a></span>GetCurrentMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classSClothDesignCanvas.html#a52130105a63f2d73cb879fad1af11fd4">EClothEditorMode</a> SClothDesignCanvas::GetCurrentMode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the editor's current mode (draw/select/sew). </p>
+<p>Useful for UI elements that need to reflect the active mode.</p>
+<dl class="section return"><dt>Returns</dt><dd>Current EClothEditorMode. </dd></dl>
+
+</div>
+</div>
+<a id="a45e1bb4c77f9252b08fbc1af5945a071" name="a45e1bb4c77f9252b08fbc1af5945a071"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45e1bb4c77f9252b08fbc1af5945a071">&#9670;&#160;</a></span>GetSelectedShapeAssetPath()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FString SClothDesignCanvas::GetSelectedShapeAssetPath </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the path of the selected shape asset. </p>
+<p>Used by save/load UI to display or persist the selected asset location.</p>
+<dl class="section return"><dt>Returns</dt><dd>Path string of the selected shape asset. </dd></dl>
+
+</div>
+</div>
+<a id="a09387db29555c2470734baa9bf88a960" name="a09387db29555c2470734baa9bf88a960"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09387db29555c2470734baa9bf88a960">&#9670;&#160;</a></span>GetSelectedTexturePath()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FString SClothDesignCanvas::GetSelectedTexturePath </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the file path of the selected background texture. </p>
+<p>Useful for displaying the currently-loaded texture in UI.</p>
+<dl class="section return"><dt>Returns</dt><dd>Path string for the selected texture, or empty if none. </dd></dl>
+
+</div>
+</div>
+<a id="a764cac01236766e076a42d7943f0d676" name="a764cac01236766e076a42d7943f0d676"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a764cac01236766e076a42d7943f0d676">&#9670;&#160;</a></span>GetSewingManager()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classFCanvasSewing.html">FCanvasSewing</a> &amp; SClothDesignCanvas::GetSewingManager </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Access to the sewing manager for programmatic control. </p>
+
+</div>
+</div>
+<a id="a554253f9466ef2dba2a93e87762dea38" name="a554253f9466ef2dba2a93e87762dea38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a554253f9466ef2dba2a93e87762dea38">&#9670;&#160;</a></span>InverseTransformPoint()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FVector2D SClothDesignCanvas::InverseTransformPoint </td>
+          <td>(</td>
+          <td class="paramtype">const FVector2D &amp;&#160;</td>
+          <td class="paramname"><em>ScreenPoint</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Inverse of TransformPoint: converts screen space to canvas space. </p>
+<p>Used for hit-testing, mouse-to-canvas conversions, and consistent input handling.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ScreenPoint</td><td>Point in screen/widget coordinates. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Corresponding point in canvas (logical) coordinates. </dd></dl>
+
+</div>
+</div>
+<a id="a886be65af485900bf807c83d14a0c793" name="a886be65af485900bf807c83d14a0c793"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a886be65af485900bf807c83d14a0c793">&#9670;&#160;</a></span>MergeClick()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SClothDesignCanvas::MergeClick </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Merges selected sewn pieces (UI button callback). </p>
+
+</div>
+</div>
+<a id="a043334f2e2c4fbf04d5e9130dc2756fa" name="a043334f2e2c4fbf04d5e9130dc2756fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a043334f2e2c4fbf04d5e9130dc2756fa">&#9670;&#160;</a></span>OnBackgroundImageScaleChanged()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SClothDesignCanvas::OnBackgroundImageScaleChanged </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>NewScale</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Changes the background image scale. </p>
+<p>Adjusts visual presentation of the background without altering geometry.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">NewScale</td><td>New scale factor to apply to the background image. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a7b3c10c3315cb1ae52cf8a9529df97b4" name="a7b3c10c3315cb1ae52cf8a9529df97b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b3c10c3315cb1ae52cf8a9529df97b4">&#9670;&#160;</a></span>OnBackgroundTextureSelected()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SClothDesignCanvas::OnBackgroundTextureSelected </td>
+          <td>(</td>
+          <td class="paramtype">const FAssetData &amp;&#160;</td>
+          <td class="paramname"><em>AssetData</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Callback invoked when a background texture is chosen by the user. </p>
+<p>Keeps texture selection and canvas rendering in sync.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">AssetData</td><td>Asset metadata for the chosen texture. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad2a07a7934d6970bca8f0e3326b77411" name="ad2a07a7934d6970bca8f0e3326b77411"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2a07a7934d6970bca8f0e3326b77411">&#9670;&#160;</a></span>OnFocusReceived()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FReply SClothDesignCanvas::OnFocusReceived </td>
+          <td>(</td>
+          <td class="paramtype">const FGeometry &amp;&#160;</td>
+          <td class="paramname"><em>Geometry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FFocusEvent &amp;&#160;</td>
+          <td class="paramname"><em>InFocusEvent</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Called when the widget receives keyboard focus. </p>
+<p>Used to update visual focus state and ensure keyboard-driven workflows behave consistently when focus changes.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Geometry</td><td>Widget geometry at focus time. </td></tr>
+    <tr><td class="paramname">InFocusEvent</td><td>Focus event details. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>FReply indicating whether the event was handled. </dd></dl>
+
+</div>
+</div>
+<a id="a6ab38c757b25d518a53172618756cb26" name="a6ab38c757b25d518a53172618756cb26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ab38c757b25d518a53172618756cb26">&#9670;&#160;</a></span>OnKeyDown()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FReply SClothDesignCanvas::OnKeyDown </td>
+          <td>(</td>
+          <td class="paramtype">const FGeometry &amp;&#160;</td>
+          <td class="paramname"><em>Geometry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FKeyEvent &amp;&#160;</td>
+          <td class="paramname"><em>InKeyEvent</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles key down events for shortcuts and keyboard control. </p>
+<p>Keeping keyboard handling local allows context-sensitive shortcuts and editing operations to be implemented adjacent to canvas state.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Geometry</td><td>Widget geometry at time of key event. </td></tr>
+    <tr><td class="paramname">InKeyEvent</td><td>The key event details. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>FReply indicating whether the event was handled. </dd></dl>
+
+</div>
+</div>
+<a id="ae4406894c9950f2e431212053ccf5c8b" name="ae4406894c9950f2e431212053ccf5c8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4406894c9950f2e431212053ccf5c8b">&#9670;&#160;</a></span>OnKeyUp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FReply SClothDesignCanvas::OnKeyUp </td>
+          <td>(</td>
+          <td class="paramtype">const FGeometry &amp;&#160;</td>
+          <td class="paramname"><em>Geometry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FKeyEvent &amp;&#160;</td>
+          <td class="paramname"><em>InKeyEvent</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles key up events. </p>
+<p>Useful for completion logic for modifier-based interactions (e.g. Shift+drag).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Geometry</td><td>Widget geometry at time of key event. </td></tr>
+    <tr><td class="paramname">InKeyEvent</td><td>The key event details. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>FReply indicating whether the event was handled. </dd></dl>
+
+</div>
+</div>
+<a id="a280d73bfc68eebb1c40404fa3c2b1969" name="a280d73bfc68eebb1c40404fa3c2b1969"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a280d73bfc68eebb1c40404fa3c2b1969">&#9670;&#160;</a></span>OnModeButtonClicked()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FReply SClothDesignCanvas::OnModeButtonClicked </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classSClothDesignCanvas.html#a52130105a63f2d73cb879fad1af11fd4">EClothEditorMode</a>&#160;</td>
+          <td class="paramname"><em>NewMode</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Switches the canvas to a different editor mode. </p>
+<p>Mode changes alter input interpretation and UI feedback; this function centralises that transition so state changes remain consistent.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">NewMode</td><td>The mode to switch to. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>FReply suitable for UI binding (typically handled). </dd></dl>
+
+</div>
+</div>
+<a id="ad6e594f4aeeb40cf954d418a2c65e845" name="ad6e594f4aeeb40cf954d418a2c65e845"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6e594f4aeeb40cf954d418a2c65e845">&#9670;&#160;</a></span>OnMouseButtonDown()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FReply SClothDesignCanvas::OnMouseButtonDown </td>
+          <td>(</td>
+          <td class="paramtype">const FGeometry &amp;&#160;</td>
+          <td class="paramname"><em>Geometry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FPointerEvent &amp;&#160;</td>
+          <td class="paramname"><em>MouseEvent</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles mouse button down events (start of click/drag operations). </p>
+<p>Centralises hit-testing and prepares the canvas for dragging, point selection, or initiating seam workflows.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Geometry</td><td>Widget geometry at the time of the event. </td></tr>
+    <tr><td class="paramname">MouseEvent</td><td>Details of the mouse button event. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>FReply indicating whether the event was handled. </dd></dl>
+
+</div>
+</div>
+<a id="a3885e3a2f879dd37beaaaf08d3b27a3c" name="a3885e3a2f879dd37beaaaf08d3b27a3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3885e3a2f879dd37beaaaf08d3b27a3c">&#9670;&#160;</a></span>OnMouseButtonUp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FReply SClothDesignCanvas::OnMouseButtonUp </td>
+          <td>(</td>
+          <td class="paramtype">const FGeometry &amp;&#160;</td>
+          <td class="paramname"><em>Geometry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FPointerEvent &amp;&#160;</td>
+          <td class="paramname"><em>MouseEvent</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles mouse button up events to finalise clicks or drags. </p>
+<p>Completes interactions started in OnMouseButtonDown and ensures state is consistent.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Geometry</td><td>Widget geometry at the time of the event. </td></tr>
+    <tr><td class="paramname">MouseEvent</td><td>Details of the mouse button release. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>FReply indicating whether the event was handled. </dd></dl>
+
+</div>
+</div>
+<a id="a36880fedcdb85fb598a9b23381b5e55e" name="a36880fedcdb85fb598a9b23381b5e55e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36880fedcdb85fb598a9b23381b5e55e">&#9670;&#160;</a></span>OnMouseMove()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FReply SClothDesignCanvas::OnMouseMove </td>
+          <td>(</td>
+          <td class="paramtype">const FGeometry &amp;&#160;</td>
+          <td class="paramname"><em>Geometry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FPointerEvent &amp;&#160;</td>
+          <td class="paramname"><em>MouseEvent</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles mouse move events for dragging, previewing and cursor updates. </p>
+<p>Keeps live previews and drag state consistent with current input and transform.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Geometry</td><td>Widget geometry at the time of the event. </td></tr>
+    <tr><td class="paramname">MouseEvent</td><td>Details of the pointer movement. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>FReply indicating whether the event was handled. </dd></dl>
+
+</div>
+</div>
+<a id="a480e1d6243ba2642a2614ce29d2fcd9d" name="a480e1d6243ba2642a2614ce29d2fcd9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a480e1d6243ba2642a2614ce29d2fcd9d">&#9670;&#160;</a></span>OnMouseWheel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FReply SClothDesignCanvas::OnMouseWheel </td>
+          <td>(</td>
+          <td class="paramtype">const FGeometry &amp;&#160;</td>
+          <td class="paramname"><em>Geometry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FPointerEvent &amp;&#160;</td>
+          <td class="paramname"><em>MouseEvent</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles mouse wheel events for zooming or other context-sensitive actions. </p>
+<p>Zooming is handled here to keep zoom logic local to the canvas and consistent across input sources.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Geometry</td><td>Widget geometry at the time of the event. </td></tr>
+    <tr><td class="paramname">MouseEvent</td><td>The mouse wheel event details. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>FReply indicating whether the event was handled. </dd></dl>
+
+</div>
+</div>
+<a id="aecb383eecebdd144b2a54d04dd35c612" name="aecb383eecebdd144b2a54d04dd35c612"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aecb383eecebdd144b2a54d04dd35c612">&#9670;&#160;</a></span>OnPaint()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32 SClothDesignCanvas::OnPaint </td>
+          <td>(</td>
+          <td class="paramtype">const FPaintArgs &amp;&#160;</td>
+          <td class="paramname"><em>Args</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FGeometry &amp;&#160;</td>
+          <td class="paramname"><em>AllottedGeometry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FSlateRect &amp;&#160;</td>
+          <td class="paramname"><em>CullingRect</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FSlateWindowElementList &amp;&#160;</td>
+          <td class="paramname"><em>OutDrawElements</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32&#160;</td>
+          <td class="paramname"><em>LayerId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FWidgetStyle &amp;&#160;</td>
+          <td class="paramname"><em>InWidgetStyle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>bParentEnabled</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Main Slate paint entry for the widget. </p>
+<p>Separates background, grid, shapes and seam drawing so that rendering is predictable and testable. Returns the next available rendering layer to allow callers to stack additional UI on top.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Args</td><td>Painting arguments passed from Slate. </td></tr>
+    <tr><td class="paramname">AllottedGeometry</td><td>Geometry of the widget area to paint into. </td></tr>
+    <tr><td class="paramname">CullingRect</td><td>Rectangle used for culling draw operations. </td></tr>
+    <tr><td class="paramname">OutDrawElements</td><td>The element list to append draw commands to. </td></tr>
+    <tr><td class="paramname">LayerId</td><td>The initial layer id to draw at. </td></tr>
+    <tr><td class="paramname">InWidgetStyle</td><td>Widget style information. </td></tr>
+    <tr><td class="paramname">bParentEnabled</td><td>Whether the parent widget is enabled. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The next free layer id after drawing. </dd></dl>
+
+</div>
+</div>
+<a id="a67ca4fd4caea182aca7f17458b8dd840" name="a67ca4fd4caea182aca7f17458b8dd840"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67ca4fd4caea182aca7f17458b8dd840">&#9670;&#160;</a></span>OnShapeAssetSelected()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SClothDesignCanvas::OnShapeAssetSelected </td>
+          <td>(</td>
+          <td class="paramtype">const FAssetData &amp;&#160;</td>
+          <td class="paramname"><em>AssetData</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Invoked when a shape asset is selected from the content browser. </p>
+<p>Triggers loading of the canvas state or preview data associated with the asset.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">AssetData</td><td>Asset metadata for the selected shape. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a954063a4059e6ab741a94d66b3982323" name="a954063a4059e6ab741a94d66b3982323"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a954063a4059e6ab741a94d66b3982323">&#9670;&#160;</a></span>SaveClick()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FReply SClothDesignCanvas::SaveClick </td>
+          <td>(</td>
+          <td class="paramtype">const FString &amp;&#160;</td>
+          <td class="paramname"><em>SaveName</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Saves the current canvas state under the given name. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">SaveName</td><td>Name to use for the saved asset/state. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>FReply indicating whether the save action was handled (for UI binding). </dd></dl>
+
+</div>
+</div>
+<a id="aa5c9a13df2306e4a0c6bdec4204f0c79" name="aa5c9a13df2306e4a0c6bdec4204f0c79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5c9a13df2306e4a0c6bdec4204f0c79">&#9670;&#160;</a></span>SewingClick()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SClothDesignCanvas::SewingClick </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Initiates the seam click workflow (UI button callback). </p>
+
+</div>
+</div>
+<a id="afbc1325fd18ee8fb5568bbd2666b6ba6" name="afbc1325fd18ee8fb5568bbd2666b6ba6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afbc1325fd18ee8fb5568bbd2666b6ba6">&#9670;&#160;</a></span>SupportsKeyboardFocus()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool SClothDesignCanvas::SupportsKeyboardFocus </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Indicates this widget can receive keyboard focus. </p>
+<p>Required so keyboard shortcuts and key-driven interactions work reliably.</p>
+<dl class="section return"><dt>Returns</dt><dd>true to allow keyboard focus. </dd></dl>
+
+</div>
+</div>
+<a id="a2f655901c138a2739bfd5616b507fb23" name="a2f655901c138a2739bfd5616b507fb23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f655901c138a2739bfd5616b507fb23">&#9670;&#160;</a></span>TransformPoint()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FVector2D SClothDesignCanvas::TransformPoint </td>
+          <td>(</td>
+          <td class="paramtype">const FVector2D &amp;&#160;</td>
+          <td class="paramname"><em>Point</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Transforms a canvas-space point into screen/widget space. </p>
+<p>Marked virtual to allow tests (and painters) to override coordinate transforms, ensuring rendering and hit-testing can be validated independently.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Point</td><td>The point in canvas (logical) coordinates. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Transformed point in screen/widget coordinates. </dd></dl>
+
+</div>
+</div>
+<a id="a97a66256aeca2f54523914777901f0ab" name="a97a66256aeca2f54523914777901f0ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97a66256aeca2f54523914777901f0ab">&#9670;&#160;</a></span>UpdateSewnPointSets()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SClothDesignCanvas::UpdateSewnPointSets </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Recomputes sewn point sets from seam definitions and current shape data. </p>
+<p>Keeps SewnPointIndicesPerShape in sync with seam definitions so merging and preview logic can operate on a precomputed data structure. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="aef4506f4281613a43908fa74dcac91de" name="aef4506f4281613a43908fa74dcac91de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef4506f4281613a43908fa74dcac91de">&#9670;&#160;</a></span>FClothCanvas_StateRoundtripTest</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class FClothCanvas_StateRoundtripTest</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Unit test access for state roundtrip tests. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a8ec0cf24ca792e95ea93e7c784bfced0" name="a8ec0cf24ca792e95ea93e7c784bfced0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ec0cf24ca792e95ea93e7c784bfced0">&#9670;&#160;</a></span>BackgroundImageScale</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float SClothDesignCanvas::BackgroundImageScale = 1.0f</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Scale applied to the background image for rendering convenience. Independent of ZoomFactor so image fits desired visual size. </p>
+
+</div>
+</div>
+<a id="a2cbcff741785835cee91d8718fa19cc9" name="a2cbcff741785835cee91d8718fa19cc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cbcff741785835cee91d8718fa19cc9">&#9670;&#160;</a></span>BackgroundTexture</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TWeakObjectPtr&lt;UTexture2D&gt; SClothDesignCanvas::BackgroundTexture</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Selected background texture (optional). Holds a weak reference to the background image asset. </p>
+
+</div>
+</div>
+<a id="a0f61b51078e341d72dd7274ef03a8b9b" name="a0f61b51078e341d72dd7274ef03a8b9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f61b51078e341d72dd7274ef03a8b9b">&#9670;&#160;</a></span>bIsDragging</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SClothDesignCanvas::bIsDragging = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">mutable</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Mutable flag used by paint/hit test code to indicate a drag is active. Allows const painting methods to know drag state. </p>
+
+</div>
+</div>
+<a id="a62cf7aad4900150d2ecbde45b46eb622" name="a62cf7aad4900150d2ecbde45b46eb622"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62cf7aad4900150d2ecbde45b46eb622">&#9670;&#160;</a></span>bIsDraggingPoint</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SClothDesignCanvas::bIsDraggingPoint = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Whether a point is currently being dragged by the user. Guards point-drag logic and prevents accidental edits. </p>
+
+</div>
+</div>
+<a id="a274587cece09ed62b589e24ac41f137a" name="a274587cece09ed62b589e24ac41f137a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a274587cece09ed62b589e24ac41f137a">&#9670;&#160;</a></span>bIsDraggingShape</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SClothDesignCanvas::bIsDraggingShape = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Whether a whole shape is being dragged. Used to move entire shapes. </p>
+
+</div>
+</div>
+<a id="adac521836fe09123922f6fafa7ae3ec7" name="adac521836fe09123922f6fafa7ae3ec7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adac521836fe09123922f6fafa7ae3ec7">&#9670;&#160;</a></span>bIsDraggingTangent</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SClothDesignCanvas::bIsDraggingTangent = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Whether a tangent handle is being dragged. Used to manipulate Bezier tangents. </p>
+
+</div>
+</div>
+<a id="a717343e348514ef046e28a0fbcb6bd1a" name="a717343e348514ef046e28a0fbcb6bd1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a717343e348514ef046e28a0fbcb6bd1a">&#9670;&#160;</a></span>bIsPanning</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SClothDesignCanvas::bIsPanning = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Whether the canvas is currently panning (middle mouse drag etc.). Panning separates camera movement from geometry edits. </p>
+
+</div>
+</div>
+<a id="a348017e33fd5f8fa334dd33b6f6d7d5d" name="a348017e33fd5f8fa334dd33b6f6d7d5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a348017e33fd5f8fa334dd33b6f6d7d5d">&#9670;&#160;</a></span>bIsShapeSelected</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SClothDesignCanvas::bIsShapeSelected = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Whether any shape is currently selected. Affects UI affordances and operation availability. </p>
+
+</div>
+</div>
+<a id="a1431752aa9a9e3e2eeb0bf10c22b446d" name="a1431752aa9a9e3e2eeb0bf10c22b446d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1431752aa9a9e3e2eeb0bf10c22b446d">&#9670;&#160;</a></span>bSeparateTangents</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SClothDesignCanvas::bSeparateTangents = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Whether tangents are handled independently for arrival/leave. If true, arrival and leave tangents are edited separately. </p>
+
+</div>
+</div>
+<a id="ac5b631ed031a8da7216180f5b169c8db" name="ac5b631ed031a8da7216180f5b169c8db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5b631ed031a8da7216180f5b169c8db">&#9670;&#160;</a></span>bUseBezierPerPoint</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TArray&lt;bool&gt; SClothDesignCanvas::bUseBezierPerPoint</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Flags indicating per-point Bezier usage for the active curve. Allows mixed handle usage within a single curve. </p>
+
+</div>
+</div>
+<a id="ac3e8151dc25b607050b155929fd77362" name="ac3e8151dc25b607050b155929fd77362"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3e8151dc25b607050b155929fd77362">&#9670;&#160;</a></span>bUseBezierPoints</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SClothDesignCanvas::bUseBezierPoints = true</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Global toggle for whether to create Bezier points by default when adding new points. Gives a sensible default for new points while allowing per-point overrides. </p>
+
+</div>
+</div>
+<a id="acbb7996deea4f5c5e3f75afb471d1ab6" name="acbb7996deea4f5c5e3f75afb471d1ab6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbb7996deea4f5c5e3f75afb471d1ab6">&#9670;&#160;</a></span>CompletedBezierFlags</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TArray&lt;TArray&lt;bool&gt; &gt; SClothDesignCanvas::CompletedBezierFlags</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Flags indicating per-point Bezier usage for completed shapes. Preserves original curve topology for completed shapes. </p>
+
+</div>
+</div>
+<a id="ac581344a87848ba382435958b3766f3b" name="ac581344a87848ba382435958b3766f3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac581344a87848ba382435958b3766f3b">&#9670;&#160;</a></span>CompletedShapes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TArray&lt;FInterpCurve&lt;FVector2D&gt; &gt; SClothDesignCanvas::CompletedShapes</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shapes that have been completed (committed) by the user. Persistent curves used for mesh generation and sewing. </p>
+
+</div>
+</div>
+<a id="a89c8df277aed2f6a1d83ce5a4f55fbe7" name="a89c8df277aed2f6a1d83ce5a4f55fbe7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89c8df277aed2f6a1d83ce5a4f55fbe7">&#9670;&#160;</a></span>CurvePoints</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FInterpCurve&lt;FVector2D&gt; SClothDesignCanvas::CurvePoints</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Current working curve (points being drawn). Stores control points for the active curve being edited. </p>
+
+</div>
+</div>
+<a id="a6c21e63c0727d0b087addbfb0535ac81" name="a6c21e63c0727d0b087addbfb0535ac81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c21e63c0727d0b087addbfb0535ac81">&#9670;&#160;</a></span>LastMousePos</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FVector2D SClothDesignCanvas::LastMousePos = FVector2D::ZeroVector</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Last recorded mouse position in widget/screen coordinates. Used to compute drags and deltas. </p>
+
+</div>
+</div>
+<a id="a0c7e15e1e783eddff25fa1e976f0820e" name="a0c7e15e1e783eddff25fa1e976f0820e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c7e15e1e783eddff25fa1e976f0820e">&#9670;&#160;</a></span>ModeReminderText</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TSharedPtr&lt;STextBlock&gt; SClothDesignCanvas::ModeReminderText</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Optional little text block reminding users of current mode or hints. UI element to show ephemeral instructions or mode reminders. </p>
+
+</div>
+</div>
+<a id="a37c3f1edfa2fd456ae8b1d76b88b2040" name="a37c3f1edfa2fd456ae8b1d76b88b2040"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37c3f1edfa2fd456ae8b1d76b88b2040">&#9670;&#160;</a></span>PanOffset</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FVector2D SClothDesignCanvas::PanOffset = FVector2D::ZeroVector</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Current pan offset in canvas units. Enables camera-like panning without changing geometry. </p>
+
+</div>
+</div>
+<a id="a801cfde007e90506c08b0c3197044f0a" name="a801cfde007e90506c08b0c3197044f0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a801cfde007e90506c08b0c3197044f0a">&#9670;&#160;</a></span>RedoStack</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TArray&lt;<a class="el" href="structFCanvasState.html">FCanvasState</a>&gt; SClothDesignCanvas::RedoStack</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Redo history for canvas states; used to reapply undone actions. Maintains states that can be redone. </p>
+
+</div>
+</div>
+<a id="ac214b0a982ee6f520981ddaa86461704" name="ac214b0a982ee6f520981ddaa86461704"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac214b0a982ee6f520981ddaa86461704">&#9670;&#160;</a></span>SelectedPointIndex</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32 SClothDesignCanvas::SelectedPointIndex = INDEX_NONE</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">mutable</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Index of the currently selected point (mutable to allow const paint operations to query). Used for highlighting and editing a point. </p>
+
+</div>
+</div>
+<a id="a0d5eced84df98b0b6f694cbd032f84ed" name="a0d5eced84df98b0b6f694cbd032f84ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d5eced84df98b0b6f694cbd032f84ed">&#9670;&#160;</a></span>SelectedSeamIndex</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32 SClothDesignCanvas::SelectedSeamIndex = INDEX_NONE</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Index of the seam currently selected by the user (or INDEX_NONE). Used for seam editing and highlight operations. </p>
+
+</div>
+</div>
+<a id="a7e660ced6d6ca94f1b0b159c69df0c55" name="a7e660ced6d6ca94f1b0b159c69df0c55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e660ced6d6ca94f1b0b159c69df0c55">&#9670;&#160;</a></span>SelectedShapeIndex</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32 SClothDesignCanvas::SelectedShapeIndex = INDEX_NONE</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">mutable</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Currently selected shape index (mutable to allow read-only operations to report selection). Used to focus operations on a single shape. </p>
+
+</div>
+</div>
+<a id="a53a7416be572a71b39fb3c16c975d8c8" name="a53a7416be572a71b39fb3c16c975d8c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53a7416be572a71b39fb3c16c975d8c8">&#9670;&#160;</a></span>SelectedTangentHandle</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classSClothDesignCanvas.html#a13fb058ed866c1e7b997f3ba8c41b096">ETangentHandle</a> SClothDesignCanvas::SelectedTangentHandle = <a class="el" href="classSClothDesignCanvas.html#a13fb058ed866c1e7b997f3ba8c41b096a6adf97f83acf6453d4a6a4b1070f3754">ETangentHandle::None</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Currently selected tangent handle for editing. Determines which handle moves on drag. </p>
+
+</div>
+</div>
+<a id="a3ace142d551a6da3f2ee355f59f94f4b" name="a3ace142d551a6da3f2ee355f59f94f4b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ace142d551a6da3f2ee355f59f94f4b">&#9670;&#160;</a></span>SewnPointIndicesPerShape</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TMap&lt;int32, TSet&lt;int32&gt; &gt; SClothDesignCanvas::SewnPointIndicesPerShape</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Mapping of shape index -&gt; set of sewn point indices for the shape. Maintained to support seam previews and merging. </p>
+
+</div>
+</div>
+<a id="acf05f13f530ae2f8ffac07a88b44d0e0" name="acf05f13f530ae2f8ffac07a88b44d0e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf05f13f530ae2f8ffac07a88b44d0e0">&#9670;&#160;</a></span>UndoStack</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TArray&lt;<a class="el" href="structFCanvasState.html">FCanvasState</a>&gt; SClothDesignCanvas::UndoStack</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Undo history for canvas states; used to revert user actions. Maintains past states for undo operations. </p>
+
+</div>
+</div>
+<a id="ab5d18928680ebfe5e589466092992b65" name="ab5d18928680ebfe5e589466092992b65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5d18928680ebfe5e589466092992b65">&#9670;&#160;</a></span>ZoomFactor</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float SClothDesignCanvas::ZoomFactor = 5.0f</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Current zoom factor used to map canvas units to screen units. Controls visual scale for drawing and hit-testing. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>Plugins/ClothDesign/Source/ClothDesign/Public/<a class="el" href="ClothDesignCanvas_8h_source.html">ClothDesignCanvas.h</a></li>
 <li>Plugins/ClothDesign/Source/ClothDesign/Private/<b>ClothDesignCanvas.cpp</b></li>

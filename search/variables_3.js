@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['edgea_0',['EdgeA',['../structFSeamDefinition.html#a3b23094c89ae51d35f0c382db591d35e',1,'FSeamDefinition']]],
-  ['edgeb_1',['EdgeB',['../structFSeamDefinition.html#af1977b409e8ff1dd3e60c9c4b7785c3f',1,'FSeamDefinition']]],
-  ['end_2',['End',['../structFEdgeIndices.html#a03d28ac4f2426e3a0f56cf3f55a7b79a',1,'FEdgeIndices']]]
+  ['damping_0',['Damping',['../structFClothPhysicalConfig.html#af806497bfe535ecc27a4b810fdf5e2e5',1,'FClothPhysicalConfig']]],
+  ['density_1',['Density',['../structFClothPhysicalConfig.html#af376ffd116fe06d7784bc669a0d8ec73',1,'FClothPhysicalConfig']]],
+  ['displayname_2',['DisplayName',['../structFPresetItem.html#ad21c7e1d412ec7487969954d382d7df8',1,'FPresetItem']]],
+  ['draglow_3',['DragLow',['../structFClothPhysicalConfig.html#ac875a85db0da96fcfeebe00fe4e62cdc',1,'FClothPhysicalConfig']]],
+  ['dynamicmesh_4',['DynamicMesh',['../classAPatternMesh.html#a263ad973e5d466c6228df661d3309b03',1,'APatternMesh']]]
 ];

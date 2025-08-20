@@ -98,6 +98,11 @@ $(document).ready(function(){initNavTree('classFClothDesignToolkit.html',''); in
   <div class="headertitle"><div class="title">FClothDesignToolkit Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Toolkit that provides the Cloth Design editor's UI and tool palettes.  
+ <a href="classFClothDesignToolkit.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="ClothDesignToolkit_8h_source.html">ClothDesignToolkit.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for FClothDesignToolkit:</div>
 <div class="dyncontent">
@@ -107,27 +112,110 @@ Inheritance diagram for FClothDesignToolkit:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a63250c4544a27660ac605c17b093b611" id="r_a63250c4544a27660ac605c17b093b611"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignToolkit.html#a63250c4544a27660ac605c17b093b611">FClothDesignToolkit</a> ()</td></tr>
+<tr class="separator:a63250c4544a27660ac605c17b093b611"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a260aa25daff57813d7521d11fca51883" id="r_a260aa25daff57813d7521d11fca51883"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignToolkit.html#a260aa25daff57813d7521d11fca51883">Init</a> (const TSharedPtr&lt; IToolkitHost &gt; &amp;InitToolkitHost, TWeakObjectPtr&lt; UEdMode &gt; InOwningMode) override</td></tr>
+<tr class="memdesc:a260aa25daff57813d7521d11fca51883"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise the toolkit and create UI content.  <br /></td></tr>
 <tr class="separator:a260aa25daff57813d7521d11fca51883"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dd10f7c91307c72b218480f132dee25" id="r_a6dd10f7c91307c72b218480f132dee25"><td class="memItemLeft" align="right" valign="top"><a id="a6dd10f7c91307c72b218480f132dee25" name="a6dd10f7c91307c72b218480f132dee25"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>GetToolPaletteNames</b> (TArray&lt; FName &gt; &amp;PaletteNames) const override</td></tr>
+<tr class="memitem:a6dd10f7c91307c72b218480f132dee25" id="r_a6dd10f7c91307c72b218480f132dee25"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignToolkit.html#a6dd10f7c91307c72b218480f132dee25">GetToolPaletteNames</a> (TArray&lt; FName &gt; &amp;PaletteNames) const override</td></tr>
+<tr class="memdesc:a6dd10f7c91307c72b218480f132dee25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the names of tool palettes provided by this toolkit.  <br /></td></tr>
 <tr class="separator:a6dd10f7c91307c72b218480f132dee25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc7b6ff01769e15ceb6f4f972c42412c" id="r_adc7b6ff01769e15ceb6f4f972c42412c"><td class="memItemLeft" align="right" valign="top">virtual FName&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignToolkit.html#adc7b6ff01769e15ceb6f4f972c42412c">GetToolkitFName</a> () const override</td></tr>
+<tr class="memdesc:adc7b6ff01769e15ceb6f4f972c42412c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the toolkit's unique FName.  <br /></td></tr>
 <tr class="separator:adc7b6ff01769e15ceb6f4f972c42412c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa97c08342f2d125253beeaedd4929638" id="r_aa97c08342f2d125253beeaedd4929638"><td class="memItemLeft" align="right" valign="top"><a id="aa97c08342f2d125253beeaedd4929638" name="aa97c08342f2d125253beeaedd4929638"></a>
-virtual FText&#160;</td><td class="memItemRight" valign="bottom"><b>GetBaseToolkitName</b> () const override</td></tr>
+<tr class="memitem:aa97c08342f2d125253beeaedd4929638" id="r_aa97c08342f2d125253beeaedd4929638"><td class="memItemLeft" align="right" valign="top">virtual FText&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignToolkit.html#aa97c08342f2d125253beeaedd4929638">GetBaseToolkitName</a> () const override</td></tr>
+<tr class="memdesc:aa97c08342f2d125253beeaedd4929638"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the base display name for this toolkit.  <br /></td></tr>
 <tr class="separator:aa97c08342f2d125253beeaedd4929638"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa9df743a2d26e7baca924ec0efb82ce" id="r_afa9df743a2d26e7baca924ec0efb82ce"><td class="memItemLeft" align="right" valign="top"><a id="afa9df743a2d26e7baca924ec0efb82ce" name="afa9df743a2d26e7baca924ec0efb82ce"></a>
-virtual TSharedPtr&lt; SWidget &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetInlineContent</b> () const override</td></tr>
+<tr class="memitem:afa9df743a2d26e7baca924ec0efb82ce" id="r_afa9df743a2d26e7baca924ec0efb82ce"><td class="memItemLeft" align="right" valign="top">virtual TSharedPtr&lt; SWidget &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignToolkit.html#afa9df743a2d26e7baca924ec0efb82ce">GetInlineContent</a> () const override</td></tr>
+<tr class="memdesc:afa9df743a2d26e7baca924ec0efb82ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the toolkit's inline content widget.  <br /></td></tr>
 <tr class="separator:afa9df743a2d26e7baca924ec0efb82ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a7491029c10f0ad4a3d967ef6d279ed64" id="r_a7491029c10f0ad4a3d967ef6d279ed64"><td class="memItemLeft" align="right" valign="top"><a id="a7491029c10f0ad4a3d967ef6d279ed64" name="a7491029c10f0ad4a3d967ef6d279ed64"></a>
-class&#160;</td><td class="memItemRight" valign="bottom"><b>FClothDesignToolkitTest</b></td></tr>
+<tr class="memitem:a7491029c10f0ad4a3d967ef6d279ed64" id="r_a7491029c10f0ad4a3d967ef6d279ed64"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignToolkit.html#a7491029c10f0ad4a3d967ef6d279ed64">FClothDesignToolkitTest</a></td></tr>
 <tr class="separator:a7491029c10f0ad4a3d967ef6d279ed64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Toolkit that provides the Cloth Design editor's UI and tool palettes. </p>
+<p>The toolkit bridges the editor mode and Slate UI: it initialises in-editor panels, exposes inline content for embedding in the host editor, and centralises command wiring and object picker state. Keeping toolkit logic here keeps the mode class lightweight and makes UI tests easier to write. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a63250c4544a27660ac605c17b093b611" name="a63250c4544a27660ac605c17b093b611"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63250c4544a27660ac605c17b093b611">&#9670;&#160;</a></span>FClothDesignToolkit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FClothDesignToolkit::FClothDesignToolkit </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Constructor </p>
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="aa97c08342f2d125253beeaedd4929638" name="aa97c08342f2d125253beeaedd4929638"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa97c08342f2d125253beeaedd4929638">&#9670;&#160;</a></span>GetBaseToolkitName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FText FClothDesignToolkit::GetBaseToolkitName </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the base display name for this toolkit. </p>
+<p>Shown in the host UI and used for accessibility/labels.</p>
+<dl class="section return"><dt>Returns</dt><dd>Localised text for the toolkit name. </dd></dl>
+
+</div>
+</div>
+<a id="afa9df743a2d26e7baca924ec0efb82ce" name="afa9df743a2d26e7baca924ec0efb82ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa9df743a2d26e7baca924ec0efb82ce">&#9670;&#160;</a></span>GetInlineContent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TSharedPtr&lt; SWidget &gt; FClothDesignToolkit::GetInlineContent </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the toolkit's inline content widget. </p>
+<p>This widget is embedded directly into the mode UI; it should be the primary interactive area the user manipulates (pickers, settings, buttons).</p>
+<dl class="section return"><dt>Returns</dt><dd>Shared pointer to the widget to embed inline. </dd></dl>
+
+</div>
+</div>
 <a id="adc7b6ff01769e15ceb6f4f972c42412c" name="adc7b6ff01769e15ceb6f4f972c42412c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adc7b6ff01769e15ceb6f4f972c42412c">&#9670;&#160;</a></span>GetToolkitFName()</h2>
 
@@ -150,7 +238,46 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FClothDesignToolkitT
   </tr>
 </table>
 </div><div class="memdoc">
-<p>IToolkit interface </p>
+
+<p>Returns the toolkit's unique FName. </p>
+<p>IToolkit interface -------------------------------------------------&mdash; </p>
+<p>Used by the host to identify and persist toolkit state.</p>
+<dl class="section return"><dt>Returns</dt><dd>Toolkit FName identifier. </dd></dl>
+
+</div>
+</div>
+<a id="a6dd10f7c91307c72b218480f132dee25" name="a6dd10f7c91307c72b218480f132dee25"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6dd10f7c91307c72b218480f132dee25">&#9670;&#160;</a></span>GetToolPaletteNames()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FClothDesignToolkit::GetToolPaletteNames </td>
+          <td>(</td>
+          <td class="paramtype">TArray&lt; FName &gt; &amp;&#160;</td>
+          <td class="paramname"><em>PaletteNames</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the names of tool palettes provided by this toolkit. </p>
+<p>Tool palettes group related tools for the editor UI; exposing their names allows the host to render palette tabs or lists.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">PaletteNames</td><td>Output array to append palette names to. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -187,7 +314,41 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FClothDesignToolkitT
   </tr>
 </table>
 </div><div class="memdoc">
-<p>FModeToolkit interface </p>
+
+<p>Initialise the toolkit and create UI content. </p>
+<p>FModeToolkit interface ----------------------------------------------&mdash; </p>
+<p>Called when the toolkit is created; responsible for building the toolkit's widget hierarchy, registering commands, and binding callbacks.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">InitToolkitHost</td><td>The host for toolkit docking and lifetime. </td></tr>
+    <tr><td class="paramname">InOwningMode</td><td>Weak pointer to the owning editor mode. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a7491029c10f0ad4a3d967ef6d279ed64" name="a7491029c10f0ad4a3d967ef6d279ed64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7491029c10f0ad4a3d967ef6d279ed64">&#9670;&#160;</a></span>FClothDesignToolkitTest</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class FClothDesignToolkitTest</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Unit test access for toolkit internals. </p>
 
 </div>
 </div>

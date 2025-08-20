@@ -111,64 +111,60 @@ $(document).ready(function(){initNavTree('ClothShapeAsset_8h_source.html',''); i
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>USTRUCT(BlueprintType)</div>
-<div class="foldopen" id="foldopen00014" data-start="{" data-end="};">
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="structFCurvePointData.html">   14</a></span>struct <a class="code hl_struct" href="structFCurvePointData.html">FCurvePointData</a></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>{</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    GENERATED_BODY()</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="comment">// The X value for the curve point (used as InVal)</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=<span class="stringliteral">&quot;Curve Point&quot;</span>)</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="keywordtype">float</span> InputKey = 0.0f;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="comment">// The actual position of the point in 2D space (used as OutVal)</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=<span class="stringliteral">&quot;Curve Point&quot;</span>)</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    FVector2D Position = FVector2D::ZeroVector;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="comment">// Tangents</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=<span class="stringliteral">&quot;Curve Point&quot;</span>)</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    FVector2D ArriveTangent = FVector2D::ZeroVector;</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=<span class="stringliteral">&quot;Curve Point&quot;</span>)</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    FVector2D LeaveTangent = FVector2D::ZeroVector;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="comment">// Whether to use Bezier for this point</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=<span class="stringliteral">&quot;Curve Point&quot;</span>)</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordtype">bool</span> bUseBezier = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>};</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>USTRUCT(BlueprintType)</div>
+<div class="foldopen" id="foldopen00020" data-start="{" data-end="};">
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="structFCurvePointData.html">   20</a></span>struct <a class="code hl_struct" href="structFCurvePointData.html">FCurvePointData</a></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    GENERATED_BODY()</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=<span class="stringliteral">&quot;Curve Point&quot;</span>)</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structFCurvePointData.html#a4a3e6866e11bd914cbe36259f57bce74">   26</a></span>    float InputKey = 0.0f;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=&quot;Curve Point&quot;)</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="structFCurvePointData.html#a057846d41dd8183924171d703e3e90f5">   30</a></span>    FVector2D Position = FVector2D::ZeroVector;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=&quot;Curve Point&quot;)</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="structFCurvePointData.html#a9ac546ea8b1b4b37ee83957aa6881dac">   34</a></span>    FVector2D ArriveTangent = FVector2D::ZeroVector;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=&quot;Curve Point&quot;)</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structFCurvePointData.html#a5e8ec0674c995c0c6a6911a9473b59ed">   38</a></span>    FVector2D LeaveTangent = FVector2D::ZeroVector;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=&quot;Curve Point&quot;)</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structFCurvePointData.html#a8cdcaed368d3da0f172fbe7c680d257d">   42</a></span>    <span class="keywordtype">bool</span> bUseBezier = false;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>};</div>
 </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>USTRUCT(BlueprintType)</div>
-<div class="foldopen" id="foldopen00040" data-start="{" data-end="};">
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="structFShapeData.html">   40</a></span>struct <a class="code hl_struct" href="structFShapeData.html">FShapeData</a></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>{</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    GENERATED_BODY()</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=<span class="stringliteral">&quot;Cloth Shape&quot;</span>)</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    TArray&lt;FCurvePointData&gt; CompletedClothShape;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>};</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>USTRUCT(BlueprintType)</div>
+<div class="foldopen" id="foldopen00049" data-start="{" data-end="};">
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="structFShapeData.html">   49</a></span>struct <a class="code hl_struct" href="structFShapeData.html">FShapeData</a></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>{</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    GENERATED_BODY()</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=<span class="stringliteral">&quot;Cloth Shape&quot;</span>)</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="structFShapeData.html#ae860a4ef522e0e04fa49dac7edfcfad4">   55</a></span>    TArray&lt;<a class="code hl_struct" href="structFCurvePointData.html">FCurvePointData</a>&gt; CompletedClothShape;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>};</div>
 </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>UCLASS(BlueprintType)</div>
-<div class="foldopen" id="foldopen00050" data-start="{" data-end="};">
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="classUClothShapeAsset.html">   50</a></span>class <a class="code hl_class" href="classUClothShapeAsset.html">UClothShapeAsset</a> : public UDataAsset</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>{</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    GENERATED_BODY()</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=<span class="stringliteral">&quot;Cloth Shapes&quot;</span>)</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    TArray&lt;FCurvePointData&gt; ClothCurvePoints;</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=<span class="stringliteral">&quot;Cloth Shapes&quot;</span>)</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    TArray&lt;FShapeData&gt; ClothShapes;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>};</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>UCLASS(BlueprintType)</div>
+<div class="foldopen" id="foldopen00064" data-start="{" data-end="};">
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="classUClothShapeAsset.html">   64</a></span>class <a class="code hl_class" href="classUClothShapeAsset.html">UClothShapeAsset</a> : public UDataAsset</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>{</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    GENERATED_BODY()</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=<span class="stringliteral">&quot;Cloth Shapes&quot;</span>)</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="classUClothShapeAsset.html#a6177d9858c16d7fc1790a364b4bcd0b7">   71</a></span>    TArray&lt;<a class="code hl_struct" href="structFCurvePointData.html">FCurvePointData</a>&gt; ClothCurvePoints;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=&quot;Cloth Shapes&quot;)</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="classUClothShapeAsset.html#a516dceebaadf05e59a9f576489f9fd4e">   75</a></span>    TArray&lt;<a class="code hl_struct" href="structFShapeData.html">FShapeData</a>&gt; ClothShapes;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>};</div>
 </div>
-<div class="ttc" id="aclassUClothShapeAsset_html"><div class="ttname"><a href="classUClothShapeAsset.html">UClothShapeAsset</a></div><div class="ttdef"><b>Definition</b> ClothShapeAsset.h:51</div></div>
-<div class="ttc" id="astructFCurvePointData_html"><div class="ttname"><a href="structFCurvePointData.html">FCurvePointData</a></div><div class="ttdef"><b>Definition</b> ClothShapeAsset.h:15</div></div>
-<div class="ttc" id="astructFShapeData_html"><div class="ttname"><a href="structFShapeData.html">FShapeData</a></div><div class="ttdef"><b>Definition</b> ClothShapeAsset.h:41</div></div>
+<div class="ttc" id="aclassUClothShapeAsset_html"><div class="ttname"><a href="classUClothShapeAsset.html">UClothShapeAsset</a></div><div class="ttdoc">Data asset storing multiple cloth shapes and their curve points.</div><div class="ttdef"><b>Definition</b> ClothShapeAsset.h:65</div></div>
+<div class="ttc" id="astructFCurvePointData_html"><div class="ttname"><a href="structFCurvePointData.html">FCurvePointData</a></div><div class="ttdoc">Stores a single point on a curve, including position and tangents.</div><div class="ttdef"><b>Definition</b> ClothShapeAsset.h:21</div></div>
+<div class="ttc" id="astructFShapeData_html"><div class="ttname"><a href="structFShapeData.html">FShapeData</a></div><div class="ttdoc">Represents a completed cloth shape made of multiple curve points.</div><div class="ttdef"><b>Definition</b> ClothShapeAsset.h:50</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

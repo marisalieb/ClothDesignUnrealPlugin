@@ -98,6 +98,11 @@ $(document).ready(function(){initNavTree('classUClothDesignEditorMode.html','');
   <div class="headertitle"><div class="title">UClothDesignEditorMode Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Custom editor mode for cloth design in the editor.  
+ <a href="classUClothDesignEditorMode.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="ClothDesignEditorMode_8h_source.html">ClothDesignEditorMode.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for UClothDesignEditorMode:</div>
 <div class="dyncontent">
@@ -107,37 +112,235 @@ Inheritance diagram for UClothDesignEditorMode:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a98990e408f6e8ea85a89042efe0cb5e6" id="r_a98990e408f6e8ea85a89042efe0cb5e6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUClothDesignEditorMode.html#a98990e408f6e8ea85a89042efe0cb5e6">UClothDesignEditorMode</a> ()</td></tr>
+<tr class="separator:a98990e408f6e8ea85a89042efe0cb5e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a362b63c16d276796091f5b3aa47ad2d0" id="r_a362b63c16d276796091f5b3aa47ad2d0"><td class="memItemLeft" align="right" valign="top"><a id="a362b63c16d276796091f5b3aa47ad2d0" name="a362b63c16d276796091f5b3aa47ad2d0"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Enter</b> () override</td></tr>
+<tr class="memdesc:a362b63c16d276796091f5b3aa47ad2d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when entering this editor mode. Use this to initialize mode-specific state and UI. <br /></td></tr>
 <tr class="separator:a362b63c16d276796091f5b3aa47ad2d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c2112d903f230a4127d85c197b7dedc" id="r_a7c2112d903f230a4127d85c197b7dedc"><td class="memItemLeft" align="right" valign="top"><a id="a7c2112d903f230a4127d85c197b7dedc" name="a7c2112d903f230a4127d85c197b7dedc"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>ActorSelectionChangeNotify</b> () override</td></tr>
+<tr class="memdesc:a7c2112d903f230a4127d85c197b7dedc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called when the actor selection changes in the editor. Handles any updates necessary when selection changes. <br /></td></tr>
 <tr class="separator:a7c2112d903f230a4127d85c197b7dedc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a920992d571784e7e614c6b859e73560a" id="r_a920992d571784e7e614c6b859e73560a"><td class="memItemLeft" align="right" valign="top"><a id="a920992d571784e7e614c6b859e73560a" name="a920992d571784e7e614c6b859e73560a"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>CreateToolkit</b> () override</td></tr>
+<tr class="memdesc:a920992d571784e7e614c6b859e73560a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates the editor toolkit for this mode. This provides custom UI panels for cloth design tools. <br /></td></tr>
 <tr class="separator:a920992d571784e7e614c6b859e73560a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fb543bd258d490eb2ac8bf74528e9e3" id="r_a1fb543bd258d490eb2ac8bf74528e9e3"><td class="memItemLeft" align="right" valign="top"><a id="a1fb543bd258d490eb2ac8bf74528e9e3" name="a1fb543bd258d490eb2ac8bf74528e9e3"></a>
-virtual TMap&lt; FName, TArray&lt; TSharedPtr&lt; FUICommandInfo &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetModeCommands</b> () const override</td></tr>
+<tr class="memitem:a1fb543bd258d490eb2ac8bf74528e9e3" id="r_a1fb543bd258d490eb2ac8bf74528e9e3"><td class="memItemLeft" align="right" valign="top">virtual TMap&lt; FName, TArray&lt; TSharedPtr&lt; FUICommandInfo &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUClothDesignEditorMode.html#a1fb543bd258d490eb2ac8bf74528e9e3">GetModeCommands</a> () const override</td></tr>
+<tr class="memdesc:a1fb543bd258d490eb2ac8bf74528e9e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the UI commands associated with this editor mode.  <br /></td></tr>
 <tr class="separator:a1fb543bd258d490eb2ac8bf74528e9e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4dd0095e8fd2380ad5c2ca205991ddf" id="r_ac4dd0095e8fd2380ad5c2ca205991ddf"><td class="memItemLeft" align="right" valign="top"><a id="ac4dd0095e8fd2380ad5c2ca205991ddf" name="ac4dd0095e8fd2380ad5c2ca205991ddf"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>UsesTransformWidget</b> (UE::Widget::EWidgetMode CheckMode) const override</td></tr>
+<tr class="memitem:ac4dd0095e8fd2380ad5c2ca205991ddf" id="r_ac4dd0095e8fd2380ad5c2ca205991ddf"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUClothDesignEditorMode.html#ac4dd0095e8fd2380ad5c2ca205991ddf">UsesTransformWidget</a> (UE::Widget::EWidgetMode CheckMode) const override</td></tr>
+<tr class="memdesc:ac4dd0095e8fd2380ad5c2ca205991ddf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether the transform widget should be enabled.  <br /></td></tr>
 <tr class="separator:ac4dd0095e8fd2380ad5c2ca205991ddf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac09981b7ba8a9d1bd49431c2a8592eae" id="r_ac09981b7ba8a9d1bd49431c2a8592eae"><td class="memItemLeft" align="right" valign="top"><a id="ac09981b7ba8a9d1bd49431c2a8592eae" name="ac09981b7ba8a9d1bd49431c2a8592eae"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>ShouldDrawWidget</b> () const override</td></tr>
+<tr class="memitem:ac09981b7ba8a9d1bd49431c2a8592eae" id="r_ac09981b7ba8a9d1bd49431c2a8592eae"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUClothDesignEditorMode.html#ac09981b7ba8a9d1bd49431c2a8592eae">ShouldDrawWidget</a> () const override</td></tr>
+<tr class="memdesc:ac09981b7ba8a9d1bd49431c2a8592eae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether the transform widget should be drawn.  <br /></td></tr>
 <tr class="separator:ac09981b7ba8a9d1bd49431c2a8592eae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a5742e8e661ad0aa80ce0d5e9a495ef" id="r_a8a5742e8e661ad0aa80ce0d5e9a495ef"><td class="memItemLeft" align="right" valign="top"><a id="a8a5742e8e661ad0aa80ce0d5e9a495ef" name="a8a5742e8e661ad0aa80ce0d5e9a495ef"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>ShowModeWidgets</b> () const override</td></tr>
+<tr class="memitem:a8a5742e8e661ad0aa80ce0d5e9a495ef" id="r_a8a5742e8e661ad0aa80ce0d5e9a495ef"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUClothDesignEditorMode.html#a8a5742e8e661ad0aa80ce0d5e9a495ef">ShowModeWidgets</a> () const override</td></tr>
+<tr class="memdesc:a8a5742e8e661ad0aa80ce0d5e9a495ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether mode-specific widgets should be shown.  <br /></td></tr>
 <tr class="separator:a8a5742e8e661ad0aa80ce0d5e9a495ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac99dc1ce058ad8ca943ba34362ff17e8" id="r_ac99dc1ce058ad8ca943ba34362ff17e8"><td class="memItemLeft" align="right" valign="top"><a id="ac99dc1ce058ad8ca943ba34362ff17e8" name="ac99dc1ce058ad8ca943ba34362ff17e8"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>CanCycleWidgetMode</b> () const override</td></tr>
+<tr class="memitem:ac99dc1ce058ad8ca943ba34362ff17e8" id="r_ac99dc1ce058ad8ca943ba34362ff17e8"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUClothDesignEditorMode.html#ac99dc1ce058ad8ca943ba34362ff17e8">CanCycleWidgetMode</a> () const override</td></tr>
+<tr class="memdesc:ac99dc1ce058ad8ca943ba34362ff17e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether the widget mode can be cycled.  <br /></td></tr>
 <tr class="separator:ac99dc1ce058ad8ca943ba34362ff17e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:ac3b049a6d1f2c8287eb7ebd2f47c8879" id="r_ac3b049a6d1f2c8287eb7ebd2f47c8879"><td class="memItemLeft" align="right" valign="top"><a id="ac3b049a6d1f2c8287eb7ebd2f47c8879" name="ac3b049a6d1f2c8287eb7ebd2f47c8879"></a>
-static const FEditorModeID&#160;</td><td class="memItemRight" valign="bottom"><b>EM_ClothDesignEditorModeId</b> = TEXT(&quot;EM_ClothDesignEditorMode&quot;)</td></tr>
+<tr class="memitem:ac3b049a6d1f2c8287eb7ebd2f47c8879" id="r_ac3b049a6d1f2c8287eb7ebd2f47c8879"><td class="memItemLeft" align="right" valign="top">static const FEditorModeID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUClothDesignEditorMode.html#ac3b049a6d1f2c8287eb7ebd2f47c8879">EM_ClothDesignEditorModeId</a> = TEXT(&quot;EM_ClothDesignEditorMode&quot;)</td></tr>
 <tr class="separator:ac3b049a6d1f2c8287eb7ebd2f47c8879"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Custom editor mode for cloth design in the editor. </p>
+<p>This class defines a specialized editor mode for manipulating cloth assets. It extends UBaseLegacyWidgetEdMode to provide interactive widgets, selection handling, and toolkit support specific to the cloth design workflow. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a98990e408f6e8ea85a89042efe0cb5e6" name="a98990e408f6e8ea85a89042efe0cb5e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98990e408f6e8ea85a89042efe0cb5e6">&#9670;&#160;</a></span>UClothDesignEditorMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">UClothDesignEditorMode::UClothDesignEditorMode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Constructor </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ac99dc1ce058ad8ca943ba34362ff17e8" name="ac99dc1ce058ad8ca943ba34362ff17e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac99dc1ce058ad8ca943ba34362ff17e8">&#9670;&#160;</a></span>CanCycleWidgetMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool UClothDesignEditorMode::CanCycleWidgetMode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Determines whether the widget mode can be cycled. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if cycling between transform widget modes is allowed. </dd></dl>
+
+</div>
+</div>
+<a id="a1fb543bd258d490eb2ac8bf74528e9e3" name="a1fb543bd258d490eb2ac8bf74528e9e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fb543bd258d490eb2ac8bf74528e9e3">&#9670;&#160;</a></span>GetModeCommands()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TMap&lt; FName, TArray&lt; TSharedPtr&lt; FUICommandInfo &gt; &gt; &gt; UClothDesignEditorMode::GetModeCommands </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieves the UI commands associated with this editor mode. </p>
+<dl class="section return"><dt>Returns</dt><dd>Map of command categories to arrays of command info shared pointers. </dd></dl>
+
+</div>
+</div>
+<a id="ac09981b7ba8a9d1bd49431c2a8592eae" name="ac09981b7ba8a9d1bd49431c2a8592eae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac09981b7ba8a9d1bd49431c2a8592eae">&#9670;&#160;</a></span>ShouldDrawWidget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool UClothDesignEditorMode::ShouldDrawWidget </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Determines whether the transform widget should be drawn. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the widget should be visible. </dd></dl>
+
+</div>
+</div>
+<a id="a8a5742e8e661ad0aa80ce0d5e9a495ef" name="a8a5742e8e661ad0aa80ce0d5e9a495ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a5742e8e661ad0aa80ce0d5e9a495ef">&#9670;&#160;</a></span>ShowModeWidgets()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool UClothDesignEditorMode::ShowModeWidgets </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Determines whether mode-specific widgets should be shown. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if mode widgets should be displayed. </dd></dl>
+
+</div>
+</div>
+<a id="ac4dd0095e8fd2380ad5c2ca205991ddf" name="ac4dd0095e8fd2380ad5c2ca205991ddf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4dd0095e8fd2380ad5c2ca205991ddf">&#9670;&#160;</a></span>UsesTransformWidget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool UClothDesignEditorMode::UsesTransformWidget </td>
+          <td>(</td>
+          <td class="paramtype">UE::Widget::EWidgetMode&#160;</td>
+          <td class="paramname"><em>CheckMode</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Determines whether the transform widget should be enabled. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">CheckMode</td><td>The widget mode to check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if transform widgets should be active in this mode. </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="ac3b049a6d1f2c8287eb7ebd2f47c8879" name="ac3b049a6d1f2c8287eb7ebd2f47c8879"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3b049a6d1f2c8287eb7ebd2f47c8879">&#9670;&#160;</a></span>EM_ClothDesignEditorModeId</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const FEditorModeID UClothDesignEditorMode::EM_ClothDesignEditorModeId = TEXT(&quot;EM_ClothDesignEditorMode&quot;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Unique identifier for this editor mode. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>Plugins/ClothDesign/Source/ClothDesign/Public/<a class="el" href="ClothDesignEditorMode_8h_source.html">ClothDesignEditorMode.h</a></li>
 <li>Plugins/ClothDesign/Source/ClothDesign/Private/<b>ClothDesignEditorMode.cpp</b></li>

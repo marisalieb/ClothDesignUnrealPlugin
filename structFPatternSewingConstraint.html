@@ -92,33 +92,80 @@ $(document).ready(function(){initNavTree('structFPatternSewingConstraint.html','
 
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structFPatternSewingConstraint-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">FPatternSewingConstraint Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Represents a sewing constraint between two procedural mesh vertices in the cloth pattern editor.  
+ <a href="structFPatternSewingConstraint.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="PatternSewingConstraint_8h_source.html">PatternSewingConstraint.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:aa61762368f6246b315a6e495b7a235b8" id="r_aa61762368f6246b315a6e495b7a235b8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFPatternSewingConstraint.html#aa61762368f6246b315a6e495b7a235b8">FPatternSewingConstraint</a> ()</td></tr>
+<tr class="separator:aa61762368f6246b315a6e495b7a235b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a0ed2b9746b8d6b5cb264ba47d9e2518e" id="r_a0ed2b9746b8d6b5cb264ba47d9e2518e"><td class="memItemLeft" align="right" valign="top"><a id="a0ed2b9746b8d6b5cb264ba47d9e2518e" name="a0ed2b9746b8d6b5cb264ba47d9e2518e"></a>
 UProceduralMeshComponent *&#160;</td><td class="memItemRight" valign="bottom"><b>MeshA</b></td></tr>
+<tr class="memdesc:a0ed2b9746b8d6b5cb264ba47d9e2518e"><td class="mdescLeft">&#160;</td><td class="mdescRight">First mesh involved in the sewing constraint. This should be a procedural mesh component whose vertex is constrained to another mesh's vertex. <br /></td></tr>
 <tr class="separator:a0ed2b9746b8d6b5cb264ba47d9e2518e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80b0a9a810959c037a396cb0346c60cd" id="r_a80b0a9a810959c037a396cb0346c60cd"><td class="memItemLeft" align="right" valign="top"><a id="a80b0a9a810959c037a396cb0346c60cd" name="a80b0a9a810959c037a396cb0346c60cd"></a>
 int32&#160;</td><td class="memItemRight" valign="bottom"><b>VertexIndexA</b></td></tr>
+<tr class="memdesc:a80b0a9a810959c037a396cb0346c60cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of the vertex in MeshA that is constrained. <br /></td></tr>
 <tr class="separator:a80b0a9a810959c037a396cb0346c60cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6388956df2b6c23b02b75c9477501f9c" id="r_a6388956df2b6c23b02b75c9477501f9c"><td class="memItemLeft" align="right" valign="top"><a id="a6388956df2b6c23b02b75c9477501f9c" name="a6388956df2b6c23b02b75c9477501f9c"></a>
 UProceduralMeshComponent *&#160;</td><td class="memItemRight" valign="bottom"><b>MeshB</b></td></tr>
+<tr class="memdesc:a6388956df2b6c23b02b75c9477501f9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Second mesh involved in the sewing constraint. This is the mesh whose vertex is connected to MeshA's vertex. <br /></td></tr>
 <tr class="separator:a6388956df2b6c23b02b75c9477501f9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52feea599a474e96d5aa132be2c048a1" id="r_a52feea599a474e96d5aa132be2c048a1"><td class="memItemLeft" align="right" valign="top"><a id="a52feea599a474e96d5aa132be2c048a1" name="a52feea599a474e96d5aa132be2c048a1"></a>
 int32&#160;</td><td class="memItemRight" valign="bottom"><b>VertexIndexB</b></td></tr>
+<tr class="memdesc:a52feea599a474e96d5aa132be2c048a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of the vertex in MeshB that is constrained. <br /></td></tr>
 <tr class="separator:a52feea599a474e96d5aa132be2c048a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9862bcedec7b04ba9af7e1997c22554b" id="r_a9862bcedec7b04ba9af7e1997c22554b"><td class="memItemLeft" align="right" valign="top"><a id="a9862bcedec7b04ba9af7e1997c22554b" name="a9862bcedec7b04ba9af7e1997c22554b"></a>
 TArray&lt; FVector2D &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ScreenPointsA</b></td></tr>
+<tr class="memdesc:a9862bcedec7b04ba9af7e1997c22554b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Screen-space coordinates corresponding to the vertex in MeshA. Used primarily for visualization in the UI and for interactive sewing. <br /></td></tr>
 <tr class="separator:a9862bcedec7b04ba9af7e1997c22554b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b7d6829ef90c024e2fc4edee632dfc9" id="r_a7b7d6829ef90c024e2fc4edee632dfc9"><td class="memItemLeft" align="right" valign="top"><a id="a7b7d6829ef90c024e2fc4edee632dfc9" name="a7b7d6829ef90c024e2fc4edee632dfc9"></a>
 TArray&lt; FVector2D &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ScreenPointsB</b></td></tr>
+<tr class="memdesc:a7b7d6829ef90c024e2fc4edee632dfc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Screen-space coordinates corresponding to the vertex in MeshB. Used primarily for visualization in the UI and for interactive sewing. <br /></td></tr>
 <tr class="separator:a7b7d6829ef90c024e2fc4edee632dfc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Represents a sewing constraint between two procedural mesh vertices in the cloth pattern editor. </p>
+<p>This struct stores references to two mesh components and their respective vertex indices that are constrained together. Additionally, it keeps track of corresponding screen-space points for each vertex, useful for visualization and interactive sewing operations in the UI. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aa61762368f6246b315a6e495b7a235b8" name="aa61762368f6246b315a6e495b7a235b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa61762368f6246b315a6e495b7a235b8">&#9670;&#160;</a></span>FPatternSewingConstraint()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FPatternSewingConstraint::FPatternSewingConstraint </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Default constructor initializing pointers to null and indices to zero. </p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>Plugins/ClothDesign/Source/ClothDesign/Public/<a class="el" href="PatternSewingConstraint_8h_source.html">PatternSewingConstraint.h</a></li>
 </ul>

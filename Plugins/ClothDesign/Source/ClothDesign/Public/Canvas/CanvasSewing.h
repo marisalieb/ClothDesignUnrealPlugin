@@ -1,4 +1,6 @@
-#pragma once
+#ifndef FCanvasSewing_H
+#define FCanvasSewing_H
+
 #include "PatternSewingConstraint.h"
 #include "PatternMesh.h"
 
@@ -93,3 +95,5 @@ private:
 
 	friend class FCanvasSewingTestHelper;
 };
+
+#endif

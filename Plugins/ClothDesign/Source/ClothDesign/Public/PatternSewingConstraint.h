@@ -1,4 +1,6 @@
 #pragma once
+// Using #pragma once here because this header contains U macros
+// UnrealHeaderTool (UHT) requires that reflected types are NOT inside #ifndef/#define include guards
 
 #include "CoreMinimal.h"
 #include "ProceduralMeshComponent.h"

@@ -1,8 +1,8 @@
-
 #pragma once
+// Using #pragma once here because this header contains UCLASS macros
+// UnrealHeaderTool (UHT) requires that reflected types are NOT inside #ifndef/#define include guards
 
 #include "UnrealWidgetFwd.h"
-
 #include "Tools/LegacyEdModeWidgetHelpers.h"
 #include "ClothDesignEditorMode.generated.h"
 

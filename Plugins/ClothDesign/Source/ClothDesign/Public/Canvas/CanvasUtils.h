@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FCanvasUtils_H
+#define FCanvasUtils_H
 
 #include "CanvasState.h"
 #include "DynamicMesh/DynamicMesh3.h"
@@ -32,3 +33,6 @@ public:
 	static void TranslateDynamicMeshBy(UE::Geometry::FDynamicMesh3& Mesh, const FVector3d& Offset);
 
 };
+
+#endif
+

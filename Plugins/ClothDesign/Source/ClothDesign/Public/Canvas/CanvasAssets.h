@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FCanvasAssets_H
+#define FCanvasAssets_H
 
 #include "ClothShapeAsset.h"
 #include "CanvasState.h" 
@@ -42,3 +43,6 @@ private:
 	bool LoadShapeAssetData(FCanvasState& OutState) const;
 	
 };
+
+#endif
+

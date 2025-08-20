@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SClothDesignCanvas_H
+#define SClothDesignCanvas_H
 
 #include "Widgets/SCompoundWidget.h"
 #include "Math/InterpCurve.h"
@@ -158,3 +159,7 @@ private:
 	
 
 };
+
+#endif
+
+

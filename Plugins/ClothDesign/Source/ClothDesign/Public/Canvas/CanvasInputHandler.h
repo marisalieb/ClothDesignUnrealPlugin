@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FCanvasInputHandler_H
+#define FCanvasInputHandler_H
 
 #include "CoreMinimal.h"
 #include "Input/Reply.h"
@@ -26,3 +27,5 @@ private:
 		const FVector2D& A,
 		const FVector2D& B);
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FCanvasState_H
+#define FCanvasState_H
 
 # include "Canvas/CanvasSewing.h"
 
@@ -47,4 +48,6 @@ struct FCanvasState
 				// SelectedSeamIndex == Other.SelectedSeamIndex;
 	} 
 };
+
+#endif
 

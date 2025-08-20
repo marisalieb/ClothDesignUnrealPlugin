@@ -1,5 +1,5 @@
-
-#pragma once
+#ifndef FClothDesignCommands_H
+#define FClothDesignCommands_H
 
 #include "Framework/Commands/Commands.h"
 
@@ -19,3 +19,4 @@ protected:
 
 };
 
+#endif

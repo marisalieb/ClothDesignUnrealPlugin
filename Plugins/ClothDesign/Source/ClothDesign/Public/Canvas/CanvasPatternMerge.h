@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef FCanvasPatternMerge_H
+#define FCanvasPatternMerge_H
 
 #include "CoreMinimal.h"
 #include "Containers/Array.h"
@@ -83,3 +84,5 @@ private:
     friend class FCanvasPatternMergeTests;
 
 };
+
+#endif

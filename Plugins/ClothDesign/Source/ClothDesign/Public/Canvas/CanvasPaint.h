@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FCanvasPaint_H
+#define FCanvasPaint_H
 
 #include "CoreMinimal.h"
 #include "Widgets/SWidget.h"
@@ -79,3 +80,5 @@ private:
 	static const FLinearColor SewingPointColour;
 	
 };
+
+#endif

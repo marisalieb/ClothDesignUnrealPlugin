@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FClothDesignStyle_H
+#define FClothDesignStyle_H
 
 #include "CoreMinimal.h"
 #include "Styling/ISlateStyle.h"
@@ -14,3 +15,5 @@ public:
 private:
 	static TSharedPtr<FSlateStyleSet> StyleInstance;
 };
+
+#endif

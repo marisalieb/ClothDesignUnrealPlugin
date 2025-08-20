@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FClothDesignToolkit_H
+#define FClothDesignToolkit_H
 
 #include "Toolkits/BaseToolkit.h"
 #include "ClothDesignEditorMode.h"
@@ -78,3 +79,4 @@ private:
 };
 
 
+#endif

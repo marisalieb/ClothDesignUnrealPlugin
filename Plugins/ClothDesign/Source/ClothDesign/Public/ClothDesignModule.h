@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FClothDesignModule_H
+#define FClothDesignModule_H
 
 #include "Modules/ModuleManager.h"
 #include "ClothDesignCanvas.h"
@@ -54,3 +55,5 @@ private:
 	friend class FClothDesignModuleButtonTest;
 
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FCanvasMesh_H
+#define FCanvasMesh_H
 
 #include "PatternMesh.h"
 #include "ConstrainedDelaunay2.h"
@@ -84,4 +85,4 @@ private:
 
 
 
-
+#endif

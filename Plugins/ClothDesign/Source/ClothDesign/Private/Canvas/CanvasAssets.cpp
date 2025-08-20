@@ -58,25 +58,18 @@ bool FCanvasAssets::SaveShapeAsset(
 	TargetAsset->ClothCurvePoints.Empty();
 
 
-
 	
-	// Copy all completed shapes into asset
-	// for (const auto& ShapeCurve : CompletedShapes)
-	// {
 	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
 	{
-		const auto& ShapeCurve = CompletedShapes[ShapeIdx];
-		const auto& ShapeFlags = CompletedBezierFlags[ShapeIdx];
+		const FInterpCurve<FVector2D>& ShapeCurve = CompletedShapes[ShapeIdx];
+		const TArray<bool>& ShapeFlags = CompletedBezierFlags[ShapeIdx];
 		
 		FShapeData SavedShape;
 		
-
-		// int32 i = 0;
-		// for (const auto& Point : ShapeCurve.Points)
-		// {
+		
 		for (int32 i = 0; i < ShapeCurve.Points.Num(); ++i)
 		{
-			const auto& Point = ShapeCurve.Points[i];
+			const FInterpCurvePoint<UE::Math::TVector2<double>>& Point = ShapeCurve.Points[i];
 
 			FCurvePointData NewPoint;
 			NewPoint.InputKey = Point.InVal;
@@ -87,7 +80,7 @@ bool FCanvasAssets::SaveShapeAsset(
 									  ? ShapeFlags[i] 
 									  : true;
 			SavedShape.CompletedClothShape.Add(NewPoint);
-			// ++i;
+			
 		}
 
 		TargetAsset->ClothShapes.Add(SavedShape);

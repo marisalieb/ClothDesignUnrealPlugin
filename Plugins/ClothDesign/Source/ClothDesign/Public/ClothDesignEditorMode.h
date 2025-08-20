@@ -1,7 +1,6 @@
 
 #pragma once
 
-// #include "Tools/UEdMode.h"
 #include "UnrealWidgetFwd.h"
 
 #include "Tools/LegacyEdModeWidgetHelpers.h"
@@ -18,13 +17,12 @@ public:
 	const static FEditorModeID EM_ClothDesignEditorModeId;
  	
 	UClothDesignEditorMode();
-	// virtual ~UClothDesignEditorMode() override;
 
-	/** UEdMode interface */
+	// UEdMode interface
 	virtual void Enter() override;
 	virtual void ActorSelectionChangeNotify() override;
 	virtual void CreateToolkit() override;
-	virtual TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> GetModeCommands() const override; // took out override
+	virtual TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> GetModeCommands() const override;
 
  	// this enables the transform widgets at the top of the editor mode which would otherwise be disabled
  	virtual bool UsesTransformWidget(UE::Widget::EWidgetMode CheckMode) const override { return true; }

@@ -10,7 +10,6 @@ class FSlateWindowElementList;
 
 struct FCanvasPaint
 {
-	SClothDesignCanvas* Canvas;
 
 	FCanvasPaint() = default;
 	FCanvasPaint(SClothDesignCanvas* InCanvas) : Canvas(InCanvas) {}
@@ -56,6 +55,9 @@ struct FCanvasPaint
 		int32 Layer) const;
 
 private:
+	SClothDesignCanvas* Canvas;
+
+	
 	const float WorldGridSpacing = 100.f;
 	const int32 NumSubdivisions = 10;
 	const float SubGridSpacing = WorldGridSpacing / NumSubdivisions;

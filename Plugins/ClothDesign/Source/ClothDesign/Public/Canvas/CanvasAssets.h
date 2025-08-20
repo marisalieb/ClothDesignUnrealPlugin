@@ -30,9 +30,7 @@ struct FCanvasAssets
 
 };
 
-/** 
- * Holds the currently selected shape asset and loads/saves its canvas state. 
- */
+// holds the currently selected shape asset and loads/saves its canvas state
 struct FCanvasAssetManager
 {
 public:

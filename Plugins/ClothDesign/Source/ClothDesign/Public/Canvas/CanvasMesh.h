@@ -5,8 +5,6 @@
 #include "MeshOpPreviewHelpers.h" 
 
 
-class SClothDesignCanvas;
-
 struct FCanvasMesh
 {
 	
@@ -18,8 +16,6 @@ public:
 
 	
 private:
-	SClothDesignCanvas* Canvas;
-
 	static bool IsPointInPolygon(
 		const FVector2f& Test, 
 		const TArray<FVector2f>& Poly);

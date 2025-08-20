@@ -10,7 +10,10 @@
 #include "Canvas/CanvasAssets.h"
 #include "Canvas/CanvasSewing.h"
 
-
+/*
+ * Thesis reference:
+ * See Chapter 4.2 and 4.4 for detailed explanations.
+ */
 
 class SClothDesignCanvas : public SCompoundWidget
 {

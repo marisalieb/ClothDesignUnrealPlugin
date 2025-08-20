@@ -3,6 +3,11 @@
 
 # include "Canvas/CanvasSewing.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.4 and 4.9.1 for detailed explanations.
+ */
+
 // Canvas state struct
 struct FCanvasState
 {
@@ -17,9 +22,9 @@ struct FCanvasState
 	TArray<TArray<bool>> CompletedBezierFlags; // for completed shapes
 
 	// --- Sewing data ----
-	TArray<FSeamDefinition> SeamDefinitions;                // full seam definitions (copy)
-	TMap<int32, TSet<int32>> SeamPreviewPoints;                   // transient preview points shown while sewing
-	int32 SeamClickState = 0;                              // store enum as int for simple comparison
+	TArray<FSeamDefinition> SeamDefinitions; // full seam definitions (copy)
+	TMap<int32, TSet<int32>> SeamPreviewPoints; // transient preview points shown while sewing
+	int32 SeamClickState = 0; // store enum as int for simple comparison
 	FIntPoint AStartTarget = FIntPoint(INDEX_NONE, INDEX_NONE); // ShapeIndex, PointIndex
 	FIntPoint AEndTarget   = FIntPoint(INDEX_NONE, INDEX_NONE);
 	FIntPoint BStartTarget = FIntPoint(INDEX_NONE, INDEX_NONE);

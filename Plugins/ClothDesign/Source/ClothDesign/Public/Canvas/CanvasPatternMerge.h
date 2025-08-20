@@ -6,7 +6,12 @@
 #include "Containers/Array.h"
 #include "Templates/SharedPointer.h"
 #include "DynamicMesh/DynamicMesh3.h"
-#include "UDynamicMesh.h"                                 // UDynamicMesh
+#include "UDynamicMesh.h"
+
+/*
+ * Thesis reference:
+ * See Chapter 4.8.1 for detailed explanations.
+ */
 
 class APatternMesh;
 struct FPatternSewingConstraint;

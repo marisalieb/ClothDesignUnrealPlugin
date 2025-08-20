@@ -4,6 +4,12 @@
 #include "CoreMinimal.h"
 #include "Styling/ISlateStyle.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.2 for details.
+ */
+
+
 class FClothDesignStyle
 {
 public:

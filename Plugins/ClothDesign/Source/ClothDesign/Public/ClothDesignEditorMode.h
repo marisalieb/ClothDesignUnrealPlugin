@@ -6,6 +6,11 @@
 #include "Tools/LegacyEdModeWidgetHelpers.h"
 #include "ClothDesignEditorMode.generated.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.2 for details.
+ */
+
  UCLASS()
 
 class CLOTHDESIGN_API UClothDesignEditorMode : public UBaseLegacyWidgetEdMode

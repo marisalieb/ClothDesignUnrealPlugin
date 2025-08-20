@@ -5,6 +5,11 @@
 #include "ConstrainedDelaunay2.h"
 #include "MeshOpPreviewHelpers.h" 
 
+/*
+ * Thesis reference:
+ * See Chapter 4.6 for detailed explanations.
+ */
+
 
 struct FCanvasMesh
 {

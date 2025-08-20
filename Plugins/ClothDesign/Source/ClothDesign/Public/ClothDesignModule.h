@@ -4,6 +4,10 @@
 #include "Modules/ModuleManager.h"
 #include "ClothDesignCanvas.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.2 and 4.3 for detailed explanations.
+ */
 
 class FClothDesignModule : public IModuleInterface
 {

@@ -4,6 +4,11 @@
 #include "CanvasState.h"
 #include "DynamicMesh/DynamicMesh3.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.9.2 for detailed explanations.
+ */
+
 struct FCanvasUtils
 {
 	

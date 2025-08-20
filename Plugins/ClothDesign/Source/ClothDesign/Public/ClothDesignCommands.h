@@ -3,6 +3,10 @@
 
 #include "Framework/Commands/Commands.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.2 for details.
+ */
 
 class FClothDesignCommands : public TCommands<FClothDesignCommands>
 {

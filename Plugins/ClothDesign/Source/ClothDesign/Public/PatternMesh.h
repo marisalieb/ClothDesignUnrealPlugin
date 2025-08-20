@@ -13,7 +13,7 @@
 
 /*
  * Thesis reference:
- * See Chapter 4.6 for detailed explanation.
+ * See Chapter 4.6 for detailed explanations.
  */
 
 UCLASS()

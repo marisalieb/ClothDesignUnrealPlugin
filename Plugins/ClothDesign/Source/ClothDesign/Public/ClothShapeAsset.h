@@ -4,6 +4,12 @@
 
 #include "ClothShapeAsset.generated.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.9.1 for detailed explanations.
+ */
+
+
 USTRUCT(BlueprintType)
 struct FCurvePointData
 {

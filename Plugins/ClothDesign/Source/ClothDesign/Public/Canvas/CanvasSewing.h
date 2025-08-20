@@ -4,6 +4,11 @@
 #include "PatternSewingConstraint.h"
 #include "PatternMesh.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.7 for detailed explanations.
+ */
+
 
 class SClothDesignCanvas;
 

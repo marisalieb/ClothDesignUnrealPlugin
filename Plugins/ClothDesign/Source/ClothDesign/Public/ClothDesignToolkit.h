@@ -4,8 +4,12 @@
 #include "Toolkits/BaseToolkit.h"
 #include "ClothDesignEditorMode.h"
 #include "GameFramework/Actor.h"
-#include "ClothSimSettings.h" 
+#include "ClothSimSettings.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.2 and 4.3 for detailed explanations.
+ */
 
 class FClothDesignToolkit : public FModeToolkit
 {

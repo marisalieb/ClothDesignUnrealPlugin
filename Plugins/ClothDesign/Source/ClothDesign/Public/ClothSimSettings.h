@@ -4,6 +4,10 @@
 
 #include "CoreMinimal.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.8.2 for detailed explanations.
+ */
 
 UENUM()
 enum class EClothPreset : uint8

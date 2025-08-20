@@ -4,6 +4,10 @@
 #include "CoreMinimal.h"
 #include "Widgets/SWidget.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.5 for detailed explanations.
+ */
 
 class SClothDesignCanvas;
 struct FGeometry;

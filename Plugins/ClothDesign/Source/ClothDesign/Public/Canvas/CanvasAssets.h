@@ -4,6 +4,12 @@
 #include "ClothShapeAsset.h"
 #include "CanvasState.h" 
 
+/*
+ * Thesis reference:
+ * See Chapter 4.9.1 for detailed explanations.
+ */
+
+
 struct FLoadedShapeData
 {
 	TArray<FInterpCurve<FVector2D>> CompletedShapes;

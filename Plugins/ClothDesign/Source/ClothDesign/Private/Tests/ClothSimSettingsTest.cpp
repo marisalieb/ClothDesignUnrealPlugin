@@ -11,11 +11,11 @@ bool FClothSimSettings_DefaultsTest::RunTest(const FString& Parameters)
 {
     FClothSimSettings Settings;
 
-    // Should contain all 5 presets
+    // should contain all 5 presets
     TestEqual(TEXT("PresetConfigs should contain 5 entries"), Settings.PresetConfigs.Num(), 5);
     TestEqual(TEXT("PresetOptions should contain 5 entries"), Settings.PresetOptions.Num(), 5);
 
-    // Spot-check a known preset
+    // check a known preset
     const FClothPhysicalConfig* SilkConfig = Settings.PresetConfigs.Find(EClothPreset::Silk);
     TestNotNull(TEXT("Silk preset should exist"), SilkConfig);
     if (SilkConfig)
@@ -34,7 +34,7 @@ bool FClothSimSettings_PresetOptionsNamesTest::RunTest(const FString& Parameters
 {
     FClothSimSettings Settings;
 
-    // The DisplayName should correspond to the enum value
+    // display name should correspond to the enum value
     TestEqual(TEXT("First option should be 'Custom'"), Settings.PresetOptions[0]->DisplayName, FString("Custom"));
     TestEqual(TEXT("Second option should be 'Denim'"), Settings.PresetOptions[1]->DisplayName, FString("Denim"));
 
@@ -50,7 +50,7 @@ bool FClothSimSettings_SetClothCollisionFlagsTest::RunTest(const FString& Parame
     USkeletalMeshComponent* SkelComp = NewObject<USkeletalMeshComponent>();
     TestNotNull(TEXT("SkeletalMeshComponent should be created"), SkelComp);
 
-    // Initially false
+    // initially false
     TestFalse(TEXT("bCollideWithEnvironment initially false"), SkelComp->bCollideWithEnvironment);
 
     FClothSimSettings::SetClothCollisionFlags(SkelComp);
@@ -72,7 +72,7 @@ bool FClothSimSettings_ApplyPreset_CustomTest::RunTest(const FString& Parameters
     USkeletalMeshComponent* SkelComp = NewObject<USkeletalMeshComponent>();
     TestNotNull(TEXT("SkeletalMeshComponent should be created"), SkelComp);
 
-    // Should early-out without modifying anything
+    // should early out without modifying anything
     Settings.ApplyPresetToCloth(SkelComp, {}, EClothPreset::Custom);
 
     TestTrue(TEXT("Still valid after ApplyPresetToCloth with Custom"), IsValid(SkelComp));

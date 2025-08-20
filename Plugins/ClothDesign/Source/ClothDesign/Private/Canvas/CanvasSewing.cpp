@@ -343,19 +343,29 @@ void FCanvasSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* Mesh
     }
 
 	FVector AverageOffset = TotalOffset / static_cast<float>(WorldA.Num());
-    FVector HalfTrans = AverageOffset * 0.5f;
-
-    // Symmetric translation: move A back half, B forward half
-    {
-        FTransform TA = MeshActorA->GetActorTransform();
-        TA.AddToTranslation(-HalfTrans);
-        MeshActorA->SetActorTransform(TA, false, nullptr, ETeleportType::TeleportPhysics);
-    }
-    {
-        FTransform TB2 = MeshActorB->GetActorTransform();
-        TB2.AddToTranslation(HalfTrans);
-        MeshActorB->SetActorTransform(TB2, false, nullptr, ETeleportType::TeleportPhysics);
-    }
+    // FVector HalfTrans = AverageOffset * 0.5f;
+    //
+    // // Symmetric translation: move A back half, B forward half
+    // {
+    //     FTransform TA = MeshActorA->GetActorTransform();
+    //     TA.AddToTranslation(-HalfTrans);
+    //     MeshActorA->SetActorTransform(TA, false, nullptr, ETeleportType::TeleportPhysics);
+    // }
+    // {
+    //     FTransform TB2 = MeshActorB->GetActorTransform();
+    //     TB2.AddToTranslation(HalfTrans);
+    //     MeshActorB->SetActorTransform(TB2, false, nullptr, ETeleportType::TeleportPhysics);
+    // }
+	
+	// instead of symmetric translation
+	// apply full translation to B and leave A unchanged
+	// not a perfect solution to the alignment issue but this way meshes can
+	// be aligned as long as they are clicked/sewing clicks in order
+	{
+    	FTransform TB2 = MeshActorB->GetActorTransform();
+    	TB2.AddToTranslation(AverageOffset);
+    	MeshActorB->SetActorTransform(TB2, false, nullptr, ETeleportType::TeleportPhysics);
+	}
 
     UE_LOG(LogTemp, Log, TEXT("AlignSeamMeshes: rotated B into alignment then applied symmetric translation (AverageOffset=%s)"), *AverageOffset.ToString());
 }

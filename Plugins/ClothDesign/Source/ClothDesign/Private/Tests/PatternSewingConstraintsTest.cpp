@@ -12,16 +12,12 @@ bool FPatternSewingConstraint_DefaultsTest::RunTest(const FString& Parameters)
 {
 	FPatternSewingConstraint Constraint;
 
-	// By default, UObject* properties should be nullptr
 	TestNull(TEXT("MeshA should be null by default"), Constraint.MeshA);
 	TestNull(TEXT("MeshB should be null by default"), Constraint.MeshB);
 	
-	// Integers default to zero
 	TestEqual(TEXT("VertexIndexA should default to 0"), Constraint.VertexIndexA, 0);
 	TestEqual(TEXT("VertexIndexB should default to 0"), Constraint.VertexIndexB, 0);
 	
-	//
-	// Arrays should start empty
 	TestTrue(TEXT("ScreenPointsA should be empty"), Constraint.ScreenPointsA.Num() == 0);
 	TestTrue(TEXT("ScreenPointsB should be empty"), Constraint.ScreenPointsB.Num() == 0);
 
@@ -34,7 +30,6 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPatternSewingConstraint_AssignmentTest,
 
 bool FPatternSewingConstraint_AssignmentTest::RunTest(const FString& Parameters)
 {
-	// Create a constraint and fill it
 	FPatternSewingConstraint Constraint;
 
 	Constraint.MeshA = NewObject<UProceduralMeshComponent>();
@@ -46,7 +41,6 @@ bool FPatternSewingConstraint_AssignmentTest::RunTest(const FString& Parameters)
 	Constraint.ScreenPointsA = { FVector2D(10, 20), FVector2D(30, 40) };
 	Constraint.ScreenPointsB = { FVector2D(50, 60) };
 
-	// Validate
 	TestNotNull(TEXT("MeshA should be set"), Constraint.MeshA);
 	TestEqual(TEXT("VertexIndexA should equal 5"), Constraint.VertexIndexA, 5);
 

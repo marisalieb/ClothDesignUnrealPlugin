@@ -17,18 +17,15 @@ bool FCanvasState_EqualityTest::RunTest(const FString& Parameters)
 	StateA.PanOffset = FVector2D(10.f, 20.f);
 	StateA.ZoomFactor = 1.0f;
 
-	FCanvasState StateB = StateA; // Copy
+	FCanvasState StateB = StateA;
 
-	// Should be equal after direct copy
+	// should be equal after direct copy
 	TestTrue(TEXT("Copied states should be equal"), StateA == StateB);
 
-	// Change a field slightly beyond tolerance
-	StateB.ZoomFactor = 1.001f; // Greater than FMath::IsNearlyEqual tolerance
+	// change field slightly beyond tolerance
+	StateB.ZoomFactor = 1.001f;
 	TestFalse(TEXT("States should differ when ZoomFactor differs beyond tolerance"), StateA == StateB);
-
-	// // Restore and test with floating-point tolerance
-	// StateB.ZoomFactor = 1.0f + 1.e-6f;
-	// TestTrue(TEXT("States should be equal when ZoomFactor differs within tolerance"), StateA == StateB);
+	
 
 	return true;
 }

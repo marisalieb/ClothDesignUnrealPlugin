@@ -1,4 +1,3 @@
-// CanvasInputHandlerTests.cpp
 #include "Misc/AutomationTest.h"
 #include "Canvas/CanvasInputHandler.h"
 #include "ClothDesignCanvas.h"
@@ -16,14 +15,14 @@ bool FInputHandler_PanSetsFlag::RunTest(const FString& Parameters)
     PressedButtons.Add(EKeys::LeftMouseButton);
 
     FPointerEvent FakeMouse(
-        0,                                  // UserIndex
-        0,                                  // PointerIndex
-        FVector2D(50, 60),                  // ScreenSpacePosition
-        FVector2D(40, 50),                  // LastScreenSpacePosition
-        PressedButtons,                     // PressedButtons
-        EKeys::LeftMouseButton,             // EffectingButton
-        0.0f,                               // WheelDelta
-        FModifierKeysState()                // ModifierKeys
+        0, // user index
+        0, // pointer index
+        FVector2D(50, 60),  // screen pos
+        FVector2D(40, 50), // last screen pos
+        PressedButtons,
+        EKeys::LeftMouseButton,
+        0.0f, // wheel delta
+        FModifierKeysState()
     );
     
     Handler.HandlePan(FakeMouse);
@@ -42,23 +41,20 @@ bool FInputHandler_DrawAddsPoint::RunTest(const FString& Parameters)
 {
     SClothDesignCanvas TestCanvas;
     FCanvasInputHandler Handler(&TestCanvas);
-
-    // Simulate click at (10,20)
-    //FGeometry Geo;
-    // FPointerEvent Mouse(0, FVector2D(10, 20), FVector2D(0,0), FVector2D(0,0), false);
+    
     TSet<FKey> PressedButtons;
     PressedButtons.Add(EKeys::LeftMouseButton);
 
     FGeometry Geo = FGeometry::MakeRoot(
-        FVector2D(100, 100),   // Size of widget
-        FSlateLayoutTransform() // No offset/scale
+        FVector2D(100, 100), // size of widget
+        FSlateLayoutTransform() 
         );
     
     FPointerEvent Mouse(
         0,
         0,
-        FVector2D(10, 20), // Screen pos
-        FVector2D(10, 20), // Last screen pos
+        FVector2D(10, 20), // screen pos
+        FVector2D(10, 20), // last screen pos
         PressedButtons,
         EKeys::LeftMouseButton,
         0.0f,
@@ -67,9 +63,10 @@ bool FInputHandler_DrawAddsPoint::RunTest(const FString& Parameters)
     
     Handler.HandleDraw(Geo, Mouse);
 
-    // Convert manually to expected point
+    // convert to expected point
     FVector2D Local = Geo.AbsoluteToLocal(Mouse.GetScreenSpacePosition());
     FVector2D Expected = Local / TestCanvas.ZoomFactor;
+
     
     TestEqual("Curve should have 1 point", TestCanvas.CurvePoints.Points.Num(), 1);
     TestEqual("Point position stored", TestCanvas.CurvePoints.Points[0].OutVal, Expected);
@@ -87,7 +84,7 @@ bool FInputHandler_SewNoPoint::RunTest(const FString& Parameters)
     TestCanvas.ZoomFactor = 1.f;
     FCanvasInputHandler Handler(&TestCanvas);
 
-    // Click far from any point
+    // click far from any point
     FReply Reply = Handler.HandleSew(FVector2D(999,999));
 
     TestEqual("SeamClickState should remain None", (int32)TestCanvas.GetSewingManager().SeamClickState, (int32)ESeamClickState::None);
@@ -108,7 +105,7 @@ bool FInputHandler_SelectPoint::RunTest(const FString& Parameters)
 
     FCanvasInputHandler Handler(&TestCanvas);
 
-    // Click near the point
+    // click near the point
     Handler.HandleSelect(FVector2D(5,5));
 
     TestTrue("Canvas should mark a point selected", TestCanvas.bIsShapeSelected);

@@ -12,9 +12,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasMeshTests, "CanvasMesh.UnitTests", EAuto
 
 bool FCanvasMeshTests::RunTest(const FString& Parameters)
 {
-    // ---------------------------
     // 1) IsPointInPolygon
-    // ---------------------------
     {
         TArray<FVector2f> Poly = { {0,0}, {0,5}, {5,5}, {5,0} };
         FVector2f Inside{2,2};
@@ -24,9 +22,7 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
         TestFalse("Outside point", FCanvasMesh::IsPointInPolygon(Outside, Poly));
     }
 
-    // ---------------------------
     // 2) SampleShapeCurve
-    // ---------------------------
     {
         FInterpCurve<FVector2D> Curve;
         Curve.AddPoint(0, {0,0});
@@ -42,9 +38,7 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
         TestTrue("Curve should produce vertices", PolyVerts.Num() > 0);
     }
 
-    // ---------------------------
     // 3) AddGridInteriorPoints
-    // ---------------------------
     {
         TArray<FVector2f> PolyVerts = { {0,0}, {0,4}, {4,4}, {4,0} };
         TArray<int32> VertexIDs;
@@ -55,9 +49,7 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
         TestTrue("AddGridInteriorPoints adds vertices", VertexIDs.Num() > 0);
     }
 
-    // ---------------------------
     // 4) BuildBoundaryEdges
-    // ---------------------------
     {
         TArray<UE::Geometry::FIndex2i> BoundaryEdges;
         FCanvasMesh::BuildBoundaryEdges(4, BoundaryEdges);
@@ -65,9 +57,7 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
     }
     
 
-    // ---------------------------
     // 6) ConvertCDTToDynamicMesh
-    // ---------------------------
     {
         TArray<FVector2f> PolyVerts = { {0,0}, {0,4}, {4,4}, {4,0} };
         TArray<UE::Geometry::FIndex2i> BoundaryEdges;
@@ -85,9 +75,7 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
         TestTrue("PolyIndexToVID mapping", PolyIndexToVID.Num() > 0);
     }
 
-    // ---------------------------
     // 7) ExtractVerticesAndIndices
-    // ---------------------------
     {
         FDynamicMesh3 Mesh;
         // make a simple triangle
@@ -104,9 +92,7 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
         TestEqual("Indices count", Indices.Num(), 3);
     }
 
-    // ---------------------------
     // 8) TriangulateAndBuildMesh
-    // ---------------------------
     {
         FInterpCurve<FVector2D> Curve;
         Curve.AddPoint(0, {0,0});
@@ -118,7 +104,8 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
         TArray<int32> LastBuiltSeamVertexIDs;
         TArray<TWeakObjectPtr<APatternMesh>> SpawnedActors;
 
-        FCanvasMesh::TriangulateAndBuildMesh(Curve, true, 0, 2, LastSeamVertexIDs, LastMesh, LastBuiltSeamVertexIDs, SpawnedActors);
+        FCanvasMesh::TriangulateAndBuildMesh(Curve, true, 0, 2,
+            LastSeamVertexIDs, LastMesh, LastBuiltSeamVertexIDs, SpawnedActors);
 
         TestTrue("TriangulateAndBuildMesh produces vertices", LastMesh.VertexCount() > 0);
     }
@@ -127,46 +114,40 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
 }
 
 
-/// FIX TEST WITH CANVAS CLASS INPUT!!!
 
-// IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasMeshBuildAllMeshesTest, "CanvasMesh.BuildAllMeshes",
-//                                  EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-//
-// bool FCanvasMeshBuildAllMeshesTest::RunTest(const FString& Parameters)
-// {
-//     // 1. Prepare test input: a simple square shape as a curve
-//     FInterpCurve<FVector2D> CurvePoints;
-//     CurvePoints.AddPoint(0.0f, FVector2D(0, 0));
-//     CurvePoints.AddPoint(1.0f, FVector2D(100, 0));
-//     CurvePoints.AddPoint(2.0f, FVector2D(100, 100));
-//     CurvePoints.AddPoint(3.0f, FVector2D(0, 100));
-//     CurvePoints.AddPoint(4.0f, FVector2D(0, 0)); // Close the shape
-//
-//     TArray<FInterpCurve<FVector2D>> CompletedShapes;
-//     CompletedShapes.Add(CurvePoints); // Only one shape for this test
-//
-//     // 2. Prepare output arrays
-//     TArray<FDynamicMesh3> OutMeshes;
-//     TArray<TWeakObjectPtr<APatternMesh>> OutSpawnedActors;
-//
-//     // 3. Call the function under test
-//     FCanvasMesh::TriangulateAndBuildAllMeshes(CompletedShapes, CurvePoints, OutMeshes, OutSpawnedActors);
-//
-//     // 4. Validate results
-//     TestTrue(TEXT("At least one mesh should be created"), OutMeshes.Num() > 0);
-//
-//     if (OutMeshes.Num() > 0)
-//     {
-//         // Each mesh should have vertices
-//         for (const FDynamicMesh3& Mesh : OutMeshes)
-//         {
-//             TestTrue(TEXT("Each mesh should have vertices"), Mesh.VertexCount() > 0);
-//             TestTrue(TEXT("Each mesh should have triangles"), Mesh.TriangleCount() > 0);
-//         }
-//     }
-//
-//     // 5. Check spawned actors array
-//     TestTrue(TEXT("Spawned actors array should match number of meshes"), OutSpawnedActors.Num() == OutMeshes.Num());
-//
-//     return true;
-// }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasMeshBuildAllMeshesTest, "CanvasMesh.BuildAllMeshes",
+                                 EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FCanvasMeshBuildAllMeshesTest::RunTest(const FString& Parameters)
+{
+    FInterpCurve<FVector2D> CurvePoints;
+    CurvePoints.AddPoint(0.0f, FVector2D(0, 0));
+    CurvePoints.AddPoint(1.0f, FVector2D(100, 0));
+    CurvePoints.AddPoint(2.0f, FVector2D(100, 100));
+    CurvePoints.AddPoint(3.0f, FVector2D(0, 100));
+    // CurvePoints.AddPoint(4.0f, FVector2D(0, 0));
+
+    TArray<FInterpCurve<FVector2D>> CompletedShapes;
+    CompletedShapes.Add(CurvePoints);
+
+    TArray<FDynamicMesh3> OutMeshes;
+    TArray<TWeakObjectPtr<APatternMesh>> OutSpawnedActors;
+
+    FCanvasMesh::TriangulateAndBuildAllMeshes(CompletedShapes, OutMeshes, OutSpawnedActors);
+
+    TestTrue(TEXT("At least one mesh should be created"), OutMeshes.Num() > 0);
+
+    if (OutMeshes.Num() > 0)
+    {
+        for (const FDynamicMesh3& Mesh : OutMeshes)
+        {
+            TestTrue(TEXT("Each mesh should have vertices"), Mesh.VertexCount() > 0);
+            TestTrue(TEXT("Each mesh should have triangles"), Mesh.TriangleCount() > 0);
+        }
+    }
+
+    TestTrue(TEXT("Spawned actors array should match number of meshes"),
+        OutSpawnedActors.Num() == OutMeshes.Num());
+
+    return true;
+}

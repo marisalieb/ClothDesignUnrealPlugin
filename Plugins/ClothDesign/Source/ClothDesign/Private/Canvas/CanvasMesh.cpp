@@ -319,7 +319,7 @@ void FCanvasMesh::CreateProceduralMesh(
     MeshActor->MeshComponent->CreateMeshSection_LinearColor(
         0, Vertices, Indices,
         Normals, UV0, VertexColors, Tangents,
-        /*bCreateCollision=*/true
+        true
     );
 }
 

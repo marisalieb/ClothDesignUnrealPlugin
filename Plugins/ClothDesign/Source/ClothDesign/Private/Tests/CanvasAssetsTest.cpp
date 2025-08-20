@@ -1,4 +1,3 @@
-// CanvasAssetsTests.cpp
 
 #include "Misc/AutomationTest.h"
 #include "Canvas/CanvasAssets.h"
@@ -10,7 +9,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveShapeAsset_BadPackage,
 
 bool FSaveShapeAsset_BadPackage::RunTest(const FString& Parameters)
 {
-    // Passing nonsense path should fail gracefully
+    // Passing nonsense path should fail
     TArray<FInterpCurve<FVector2D>> Shapes;
     TArray<TArray<bool>> Flags;
     FInterpCurve<FVector2D> Curve;
@@ -32,7 +31,6 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveAndLoad_RoundTrip,
 
 bool FSaveAndLoad_RoundTrip::RunTest(const FString& Parameters)
 {
-    // Minimal data
     FInterpCurve<FVector2D> Curve;
     Curve.AddPoint(0.f, FVector2D(10, 20));
     Curve.AddPoint(1.f, FVector2D(30, 40));
@@ -63,11 +61,9 @@ bool FSaveAndLoad_RoundTrip::RunTest(const FString& Parameters)
     TestTrue("Asset should save successfully", bSaved);
 
     // Load it back
-    // UClothShapeAsset* Loaded = FindObject<UClothShapeAsset>(
-    //     GetTransientPackage(), TEXT("TestingAsset"));
     UClothShapeAsset* Loaded = LoadObject<UClothShapeAsset>(
     nullptr, TEXT("/Game/ClothDesign/UnitTest/TestingAsset.TestingAsset"));
-
+    
     
     TestNotNull("Asset should exist after save", Loaded);
 
@@ -107,7 +103,8 @@ bool FAssetManager_Selection::RunTest(const FString& Parameters)
     TestEqual("Path should be empty when nothing selected", 
         Manager.GetSelectedShapeAssetPath(), FString());
 
-    // Fake asset data that isn't UClothShapeAsset should fail
+
+    // Fake asset data that isnt UClothShapeAsset should fail
     FAssetData FakeData;
     bool bResult = Manager.OnShapeAssetSelected(FakeData, Test);
     TestFalse("Non cloth asset should fail", bResult);

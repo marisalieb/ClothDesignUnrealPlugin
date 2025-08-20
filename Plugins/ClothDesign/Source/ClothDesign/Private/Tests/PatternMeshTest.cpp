@@ -9,7 +9,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPatternMesh_DefaultsTest,
 
 bool FPatternMesh_DefaultsTest::RunTest(const FString& Parameters)
 {
-	// Get the current world
+	// get current world
 	UWorld* World = GEngine->GetCurrentPlayWorld();
 	if (!World)
 	{
@@ -17,11 +17,9 @@ bool FPatternMesh_DefaultsTest::RunTest(const FString& Parameters)
 		return true;
 	}
 
-	// Spawn the actor
 	APatternMesh* PatternMesh = World->SpawnActor<APatternMesh>();
 	TestNotNull(TEXT("PatternMesh should be spawned"), PatternMesh);
 
-	// Test the MeshComponent
 	TestNotNull(TEXT("MeshComponent should exist"), PatternMesh->MeshComponent);
 	TestTrue(TEXT("MeshComponent should be movable"), PatternMesh->MeshComponent->Mobility == EComponentMobility::Movable);
 	TestTrue(TEXT("MeshComponent should be visible"), PatternMesh->MeshComponent->IsVisible());
@@ -37,17 +35,14 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPatternMesh_PolyIndexMappingTest,
 
 bool FPatternMesh_PolyIndexMappingTest::RunTest(const FString& Parameters)
 {
-	// Create the object (UObject or Actor, depending on your class)
+	// create object
 	APatternMesh* PatternMesh = NewObject<APatternMesh>();
 	TestNotNull(TEXT("PatternMesh should be created"), PatternMesh);
 
-	// Prepare test data
 	TArray<int32> Mapping = { 3, 5, 7, 9 };
 
-	// Test setter
 	PatternMesh->SetPolyIndexToVID(Mapping);
 
-	// Test getter
 	const TArray<int32>& Retrieved = PatternMesh->GetPolyIndexToVID();
 	TestEqual(TEXT("PolyIndexToVID array size should match"), Retrieved.Num(), Mapping.Num());
 	for (int32 i = 0; i < Mapping.Num(); ++i)

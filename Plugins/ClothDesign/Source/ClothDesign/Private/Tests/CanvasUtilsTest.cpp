@@ -12,27 +12,26 @@ bool FCanvasUtilsUndoRedoTest::RunTest(const FString& Parameters)
     TArray<FCanvasState> RedoStack;
     FCanvasState Current;
 
-    // Initialize Current state
     Current.SelectedPointIndex = 5;
     Current.ZoomFactor = 1.5f;
     Current.PanOffset = FVector2D(10, 20);
 
-    // Save state
+    // save state
     FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, Current);
 
     TestEqual(TEXT("Undo stack should have 1 item"), UndoStack.Num(), 1);
     TestEqual(TEXT("Redo stack should be empty"), RedoStack.Num(), 0);
 
-    // Change current state
+    // change current state
     Current.SelectedPointIndex = 7;
 
-    // Undo
+    // undo
     bool bUndid = FCanvasUtils::Undo(UndoStack, RedoStack, Current);
     TestTrue(TEXT("Undo should succeed"), bUndid);
     TestEqual(TEXT("Current state restored SelectedPointIndex"), Current.SelectedPointIndex, 5);
     TestEqual(TEXT("Redo stack should have 1 item"), RedoStack.Num(), 1);
 
-    // Redo
+    // redo
     bool bRedid = FCanvasUtils::Redo(UndoStack, RedoStack, Current);
     TestTrue(TEXT("Redo should succeed"), bRedid);
     TestEqual(TEXT("Current state restored SelectedPointIndex after redo"), Current.SelectedPointIndex, 7);
@@ -50,16 +49,19 @@ bool FCanvasUtilsRecalculateTangentsTest::RunTest(const FString& Parameters)
     FInterpCurve<FVector2D> Curve;
     TArray<bool> bBezierFlags;
 
-    // Add points explicitly
-    Curve.Points.Add(FInterpCurvePoint<FVector2D>(0.0f, FVector2D(0,0), FVector2D::ZeroVector, FVector2D::ZeroVector, CIM_Linear));
-    Curve.Points.Add(FInterpCurvePoint<FVector2D>(1.0f, FVector2D(1,1), FVector2D::ZeroVector, FVector2D::ZeroVector, CIM_Linear));
-    Curve.Points.Add(FInterpCurvePoint<FVector2D>(2.0f, FVector2D(2,0), FVector2D::ZeroVector, FVector2D::ZeroVector, CIM_Linear));
+    // add points
+    Curve.Points.Add(FInterpCurvePoint<FVector2D>(0.0f, FVector2D(0,0),
+        FVector2D::ZeroVector, FVector2D::ZeroVector, CIM_Linear));
+    Curve.Points.Add(FInterpCurvePoint<FVector2D>(1.0f, FVector2D(1,1),
+        FVector2D::ZeroVector, FVector2D::ZeroVector, CIM_Linear));
+    Curve.Points.Add(FInterpCurvePoint<FVector2D>(2.0f, FVector2D(2,0),
+        FVector2D::ZeroVector, FVector2D::ZeroVector, CIM_Linear));
 
     bBezierFlags.Init(false, 3);
 
     FCanvasUtils::RecalculateNTangents(Curve, bBezierFlags);
 
-    // Test that tangents are computed
+    // test that tangents are computed
     TestTrue(TEXT("Point 0 ArriveTangent should be zero"), Curve.Points[0].ArriveTangent.IsNearlyZero());
     TestTrue(TEXT("Point 0 LeaveTangent should be half the vector to next"), 
         Curve.Points[0].LeaveTangent.Equals((FVector2D(1,1)-FVector2D(0,0))*0.5f));
@@ -83,7 +85,7 @@ bool FCanvasUtilsCentroidAndTranslateTest::RunTest(const FString& Parameters)
 {
     UE::Geometry::FDynamicMesh3 Mesh;
 
-    // Create a simple triangle mesh
+    // create simple triangle mesh
     int v0 = Mesh.AppendVertex(FVector3d(0,0,0));
     int v1 = Mesh.AppendVertex(FVector3d(1,0,0));
     int v2 = Mesh.AppendVertex(FVector3d(0,1,0));
@@ -97,7 +99,7 @@ bool FCanvasUtilsCentroidAndTranslateTest::RunTest(const FString& Parameters)
     FCanvasUtils::CenterMeshVerticesToOrigin(Vertices, FVector(1,1,0));
     TestTrue(TEXT("Vertices centered to origin"), Vertices[0].IsNearlyZero());
 
-    // Translate dynamic mesh by offset
+    // translate dynamic mesh by offset
     FCanvasUtils::TranslateDynamicMeshBy(Mesh, Centroid);
     FVector3d NewCentroid = FCanvasUtils::ComputeAreaWeightedCentroid(Mesh);
     TestTrue(TEXT("Translated mesh centroid at origin"), NewCentroid.IsNearlyZero());

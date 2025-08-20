@@ -9,11 +9,10 @@
 //  * See Chapter 4.5 for detailed explanations.
 //  */
 
-/**
- * @file CanvasPaint.h
+/** 
+ * \file CanvasPaint.h
  *
- * @note Thesis reference:
- * See Chapter 4.5 for detailed explanations.
+ * \note Thesis reference: See Chapter 4.5 for detailed explanations.
  */
 
 // Forward declarations of classes used by FCanvasPaint

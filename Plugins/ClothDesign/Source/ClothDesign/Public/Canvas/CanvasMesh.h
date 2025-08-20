@@ -11,7 +11,7 @@
  */
 
 
-struct FCanvasMesh
+class FCanvasMesh
 {
 	
 public:

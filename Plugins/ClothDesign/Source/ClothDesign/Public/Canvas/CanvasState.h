@@ -42,15 +42,7 @@ struct FCanvasState
 				PanOffset == Other.PanOffset &&
 				FMath::IsNearlyEqual(ZoomFactor, Other.ZoomFactor); // &&
 
-				// // sewing compares
-				// SeamDefinitions == Other.SeamDefinitions &&
-				// // SeamPreviewPoints == Other.SeamPreviewPoints &&
-				// SeamClickState == Other.SeamClickState &&
-				// AStartTarget == Other.AStartTarget &&
-				// AEndTarget   == Other.AEndTarget &&
-				// BStartTarget == Other.BStartTarget &&
-				// BEndTarget   == Other.BEndTarget &&
-				// SelectedSeamIndex == Other.SelectedSeamIndex;
+
 	} 
 };
 

@@ -19,7 +19,7 @@ struct FLoadedShapeData
 };
 
 
-struct FCanvasAssets
+class FCanvasAssets
 {
 
 	static bool SaveShapeAsset(
@@ -38,7 +38,7 @@ struct FCanvasAssets
 };
 
 // holds the currently selected shape asset and loads/saves its canvas state
-struct FCanvasAssetManager
+class FCanvasAssetManager
 {
 public:
 	TWeakObjectPtr<UClothShapeAsset> ClothAsset;

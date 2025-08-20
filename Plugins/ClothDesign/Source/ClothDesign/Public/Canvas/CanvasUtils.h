@@ -9,7 +9,7 @@
  * See Chapter 4.9.2 for detailed explanations.
  */
 
-struct FCanvasUtils
+class FCanvasUtils
 {
 	
 public:

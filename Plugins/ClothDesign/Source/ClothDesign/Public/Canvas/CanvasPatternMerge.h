@@ -17,7 +17,7 @@ class APatternMesh;
 struct FPatternSewingConstraint;
 
 
-struct FCanvasPatternMerge
+class FCanvasPatternMerge
 {
 public:
 

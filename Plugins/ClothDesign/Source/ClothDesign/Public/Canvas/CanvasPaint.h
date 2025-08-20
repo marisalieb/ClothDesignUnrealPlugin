@@ -13,7 +13,7 @@ class SClothDesignCanvas;
 struct FGeometry;
 class FSlateWindowElementList;
 
-struct FCanvasPaint
+class FCanvasPaint
 {
 
 	FCanvasPaint() = default;

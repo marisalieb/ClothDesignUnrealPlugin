@@ -11,7 +11,7 @@
 
 class SClothDesignCanvas;
 
-struct FCanvasInputHandler
+class FCanvasInputHandler
 {
 	
 public:

@@ -10,52 +10,67 @@
  */
 
 
+
+/**
+ * @brief Stores a single point on a curve, including position and tangents.
+ * 
+ * Used for defining cloth patterns and Bezier curve control points.
+ */
 USTRUCT(BlueprintType)
 struct FCurvePointData
 {
 	GENERATED_BODY()
 	
-	// The X value for the curve point (used as InVal)
+	/** X value of the curve point (input key) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Curve Point")
 	float InputKey = 0.0f;
 
-	// The actual position of the point in 2D space (used as OutVal)
+	/** Position of the point in 2D space (output value) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Curve Point")
 	FVector2D Position = FVector2D::ZeroVector;
 
-	// Tangents
+	/** Tangent arriving to this point for Bezier interpolation */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Curve Point")
 	FVector2D ArriveTangent = FVector2D::ZeroVector;
 
+	/** Tangent leaving this point for Bezier interpolation */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Curve Point")
 	FVector2D LeaveTangent = FVector2D::ZeroVector;
 
-	// Whether to use Bezier for this point
+	/** Whether Bezier interpolation should be used for this point */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Curve Point")
 	bool bUseBezier = false;
-	
 };
 
+/**
+ * @brief Represents a completed cloth shape made of multiple curve points.
+ */
 USTRUCT(BlueprintType)
 struct FShapeData
 {
 	GENERATED_BODY()
 
+	/** Array of curve points defining the completed shape */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Cloth Shape")
 	TArray<FCurvePointData> CompletedClothShape;
 };
 
-
+/**
+ * @brief Data asset storing multiple cloth shapes and their curve points.
+ * 
+ * Can be used to save and load predefined cloth patterns in the editor or at runtime.
+ */
 UCLASS(BlueprintType)
 class UClothShapeAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
+	/** Curve points for the current editable shape */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Cloth Shapes")
 	TArray<FCurvePointData> ClothCurvePoints;
 
+	/** Collection of completed cloth shapes */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Cloth Shapes")
 	TArray<FShapeData> ClothShapes;
-
 };

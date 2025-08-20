@@ -9,11 +9,6 @@
 //  * See Chapter 4.5 for detailed explanations.
 //  */
 
-/** 
- * \file CanvasPaint.h
- *
- * \note Thesis reference: See Chapter 4.5 for detailed explanations.
- */
 
 // Forward declarations of classes used by FCanvasPaint
 class SClothDesignCanvas;           /**< Represents the cloth design canvas; used for querying shape data and canvas state. */
@@ -28,7 +23,7 @@ class FSlateWindowElementList;      /**< Container for Slate draw elements, used
  * grid lines, completed shapes, current shapes, and seam lines. It ensures visual consistency 
  * and abstracts complex rendering logic from the main canvas class.
  *
- * @note Thesis reference: See Chapter 4.5 for detailed explanations.
+ * Thesis reference: See Chapter 4.5 for detailed explanations.
  */
 class FCanvasPaint
 {

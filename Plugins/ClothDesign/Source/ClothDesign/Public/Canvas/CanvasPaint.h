@@ -27,6 +27,8 @@ class FSlateWindowElementList;      /**< Container for Slate draw elements, used
  * This class encapsulates the painting logic for the canvas, including background rendering,
  * grid lines, completed shapes, current shapes, and seam lines. It ensures visual consistency 
  * and abstracts complex rendering logic from the main canvas class.
+ *
+ * @note Thesis reference: See Chapter 4.5 for detailed explanations.
  */
 class FCanvasPaint
 {

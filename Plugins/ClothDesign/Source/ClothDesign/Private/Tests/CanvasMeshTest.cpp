@@ -34,7 +34,8 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
         TArray<int32> VertexIDs;
         FDynamicMesh3 Mesh;
 
-        FCanvasMesh::SampleShapeCurve(Curve, true, 0, 2, 2, PolyVerts, SeamVertexIDs, VertexIDs, Mesh);
+        FCanvasMesh::SampleShapeCurve(Curve, true, 0, 2, 2,
+            PolyVerts, SeamVertexIDs, VertexIDs, Mesh);
         TestTrue("Curve should produce vertices", PolyVerts.Num() > 0);
     }
 

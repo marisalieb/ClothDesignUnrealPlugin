@@ -30,7 +30,7 @@ FReply FCanvasInputHandler::HandleDraw(const FGeometry& Geo, const FPointerEvent
 	FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
 
 	// add a point…
-	auto& CurvePoints = Canvas->CurvePoints;
+	FInterpCurve<FVector2D>& CurvePoints = Canvas->CurvePoints;
 	FInterpCurvePoint<FVector2D> NewPoint;
 	NewPoint.InVal     = CurvePoints.Points.Num();
 	NewPoint.OutVal    = CanvasClickPos;
@@ -77,14 +77,14 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 	// FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
 
 	// add a point…
-	auto& CurvePoints = Canvas->CurvePoints;
-	auto& CompletedShapes =Canvas->CompletedShapes;
-	auto& SeamClickState =Canvas->GetSewingManager().SeamClickState;
-	auto&  AStartTarget=Canvas->GetSewingManager().AStartTarget ;
-	auto&  AEndTarget=Canvas->GetSewingManager().AEndTarget;
-	auto&  BStartTarget=Canvas->GetSewingManager().BStartTarget ;
-	auto&  BEndTarget=Canvas->GetSewingManager().BEndTarget ;
-	auto&  SpawnedPatternActors=Canvas->GetSewingManager().SpawnedPatternActors;
+	FInterpCurve<FVector2D>& CurvePoints = Canvas->CurvePoints;
+	TArray<FInterpCurve<FVector2D>>& CompletedShapes =Canvas->CompletedShapes;
+	ESeamClickState& SeamClickState =Canvas->GetSewingManager().SeamClickState;
+	FClickTarget&  AStartTarget=Canvas->GetSewingManager().AStartTarget ;
+	FClickTarget&  AEndTarget=Canvas->GetSewingManager().AEndTarget;
+	FClickTarget&  BStartTarget=Canvas->GetSewingManager().BStartTarget ;
+	FClickTarget&  BEndTarget=Canvas->GetSewingManager().BEndTarget ;
+	TArray<TWeakObjectPtr<APatternMesh>>&  SpawnedPatternActors=Canvas->GetSewingManager().SpawnedPatternActors;
 	
 	 // 1) Find nearest control point across all shapes + current
     const float SelRadius = 10.0f / Canvas->ZoomFactor;
@@ -280,17 +280,17 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 {
 	// Alias the data members on the helper
-	auto& CurvePoints        = Canvas->CurvePoints;
-	auto& CompletedShapes    = Canvas->CompletedShapes;
-	auto& BezierFlags        = Canvas->CompletedBezierFlags;
-	auto& bUseBezierPerPoint = Canvas->bUseBezierPerPoint;
-	float  ZoomFactor        = Canvas->ZoomFactor;
+	FInterpCurve<FVector2D>& CurvePoints = Canvas->CurvePoints;
+	TArray<FInterpCurve<FVector2D>>& CompletedShapes = Canvas->CompletedShapes;
+	TArray<TArray<bool>>& BezierFlags = Canvas->CompletedBezierFlags;
+	TArray<bool>& bUseBezierPerPoint = Canvas->bUseBezierPerPoint;
+	float  ZoomFactor = Canvas->ZoomFactor;
 	
 	// 3) Selecting whole points on completed shapes
 	constexpr float SelectionRadius = 10.f;
 	for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
 	{
-		const auto& Shape = CompletedShapes[ShapeIndex];
+		const FInterpCurve<FVector2D>& Shape = CompletedShapes[ShapeIndex];
 		for (int32 i = 0; i < Shape.Points.Num(); ++i)
 		{
 			FVector2D WorldPoint = Shape.Points[i].OutVal;
@@ -326,13 +326,13 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
     // 1) Try selecting a tangent handle on completed shapes
     for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
     {
-        const auto& Shape = CompletedShapes[ShapeIndex];
-        const auto& Flags = BezierFlags[ShapeIndex];
+        const FInterpCurve<FVector2D>& Shape = CompletedShapes[ShapeIndex];
+        const TArray<bool>& Flags = BezierFlags[ShapeIndex];
         int32 NumPts = Shape.Points.Num();
 
         for (int32 i = 0; i < NumPts; ++i)
         {
-            const auto& Pt = Shape.Points[i];
+            const FInterpCurvePoint<UE::Math::TVector2<double>>& Pt = Shape.Points[i];
             FVector2D World = Pt.OutVal;
 
             FVector2D Arrive = Flags[i]
@@ -369,7 +369,7 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
     // 2) Then the in-progress shape’s handles
     for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
     {
-        const auto& Pt = CurvePoints.Points[i];
+        const FInterpCurvePoint<UE::Math::TVector2<double>>& Pt = CurvePoints.Points[i];
         if (!bUseBezierPerPoint[i])
             continue;
 
@@ -425,7 +425,7 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	            return false;
 	        }
 	        if (!Canvas->CompletedShapes.IsValidIndex(ShapeIndex)) return false;
-	        const auto& Shape = Canvas->CompletedShapes[ShapeIndex];
+	        const FInterpCurve<FVector2D>& Shape = Canvas->CompletedShapes[ShapeIndex];
 	        if (!Shape.Points.IsValidIndex(PtIdx)) return false;
 	        OutPatternPt = Shape.Points[PtIdx].OutVal;
 	        return true;

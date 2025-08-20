@@ -245,7 +245,7 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& Geometry, const FPointer
 				FVector2D PointPos = Pt.OutVal;
 				FVector2D Delta = CanvasMousePos - PointPos;
 				
-				auto& BezierFlags = CompletedBezierFlags[SelectedShapeIndex];
+				TArray<bool>& BezierFlags = CompletedBezierFlags[SelectedShapeIndex];
 				if (!BezierFlags[SelectedPointIndex])
 				{
 					BezierFlags[SelectedPointIndex] = true;
@@ -583,15 +583,15 @@ void SClothDesignCanvas::FocusViewportOnPoints()
 	TArray<FVector2D> AllPoints;
 
 	// Collect points from in-progress shape
-	for (const auto& Pt : CurvePoints.Points)
+	for (const FInterpCurvePoint<UE::Math::TVector2<double>>& Pt : CurvePoints.Points)
 	{
 		AllPoints.Add(Pt.OutVal);
 	}
 
 	// Collect points from completed shapes
-	for (const auto& Shape : CompletedShapes)
+	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
 	{
-		for (const auto& Pt : Shape.Points)
+		for (const FInterpCurvePoint<UE::Math::TVector2<double>>& Pt : Shape.Points)
 		{
 			AllPoints.Add(Pt.OutVal);
 		}
@@ -731,7 +731,7 @@ FCanvasState SClothDesignCanvas::GetCurrentCanvasState() const
 	State.ZoomFactor = ZoomFactor;
 
 	// --- Sewing manager data ---
-	const auto& SewingMgr = GetSewingManager(); // your accessor
+	const FCanvasSewing& SewingMgr = GetSewingManager(); // your accessor
 
 	// copy seam definitions (deep copy)
 	State.SeamDefinitions = SewingMgr.SeamDefinitions;
@@ -774,7 +774,7 @@ void SClothDesignCanvas::RestoreCanvasState(const FCanvasState& State)
 	SelectedShapeIndex = INDEX_NONE;
 
 	// restore sewing manager
-	auto& SewingMgr = GetSewingManager();
+	FCanvasSewing& SewingMgr = GetSewingManager();
 	SewingMgr.SeamDefinitions = State.SeamDefinitions;
 	SewingMgr.CurrentSeamPreviewPoints = State.SeamPreviewPoints;
 	SewingMgr.SeamClickState = static_cast<ESeamClickState>(State.SeamClickState);

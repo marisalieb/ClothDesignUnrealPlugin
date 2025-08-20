@@ -30,7 +30,9 @@ public:
 };
 #endif
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasPaintTest, "CanvasPaintTests.Basic", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasPaintTest, "CanvasPaintTests.Basic",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FCanvasPaintTest::RunTest(const FString& Parameters)
 {

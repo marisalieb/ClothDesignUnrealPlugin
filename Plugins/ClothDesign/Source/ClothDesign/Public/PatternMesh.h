@@ -11,6 +11,10 @@
 // Required for UCLASS to work:
 #include "PatternMesh.generated.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.6 for detailed explanation.
+ */
 
 UCLASS()
 class APatternMesh : public AActor

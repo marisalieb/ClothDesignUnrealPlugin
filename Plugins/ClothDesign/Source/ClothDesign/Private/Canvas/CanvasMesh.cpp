@@ -227,7 +227,7 @@ void FCanvasMesh::ExtractVerticesAndIndices(
 	}
 	for (int tid : OutMesh.TriangleIndicesItr())
 	{
-		auto T = OutMesh.GetTriangle(tid);
+		UE::Geometry::FIndex3i T = OutMesh.GetTriangle(tid);
 		// already CCW, so push A→B→C
 		OutIndices.Add(T.C);
 		OutIndices.Add(T.B);

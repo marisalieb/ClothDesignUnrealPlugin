@@ -492,7 +492,7 @@ TSharedRef<SWidget> FClothDesignToolkit::MakePresetPicker()
 				SNew(STextBlock)
 				.Text_Lambda([this]()
 				{
-					for (const auto& Item : SimSettings.PresetOptions)
+					for (const TSharedPtr<FPresetItem>& Item : SimSettings.PresetOptions)
 					{
 						if (Item->Preset == SimSettings.SelectedPreset)
 							return FText::FromString(Item->DisplayName);

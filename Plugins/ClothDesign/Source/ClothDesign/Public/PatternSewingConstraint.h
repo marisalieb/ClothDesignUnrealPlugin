@@ -7,6 +7,11 @@
 
 #include "PatternSewingConstraint.generated.h"
 
+/*
+ * Thesis reference:
+ * See Chapter 4.7 and 4.8.1 for detailed explanation.
+ */
+
 USTRUCT()
 struct FPatternSewingConstraint
 {

@@ -180,8 +180,8 @@ int32 FCanvasPaint::DrawCompletedShapes(
     int32 Layer) const
 {
     // Quick refs
-    const auto& Shapes       = Canvas->CompletedShapes;
-    const auto& BezierFlags  = Canvas->CompletedBezierFlags;
+    const TArray<FInterpCurve<FVector2D>>& Shapes       = Canvas->CompletedShapes;
+    const TArray<TArray<bool>>& BezierFlags  = Canvas->CompletedBezierFlags;
     const int32 NumShapes    = Shapes.Num();
 
     const TArray<FSeamDefinition>& SeamDefs = Canvas->GetSewingManager().SeamDefinitions;
@@ -189,7 +189,7 @@ int32 FCanvasPaint::DrawCompletedShapes(
     // --- Section 1: Draw each completed shape's edges ---
     for (int32 ShapeIdx = 0; ShapeIdx < NumShapes; ++ShapeIdx)
     {
-        const auto& Shape = Shapes[ShapeIdx];
+        const FInterpCurve<FVector2D>& Shape = Shapes[ShapeIdx];
         const int32 NumPts = Shape.Points.Num();
         if (NumPts < 2) continue;
 
@@ -272,18 +272,18 @@ int32 FCanvasPaint::DrawCompletedShapes(
     // --- Section 3: Draw each shape's Bezier handles ---
     for (int32 ShapeIdx = 0; ShapeIdx < NumShapes; ++ShapeIdx)
     {
-        const auto& Shape = Shapes[ShapeIdx];
-        const auto& Flags = BezierFlags[ShapeIdx];
+        const FInterpCurve<FVector2D>& Shape = Shapes[ShapeIdx];
+        const TArray<bool>& Flags = BezierFlags[ShapeIdx];
 
         for (int32 i = 0; i < Shape.Points.Num(); ++i)
         {
             if (!Flags[i]) continue; // skip N-points entirely
 
-            const auto& Pt = Shape.Points[i];
-            FVector2D World   = Pt.OutVal;
-            FVector2D Screen  = Canvas->TransformPoint(World);
-            FVector2D H1      = Canvas->TransformPoint(World - Pt.ArriveTangent);
-            FVector2D H2      = Canvas->TransformPoint(World + Pt.LeaveTangent);
+            const FInterpCurvePoint<UE::Math::TVector2<double>>& Pt = Shape.Points[i];
+            FVector2D World = Pt.OutVal;
+            FVector2D Screen = Canvas->TransformPoint(World);
+            FVector2D H1 = Canvas->TransformPoint(World - Pt.ArriveTangent);
+            FVector2D H2 = Canvas->TransformPoint(World + Pt.LeaveTangent);
             
             FPaintGeometry HandleLineGeo = Geo.ToPaintGeometry();
 
@@ -307,7 +307,7 @@ int32 FCanvasPaint::DrawCompletedShapes(
             );
 
             // Boxes at handle endpoints
-            for (auto& PtScreen : {H1, H2})
+            for (const UE::Math::TVector2<double>& PtScreen : {H1, H2})
             {
                 FVector2f BoxPos = FVector2f(PtScreen - FVector2D(3, 3));
                 FVector2f BoxSize = FVector2f(6, 6);
@@ -331,7 +331,7 @@ int32 FCanvasPaint::DrawCompletedShapes(
     // --- Section 2: Draw each shape's points ---
     for (int32 ShapeIdx = 0; ShapeIdx < NumShapes; ++ShapeIdx)
     {
-        const auto& Shape = Shapes[ShapeIdx];
+        const FInterpCurve<FVector2D>& Shape = Shapes[ShapeIdx];
         
         for (int32 PtIdx = 0; PtIdx < Shape.Points.Num(); ++PtIdx)
         {
@@ -384,7 +384,7 @@ int FCanvasPaint::DrawFinalisedSeamLines(
 {
     // using namespace UE::Slate;
 
-    const auto& Sewing = Canvas->GetSewingManager();
+    const FCanvasSewing& Sewing = Canvas->GetSewingManager();
     const TArray<FSeamDefinition>& Seams = Sewing.SeamDefinitions;
     
 
@@ -406,7 +406,7 @@ int FCanvasPaint::DrawFinalisedSeamLines(
                 return false;
             }
             if (!Canvas->CompletedShapes.IsValidIndex(ShapeIndex)) return false;
-            const auto& Shape = Canvas->CompletedShapes[ShapeIndex];
+            const FInterpCurve<FVector2D>& Shape = Canvas->CompletedShapes[ShapeIndex];
             if (!Shape.Points.IsValidIndex(PtIdx)) return false;
             OutPt = Shape.Points[PtIdx].OutVal;
             return true;
@@ -469,8 +469,8 @@ int32 FCanvasPaint::DrawCurrentShape(
     FSlateWindowElementList& OutDraw,
     int32 Layer) const
 {
-    const auto& CurvePoints = Canvas->CurvePoints;
-    const auto& bUseBezierPerPoint = Canvas->bUseBezierPerPoint;
+    const FInterpCurve<FVector2D>& CurvePoints = Canvas->CurvePoints;
+    const TArray<bool>& bUseBezierPerPoint = Canvas->bUseBezierPerPoint;
     
 	if (CurvePoints.Points.Num() >= 2)
 	{
@@ -532,8 +532,7 @@ int32 FCanvasPaint::DrawCurrentShape(
     {
         if (!bUseBezierPerPoint[i]) continue; // skip N-points entirely
 
-       // const auto& Pt = Shape.Points[i];
-	    const auto& Pt = CurvePoints.Points[i];
+	    const FInterpCurvePoint<UE::Math::TVector2<double>>& Pt = CurvePoints.Points[i];
 
         FVector2D World   = Pt.OutVal;
         FVector2D Screen  = Canvas->TransformPoint(World);
@@ -563,7 +562,7 @@ int32 FCanvasPaint::DrawCurrentShape(
         );
 
         // Boxes at handle endpoints
-        for (auto& PtScreen : {H1, H2})
+        for (const UE::Math::TVector2<double>& PtScreen : {H1, H2})
         {
     	    // FPaintGeometry BoxGeo = Geo.ToPaintGeometry(Pos - FVector2D(3, 3), FVector2D(6, 6));
             FVector2f BoxPos = FVector2f(PtScreen - FVector2D(3, 3));

@@ -99,66 +99,85 @@ $(document).ready(function(){initNavTree('CanvasAssets_8h_source.html',''); init
   <div class="headertitle"><div class="title">CanvasAssets.h</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ClothShapeAsset.h&quot;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;CanvasState.h&quot;</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="foldopen" id="foldopen00006" data-start="{" data-end="};">
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="structFLoadedShapeData.html">    6</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structFLoadedShapeData.html">FLoadedShapeData</a></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>{</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    TArray&lt;FInterpCurve&lt;FVector2D&gt;&gt; CompletedShapes;</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    TArray&lt;TArray&lt;bool&gt;&gt; CompletedBezierFlags;</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    FInterpCurve&lt;FVector2D&gt; CurvePoints;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    TArray&lt;bool&gt; bUseBezierPerPoint;</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>};</div>
+<a href="CanvasAssets_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef FCanvasAssets_H</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define FCanvasAssets_H</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;ClothShapeAsset.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;CanvasState.h&quot;</span> </div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// /*</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment">//  * Thesis reference:</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">//  * See Chapter 4.9.1 for detailed explanations.</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">//  */</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="foldopen" id="foldopen00026" data-start="{" data-end="};">
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structFLoadedShapeData.html">   26</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structFLoadedShapeData.html">FLoadedShapeData</a></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>{</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="structFLoadedShapeData.html#ad76f660bd076fb296ff7563a4fc9b48d">   28</a></span>    TArray&lt;FInterpCurve&lt;FVector2D&gt;&gt; <a class="code hl_variable" href="structFLoadedShapeData.html#ad76f660bd076fb296ff7563a4fc9b48d">CompletedShapes</a>; </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="structFLoadedShapeData.html#a7d0cbaee6846ebaa24b78037585300f5">   29</a></span>    TArray&lt;TArray&lt;bool&gt;&gt; <a class="code hl_variable" href="structFLoadedShapeData.html#a7d0cbaee6846ebaa24b78037585300f5">CompletedBezierFlags</a>;      </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="structFLoadedShapeData.html#a762f71e7b27ae6396b70428cb908c10e">   30</a></span>    FInterpCurve&lt;FVector2D&gt; <a class="code hl_variable" href="structFLoadedShapeData.html#a762f71e7b27ae6396b70428cb908c10e">CurvePoints</a>;           </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="structFLoadedShapeData.html#af4ee0017673f496b9c936d72d90584a7">   31</a></span>    TArray&lt;bool&gt; <a class="code hl_variable" href="structFLoadedShapeData.html#af4ee0017673f496b9c936d72d90584a7">bUseBezierPerPoint</a>;               </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>};</div>
 </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="foldopen" id="foldopen00015" data-start="{" data-end="};">
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="structFCanvasAssets.html">   15</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structFCanvasAssets.html">FCanvasAssets</a></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>{</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> SaveShapeAsset(</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        <span class="keyword">const</span> FString&amp; AssetPath,</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        <span class="keyword">const</span> FString&amp; AssetName,</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        <span class="keyword">const</span> TArray&lt;FInterpCurve&lt;FVector2D&gt;&gt;&amp; CompletedShapes,</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        <span class="keyword">const</span> TArray&lt;TArray&lt;bool&gt;&gt;&amp; CompletedBezierFlags,</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        <span class="keyword">const</span> FInterpCurve&lt;FVector2D&gt;&amp; CurvePoints,</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        <span class="keyword">const</span> TArray&lt;bool&gt;&amp; bUseBezierPerPoint</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    );</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> LoadCanvasState(</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        <a class="code hl_class" href="classUClothShapeAsset.html">UClothShapeAsset</a>* ClothAsset,</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; OutState);</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>};</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="foldopen" id="foldopen00040" data-start="{" data-end="};">
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="classFCanvasAssets.html">   40</a></span><span class="keyword">class </span><a class="code hl_class" href="classFCanvasAssets.html">FCanvasAssets</a></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>{</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="classFCanvasAssets.html#ac9ab81f331afb27c6c56f5db2ea18921">SaveShapeAsset</a>(</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        <span class="keyword">const</span> FString&amp; AssetPath,</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        <span class="keyword">const</span> FString&amp; AssetName,</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="keyword">const</span> TArray&lt;FInterpCurve&lt;FVector2D&gt;&gt;&amp; CompletedShapes,</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keyword">const</span> TArray&lt;TArray&lt;bool&gt;&gt;&amp; CompletedBezierFlags,</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="keyword">const</span> FInterpCurve&lt;FVector2D&gt;&amp; CurvePoints,</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="keyword">const</span> TArray&lt;bool&gt;&amp; bUseBezierPerPoint</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    );</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="classFCanvasAssets.html#a1f0de57b6c351873559f2c1c1de9b4a9">LoadCanvasState</a>(</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <a class="code hl_class" href="classUClothShapeAsset.html">UClothShapeAsset</a>* ClothAsset,</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; OutState</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    );</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>};</div>
 </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="foldopen" id="foldopen00036" data-start="{" data-end="};">
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="structFCanvasAssetManager.html">   36</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structFCanvasAssetManager.html">FCanvasAssetManager</a></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>{</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    TWeakObjectPtr&lt;UClothShapeAsset&gt; ClothAsset;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    FString GetSelectedShapeAssetPath() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordtype">bool</span> OnShapeAssetSelected(<span class="keyword">const</span> FAssetData&amp; AssetData, <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; OutState);</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordtype">bool</span> LoadShapeAssetData(<a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; OutState) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>};</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="foldopen" id="foldopen00086" data-start="{" data-end="};">
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="classFCanvasAssetManager.html">   86</a></span><span class="keyword">class </span><a class="code hl_class" href="classFCanvasAssetManager.html">FCanvasAssetManager</a></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>{</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="classFCanvasAssetManager.html#afc9f84b71a8798b18216d79fe478c995">   89</a></span>    TWeakObjectPtr&lt;UClothShapeAsset&gt; <a class="code hl_variable" href="classFCanvasAssetManager.html#afc9f84b71a8798b18216d79fe478c995">ClothAsset</a>; </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    FString <a class="code hl_function" href="classFCanvasAssetManager.html#a6729a0920df25729b0f409f1897945fe">GetSelectedShapeAssetPath</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classFCanvasAssetManager.html#ad218b2b4ba542c7812035185cda76cf0">OnShapeAssetSelected</a>(<span class="keyword">const</span> FAssetData&amp; AssetData, <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; OutState);</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keywordtype">bool</span> LoadShapeAssetData(<a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; OutState) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>};</div>
 </div>
-<div class="ttc" id="aclassUClothShapeAsset_html"><div class="ttname"><a href="classUClothShapeAsset.html">UClothShapeAsset</a></div><div class="ttdef"><b>Definition</b> ClothShapeAsset.h:43</div></div>
-<div class="ttc" id="astructFCanvasAssetManager_html"><div class="ttname"><a href="structFCanvasAssetManager.html">FCanvasAssetManager</a></div><div class="ttdef"><b>Definition</b> CanvasAssets.h:37</div></div>
-<div class="ttc" id="astructFCanvasAssets_html"><div class="ttname"><a href="structFCanvasAssets.html">FCanvasAssets</a></div><div class="ttdef"><b>Definition</b> CanvasAssets.h:16</div></div>
-<div class="ttc" id="astructFCanvasState_html"><div class="ttname"><a href="structFCanvasState.html">FCanvasState</a></div><div class="ttdef"><b>Definition</b> CanvasState.h:7</div></div>
-<div class="ttc" id="astructFLoadedShapeData_html"><div class="ttname"><a href="structFLoadedShapeData.html">FLoadedShapeData</a></div><div class="ttdef"><b>Definition</b> CanvasAssets.h:7</div></div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="ttc" id="aclassFCanvasAssetManager_html"><div class="ttname"><a href="classFCanvasAssetManager.html">FCanvasAssetManager</a></div><div class="ttdoc">Manages the currently selected shape asset and handles its state loading.</div><div class="ttdef"><b>Definition</b> CanvasAssets.h:87</div></div>
+<div class="ttc" id="aclassFCanvasAssetManager_html_a6729a0920df25729b0f409f1897945fe"><div class="ttname"><a href="classFCanvasAssetManager.html#a6729a0920df25729b0f409f1897945fe">FCanvasAssetManager::GetSelectedShapeAssetPath</a></div><div class="ttdeci">FString GetSelectedShapeAssetPath() const</div><div class="ttdoc">Returns the file path of the currently selected shape asset.</div><div class="ttdef"><b>Definition</b> CanvasAssets.cpp:220</div></div>
+<div class="ttc" id="aclassFCanvasAssetManager_html_ad218b2b4ba542c7812035185cda76cf0"><div class="ttname"><a href="classFCanvasAssetManager.html#ad218b2b4ba542c7812035185cda76cf0">FCanvasAssetManager::OnShapeAssetSelected</a></div><div class="ttdeci">bool OnShapeAssetSelected(const FAssetData &amp;AssetData, FCanvasState &amp;OutState)</div><div class="ttdoc">Updates the currently selected shape asset based on user selection.</div><div class="ttdef"><b>Definition</b> CanvasAssets.cpp:226</div></div>
+<div class="ttc" id="aclassFCanvasAssetManager_html_afc9f84b71a8798b18216d79fe478c995"><div class="ttname"><a href="classFCanvasAssetManager.html#afc9f84b71a8798b18216d79fe478c995">FCanvasAssetManager::ClothAsset</a></div><div class="ttdeci">TWeakObjectPtr&lt; UClothShapeAsset &gt; ClothAsset</div><div class="ttdef"><b>Definition</b> CanvasAssets.h:89</div></div>
+<div class="ttc" id="aclassFCanvasAssets_html"><div class="ttname"><a href="classFCanvasAssets.html">FCanvasAssets</a></div><div class="ttdoc">Provides static functions to save and load canvas-related assets.</div><div class="ttdef"><b>Definition</b> CanvasAssets.h:41</div></div>
+<div class="ttc" id="aclassFCanvasAssets_html_a1f0de57b6c351873559f2c1c1de9b4a9"><div class="ttname"><a href="classFCanvasAssets.html#a1f0de57b6c351873559f2c1c1de9b4a9">FCanvasAssets::LoadCanvasState</a></div><div class="ttdeci">static bool LoadCanvasState(UClothShapeAsset *ClothAsset, FCanvasState &amp;OutState)</div><div class="ttdoc">Loads the canvas state from a given cloth asset.</div><div class="ttdef"><b>Definition</b> CanvasAssets.cpp:146</div></div>
+<div class="ttc" id="aclassFCanvasAssets_html_ac9ab81f331afb27c6c56f5db2ea18921"><div class="ttname"><a href="classFCanvasAssets.html#ac9ab81f331afb27c6c56f5db2ea18921">FCanvasAssets::SaveShapeAsset</a></div><div class="ttdeci">static bool SaveShapeAsset(const FString &amp;AssetPath, const FString &amp;AssetName, const TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt; &amp;CompletedShapes, const TArray&lt; TArray&lt; bool &gt; &gt; &amp;CompletedBezierFlags, const FInterpCurve&lt; FVector2D &gt; &amp;CurvePoints, const TArray&lt; bool &gt; &amp;bUseBezierPerPoint)</div><div class="ttdoc">Saves the given shape data as an asset to disk.</div><div class="ttdef"><b>Definition</b> CanvasAssets.cpp:8</div></div>
+<div class="ttc" id="aclassUClothShapeAsset_html"><div class="ttname"><a href="classUClothShapeAsset.html">UClothShapeAsset</a></div><div class="ttdef"><b>Definition</b> ClothShapeAsset.h:51</div></div>
+<div class="ttc" id="astructFCanvasState_html"><div class="ttname"><a href="structFCanvasState.html">FCanvasState</a></div><div class="ttdoc">Represents the complete state of the cloth design canvas at a given moment.</div><div class="ttdef"><b>Definition</b> CanvasState.h:21</div></div>
+<div class="ttc" id="astructFLoadedShapeData_html"><div class="ttname"><a href="structFLoadedShapeData.html">FLoadedShapeData</a></div><div class="ttdoc">Stores all data needed to reconstruct a previously completed shape.</div><div class="ttdef"><b>Definition</b> CanvasAssets.h:27</div></div>
+<div class="ttc" id="astructFLoadedShapeData_html_a762f71e7b27ae6396b70428cb908c10e"><div class="ttname"><a href="structFLoadedShapeData.html#a762f71e7b27ae6396b70428cb908c10e">FLoadedShapeData::CurvePoints</a></div><div class="ttdeci">FInterpCurve&lt; FVector2D &gt; CurvePoints</div><div class="ttdef"><b>Definition</b> CanvasAssets.h:30</div></div>
+<div class="ttc" id="astructFLoadedShapeData_html_a7d0cbaee6846ebaa24b78037585300f5"><div class="ttname"><a href="structFLoadedShapeData.html#a7d0cbaee6846ebaa24b78037585300f5">FLoadedShapeData::CompletedBezierFlags</a></div><div class="ttdeci">TArray&lt; TArray&lt; bool &gt; &gt; CompletedBezierFlags</div><div class="ttdef"><b>Definition</b> CanvasAssets.h:29</div></div>
+<div class="ttc" id="astructFLoadedShapeData_html_ad76f660bd076fb296ff7563a4fc9b48d"><div class="ttname"><a href="structFLoadedShapeData.html#ad76f660bd076fb296ff7563a4fc9b48d">FLoadedShapeData::CompletedShapes</a></div><div class="ttdeci">TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt; CompletedShapes</div><div class="ttdef"><b>Definition</b> CanvasAssets.h:28</div></div>
+<div class="ttc" id="astructFLoadedShapeData_html_af4ee0017673f496b9c936d72d90584a7"><div class="ttname"><a href="structFLoadedShapeData.html#af4ee0017673f496b9c936d72d90584a7">FLoadedShapeData::bUseBezierPerPoint</a></div><div class="ttdeci">TArray&lt; bool &gt; bUseBezierPerPoint</div><div class="ttdef"><b>Definition</b> CanvasAssets.h:31</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b4eaef40a1fe20bedafe9e8e719ce66.html">Plugins</a></li><li class="navelem"><a class="el" href="dir_e73a24b9f56b67762402fc59bf305c32.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_00130aff64f0cd43764efd6f84b16d7b.html">Source</a></li><li class="navelem"><a class="el" href="dir_8aeeb0e0a1a8ea6a84d44b7114371350.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_3786820cdedd5409c11f18a4e1deb575.html">Public</a></li><li class="navelem"><a class="el" href="dir_727f76c6ea6965b7f2dd168a109f7adb.html">Canvas</a></li><li class="navelem"><b>CanvasAssets.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b4eaef40a1fe20bedafe9e8e719ce66.html">Plugins</a></li><li class="navelem"><a class="el" href="dir_e73a24b9f56b67762402fc59bf305c32.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_00130aff64f0cd43764efd6f84b16d7b.html">Source</a></li><li class="navelem"><a class="el" href="dir_8aeeb0e0a1a8ea6a84d44b7114371350.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_3786820cdedd5409c11f18a4e1deb575.html">Public</a></li><li class="navelem"><a class="el" href="dir_727f76c6ea6965b7f2dd168a109f7adb.html">Canvas</a></li><li class="navelem"><a class="el" href="CanvasAssets_8h.html">CanvasAssets.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>

@@ -98,61 +98,350 @@ $(document).ready(function(){initNavTree('structFCanvasState.html',''); initResi
   <div class="headertitle"><div class="title">FCanvasState Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Represents the complete state of the cloth design canvas at a given moment.  
+ <a href="structFCanvasState.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="CanvasState_8h_source.html">CanvasState.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a69c8bbd1931cc74751ba7646aed7897d" id="r_a69c8bbd1931cc74751ba7646aed7897d"><td class="memItemLeft" align="right" valign="top"><a id="a69c8bbd1931cc74751ba7646aed7897d" name="a69c8bbd1931cc74751ba7646aed7897d"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="structFCanvasState.html">FCanvasState</a> &amp;Other) const</td></tr>
+<tr class="memitem:a69c8bbd1931cc74751ba7646aed7897d" id="r_a69c8bbd1931cc74751ba7646aed7897d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a69c8bbd1931cc74751ba7646aed7897d">operator==</a> (const <a class="el" href="structFCanvasState.html">FCanvasState</a> &amp;Other) const</td></tr>
+<tr class="memdesc:a69c8bbd1931cc74751ba7646aed7897d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Equality operator.  <br /></td></tr>
 <tr class="separator:a69c8bbd1931cc74751ba7646aed7897d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a382bb084c6b3de9e414555b7b53a6adb" id="r_a382bb084c6b3de9e414555b7b53a6adb"><td class="memItemLeft" align="right" valign="top"><a id="a382bb084c6b3de9e414555b7b53a6adb" name="a382bb084c6b3de9e414555b7b53a6adb"></a>
-FInterpCurve&lt; FVector2D &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CurvePoints</b></td></tr>
+<tr class="memitem:a382bb084c6b3de9e414555b7b53a6adb" id="r_a382bb084c6b3de9e414555b7b53a6adb"><td class="memItemLeft" align="right" valign="top">FInterpCurve&lt; FVector2D &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a382bb084c6b3de9e414555b7b53a6adb">CurvePoints</a></td></tr>
+<tr class="memdesc:a382bb084c6b3de9e414555b7b53a6adb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The curve currently being drawn by the user.  <br /></td></tr>
 <tr class="separator:a382bb084c6b3de9e414555b7b53a6adb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d9997e5c15840281edafebd4852c232" id="r_a8d9997e5c15840281edafebd4852c232"><td class="memItemLeft" align="right" valign="top"><a id="a8d9997e5c15840281edafebd4852c232" name="a8d9997e5c15840281edafebd4852c232"></a>
-TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CompletedShapes</b></td></tr>
+<tr class="memitem:a8d9997e5c15840281edafebd4852c232" id="r_a8d9997e5c15840281edafebd4852c232"><td class="memItemLeft" align="right" valign="top">TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a8d9997e5c15840281edafebd4852c232">CompletedShapes</a></td></tr>
+<tr class="memdesc:a8d9997e5c15840281edafebd4852c232"><td class="mdescLeft">&#160;</td><td class="mdescRight">All shapes that have been completed on the canvas.  <br /></td></tr>
 <tr class="separator:a8d9997e5c15840281edafebd4852c232"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad38bc0257d5870fca04956229bdc40c2" id="r_ad38bc0257d5870fca04956229bdc40c2"><td class="memItemLeft" align="right" valign="top"><a id="ad38bc0257d5870fca04956229bdc40c2" name="ad38bc0257d5870fca04956229bdc40c2"></a>
-int32&#160;</td><td class="memItemRight" valign="bottom"><b>SelectedPointIndex</b></td></tr>
+<tr class="memitem:ad38bc0257d5870fca04956229bdc40c2" id="r_ad38bc0257d5870fca04956229bdc40c2"><td class="memItemLeft" align="right" valign="top">int32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#ad38bc0257d5870fca04956229bdc40c2">SelectedPointIndex</a></td></tr>
+<tr class="memdesc:ad38bc0257d5870fca04956229bdc40c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The index of the currently selected point on the active curve.  <br /></td></tr>
 <tr class="separator:ad38bc0257d5870fca04956229bdc40c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a131f28fb968374bcf7dcddec11d95e20" id="r_a131f28fb968374bcf7dcddec11d95e20"><td class="memItemLeft" align="right" valign="top"><a id="a131f28fb968374bcf7dcddec11d95e20" name="a131f28fb968374bcf7dcddec11d95e20"></a>
-FVector2D&#160;</td><td class="memItemRight" valign="bottom"><b>PanOffset</b></td></tr>
+<tr class="memitem:a131f28fb968374bcf7dcddec11d95e20" id="r_a131f28fb968374bcf7dcddec11d95e20"><td class="memItemLeft" align="right" valign="top">FVector2D&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a131f28fb968374bcf7dcddec11d95e20">PanOffset</a></td></tr>
+<tr class="memdesc:a131f28fb968374bcf7dcddec11d95e20"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current pan offset of the canvas in screen coordinates.  <br /></td></tr>
 <tr class="separator:a131f28fb968374bcf7dcddec11d95e20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67aaa88bb2a26e95e2b5a781d4fe3d13" id="r_a67aaa88bb2a26e95e2b5a781d4fe3d13"><td class="memItemLeft" align="right" valign="top"><a id="a67aaa88bb2a26e95e2b5a781d4fe3d13" name="a67aaa88bb2a26e95e2b5a781d4fe3d13"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>ZoomFactor</b></td></tr>
+<tr class="memitem:a67aaa88bb2a26e95e2b5a781d4fe3d13" id="r_a67aaa88bb2a26e95e2b5a781d4fe3d13"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a67aaa88bb2a26e95e2b5a781d4fe3d13">ZoomFactor</a></td></tr>
+<tr class="memdesc:a67aaa88bb2a26e95e2b5a781d4fe3d13"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current zoom factor of the canvas.  <br /></td></tr>
 <tr class="separator:a67aaa88bb2a26e95e2b5a781d4fe3d13"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedef968ba4d1a88aaef25cffddc4bbed" id="r_aedef968ba4d1a88aaef25cffddc4bbed"><td class="memItemLeft" align="right" valign="top"><a id="aedef968ba4d1a88aaef25cffddc4bbed" name="aedef968ba4d1a88aaef25cffddc4bbed"></a>
-TArray&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>bUseBezierPerPoint</b></td></tr>
+<tr class="memitem:aedef968ba4d1a88aaef25cffddc4bbed" id="r_aedef968ba4d1a88aaef25cffddc4bbed"><td class="memItemLeft" align="right" valign="top">TArray&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#aedef968ba4d1a88aaef25cffddc4bbed">bUseBezierPerPoint</a></td></tr>
+<tr class="memdesc:aedef968ba4d1a88aaef25cffddc4bbed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bezier usage flags for each point of the active curve.  <br /></td></tr>
 <tr class="separator:aedef968ba4d1a88aaef25cffddc4bbed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a302855ad43362be3e18c6e62bd728bba" id="r_a302855ad43362be3e18c6e62bd728bba"><td class="memItemLeft" align="right" valign="top"><a id="a302855ad43362be3e18c6e62bd728bba" name="a302855ad43362be3e18c6e62bd728bba"></a>
-TArray&lt; TArray&lt; bool &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CompletedBezierFlags</b></td></tr>
+<tr class="memitem:a302855ad43362be3e18c6e62bd728bba" id="r_a302855ad43362be3e18c6e62bd728bba"><td class="memItemLeft" align="right" valign="top">TArray&lt; TArray&lt; bool &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a302855ad43362be3e18c6e62bd728bba">CompletedBezierFlags</a></td></tr>
+<tr class="memdesc:a302855ad43362be3e18c6e62bd728bba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bezier usage flags for each point of completed shapes.  <br /></td></tr>
 <tr class="separator:a302855ad43362be3e18c6e62bd728bba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a592c2997a46cb59d26a63256ec1dca1b" id="r_a592c2997a46cb59d26a63256ec1dca1b"><td class="memItemLeft" align="right" valign="top"><a id="a592c2997a46cb59d26a63256ec1dca1b" name="a592c2997a46cb59d26a63256ec1dca1b"></a>
-TArray&lt; <a class="el" href="structFSeamDefinition.html">FSeamDefinition</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SeamDefinitions</b></td></tr>
+<tr class="memitem:a592c2997a46cb59d26a63256ec1dca1b" id="r_a592c2997a46cb59d26a63256ec1dca1b"><td class="memItemLeft" align="right" valign="top">TArray&lt; <a class="el" href="structFSeamDefinition.html">FSeamDefinition</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a592c2997a46cb59d26a63256ec1dca1b">SeamDefinitions</a></td></tr>
+<tr class="memdesc:a592c2997a46cb59d26a63256ec1dca1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Full seam definitions that have been added to the canvas.  <br /></td></tr>
 <tr class="separator:a592c2997a46cb59d26a63256ec1dca1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29b17398df1f74a575893f3b3d5e1100" id="r_a29b17398df1f74a575893f3b3d5e1100"><td class="memItemLeft" align="right" valign="top"><a id="a29b17398df1f74a575893f3b3d5e1100" name="a29b17398df1f74a575893f3b3d5e1100"></a>
-TMap&lt; int32, TSet&lt; int32 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>SeamPreviewPoints</b></td></tr>
+<tr class="memitem:a29b17398df1f74a575893f3b3d5e1100" id="r_a29b17398df1f74a575893f3b3d5e1100"><td class="memItemLeft" align="right" valign="top">TMap&lt; int32, TSet&lt; int32 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a29b17398df1f74a575893f3b3d5e1100">SeamPreviewPoints</a></td></tr>
+<tr class="memdesc:a29b17398df1f74a575893f3b3d5e1100"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transient preview points shown while sewing.  <br /></td></tr>
 <tr class="separator:a29b17398df1f74a575893f3b3d5e1100"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34e869cc9128fa86afb1ab10fd24d2f7" id="r_a34e869cc9128fa86afb1ab10fd24d2f7"><td class="memItemLeft" align="right" valign="top"><a id="a34e869cc9128fa86afb1ab10fd24d2f7" name="a34e869cc9128fa86afb1ab10fd24d2f7"></a>
-int32&#160;</td><td class="memItemRight" valign="bottom"><b>SeamClickState</b> = 0</td></tr>
+<tr class="memitem:a34e869cc9128fa86afb1ab10fd24d2f7" id="r_a34e869cc9128fa86afb1ab10fd24d2f7"><td class="memItemLeft" align="right" valign="top">int32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a34e869cc9128fa86afb1ab10fd24d2f7">SeamClickState</a> = 0</td></tr>
+<tr class="memdesc:a34e869cc9128fa86afb1ab10fd24d2f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the current state of the seam click process.  <br /></td></tr>
 <tr class="separator:a34e869cc9128fa86afb1ab10fd24d2f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86f4ab3cece29fa0029df16425a797a3" id="r_a86f4ab3cece29fa0029df16425a797a3"><td class="memItemLeft" align="right" valign="top"><a id="a86f4ab3cece29fa0029df16425a797a3" name="a86f4ab3cece29fa0029df16425a797a3"></a>
-FIntPoint&#160;</td><td class="memItemRight" valign="bottom"><b>AStartTarget</b> = FIntPoint(INDEX_NONE, INDEX_NONE)</td></tr>
+<tr class="memitem:a86f4ab3cece29fa0029df16425a797a3" id="r_a86f4ab3cece29fa0029df16425a797a3"><td class="memItemLeft" align="right" valign="top">FIntPoint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a86f4ab3cece29fa0029df16425a797a3">AStartTarget</a> = FIntPoint(INDEX_NONE, INDEX_NONE)</td></tr>
 <tr class="separator:a86f4ab3cece29fa0029df16425a797a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e2041b8069a91c7fe35857cab37f7f8" id="r_a1e2041b8069a91c7fe35857cab37f7f8"><td class="memItemLeft" align="right" valign="top"><a id="a1e2041b8069a91c7fe35857cab37f7f8" name="a1e2041b8069a91c7fe35857cab37f7f8"></a>
-FIntPoint&#160;</td><td class="memItemRight" valign="bottom"><b>AEndTarget</b> = FIntPoint(INDEX_NONE, INDEX_NONE)</td></tr>
+<tr class="memitem:a1e2041b8069a91c7fe35857cab37f7f8" id="r_a1e2041b8069a91c7fe35857cab37f7f8"><td class="memItemLeft" align="right" valign="top">FIntPoint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a1e2041b8069a91c7fe35857cab37f7f8">AEndTarget</a> = FIntPoint(INDEX_NONE, INDEX_NONE)</td></tr>
 <tr class="separator:a1e2041b8069a91c7fe35857cab37f7f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe3c687a0142c9d5008fc8f03e90c6ee" id="r_afe3c687a0142c9d5008fc8f03e90c6ee"><td class="memItemLeft" align="right" valign="top"><a id="afe3c687a0142c9d5008fc8f03e90c6ee" name="afe3c687a0142c9d5008fc8f03e90c6ee"></a>
-FIntPoint&#160;</td><td class="memItemRight" valign="bottom"><b>BStartTarget</b> = FIntPoint(INDEX_NONE, INDEX_NONE)</td></tr>
+<tr class="memitem:afe3c687a0142c9d5008fc8f03e90c6ee" id="r_afe3c687a0142c9d5008fc8f03e90c6ee"><td class="memItemLeft" align="right" valign="top">FIntPoint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#afe3c687a0142c9d5008fc8f03e90c6ee">BStartTarget</a> = FIntPoint(INDEX_NONE, INDEX_NONE)</td></tr>
 <tr class="separator:afe3c687a0142c9d5008fc8f03e90c6ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06919a5eaaaf55a1d0214b4805bf9bc9" id="r_a06919a5eaaaf55a1d0214b4805bf9bc9"><td class="memItemLeft" align="right" valign="top"><a id="a06919a5eaaaf55a1d0214b4805bf9bc9" name="a06919a5eaaaf55a1d0214b4805bf9bc9"></a>
-FIntPoint&#160;</td><td class="memItemRight" valign="bottom"><b>BEndTarget</b> = FIntPoint(INDEX_NONE, INDEX_NONE)</td></tr>
+<tr class="memitem:a06919a5eaaaf55a1d0214b4805bf9bc9" id="r_a06919a5eaaaf55a1d0214b4805bf9bc9"><td class="memItemLeft" align="right" valign="top">FIntPoint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a06919a5eaaaf55a1d0214b4805bf9bc9">BEndTarget</a> = FIntPoint(INDEX_NONE, INDEX_NONE)</td></tr>
 <tr class="separator:a06919a5eaaaf55a1d0214b4805bf9bc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f5ad439dc786f4c516dd57a2047ac1d" id="r_a6f5ad439dc786f4c516dd57a2047ac1d"><td class="memItemLeft" align="right" valign="top"><a id="a6f5ad439dc786f4c516dd57a2047ac1d" name="a6f5ad439dc786f4c516dd57a2047ac1d"></a>
-int32&#160;</td><td class="memItemRight" valign="bottom"><b>SelectedSeamIndex</b> = INDEX_NONE</td></tr>
+<tr class="memitem:a6f5ad439dc786f4c516dd57a2047ac1d" id="r_a6f5ad439dc786f4c516dd57a2047ac1d"><td class="memItemLeft" align="right" valign="top">int32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFCanvasState.html#a6f5ad439dc786f4c516dd57a2047ac1d">SelectedSeamIndex</a> = INDEX_NONE</td></tr>
+<tr class="memdesc:a6f5ad439dc786f4c516dd57a2047ac1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The index of the currently selected seam.  <br /></td></tr>
 <tr class="separator:a6f5ad439dc786f4c516dd57a2047ac1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Represents the complete state of the cloth design canvas at a given moment. </p>
+<p>This struct encapsulates all relevant information required to render the canvas, manage user interactions, undo/redo operations, and handle sewing operations. The intent is to provide a single, serialisable snapshot of the canvas state so that operations such as undo, redo, and temporary previews can be performed consistently without relying on scattered state. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a69c8bbd1931cc74751ba7646aed7897d" name="a69c8bbd1931cc74751ba7646aed7897d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69c8bbd1931cc74751ba7646aed7897d">&#9670;&#160;</a></span>operator==()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool FCanvasState::operator== </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structFCanvasState.html">FCanvasState</a> &amp;&#160;</td>
+          <td class="paramname"><em>Other</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Equality operator. </p>
+<p>Compares curve points, Bezier flags, completed shapes, selection indices, pan offset, and zoom factor to determine if two canvas states are equivalent. Excludes sewing preview points and seam definitions for efficiency.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Other</td><td>The canvas state to compare against. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the states are effectively identical, false otherwise. </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a1e2041b8069a91c7fe35857cab37f7f8" name="a1e2041b8069a91c7fe35857cab37f7f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e2041b8069a91c7fe35857cab37f7f8">&#9670;&#160;</a></span>AEndTarget</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FIntPoint FCanvasState::AEndTarget = FIntPoint(INDEX_NONE, INDEX_NONE)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>ShapeIndex, PointIndex </p>
+
+</div>
+</div>
+<a id="a86f4ab3cece29fa0029df16425a797a3" name="a86f4ab3cece29fa0029df16425a797a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86f4ab3cece29fa0029df16425a797a3">&#9670;&#160;</a></span>AStartTarget</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FIntPoint FCanvasState::AStartTarget = FIntPoint(INDEX_NONE, INDEX_NONE)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shape and point indices for the start and end targets of the first seam side. ShapeIndex, PointIndex </p>
+
+</div>
+</div>
+<a id="a06919a5eaaaf55a1d0214b4805bf9bc9" name="a06919a5eaaaf55a1d0214b4805bf9bc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06919a5eaaaf55a1d0214b4805bf9bc9">&#9670;&#160;</a></span>BEndTarget</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FIntPoint FCanvasState::BEndTarget = FIntPoint(INDEX_NONE, INDEX_NONE)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>ShapeIndex, PointIndex </p>
+
+</div>
+</div>
+<a id="afe3c687a0142c9d5008fc8f03e90c6ee" name="afe3c687a0142c9d5008fc8f03e90c6ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe3c687a0142c9d5008fc8f03e90c6ee">&#9670;&#160;</a></span>BStartTarget</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FIntPoint FCanvasState::BStartTarget = FIntPoint(INDEX_NONE, INDEX_NONE)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Shape and point indices for the start and end targets of the second seam side. ShapeIndex, PointIndex </p>
+
+</div>
+</div>
+<a id="aedef968ba4d1a88aaef25cffddc4bbed" name="aedef968ba4d1a88aaef25cffddc4bbed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aedef968ba4d1a88aaef25cffddc4bbed">&#9670;&#160;</a></span>bUseBezierPerPoint</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TArray&lt;bool&gt; FCanvasState::bUseBezierPerPoint</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bezier usage flags for each point of the active curve. </p>
+<p>Determines whether individual points of the current curve should use Bezier handles. This allows mixed curve types within the same canvas. </p>
+
+</div>
+</div>
+<a id="a302855ad43362be3e18c6e62bd728bba" name="a302855ad43362be3e18c6e62bd728bba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a302855ad43362be3e18c6e62bd728bba">&#9670;&#160;</a></span>CompletedBezierFlags</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TArray&lt;TArray&lt;bool&gt; &gt; FCanvasState::CompletedBezierFlags</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bezier usage flags for each point of completed shapes. </p>
+<p>Stores which points of completed shapes used Bezier handles, preserving the original geometry for undo/redo and rendering. </p>
+
+</div>
+</div>
+<a id="a8d9997e5c15840281edafebd4852c232" name="a8d9997e5c15840281edafebd4852c232"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d9997e5c15840281edafebd4852c232">&#9670;&#160;</a></span>CompletedShapes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TArray&lt;FInterpCurve&lt;FVector2D&gt; &gt; FCanvasState::CompletedShapes</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>All shapes that have been completed on the canvas. </p>
+<p>Each shape is stored as a curve, allowing the system to maintain persistent geometry and provide operations such as mesh generation and sewing alignment. </p>
+
+</div>
+</div>
+<a id="a382bb084c6b3de9e414555b7b53a6adb" name="a382bb084c6b3de9e414555b7b53a6adb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a382bb084c6b3de9e414555b7b53a6adb">&#9670;&#160;</a></span>CurvePoints</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FInterpCurve&lt;FVector2D&gt; FCanvasState::CurvePoints</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The curve currently being drawn by the user. </p>
+<p>Stores the control points for the active curve. Maintaining this separately allows the system to provide live feedback and undo functionality while preserving the original shapes. </p>
+
+</div>
+</div>
+<a id="a131f28fb968374bcf7dcddec11d95e20" name="a131f28fb968374bcf7dcddec11d95e20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a131f28fb968374bcf7dcddec11d95e20">&#9670;&#160;</a></span>PanOffset</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FVector2D FCanvasState::PanOffset</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The current pan offset of the canvas in screen coordinates. </p>
+<p>Separating the pan offset from the shapes allows smooth camera-like movement without modifying the underlying geometry. </p>
+
+</div>
+</div>
+<a id="a34e869cc9128fa86afb1ab10fd24d2f7" name="a34e869cc9128fa86afb1ab10fd24d2f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34e869cc9128fa86afb1ab10fd24d2f7">&#9670;&#160;</a></span>SeamClickState</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32 FCanvasState::SeamClickState = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stores the current state of the seam click process. </p>
+<p>Represents the sequential steps of selecting start and end points for two shapes. Stored as an integer for efficient comparison and serialisation. </p>
+
+</div>
+</div>
+<a id="a592c2997a46cb59d26a63256ec1dca1b" name="a592c2997a46cb59d26a63256ec1dca1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a592c2997a46cb59d26a63256ec1dca1b">&#9670;&#160;</a></span>SeamDefinitions</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TArray&lt;<a class="el" href="structFSeamDefinition.html">FSeamDefinition</a>&gt; FCanvasState::SeamDefinitions</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Full seam definitions that have been added to the canvas. </p>
+<p>Contains the start and end indices of sewn edges between shapes. Keeping this allows the system to persist sewing operations and regenerate meshes or previews without redoing calculations. </p>
+
+</div>
+</div>
+<a id="a29b17398df1f74a575893f3b3d5e1100" name="a29b17398df1f74a575893f3b3d5e1100"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29b17398df1f74a575893f3b3d5e1100">&#9670;&#160;</a></span>SeamPreviewPoints</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TMap&lt;int32, TSet&lt;int32&gt; &gt; FCanvasState::SeamPreviewPoints</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Transient preview points shown while sewing. </p>
+<p>Maps shape indices to sets of points that are temporarily highlighted during user interaction, allowing the user to visualise proposed seams before committing. </p>
+
+</div>
+</div>
+<a id="ad38bc0257d5870fca04956229bdc40c2" name="ad38bc0257d5870fca04956229bdc40c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad38bc0257d5870fca04956229bdc40c2">&#9670;&#160;</a></span>SelectedPointIndex</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32 FCanvasState::SelectedPointIndex</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The index of the currently selected point on the active curve. </p>
+<p>Tracking the selected point is essential for move, delete, or edit operations and ensures the UI responds correctly to user input. </p>
+
+</div>
+</div>
+<a id="a6f5ad439dc786f4c516dd57a2047ac1d" name="a6f5ad439dc786f4c516dd57a2047ac1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f5ad439dc786f4c516dd57a2047ac1d">&#9670;&#160;</a></span>SelectedSeamIndex</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32 FCanvasState::SelectedSeamIndex = INDEX_NONE</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The index of the currently selected seam. </p>
+<p>Allows the system to highlight or modify a specific seam while preserving the rest of the canvas state. </p>
+
+</div>
+</div>
+<a id="a67aaa88bb2a26e95e2b5a781d4fe3d13" name="a67aaa88bb2a26e95e2b5a781d4fe3d13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67aaa88bb2a26e95e2b5a781d4fe3d13">&#9670;&#160;</a></span>ZoomFactor</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float FCanvasState::ZoomFactor</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The current zoom factor of the canvas. </p>
+<p>Used to scale the canvas and provide consistent UI feedback, enabling precise user interactions across different zoom levels. </p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>Plugins/ClothDesign/Source/ClothDesign/Public/Canvas/<a class="el" href="CanvasState_8h_source.html">CanvasState.h</a></li>
 </ul>

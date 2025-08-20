@@ -99,44 +99,58 @@ $(document).ready(function(){initNavTree('CanvasInputHandler_8h_source.html','')
   <div class="headertitle"><div class="title">CanvasInputHandler.h</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;CoreMinimal.h&quot;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;Input/Reply.h&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">class </span><a class="code hl_class" href="classSClothDesignCanvas.html">SClothDesignCanvas</a>;</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="foldopen" id="foldopen00008" data-start="{" data-end="};">
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno"><a class="line" href="structFCanvasInputHandler.html">    8</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structFCanvasInputHandler.html">FCanvasInputHandler</a></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>{</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <span class="keyword">explicit</span> <a class="code hl_struct" href="structFCanvasInputHandler.html">FCanvasInputHandler</a>(<a class="code hl_class" href="classSClothDesignCanvas.html">SClothDesignCanvas</a>* InCanvas);</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="comment">// Each returns FReply::Handled() or Unhandled()</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    FReply HandlePan(<span class="keyword">const</span> FPointerEvent&amp; MouseEvent);</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    FReply HandleDraw(<span class="keyword">const</span> FGeometry&amp; Geo, <span class="keyword">const</span> FPointerEvent&amp; MouseEvent);</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    FReply HandleSew(<span class="keyword">const</span> FVector2D&amp; CanvasClick);</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    FReply HandleSelect(<span class="keyword">const</span> FVector2D&amp; CanvasClick);</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <a class="code hl_class" href="classSClothDesignCanvas.html">SClothDesignCanvas</a>* Canvas;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keywordtype">bool</span> bIsSeamReady = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keyword">static</span> <span class="keywordtype">float</span> DistPointToSegmentSq(</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        <span class="keyword">const</span> FVector2D&amp; P,</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        <span class="keyword">const</span> FVector2D&amp; A,</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        <span class="keyword">const</span> FVector2D&amp; B);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>};</div>
+<a href="CanvasInputHandler_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef FCanvasInputHandler_H</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define FCanvasInputHandler_H</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;CoreMinimal.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;Input/Reply.h&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// /*</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment">//  * Thesis reference:</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">//  * See Chapter 4.5 (HandleDraw), 4.7 (HandleSew) and 4.9.2 (HandleSelect) for details.</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">//  */</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">class </span><a class="code hl_class" href="classSClothDesignCanvas.html">SClothDesignCanvas</a>;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
+<div class="foldopen" id="foldopen00032" data-start="{" data-end="};">
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="classFCanvasInputHandler.html">   32</a></span><span class="keyword">class </span><a class="code hl_class" href="classFCanvasInputHandler.html">FCanvasInputHandler</a></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>{</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keyword">explicit</span> <a class="code hl_class" href="classFCanvasInputHandler.html">FCanvasInputHandler</a>(<a class="code hl_class" href="classSClothDesignCanvas.html">SClothDesignCanvas</a>* InCanvas);</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    FReply <a class="code hl_function" href="classFCanvasInputHandler.html#aa528d69a1111bd9f11ab94a2935a0267">HandlePan</a>(<span class="keyword">const</span> FPointerEvent&amp; MouseEvent);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    FReply <a class="code hl_function" href="classFCanvasInputHandler.html#ad25c100f3e48bff467a3a13cd54e86b0">HandleDraw</a>(<span class="keyword">const</span> FGeometry&amp; Geo, <span class="keyword">const</span> FPointerEvent&amp; MouseEvent);</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    FReply <a class="code hl_function" href="classFCanvasInputHandler.html#abd02f24f8068cd6b80432e8e2e8f0ab9">HandleSew</a>(<span class="keyword">const</span> FVector2D&amp; CanvasClick);</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    FReply <a class="code hl_function" href="classFCanvasInputHandler.html#ac569e59b6db93406b6b50966e9df77b3">HandleSelect</a>(<span class="keyword">const</span> FVector2D&amp; CanvasClick);</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <a class="code hl_class" href="classSClothDesignCanvas.html">SClothDesignCanvas</a>* Canvas; </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="keywordtype">bool</span> bIsSeamReady = <span class="keyword">false</span>; </div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keyword">static</span> <span class="keywordtype">float</span> DistPointToSegmentSq(</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        <span class="keyword">const</span> FVector2D&amp; P,</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        <span class="keyword">const</span> FVector2D&amp; A,</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        <span class="keyword">const</span> FVector2D&amp; B);</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>};</div>
 </div>
-<div class="ttc" id="aclassSClothDesignCanvas_html"><div class="ttname"><a href="classSClothDesignCanvas.html">SClothDesignCanvas</a></div><div class="ttdef"><b>Definition</b> ClothDesignCanvas.h:15</div></div>
-<div class="ttc" id="astructFCanvasInputHandler_html"><div class="ttname"><a href="structFCanvasInputHandler.html">FCanvasInputHandler</a></div><div class="ttdef"><b>Definition</b> CanvasInputHandler.h:9</div></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassFCanvasInputHandler_html"><div class="ttname"><a href="classFCanvasInputHandler.html">FCanvasInputHandler</a></div><div class="ttdoc">Handles user input for the canvas.</div><div class="ttdef"><b>Definition</b> CanvasInputHandler.h:33</div></div>
+<div class="ttc" id="aclassFCanvasInputHandler_html_aa528d69a1111bd9f11ab94a2935a0267"><div class="ttname"><a href="classFCanvasInputHandler.html#aa528d69a1111bd9f11ab94a2935a0267">FCanvasInputHandler::HandlePan</a></div><div class="ttdeci">FReply HandlePan(const FPointerEvent &amp;MouseEvent)</div><div class="ttdoc">Handles panning of the canvas.</div><div class="ttdef"><b>Definition</b> CanvasInputHandler.cpp:17</div></div>
+<div class="ttc" id="aclassFCanvasInputHandler_html_abd02f24f8068cd6b80432e8e2e8f0ab9"><div class="ttname"><a href="classFCanvasInputHandler.html#abd02f24f8068cd6b80432e8e2e8f0ab9">FCanvasInputHandler::HandleSew</a></div><div class="ttdeci">FReply HandleSew(const FVector2D &amp;CanvasClick)</div><div class="ttdoc">Handles sewing actions at a clicked location on the canvas.</div><div class="ttdef"><b>Definition</b> CanvasInputHandler.cpp:74</div></div>
+<div class="ttc" id="aclassFCanvasInputHandler_html_ac569e59b6db93406b6b50966e9df77b3"><div class="ttname"><a href="classFCanvasInputHandler.html#ac569e59b6db93406b6b50966e9df77b3">FCanvasInputHandler::HandleSelect</a></div><div class="ttdeci">FReply HandleSelect(const FVector2D &amp;CanvasClick)</div><div class="ttdoc">Handles selection actions at a clicked location on the canvas.</div><div class="ttdef"><b>Definition</b> CanvasInputHandler.cpp:280</div></div>
+<div class="ttc" id="aclassFCanvasInputHandler_html_ad25c100f3e48bff467a3a13cd54e86b0"><div class="ttname"><a href="classFCanvasInputHandler.html#ad25c100f3e48bff467a3a13cd54e86b0">FCanvasInputHandler::HandleDraw</a></div><div class="ttdeci">FReply HandleDraw(const FGeometry &amp;Geo, const FPointerEvent &amp;MouseEvent)</div><div class="ttdoc">Handles drawing input on the canvas.</div><div class="ttdef"><b>Definition</b> CanvasInputHandler.cpp:25</div></div>
+<div class="ttc" id="aclassSClothDesignCanvas_html"><div class="ttname"><a href="classSClothDesignCanvas.html">SClothDesignCanvas</a></div><div class="ttdef"><b>Definition</b> ClothDesignCanvas.h:19</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b4eaef40a1fe20bedafe9e8e719ce66.html">Plugins</a></li><li class="navelem"><a class="el" href="dir_e73a24b9f56b67762402fc59bf305c32.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_00130aff64f0cd43764efd6f84b16d7b.html">Source</a></li><li class="navelem"><a class="el" href="dir_8aeeb0e0a1a8ea6a84d44b7114371350.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_3786820cdedd5409c11f18a4e1deb575.html">Public</a></li><li class="navelem"><a class="el" href="dir_727f76c6ea6965b7f2dd168a109f7adb.html">Canvas</a></li><li class="navelem"><b>CanvasInputHandler.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b4eaef40a1fe20bedafe9e8e719ce66.html">Plugins</a></li><li class="navelem"><a class="el" href="dir_e73a24b9f56b67762402fc59bf305c32.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_00130aff64f0cd43764efd6f84b16d7b.html">Source</a></li><li class="navelem"><a class="el" href="dir_8aeeb0e0a1a8ea6a84d44b7114371350.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_3786820cdedd5409c11f18a4e1deb575.html">Public</a></li><li class="navelem"><a class="el" href="dir_727f76c6ea6965b7f2dd168a109f7adb.html">Canvas</a></li><li class="navelem"><a class="el" href="CanvasInputHandler_8h.html">CanvasInputHandler.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['centermeshverticestoorigin_0',['CenterMeshVerticesToOrigin',['../structFCanvasUtils.html#ab29c3062f58d7e232766b6700b8630d0',1,'FCanvasUtils']]]
+  ['addpreviewpoint_0',['AddPreviewPoint',['../classFCanvasSewing.html#afab5da100568c10f433b38f9a4f0d279',1,'FCanvasSewing']]]
 ];

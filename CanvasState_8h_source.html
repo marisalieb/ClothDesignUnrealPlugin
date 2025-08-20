@@ -99,59 +99,82 @@ $(document).ready(function(){initNavTree('CanvasState_8h_source.html',''); initR
   <div class="headertitle"><div class="title">CanvasState.h</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor"># include &quot;Canvas/CanvasSewing.h&quot;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// Canvas state struct</span></div>
-<div class="foldopen" id="foldopen00006" data-start="{" data-end="};">
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="structFCanvasState.html">    6</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>{</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    FInterpCurve&lt;FVector2D&gt; CurvePoints;</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    TArray&lt;FInterpCurve&lt;FVector2D&gt;&gt; CompletedShapes;</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    int32 SelectedPointIndex;</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    FVector2D PanOffset;</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keywordtype">float</span> ZoomFactor;</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    </div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    TArray&lt;bool&gt; bUseBezierPerPoint; <span class="comment">// For the current curve</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    TArray&lt;TArray&lt;bool&gt;&gt; CompletedBezierFlags; <span class="comment">// for completed shapes</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="comment">// --- Sewing data ----</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    TArray&lt;FSeamDefinition&gt; SeamDefinitions;                <span class="comment">// full seam definitions (copy)</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    TMap&lt;int32, TSet&lt;int32&gt;&gt; SeamPreviewPoints;                   <span class="comment">// transient preview points shown while sewing</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    int32 SeamClickState = 0;                              <span class="comment">// store enum as int for simple comparison</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    FIntPoint AStartTarget = FIntPoint(INDEX_NONE, INDEX_NONE); <span class="comment">// ShapeIndex, PointIndex</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    FIntPoint AEndTarget   = FIntPoint(INDEX_NONE, INDEX_NONE);</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    FIntPoint BStartTarget = FIntPoint(INDEX_NONE, INDEX_NONE);</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    FIntPoint BEndTarget   = FIntPoint(INDEX_NONE, INDEX_NONE);</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    int32 SelectedSeamIndex = INDEX_NONE;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="comment">// Optional equality operator </span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; Other)<span class="keyword"> const</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">    </span>{</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="keywordflow">return</span>  CurvePoints == Other.CurvePoints &amp;&amp;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>                bUseBezierPerPoint == Other.bUseBezierPerPoint &amp;&amp; </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>                CompletedShapes == Other.CompletedShapes &amp;&amp;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>                CompletedBezierFlags == Other.CompletedBezierFlags &amp;&amp;</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>                SelectedPointIndex == Other.SelectedPointIndex &amp;&amp;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>                PanOffset == Other.PanOffset &amp;&amp;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>                FMath::IsNearlyEqual(ZoomFactor, Other.ZoomFactor); <span class="comment">// &amp;&amp;</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>                <span class="comment">// // sewing compares</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>                <span class="comment">// SeamDefinitions == Other.SeamDefinitions &amp;&amp;</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>                <span class="comment">// // SeamPreviewPoints == Other.SeamPreviewPoints &amp;&amp;</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>                <span class="comment">// SeamClickState == Other.SeamClickState &amp;&amp;</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>                <span class="comment">// AStartTarget == Other.AStartTarget &amp;&amp;</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                <span class="comment">// AEndTarget   == Other.AEndTarget &amp;&amp;</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                <span class="comment">// BStartTarget == Other.BStartTarget &amp;&amp;</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                <span class="comment">// BEndTarget   == Other.BEndTarget &amp;&amp;</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                <span class="comment">// SelectedSeamIndex == Other.SelectedSeamIndex;</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    } </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>};</div>
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef FCanvasState_H</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define FCanvasState_H</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor"># include &quot;Canvas/CanvasSewing.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">/*</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> * Thesis reference:</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"> * See Chapter 4.4 and 4.9.1 for detailed explanations.</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="foldopen" id="foldopen00020" data-start="{" data-end="};">
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="structFCanvasState.html">   20</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a382bb084c6b3de9e414555b7b53a6adb">   29</a></span>    FInterpCurve&lt;FVector2D&gt; <a class="code hl_variable" href="structFCanvasState.html#a382bb084c6b3de9e414555b7b53a6adb">CurvePoints</a>;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a8d9997e5c15840281edafebd4852c232">   38</a></span>    TArray&lt;FInterpCurve&lt;FVector2D&gt;&gt; <a class="code hl_variable" href="structFCanvasState.html#a8d9997e5c15840281edafebd4852c232">CompletedShapes</a>;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="structFCanvasState.html#ad38bc0257d5870fca04956229bdc40c2">   46</a></span>    int32 <a class="code hl_variable" href="structFCanvasState.html#ad38bc0257d5870fca04956229bdc40c2">SelectedPointIndex</a>;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a131f28fb968374bcf7dcddec11d95e20">   54</a></span>    FVector2D <a class="code hl_variable" href="structFCanvasState.html#a131f28fb968374bcf7dcddec11d95e20">PanOffset</a>;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a67aaa88bb2a26e95e2b5a781d4fe3d13">   62</a></span>    <span class="keywordtype">float</span> <a class="code hl_variable" href="structFCanvasState.html#a67aaa88bb2a26e95e2b5a781d4fe3d13">ZoomFactor</a>;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="structFCanvasState.html#aedef968ba4d1a88aaef25cffddc4bbed">   70</a></span>    TArray&lt;bool&gt; <a class="code hl_variable" href="structFCanvasState.html#aedef968ba4d1a88aaef25cffddc4bbed">bUseBezierPerPoint</a>;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a302855ad43362be3e18c6e62bd728bba">   78</a></span>    TArray&lt;TArray&lt;bool&gt;&gt; <a class="code hl_variable" href="structFCanvasState.html#a302855ad43362be3e18c6e62bd728bba">CompletedBezierFlags</a>;</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="comment">// --- Sewing data ---</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a592c2997a46cb59d26a63256ec1dca1b">   89</a></span>    TArray&lt;FSeamDefinition&gt; <a class="code hl_variable" href="structFCanvasState.html#a592c2997a46cb59d26a63256ec1dca1b">SeamDefinitions</a>;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a29b17398df1f74a575893f3b3d5e1100">   98</a></span>    TMap&lt;int32, TSet&lt;int32&gt;&gt; <a class="code hl_variable" href="structFCanvasState.html#a29b17398df1f74a575893f3b3d5e1100">SeamPreviewPoints</a>;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a34e869cc9128fa86afb1ab10fd24d2f7">  107</a></span>    int32 <a class="code hl_variable" href="structFCanvasState.html#a34e869cc9128fa86afb1ab10fd24d2f7">SeamClickState</a> = 0;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a86f4ab3cece29fa0029df16425a797a3">  110</a></span>    FIntPoint <a class="code hl_variable" href="structFCanvasState.html#a86f4ab3cece29fa0029df16425a797a3">AStartTarget</a> = FIntPoint(INDEX_NONE, INDEX_NONE); </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a1e2041b8069a91c7fe35857cab37f7f8">  111</a></span>    FIntPoint <a class="code hl_variable" href="structFCanvasState.html#a1e2041b8069a91c7fe35857cab37f7f8">AEndTarget</a>   = FIntPoint(INDEX_NONE, INDEX_NONE); </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="structFCanvasState.html#afe3c687a0142c9d5008fc8f03e90c6ee">  114</a></span>    FIntPoint <a class="code hl_variable" href="structFCanvasState.html#afe3c687a0142c9d5008fc8f03e90c6ee">BStartTarget</a> = FIntPoint(INDEX_NONE, INDEX_NONE); </div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a06919a5eaaaf55a1d0214b4805bf9bc9">  115</a></span>    FIntPoint <a class="code hl_variable" href="structFCanvasState.html#a06919a5eaaaf55a1d0214b4805bf9bc9">BEndTarget</a>   = FIntPoint(INDEX_NONE, INDEX_NONE); </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a6f5ad439dc786f4c516dd57a2047ac1d">  123</a></span>    int32 <a class="code hl_variable" href="structFCanvasState.html#a6f5ad439dc786f4c516dd57a2047ac1d">SelectedSeamIndex</a> = INDEX_NONE;</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
+<div class="foldopen" id="foldopen00135" data-start="{" data-end="}">
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno"><a class="line" href="structFCanvasState.html#a69c8bbd1931cc74751ba7646aed7897d">  135</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="structFCanvasState.html#a69c8bbd1931cc74751ba7646aed7897d">operator==</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; Other)<span class="keyword"> const</span></div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span><span class="keyword">    </span>{</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        <span class="keywordflow">return</span>  <a class="code hl_variable" href="structFCanvasState.html#a382bb084c6b3de9e414555b7b53a6adb">CurvePoints</a> == Other.<a class="code hl_variable" href="structFCanvasState.html#a382bb084c6b3de9e414555b7b53a6adb">CurvePoints</a> &amp;&amp;</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                <a class="code hl_variable" href="structFCanvasState.html#aedef968ba4d1a88aaef25cffddc4bbed">bUseBezierPerPoint</a> == Other.<a class="code hl_variable" href="structFCanvasState.html#aedef968ba4d1a88aaef25cffddc4bbed">bUseBezierPerPoint</a> &amp;&amp; </div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                <a class="code hl_variable" href="structFCanvasState.html#a8d9997e5c15840281edafebd4852c232">CompletedShapes</a> == Other.<a class="code hl_variable" href="structFCanvasState.html#a8d9997e5c15840281edafebd4852c232">CompletedShapes</a> &amp;&amp;</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>                <a class="code hl_variable" href="structFCanvasState.html#a302855ad43362be3e18c6e62bd728bba">CompletedBezierFlags</a> == Other.<a class="code hl_variable" href="structFCanvasState.html#a302855ad43362be3e18c6e62bd728bba">CompletedBezierFlags</a> &amp;&amp;</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>                <a class="code hl_variable" href="structFCanvasState.html#ad38bc0257d5870fca04956229bdc40c2">SelectedPointIndex</a> == Other.<a class="code hl_variable" href="structFCanvasState.html#ad38bc0257d5870fca04956229bdc40c2">SelectedPointIndex</a> &amp;&amp;</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>                <a class="code hl_variable" href="structFCanvasState.html#a131f28fb968374bcf7dcddec11d95e20">PanOffset</a> == Other.<a class="code hl_variable" href="structFCanvasState.html#a131f28fb968374bcf7dcddec11d95e20">PanOffset</a> &amp;&amp;</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>                FMath::IsNearlyEqual(<a class="code hl_variable" href="structFCanvasState.html#a67aaa88bb2a26e95e2b5a781d4fe3d13">ZoomFactor</a>, Other.<a class="code hl_variable" href="structFCanvasState.html#a67aaa88bb2a26e95e2b5a781d4fe3d13">ZoomFactor</a>);</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    }</div>
 </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="ttc" id="astructFCanvasState_html"><div class="ttname"><a href="structFCanvasState.html">FCanvasState</a></div><div class="ttdef"><b>Definition</b> CanvasState.h:7</div></div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>};</div>
+</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
+<div class="ttc" id="astructFCanvasState_html"><div class="ttname"><a href="structFCanvasState.html">FCanvasState</a></div><div class="ttdoc">Represents the complete state of the cloth design canvas at a given moment.</div><div class="ttdef"><b>Definition</b> CanvasState.h:21</div></div>
+<div class="ttc" id="astructFCanvasState_html_a06919a5eaaaf55a1d0214b4805bf9bc9"><div class="ttname"><a href="structFCanvasState.html#a06919a5eaaaf55a1d0214b4805bf9bc9">FCanvasState::BEndTarget</a></div><div class="ttdeci">FIntPoint BEndTarget</div><div class="ttdef"><b>Definition</b> CanvasState.h:115</div></div>
+<div class="ttc" id="astructFCanvasState_html_a131f28fb968374bcf7dcddec11d95e20"><div class="ttname"><a href="structFCanvasState.html#a131f28fb968374bcf7dcddec11d95e20">FCanvasState::PanOffset</a></div><div class="ttdeci">FVector2D PanOffset</div><div class="ttdoc">The current pan offset of the canvas in screen coordinates.</div><div class="ttdef"><b>Definition</b> CanvasState.h:54</div></div>
+<div class="ttc" id="astructFCanvasState_html_a1e2041b8069a91c7fe35857cab37f7f8"><div class="ttname"><a href="structFCanvasState.html#a1e2041b8069a91c7fe35857cab37f7f8">FCanvasState::AEndTarget</a></div><div class="ttdeci">FIntPoint AEndTarget</div><div class="ttdef"><b>Definition</b> CanvasState.h:111</div></div>
+<div class="ttc" id="astructFCanvasState_html_a29b17398df1f74a575893f3b3d5e1100"><div class="ttname"><a href="structFCanvasState.html#a29b17398df1f74a575893f3b3d5e1100">FCanvasState::SeamPreviewPoints</a></div><div class="ttdeci">TMap&lt; int32, TSet&lt; int32 &gt; &gt; SeamPreviewPoints</div><div class="ttdoc">Transient preview points shown while sewing.</div><div class="ttdef"><b>Definition</b> CanvasState.h:98</div></div>
+<div class="ttc" id="astructFCanvasState_html_a302855ad43362be3e18c6e62bd728bba"><div class="ttname"><a href="structFCanvasState.html#a302855ad43362be3e18c6e62bd728bba">FCanvasState::CompletedBezierFlags</a></div><div class="ttdeci">TArray&lt; TArray&lt; bool &gt; &gt; CompletedBezierFlags</div><div class="ttdoc">Bezier usage flags for each point of completed shapes.</div><div class="ttdef"><b>Definition</b> CanvasState.h:78</div></div>
+<div class="ttc" id="astructFCanvasState_html_a34e869cc9128fa86afb1ab10fd24d2f7"><div class="ttname"><a href="structFCanvasState.html#a34e869cc9128fa86afb1ab10fd24d2f7">FCanvasState::SeamClickState</a></div><div class="ttdeci">int32 SeamClickState</div><div class="ttdoc">Stores the current state of the seam click process.</div><div class="ttdef"><b>Definition</b> CanvasState.h:107</div></div>
+<div class="ttc" id="astructFCanvasState_html_a382bb084c6b3de9e414555b7b53a6adb"><div class="ttname"><a href="structFCanvasState.html#a382bb084c6b3de9e414555b7b53a6adb">FCanvasState::CurvePoints</a></div><div class="ttdeci">FInterpCurve&lt; FVector2D &gt; CurvePoints</div><div class="ttdoc">The curve currently being drawn by the user.</div><div class="ttdef"><b>Definition</b> CanvasState.h:29</div></div>
+<div class="ttc" id="astructFCanvasState_html_a592c2997a46cb59d26a63256ec1dca1b"><div class="ttname"><a href="structFCanvasState.html#a592c2997a46cb59d26a63256ec1dca1b">FCanvasState::SeamDefinitions</a></div><div class="ttdeci">TArray&lt; FSeamDefinition &gt; SeamDefinitions</div><div class="ttdoc">Full seam definitions that have been added to the canvas.</div><div class="ttdef"><b>Definition</b> CanvasState.h:89</div></div>
+<div class="ttc" id="astructFCanvasState_html_a67aaa88bb2a26e95e2b5a781d4fe3d13"><div class="ttname"><a href="structFCanvasState.html#a67aaa88bb2a26e95e2b5a781d4fe3d13">FCanvasState::ZoomFactor</a></div><div class="ttdeci">float ZoomFactor</div><div class="ttdoc">The current zoom factor of the canvas.</div><div class="ttdef"><b>Definition</b> CanvasState.h:62</div></div>
+<div class="ttc" id="astructFCanvasState_html_a69c8bbd1931cc74751ba7646aed7897d"><div class="ttname"><a href="structFCanvasState.html#a69c8bbd1931cc74751ba7646aed7897d">FCanvasState::operator==</a></div><div class="ttdeci">bool operator==(const FCanvasState &amp;Other) const</div><div class="ttdoc">Equality operator.</div><div class="ttdef"><b>Definition</b> CanvasState.h:135</div></div>
+<div class="ttc" id="astructFCanvasState_html_a6f5ad439dc786f4c516dd57a2047ac1d"><div class="ttname"><a href="structFCanvasState.html#a6f5ad439dc786f4c516dd57a2047ac1d">FCanvasState::SelectedSeamIndex</a></div><div class="ttdeci">int32 SelectedSeamIndex</div><div class="ttdoc">The index of the currently selected seam.</div><div class="ttdef"><b>Definition</b> CanvasState.h:123</div></div>
+<div class="ttc" id="astructFCanvasState_html_a86f4ab3cece29fa0029df16425a797a3"><div class="ttname"><a href="structFCanvasState.html#a86f4ab3cece29fa0029df16425a797a3">FCanvasState::AStartTarget</a></div><div class="ttdeci">FIntPoint AStartTarget</div><div class="ttdef"><b>Definition</b> CanvasState.h:110</div></div>
+<div class="ttc" id="astructFCanvasState_html_a8d9997e5c15840281edafebd4852c232"><div class="ttname"><a href="structFCanvasState.html#a8d9997e5c15840281edafebd4852c232">FCanvasState::CompletedShapes</a></div><div class="ttdeci">TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt; CompletedShapes</div><div class="ttdoc">All shapes that have been completed on the canvas.</div><div class="ttdef"><b>Definition</b> CanvasState.h:38</div></div>
+<div class="ttc" id="astructFCanvasState_html_ad38bc0257d5870fca04956229bdc40c2"><div class="ttname"><a href="structFCanvasState.html#ad38bc0257d5870fca04956229bdc40c2">FCanvasState::SelectedPointIndex</a></div><div class="ttdeci">int32 SelectedPointIndex</div><div class="ttdoc">The index of the currently selected point on the active curve.</div><div class="ttdef"><b>Definition</b> CanvasState.h:46</div></div>
+<div class="ttc" id="astructFCanvasState_html_aedef968ba4d1a88aaef25cffddc4bbed"><div class="ttname"><a href="structFCanvasState.html#aedef968ba4d1a88aaef25cffddc4bbed">FCanvasState::bUseBezierPerPoint</a></div><div class="ttdeci">TArray&lt; bool &gt; bUseBezierPerPoint</div><div class="ttdoc">Bezier usage flags for each point of the active curve.</div><div class="ttdef"><b>Definition</b> CanvasState.h:70</div></div>
+<div class="ttc" id="astructFCanvasState_html_afe3c687a0142c9d5008fc8f03e90c6ee"><div class="ttname"><a href="structFCanvasState.html#afe3c687a0142c9d5008fc8f03e90c6ee">FCanvasState::BStartTarget</a></div><div class="ttdeci">FIntPoint BStartTarget</div><div class="ttdef"><b>Definition</b> CanvasState.h:114</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -1,26 +1,9 @@
 var searchData=
 [
-  ['fcanvasassetmanager_0',['FCanvasAssetManager',['../structFCanvasAssetManager.html',1,'']]],
-  ['fcanvasassets_1',['FCanvasAssets',['../structFCanvasAssets.html',1,'']]],
-  ['fcanvasinputhandler_2',['FCanvasInputHandler',['../structFCanvasInputHandler.html',1,'']]],
-  ['fcanvasmesh_3',['FCanvasMesh',['../structFCanvasMesh.html',1,'']]],
-  ['fcanvaspaint_4',['FCanvasPaint',['../structFCanvasPaint.html',1,'']]],
-  ['fcanvaspatternmerge_5',['FCanvasPatternMerge',['../structFCanvasPatternMerge.html',1,'']]],
-  ['fcanvassewing_6',['FCanvasSewing',['../classFCanvasSewing.html',1,'']]],
-  ['fcanvasstate_7',['FCanvasState',['../structFCanvasState.html',1,'']]],
-  ['fcanvasutils_8',['FCanvasUtils',['../structFCanvasUtils.html',1,'']]],
-  ['fclicktarget_9',['FClickTarget',['../structFClickTarget.html',1,'']]],
-  ['fclothdesigncommands_10',['FClothDesignCommands',['../classFClothDesignCommands.html',1,'']]],
-  ['fclothdesignmodule_11',['FClothDesignModule',['../classFClothDesignModule.html',1,'']]],
-  ['fclothdesignstyle_12',['FClothDesignStyle',['../classFClothDesignStyle.html',1,'']]],
-  ['fclothdesigntoolkit_13',['FClothDesignToolkit',['../classFClothDesignToolkit.html',1,'']]],
-  ['fclothphysicalconfig_14',['FClothPhysicalConfig',['../structFClothPhysicalConfig.html',1,'']]],
-  ['fclothsimsettings_15',['FClothSimSettings',['../structFClothSimSettings.html',1,'']]],
-  ['fcurvepointdata_16',['FCurvePointData',['../structFCurvePointData.html',1,'']]],
-  ['fedgeindices_17',['FEdgeIndices',['../structFEdgeIndices.html',1,'']]],
-  ['floadedshapedata_18',['FLoadedShapeData',['../structFLoadedShapeData.html',1,'']]],
-  ['fpatternsewingconstraint_19',['FPatternSewingConstraint',['../structFPatternSewingConstraint.html',1,'']]],
-  ['fpresetitem_20',['FPresetItem',['../structFPresetItem.html',1,'']]],
-  ['fseamdefinition_21',['FSeamDefinition',['../structFSeamDefinition.html',1,'']]],
-  ['fshapedata_22',['FShapeData',['../structFShapeData.html',1,'']]]
+  ['drawbackground_0',['DrawBackground',['../classFCanvasPaint.html#ab853cc31f0e17bc5d42625bc7186fc71',1,'FCanvasPaint']]],
+  ['drawcompletedshapes_1',['DrawCompletedShapes',['../classFCanvasPaint.html#ab3922c05dd75fb2d16878cc0c8452a7b',1,'FCanvasPaint']]],
+  ['drawcurrentshape_2',['DrawCurrentShape',['../classFCanvasPaint.html#ac6f406f32fbcd762f1409c77595d2ade',1,'FCanvasPaint']]],
+  ['drawfinalisedseamlines_3',['DrawFinalisedSeamLines',['../classFCanvasPaint.html#ab6ccab28e37a87a6695927a4e900ffe2',1,'FCanvasPaint']]],
+  ['drawgrid_4',['DrawGrid',['../classFCanvasPaint.html#ad2910a76eb9dc1c48ec0d980fe2eab69',1,'FCanvasPaint']]],
+  ['drawgridlines_5',['DrawGridLines',['../classFCanvasPaint.html#a7e1fa56c656b5764a64ac2839b304982',1,'FCanvasPaint']]]
 ];

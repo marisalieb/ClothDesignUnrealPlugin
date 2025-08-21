@@ -1,117 +1,117 @@
 #include "Misc/AutomationTest.h"
-#include "Canvas/CanvasPatternMerge.h"
+#include "PatternCreation/PatternMerge.h"
 #include "PatternMesh.h"
 #include "PatternSewingConstraint.h"
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasPatternMergeTest, 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPatternMergeTest, 
 	"CanvasPatternMerge.BasicTest", 
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FCanvasPatternMergeTest::RunTest(const FString& Parameters)
+bool FPatternMergeTest::RunTest(const FString& Parameters)
 {
-	FCanvasPatternMerge::TestActors.Empty();
-	FCanvasPatternMerge::TestSeams.Empty();
+	FPatternMerge::TestActors.Empty();
+	FPatternMerge::TestSeams.Empty();
 
 	TWeakObjectPtr<APatternMesh> MockActor;
 	FPatternSewingConstraint MockSeam;
 
-	FCanvasPatternMerge::TestActors.Add(MockActor);
-	FCanvasPatternMerge::TestSeams.Add(MockSeam);
+	FPatternMerge::TestActors.Add(MockActor);
+	FPatternMerge::TestSeams.Add(MockSeam);
 
-	FCanvasPatternMerge PatternMerge;
+	FPatternMerge PatternMerge;
 
 	PatternMerge.MergeSewnGroups();
 	
-	TestTrue(TEXT("TestActors array should still contain mock actor"), FCanvasPatternMerge::TestActors.Num() > 0);
-	TestTrue(TEXT("TestSeams array should still contain mock seam"), FCanvasPatternMerge::TestSeams.Num() > 0);
+	TestTrue(TEXT("TestActors array should still contain mock actor"), FPatternMerge::TestActors.Num() > 0);
+	TestTrue(TEXT("TestSeams array should still contain mock seam"), FPatternMerge::TestSeams.Num() > 0);
 	
 
 	return true;
 }
 
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFCanvasPatternMergeMixedTest, 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFPatternMergeMixedTest, 
 	"CanvasPatternMerge.TwoActorsAndSeams", 
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FFCanvasPatternMergeMixedTest::RunTest(const FString& Parameters)
+bool FFPatternMergeMixedTest::RunTest(const FString& Parameters)
 {
-	FCanvasPatternMerge::TestActors.Empty();
-	FCanvasPatternMerge::TestSeams.Empty();
+	FPatternMerge::TestActors.Empty();
+	FPatternMerge::TestSeams.Empty();
 
-	FCanvasPatternMerge::TestActors.Add(nullptr);
-	FCanvasPatternMerge::TestActors.Add(nullptr);
+	FPatternMerge::TestActors.Add(nullptr);
+	FPatternMerge::TestActors.Add(nullptr);
 
 	FPatternSewingConstraint Seam1, Seam2;
-	FCanvasPatternMerge::TestSeams.Add(Seam1);
-	FCanvasPatternMerge::TestSeams.Add(Seam2);
+	FPatternMerge::TestSeams.Add(Seam1);
+	FPatternMerge::TestSeams.Add(Seam2);
 
-	FCanvasPatternMerge PatternMerge;
+	FPatternMerge PatternMerge;
 	PatternMerge.MergeSewnGroups();
 
-	TestEqual(TEXT("Number of actors should remain 2"), FCanvasPatternMerge::TestActors.Num(), 2);
-	TestEqual(TEXT("Number of seams should remain 2"), FCanvasPatternMerge::TestSeams.Num(), 2);
+	TestEqual(TEXT("Number of actors should remain 2"), FPatternMerge::TestActors.Num(), 2);
+	TestEqual(TEXT("Number of seams should remain 2"), FPatternMerge::TestSeams.Num(), 2);
 
 	return true;
 }
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFCanvasPatternMergeEmptyTest, 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFPatternMergeEmptyTest, 
 	"CanvasPatternMerge.EmptyArrays", 
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FFCanvasPatternMergeEmptyTest::RunTest(const FString& Parameters)
+bool FFPatternMergeEmptyTest::RunTest(const FString& Parameters)
 {
-	FCanvasPatternMerge::TestActors.Empty();
-	FCanvasPatternMerge::TestSeams.Empty();
+	FPatternMerge::TestActors.Empty();
+	FPatternMerge::TestSeams.Empty();
 
-	FCanvasPatternMerge PatternMerge;
+	FPatternMerge PatternMerge;
 	PatternMerge.MergeSewnGroups();
 
-	TestEqual(TEXT("TestActors should remain empty"), FCanvasPatternMerge::TestActors.Num(), 0);
-	TestEqual(TEXT("TestSeams should remain empty"), FCanvasPatternMerge::TestSeams.Num(), 0);
+	TestEqual(TEXT("TestActors should remain empty"), FPatternMerge::TestActors.Num(), 0);
+	TestEqual(TEXT("TestSeams should remain empty"), FPatternMerge::TestSeams.Num(), 0);
 
 	return true;
 }
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFCanvasPatternMergeActorsOnlyTest, 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFPatternMergeActorsOnlyTest, 
 	"CanvasPatternMerge.MultipleActorsNoSeams", 
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FFCanvasPatternMergeActorsOnlyTest::RunTest(const FString& Parameters)
+bool FFPatternMergeActorsOnlyTest::RunTest(const FString& Parameters)
 {
-	FCanvasPatternMerge::TestActors.Empty();
-	FCanvasPatternMerge::TestSeams.Empty();
+	FPatternMerge::TestActors.Empty();
+	FPatternMerge::TestSeams.Empty();
 
-	FCanvasPatternMerge::TestActors.Add(nullptr);
-	FCanvasPatternMerge::TestActors.Add(nullptr);
+	FPatternMerge::TestActors.Add(nullptr);
+	FPatternMerge::TestActors.Add(nullptr);
 
-	FCanvasPatternMerge PatternMerge;
+	FPatternMerge PatternMerge;
 	PatternMerge.MergeSewnGroups();
 
-	TestEqual(TEXT("Number of actors should remain 2"), FCanvasPatternMerge::TestActors.Num(), 2);
-	TestEqual(TEXT("Number of seams should remain 0"), FCanvasPatternMerge::TestSeams.Num(), 0);
+	TestEqual(TEXT("Number of actors should remain 2"), FPatternMerge::TestActors.Num(), 2);
+	TestEqual(TEXT("Number of seams should remain 0"), FPatternMerge::TestSeams.Num(), 0);
 
 	return true;
 }
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFCanvasPatternMergeSeamsOnlyTest, 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFPatternMergeSeamsOnlyTest, 
 	"CanvasPatternMerge.MultipleSeamsNoActors", 
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FFCanvasPatternMergeSeamsOnlyTest::RunTest(const FString& Parameters)
+bool FFPatternMergeSeamsOnlyTest::RunTest(const FString& Parameters)
 {
-	FCanvasPatternMerge::TestActors.Empty();
-	FCanvasPatternMerge::TestSeams.Empty();
+	FPatternMerge::TestActors.Empty();
+	FPatternMerge::TestSeams.Empty();
 
 	FPatternSewingConstraint Seam1, Seam2;
-	FCanvasPatternMerge::TestSeams.Add(Seam1);
-	FCanvasPatternMerge::TestSeams.Add(Seam2);
+	FPatternMerge::TestSeams.Add(Seam1);
+	FPatternMerge::TestSeams.Add(Seam2);
 
-	FCanvasPatternMerge PatternMerge;
+	FPatternMerge PatternMerge;
 	PatternMerge.MergeSewnGroups();
 
-	TestEqual(TEXT("Number of actors should remain 0"), FCanvasPatternMerge::TestActors.Num(), 0);
-	TestEqual(TEXT("Number of seams should remain 2"), FCanvasPatternMerge::TestSeams.Num(), 2);
+	TestEqual(TEXT("Number of actors should remain 0"), FPatternMerge::TestActors.Num(), 0);
+	TestEqual(TEXT("Number of seams should remain 2"), FPatternMerge::TestSeams.Num(), 2);
 
 	return true;
 }
@@ -120,23 +120,23 @@ bool FFCanvasPatternMergeSeamsOnlyTest::RunTest(const FString& Parameters)
 
 
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFCanvasPatternMergeRealisticTest,
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFPatternMergeRealisticTest,
     "CanvasPatternMerge.RealisticMergeScenario",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FFCanvasPatternMergeRealisticTest::RunTest(const FString& Parameters)
+bool FFPatternMergeRealisticTest::RunTest(const FString& Parameters)
 {
-    FCanvasPatternMerge::TestActors.Empty();
-    FCanvasPatternMerge::TestSeams.Empty();
+    FPatternMerge::TestActors.Empty();
+    FPatternMerge::TestSeams.Empty();
 
     // create 3 PatternMesh actors
     TWeakObjectPtr<APatternMesh> Actor1 = NewObject<APatternMesh>();
     TWeakObjectPtr<APatternMesh> Actor2 = NewObject<APatternMesh>();
     TWeakObjectPtr<APatternMesh> Actor3 = NewObject<APatternMesh>();
 
-    FCanvasPatternMerge::TestActors.Add(Actor1);
-    FCanvasPatternMerge::TestActors.Add(Actor2);
-    FCanvasPatternMerge::TestActors.Add(Actor3);
+    FPatternMerge::TestActors.Add(Actor1);
+    FPatternMerge::TestActors.Add(Actor2);
+    FPatternMerge::TestActors.Add(Actor3);
 
     // create seams
     FPatternSewingConstraint Seam1;
@@ -147,17 +147,17 @@ bool FFCanvasPatternMergeRealisticTest::RunTest(const FString& Parameters)
     Seam2.MeshA = Actor2->MeshComponent;
     Seam2.MeshB = Actor3->MeshComponent;
 
-    FCanvasPatternMerge::TestSeams.Add(Seam1);
-    FCanvasPatternMerge::TestSeams.Add(Seam2);
+    FPatternMerge::TestSeams.Add(Seam1);
+    FPatternMerge::TestSeams.Add(Seam2);
 
-    FCanvasPatternMerge PatternMerge;
+    FPatternMerge PatternMerge;
     PatternMerge.MergeSewnGroups();
 
-    TestEqual(TEXT("All actors should remain in the array"), FCanvasPatternMerge::TestActors.Num(), 3);
-    TestEqual(TEXT("All seams should remain in the array"), FCanvasPatternMerge::TestSeams.Num(), 2);
+    TestEqual(TEXT("All actors should remain in the array"), FPatternMerge::TestActors.Num(), 3);
+    TestEqual(TEXT("All seams should remain in the array"), FPatternMerge::TestSeams.Num(), 2);
 
     bool bActor2Connected = false;
-    for (const FPatternSewingConstraint& Seam : FCanvasPatternMerge::TestSeams)
+    for (const FPatternSewingConstraint& Seam : FPatternMerge::TestSeams)
     {
         if ((Seam.MeshA == Actor2->MeshComponent && (Seam.MeshB == Actor1->MeshComponent || Seam.MeshB == Actor3->MeshComponent)) ||
             (Seam.MeshB == Actor2->MeshComponent && (Seam.MeshA == Actor1->MeshComponent || Seam.MeshA == Actor3->MeshComponent)))

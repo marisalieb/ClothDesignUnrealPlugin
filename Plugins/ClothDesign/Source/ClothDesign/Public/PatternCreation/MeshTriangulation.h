@@ -1,12 +1,11 @@
-#ifndef FCanvasMesh_H
-#define FCanvasMesh_H
+#ifndef FMeshTriangulation_H
+#define FMeshTriangulation_H
 
 #include "PatternMesh.h"
 #include "ConstrainedDelaunay2.h"
 #include "MeshOpPreviewHelpers.h" 
 
 /**
- * @file CanvasMesh.h
  *
  * @note Thesis reference:
  * See Chapter 4.6 for detailed explanations.
@@ -19,7 +18,7 @@
  * fully triangulated 3D meshes. By encapsulating this functionality, it ensures that
  * mesh construction is consistent, reusable, and maintainable.
  */
-class FCanvasMesh
+class FMeshTriangulation
 {
 public:
     /**
@@ -187,7 +186,7 @@ private:
         TArray<int32>& LastBuiltSeamVertexIDs,
         TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors);
 
-    friend class FCanvasMeshTests; /**< Allows the test class to access private mesh internals. */
+    friend class FMeshTriangulationTests; /**< Allows the test class to access private mesh internals. */
 };
 
 

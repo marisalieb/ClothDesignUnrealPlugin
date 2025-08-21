@@ -1,7 +1,7 @@
 #ifndef FCanvasState_H
 #define FCanvasState_H
 
-# include "Canvas/CanvasSewing.h"
+# include "PatternCreation/PatternSewing.h"
 
 /*
  * Thesis reference:

@@ -1,6 +1,6 @@
 
-#ifndef FCanvasPatternMerge_H
-#define FCanvasPatternMerge_H
+#ifndef FPatternMerge_H
+#define FPatternMerge_H
 
 #include "CoreMinimal.h"
 #include "Containers/Array.h"
@@ -13,20 +13,20 @@
  * See Chapter 4.8.1 for detailed explanations.
  */
 
-// Forward declarations of classes used by FCanvasPatternMerge
+// Forward declarations of classes used by FPatternMerge
 class APatternMesh; /**< Represents a single pattern mesh in the canvas, used for merging and sewing operations. */
 struct FPatternSewingConstraint; /**< Represents a sewing constraint between pattern edges, used to determine adjacency. */
 
 /**
  * @brief Handles merging of sewn pattern mesh groups in the canvas.
  * 
- * FCanvasPatternMerge analyses the sewing constraints between pattern meshes
+ * FPatternMerge analyses the sewing constraints between pattern meshes
  * and merges groups of meshes that are safely connected, ensuring that
  * operations on patterns remain consistent and coherent. Merging is done
  * where no external connections would be broken, preserving the integrity
  * of the cloth design.
  */
-class FCanvasPatternMerge
+class FPatternMerge
 {
 public:
 
@@ -40,7 +40,7 @@ public:
      * @param InSpawnedActors Reference to the canvas's spawned pattern meshes.
      * @param InAllSeams Reference to all sewing constraints currently in the canvas.
      */
-    FCanvasPatternMerge(
+    FPatternMerge(
         TArray<TWeakObjectPtr<APatternMesh>>& InSpawnedActors,
         TArray<FPatternSewingConstraint>& InAllSeams);
 
@@ -58,7 +58,7 @@ public:
      * Allows unit tests to operate on shared static arrays instead of
      * requiring a full canvas setup.
      */
-    FCanvasPatternMerge()
+    FPatternMerge()
         : SpawnedActorsRef(TestActors), AllSeamsRef(TestSeams) {}
 
     /** @brief Static array used for test-only actor references. */
@@ -166,7 +166,7 @@ private:
         const FString& AssetPathAndName);
 
     /** @brief Grants test class access to private members. */
-    friend class FCanvasPatternMergeTests;
+    friend class FPatternMergeTests;
 };
 
 

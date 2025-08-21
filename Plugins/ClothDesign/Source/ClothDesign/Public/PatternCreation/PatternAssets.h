@@ -1,8 +1,8 @@
-#ifndef FCanvasAssets_H
-#define FCanvasAssets_H
+#ifndef FPatternAssets_H
+#define FPatternAssets_H
 
 #include "ClothShapeAsset.h"
-#include "CanvasState.h" 
+#include "Canvas/CanvasState.h" 
 
 // /*
 //  * Thesis reference:
@@ -11,8 +11,6 @@
 
 
 /**
- * @file CanvasAssets.h
- *
  * @note Thesis reference:
  * See Chapter 4.9.1 for detailed explanations.
  */
@@ -37,7 +35,7 @@ struct FLoadedShapeData
  * This class centralises asset I/O to ensure canvas state persistence is handled consistently,
  * supporting undoable workflows and reproducible designs.
  */
-class FCanvasAssets
+class FPatternAssets
 {
 public:
     /**

@@ -1,5 +1,5 @@
-#ifndef FCanvasSewing_H
-#define FCanvasSewing_H
+#ifndef FPatternSewing_H
+#define FPatternSewing_H
 
 #include "PatternSewingConstraint.h"
 #include "PatternMesh.h"
@@ -63,7 +63,7 @@ enum class ESeamClickState : uint8
  * validate, and merge seams between shapes. It ensures that sewing operations
  * are logically consistent and supports visual previews of seams.
  */
-class FCanvasSewing
+class FPatternSewing
 {
 public:
     /** All seam definitions created on the canvas. */
@@ -199,7 +199,7 @@ private:
     void BuildAndAlignSeam(const FPatternSewingConstraint& Seam);
 
     /** Test helper class for unit testing seam functionality. */
-    friend class FCanvasSewingTestHelper;
+    friend class FPatternSewingTestHelper;
 };
 
 #endif

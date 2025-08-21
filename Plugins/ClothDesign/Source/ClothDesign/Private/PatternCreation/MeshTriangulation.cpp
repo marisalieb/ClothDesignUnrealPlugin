@@ -1,4 +1,4 @@
-#include "Canvas/CanvasMesh.h"
+#include "PatternCreation/MeshTriangulation.h"
 #include "Canvas/CanvasUtils.h"
 #include "DynamicMesh/DynamicMesh3.h"
 #include "CoreMinimal.h"
@@ -7,7 +7,7 @@
 
 
 // 1) Helper: even–odd rule point-in-polygon test
-bool FCanvasMesh::IsPointInPolygon(
+bool FMeshTriangulation::IsPointInPolygon(
 	const FVector2f& Test, 
 	const TArray<FVector2f>& Poly
 ) {
@@ -28,7 +28,7 @@ bool FCanvasMesh::IsPointInPolygon(
 }
 
 
-void FCanvasMesh::SampleShapeCurve(
+void FMeshTriangulation::SampleShapeCurve(
 	const FInterpCurve<FVector2D>& Shape,
 	bool bRecordSeam,
 	int32 StartPointIdx2D,
@@ -81,7 +81,7 @@ void FCanvasMesh::SampleShapeCurve(
 	}
 }
 
-void FCanvasMesh::AddGridInteriorPoints(
+void FMeshTriangulation::AddGridInteriorPoints(
 	TArray<FVector2f>& PolyVerts,
 	int32 OriginalBoundaryCount,
 	TArray<int32>& OutVertexIDs,
@@ -134,7 +134,7 @@ void FCanvasMesh::AddGridInteriorPoints(
 	}
 }
 
-void FCanvasMesh::BuildBoundaryEdges(
+void FMeshTriangulation::BuildBoundaryEdges(
 	int32 OriginalBoundaryCount,
 	TArray<UE::Geometry::FIndex2i>& OutBoundaryEdges)
 {
@@ -150,7 +150,7 @@ void FCanvasMesh::BuildBoundaryEdges(
 	}
 }
 
-void FCanvasMesh::RunConstrainedDelaunay(
+void FMeshTriangulation::RunConstrainedDelaunay(
 	const TArray<FVector2f>& PolyVerts,
 	const TArray<UE::Geometry::FIndex2i>& BoundaryEdges,
 	UE::Geometry::TConstrainedDelaunay2<float>& OutCDT)
@@ -179,7 +179,7 @@ void FCanvasMesh::RunConstrainedDelaunay(
 	
 }
 
-void FCanvasMesh::ConvertCDTToDynamicMesh(
+void FMeshTriangulation::ConvertCDTToDynamicMesh(
 	const UE::Geometry::TConstrainedDelaunay2<float>& CDT,
 	FDynamicMesh3& OutMesh,
 	TArray<int32>& OutPolyIndexToVID)
@@ -210,7 +210,7 @@ void FCanvasMesh::ConvertCDTToDynamicMesh(
 	}
 }
 
-void FCanvasMesh::ExtractVerticesAndIndices(
+void FMeshTriangulation::ExtractVerticesAndIndices(
 	const FDynamicMesh3& OutMesh,
 	TArray<FVector>& OutVertices,
 	TArray<int32>& OutIndices)
@@ -233,7 +233,7 @@ void FCanvasMesh::ExtractVerticesAndIndices(
 }
 
 
-void FCanvasMesh::CreateProceduralMesh(
+void FMeshTriangulation::CreateProceduralMesh(
 	const TArray<FVector>& Vertices,
 	const TArray<int32>& Indices,
 	FDynamicMesh3&& DynamicMesh,
@@ -321,7 +321,7 @@ void FCanvasMesh::CreateProceduralMesh(
 
 
 // second version but with steiner points, grid spaced constrained delaunay
-void FCanvasMesh::TriangulateAndBuildMesh(
+void FMeshTriangulation::TriangulateAndBuildMesh(
 	const FInterpCurve<FVector2D>& Shape,
 	bool bRecordSeam ,
 	int32 StartPointIdx2D,
@@ -445,7 +445,7 @@ void FCanvasMesh::TriangulateAndBuildMesh(
 
 
 
-void FCanvasMesh::TriangulateAndBuildAllMeshes(
+void FMeshTriangulation::TriangulateAndBuildAllMeshes(
 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
 	TArray<FDynamicMesh3>& OutMeshes,
 	TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors)

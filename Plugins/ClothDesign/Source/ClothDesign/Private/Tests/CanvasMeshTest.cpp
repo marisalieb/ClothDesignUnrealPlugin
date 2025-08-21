@@ -1,5 +1,5 @@
 #include "Misc/AutomationTest.h"
-#include "Canvas/CanvasMesh.h"
+#include "PatternCreation/MeshTriangulation.h"
 #include "DynamicMesh/DynamicMesh3.h"
 #include "CoreMinimal.h"
 
@@ -8,9 +8,9 @@
 #include "Misc/AutomationTest.h"
 
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasMeshTests, "CanvasMesh.UnitTests", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMeshTriangulationTests, "CanvasMesh.UnitTests", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FCanvasMeshTests::RunTest(const FString& Parameters)
+bool FMeshTriangulationTests::RunTest(const FString& Parameters)
 {
     // 1) IsPointInPolygon
     {
@@ -18,8 +18,8 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
         FVector2f Inside{2,2};
         FVector2f Outside{6,6};
 
-        TestTrue("Inside point", FCanvasMesh::IsPointInPolygon(Inside, Poly));
-        TestFalse("Outside point", FCanvasMesh::IsPointInPolygon(Outside, Poly));
+        TestTrue("Inside point", FMeshTriangulation::IsPointInPolygon(Inside, Poly));
+        TestFalse("Outside point", FMeshTriangulation::IsPointInPolygon(Outside, Poly));
     }
 
     // 2) SampleShapeCurve
@@ -34,7 +34,7 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
         TArray<int32> VertexIDs;
         FDynamicMesh3 Mesh;
 
-        FCanvasMesh::SampleShapeCurve(Curve, true, 0, 2, 2,
+        FMeshTriangulation::SampleShapeCurve(Curve, true, 0, 2, 2,
             PolyVerts, SeamVertexIDs, VertexIDs, Mesh);
         TestTrue("Curve should produce vertices", PolyVerts.Num() > 0);
     }
@@ -45,7 +45,7 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
         TArray<int32> VertexIDs;
         FDynamicMesh3 Mesh;
 
-        FCanvasMesh::AddGridInteriorPoints(PolyVerts, PolyVerts.Num(), VertexIDs, Mesh);
+        FMeshTriangulation::AddGridInteriorPoints(PolyVerts, PolyVerts.Num(), VertexIDs, Mesh);
 
         TestTrue("AddGridInteriorPoints adds vertices", VertexIDs.Num() > 0);
     }
@@ -53,7 +53,7 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
     // 4) BuildBoundaryEdges
     {
         TArray<UE::Geometry::FIndex2i> BoundaryEdges;
-        FCanvasMesh::BuildBoundaryEdges(4, BoundaryEdges);
+        FMeshTriangulation::BuildBoundaryEdges(4, BoundaryEdges);
         TestEqual("BoundaryEdges count should match", BoundaryEdges.Num(), 4);
     }
     
@@ -62,14 +62,14 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
     {
         TArray<FVector2f> PolyVerts = { {0,0}, {0,4}, {4,4}, {4,0} };
         TArray<UE::Geometry::FIndex2i> BoundaryEdges;
-        FCanvasMesh::BuildBoundaryEdges(PolyVerts.Num(), BoundaryEdges);
+        FMeshTriangulation::BuildBoundaryEdges(PolyVerts.Num(), BoundaryEdges);
 
         UE::Geometry::TConstrainedDelaunay2<float> CDT;
-        FCanvasMesh::RunConstrainedDelaunay(PolyVerts, BoundaryEdges, CDT);
+        FMeshTriangulation::RunConstrainedDelaunay(PolyVerts, BoundaryEdges, CDT);
 
         FDynamicMesh3 Mesh;
         TArray<int32> PolyIndexToVID;
-        FCanvasMesh::ConvertCDTToDynamicMesh(CDT, Mesh, PolyIndexToVID);
+        FMeshTriangulation::ConvertCDTToDynamicMesh(CDT, Mesh, PolyIndexToVID);
 
         TestTrue("Mesh should have triangles (CDT internal data not directly testable)", Mesh.TriangleCount() > 0);
         TestTrue("Mesh should have vertices (CDT internal data not directly testable)", Mesh.VertexCount() > 0);
@@ -87,7 +87,7 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
 
         TArray<FVector> Vertices;
         TArray<int32> Indices;
-        FCanvasMesh::ExtractVerticesAndIndices(Mesh, Vertices, Indices);
+        FMeshTriangulation::ExtractVerticesAndIndices(Mesh, Vertices, Indices);
 
         TestEqual("Vertices count", Vertices.Num(), 3);
         TestEqual("Indices count", Indices.Num(), 3);
@@ -105,7 +105,7 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
         TArray<int32> LastBuiltSeamVertexIDs;
         TArray<TWeakObjectPtr<APatternMesh>> SpawnedActors;
 
-        FCanvasMesh::TriangulateAndBuildMesh(Curve, true, 0, 2,
+        FMeshTriangulation::TriangulateAndBuildMesh(Curve, true, 0, 2,
             LastSeamVertexIDs, LastMesh, LastBuiltSeamVertexIDs, SpawnedActors);
 
         TestTrue("TriangulateAndBuildMesh produces vertices", LastMesh.VertexCount() > 0);
@@ -116,10 +116,10 @@ bool FCanvasMeshTests::RunTest(const FString& Parameters)
 
 
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasMeshBuildAllMeshesTest, "CanvasMesh.BuildAllMeshes",
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMeshTriangulationBuildAllMeshesTest, "CanvasMesh.BuildAllMeshes",
                                  EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FCanvasMeshBuildAllMeshesTest::RunTest(const FString& Parameters)
+bool FMeshTriangulationBuildAllMeshesTest::RunTest(const FString& Parameters)
 {
     FInterpCurve<FVector2D> CurvePoints;
     CurvePoints.AddPoint(0.0f, FVector2D(0, 0));
@@ -134,7 +134,7 @@ bool FCanvasMeshBuildAllMeshesTest::RunTest(const FString& Parameters)
     TArray<FDynamicMesh3> OutMeshes;
     TArray<TWeakObjectPtr<APatternMesh>> OutSpawnedActors;
 
-    FCanvasMesh::TriangulateAndBuildAllMeshes(CompletedShapes, OutMeshes, OutSpawnedActors);
+    FMeshTriangulation::TriangulateAndBuildAllMeshes(CompletedShapes, OutMeshes, OutSpawnedActors);
 
     TestTrue(TEXT("At least one mesh should be created"), OutMeshes.Num() > 0);
 

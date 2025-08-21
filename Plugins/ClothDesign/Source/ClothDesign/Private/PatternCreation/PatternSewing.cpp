@@ -1,10 +1,10 @@
-#include "Canvas/CanvasSewing.h"
-#include "Canvas/CanvasMesh.h"
-#include "Canvas/CanvasPatternMerge.h"
+#include "PatternCreation/PatternSewing.h"
+#include "PatternCreation/MeshTriangulation.h"
+#include "PatternCreation/PatternMerge.h"
 #include "Misc/MessageDialog.h"
 
 // Returns true if the shape index maps to a valid spawned pattern actor.
-bool FCanvasSewing::ValidateMeshForShape(
+bool FPatternSewing::ValidateMeshForShape(
     int32 ShapeIndex,
     const TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors,
     bool bShowDialog)
@@ -46,7 +46,7 @@ bool FCanvasSewing::ValidateMeshForShape(
 }
 
 // Validate both A and B targets are backed by real actors. Returns true if both exist.
-bool FCanvasSewing::ValidateMeshesForTargets(
+bool FPatternSewing::ValidateMeshesForTargets(
     const FClickTarget& AStart,
     const FClickTarget& BStart,
     const TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors,
@@ -83,7 +83,7 @@ bool FCanvasSewing::ValidateMeshesForTargets(
 
 
 
-void FCanvasSewing::FinaliseSeamDefinitionByTargets(
+void FPatternSewing::FinaliseSeamDefinitionByTargets(
 	const FClickTarget& AStart,
 	const FClickTarget& AEnd,
 	const FClickTarget& BStart,
@@ -205,7 +205,7 @@ void FCanvasSewing::FinaliseSeamDefinitionByTargets(
 }
 
 
-void FCanvasSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* MeshActorB)
+void FPatternSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* MeshActorB)
 {
     if (!MeshActorA || !MeshActorB) return;
 
@@ -371,7 +371,7 @@ void FCanvasSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* Mesh
 }
 
 
-void FCanvasSewing::BuildAndAlignSeam(
+void FPatternSewing::BuildAndAlignSeam(
 	const FPatternSewingConstraint& Seam)
 {
 	// --- helper: find the APatternMesh that owns this procedural mesh component ---
@@ -567,7 +567,7 @@ void FCanvasSewing::BuildAndAlignSeam(
 
 
 
-void FCanvasSewing::BuildAndAlignAllSeams()
+void FPatternSewing::BuildAndAlignAllSeams()
 {
 	if (AllDefinedSeams.Num() == 0)
 	{
@@ -582,7 +582,7 @@ void FCanvasSewing::BuildAndAlignAllSeams()
 	}
 }
 
-void FCanvasSewing::ClearAllSeams()
+void FPatternSewing::ClearAllSeams()
 {
 	// SewingConstraints.Empty();
 	SeamDefinitions.Empty();
@@ -595,15 +595,15 @@ void FCanvasSewing::ClearAllSeams()
 }
 
 
-void FCanvasSewing::MergeSewnPatternPieces()
+void FPatternSewing::MergeSewnPatternPieces()
 {
-	FCanvasPatternMerge Merge(SpawnedPatternActors, AllDefinedSeams);
+	FPatternMerge Merge(SpawnedPatternActors, AllDefinedSeams);
 	Merge.MergeSewnGroups();
 }
 
 
 
-void FCanvasSewing::BuildSewnPointSets(TMap<int32, TSet<int32>>& OutSewn) const
+void FPatternSewing::BuildSewnPointSets(TMap<int32, TSet<int32>>& OutSewn) const
 {
 	OutSewn.Empty();
 	for (const FSeamDefinition& S : SeamDefinitions)
@@ -621,7 +621,7 @@ void FCanvasSewing::BuildSewnPointSets(TMap<int32, TSet<int32>>& OutSewn) const
 	}
 }
 
-void FCanvasSewing::AddPreviewPoint(int32 ShapeIndex, int32 PointIndex)
+void FPatternSewing::AddPreviewPoint(int32 ShapeIndex, int32 PointIndex)
 {
 	if (ShapeIndex != INDEX_NONE && PointIndex != INDEX_NONE)
 	{

@@ -1,19 +1,19 @@
 #include "Misc/AutomationTest.h"
-#include "Canvas/CanvasSewing.h"
-#include "Canvas/CanvasMesh.h"
+#include "PatternCreation/PatternSewing.h"
+#include "PatternCreation/MeshTriangulation.h"
 
 #include "CoreMinimal.h"
 #include "PatternMesh.h"
 #include "Engine/World.h"
 
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCanvasSewing_FinaliseSeamDefinition_Test,
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPatternSewing_FinaliseSeamDefinition_Test,
 	"CanvasSewing.FinaliseSeamDefinition",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FCanvasSewing_FinaliseSeamDefinition_Test::RunTest(const FString& Parameters)
+bool FPatternSewing_FinaliseSeamDefinition_Test::RunTest(const FString& Parameters)
 {
-	FCanvasSewing Sewing;
+	FPatternSewing Sewing;
 
 	FInterpCurve<FVector2D> CurvePoints;
 	CurvePoints.Points.Add(FInterpCurvePoint(0.f, FVector2D(0,0)));
@@ -49,17 +49,17 @@ bool FCanvasSewing_FinaliseSeamDefinition_Test::RunTest(const FString& Parameter
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-class FCanvasSewingTestHelper
+class FPatternSewingTestHelper
 {
 
 public:
 
 	static void CallAlign(APatternMesh* MeshA, APatternMesh* MeshB)
     {
-        FCanvasSewing::AlignSeamMeshes(MeshA, MeshB);
+        FPatternSewing::AlignSeamMeshes(MeshA, MeshB);
     }
 	
-	static void CallBuildAndAlignSeam(FCanvasSewing& SewingInstance, const FPatternSewingConstraint& Seam)
+	static void CallBuildAndAlignSeam(FPatternSewing& SewingInstance, const FPatternSewingConstraint& Seam)
 	{
 		SewingInstance.BuildAndAlignSeam(Seam);
 	}
@@ -88,7 +88,7 @@ bool FAlignSeamMeshesTest::RunTest(const FString& Parameters)
     MeshA->LastSeamVertexIDs = { v0A, v1A, v2A };
     MeshB->LastSeamVertexIDs = { v0B, v1B, v2B };
 
-    FCanvasSewingTestHelper::CallAlign(MeshA, MeshB);
+    FPatternSewingTestHelper::CallAlign(MeshA, MeshB);
     
     FVector alignedA = MeshA->GetActorTransform().TransformPosition(MeshA->DynamicMesh.GetVertex(v0A));
     FVector alignedB = MeshB->GetActorTransform().TransformPosition(MeshB->DynamicMesh.GetVertex(v0B));
@@ -118,7 +118,7 @@ bool FBuildAndAlignSeamTest::RunTest(const FString& Parameters)
 	PatternB->BoundarySampleVertexIDs.Add(0);
 	PatternB->DynamicMesh.AppendVertex(FVector3d(1,1,0));
 
-	FCanvasSewing Sewing;
+	FPatternSewing Sewing;
 	Sewing.SpawnedPatternActors.Add(PatternA);
 	Sewing.SpawnedPatternActors.Add(PatternB);
 
@@ -130,7 +130,7 @@ bool FBuildAndAlignSeamTest::RunTest(const FString& Parameters)
 	Seam.ScreenPointsB.Add(FVector2D(1,0));
 	Seam.ScreenPointsB.Add(FVector2D(1,1));
 
-	FCanvasSewingTestHelper::CallBuildAndAlignSeam(Sewing, Seam);
+	FPatternSewingTestHelper::CallBuildAndAlignSeam(Sewing, Seam);
 
 	TestTrue(TEXT("ActorA LastSeamVertexIDs populated"), PatternA->LastSeamVertexIDs.Num() > 0);
 	TestTrue(TEXT("ActorB LastSeamVertexIDs populated"), PatternB->LastSeamVertexIDs.Num() > 0);

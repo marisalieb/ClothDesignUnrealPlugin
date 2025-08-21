@@ -1,6 +1,6 @@
 
 #include "Misc/AutomationTest.h"
-#include "Canvas/CanvasAssets.h"
+#include "PatternCreation/PatternAssets.h"
 #include "ClothShapeAsset.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveShapeAsset_BadPackage, 
@@ -15,7 +15,7 @@ bool FSaveShapeAsset_BadPackage::RunTest(const FString& Parameters)
     FInterpCurve<FVector2D> Curve;
     TArray<bool> Beziers;
 
-    bool bResult = FCanvasAssets::SaveShapeAsset(
+    bool bResult = FPatternAssets::SaveShapeAsset(
                   TEXT("/Engine/Invalid:Path"), // illegal colon
         TEXT("TestAsset"),
         Shapes, Flags, Curve, Beziers);
@@ -53,7 +53,7 @@ bool FSaveAndLoad_RoundTrip::RunTest(const FString& Parameters)
     Beziers.Add(true);
     Beziers.Add(false);
 
-    bool bSaved = FCanvasAssets::SaveShapeAsset(
+    bool bSaved = FPatternAssets::SaveShapeAsset(
         TEXT("UnitTest"), 
         TEXT("TestingAsset"),
         Shapes, Flags, Curve, Beziers);
@@ -68,7 +68,7 @@ bool FSaveAndLoad_RoundTrip::RunTest(const FString& Parameters)
     TestNotNull("Asset should exist after save", Loaded);
 
     FCanvasState State;
-    bool bLoaded = FCanvasAssets::LoadCanvasState(Loaded, State);
+    bool bLoaded = FPatternAssets::LoadCanvasState(Loaded, State);
     TestTrue("Should load state", bLoaded);
     TestEqual("Loaded one completed shape", State.CompletedShapes.Num(), 1);
     TestEqual("Loaded curve points", State.CurvePoints.Points.Num(), 2);
@@ -84,7 +84,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLoadCanvasState_NullAsset,
 bool FLoadCanvasState_NullAsset::RunTest(const FString& Parameters)
 {
     FCanvasState Test;
-    bool bLoaded = FCanvasAssets::LoadCanvasState(nullptr, Test);
+    bool bLoaded = FPatternAssets::LoadCanvasState(nullptr, Test);
     TestFalse("Null input should fail", bLoaded);
     return true;
 }

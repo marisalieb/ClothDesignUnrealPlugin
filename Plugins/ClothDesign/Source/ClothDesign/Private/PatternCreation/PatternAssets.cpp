@@ -1,11 +1,11 @@
-#include "Canvas/CanvasAssets.h"
+#include "PatternCreation/PatternAssets.h"
 
 #include "UObject/SavePackage.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "PackageTools.h"
 #include "Misc/PackageName.h"
 
-bool FCanvasAssets::SaveShapeAsset(
+bool FPatternAssets::SaveShapeAsset(
 	const FString& AssetPath,
 	const FString& AssetName,
 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
@@ -143,7 +143,7 @@ bool FCanvasAssets::SaveShapeAsset(
 
 
 
-bool FCanvasAssets::LoadCanvasState(UClothShapeAsset* ClothAsset, FCanvasState& OutState)
+bool FPatternAssets::LoadCanvasState(UClothShapeAsset* ClothAsset, FCanvasState& OutState)
 {
     if (!ClothAsset)
     {
@@ -240,6 +240,6 @@ bool FCanvasAssetManager::LoadShapeAssetData(FCanvasState& OutState) const
 	if (!ClothAsset.IsValid())
 		return false;
 	
-	return FCanvasAssets::LoadCanvasState(ClothAsset.Get(), OutState);
+	return FPatternAssets::LoadCanvasState(ClothAsset.Get(), OutState);
 }
 

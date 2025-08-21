@@ -6,7 +6,7 @@
 
 #include "ClothDesignCanvas.h"
 #include "Canvas/CanvasUtils.h"
-#include "Canvas/CanvasSewing.h"
+#include "PatternCreation/PatternSewing.h"
 
 
 

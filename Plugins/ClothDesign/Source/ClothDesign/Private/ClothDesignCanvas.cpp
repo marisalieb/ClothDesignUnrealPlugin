@@ -20,7 +20,7 @@
 #include "Canvas/CanvasPaint.h"
 #include "Canvas/CanvasUtils.h"
 #include "Canvas/CanvasInputHandler.h"
-#include "Canvas/CanvasMesh.h"
+#include "PatternCreation/MeshTriangulation.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "Editor.h"
@@ -729,7 +729,7 @@ FCanvasState SClothDesignCanvas::GetCurrentCanvasState() const
 	State.ZoomFactor = ZoomFactor;
 
 	// --- Sewing manager data ---
-	const FCanvasSewing& SewingMgr = GetSewingManager();
+	const FPatternSewing& SewingMgr = GetSewingManager();
 
 	// copy seam definitions (deep copy)
 	State.SeamDefinitions = SewingMgr.SeamDefinitions;
@@ -772,7 +772,7 @@ void SClothDesignCanvas::RestoreCanvasState(const FCanvasState& State)
 	SelectedShapeIndex = INDEX_NONE;
 
 	// restore sewing manager
-	FCanvasSewing& SewingMgr = GetSewingManager();
+	FPatternSewing& SewingMgr = GetSewingManager();
 	SewingMgr.SeamDefinitions = State.SeamDefinitions;
 	SewingMgr.CurrentSeamPreviewPoints = State.SeamPreviewPoints;
 	SewingMgr.SeamClickState = static_cast<ESeamClickState>(State.SeamClickState);
@@ -893,7 +893,7 @@ FReply SClothDesignCanvas::SaveClick(const FString& SaveName)
 	}
 	
 	// Save
-	bool bOK = FCanvasAssets::SaveShapeAsset(
+	bool bOK = FPatternAssets::SaveShapeAsset(
 		TEXT("SavedClothMeshes"),
 		SaveName,
 		CompletedShapes,
@@ -951,7 +951,7 @@ void SClothDesignCanvas::GenerateMeshesClick()
 	}
 
 	TArray<FDynamicMesh3> AllMeshes;
-	FCanvasMesh CanvasMesh;
+	FMeshTriangulation CanvasMesh;
 	
 	CanvasMesh.TriangulateAndBuildAllMeshes(
 		CompletedShapes,

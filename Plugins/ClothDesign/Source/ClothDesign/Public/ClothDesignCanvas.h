@@ -7,8 +7,8 @@
 #include "Misc/ScopeLock.h"
 #include "UObject/Package.h"
 #include "Misc/PackageName.h"
-#include "Canvas/CanvasAssets.h"
-#include "Canvas/CanvasSewing.h"
+#include "PatternCreation/PatternAssets.h"
+#include "PatternCreation/PatternSewing.h"
 
 /*
  * Thesis reference:
@@ -341,8 +341,8 @@ public:
 	EClothEditorMode GetCurrentMode() const { return CurrentMode; }
 
 	/** Access to the sewing manager for programmatic control. */
-	FCanvasSewing& GetSewingManager() { return SewingManager; }
-	const FCanvasSewing& GetSewingManager() const { return SewingManager; }
+	FPatternSewing& GetSewingManager() { return SewingManager; }
+	const FPatternSewing& GetSewingManager() const { return SewingManager; }
 
 	// --- Core canvas state (user-editable) ---
 
@@ -436,7 +436,7 @@ private:
 	FCanvasAssetManager AssetManager; /**< Centralises asset I/O so code does not duplicate load/save logic. */
 
 	/** Sewing helper that encapsulates seam definition, validation and merging. */
-	FCanvasSewing SewingManager; /**< Separates seam workflow from canvas rendering and input logic. */
+	FPatternSewing SewingManager; /**< Separates seam workflow from canvas rendering and input logic. */
 
 	/** Current editor mode (draw/select/sew). */
 	EClothEditorMode CurrentMode = EClothEditorMode::Draw; /**< Default to draw mode on initialisation. */

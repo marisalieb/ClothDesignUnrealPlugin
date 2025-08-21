@@ -384,7 +384,7 @@ int FCanvasPaint::DrawFinalisedSeamLines(
 {
     // using namespace UE::Slate;
 
-    const FCanvasSewing& Sewing = Canvas->GetSewingManager();
+    const FPatternSewing& Sewing = Canvas->GetSewingManager();
     const TArray<FSeamDefinition>& Seams = Sewing.SeamDefinitions;
     
 

@@ -1,4 +1,4 @@
-#include "Canvas/CanvasPatternMerge.h"
+#include "PatternCreation/PatternMerge.h"
 
 #include "PatternMesh.h" 
 #include "PatternSewingConstraint.h" 
@@ -25,7 +25,7 @@
 #endif
 
 
-FCanvasPatternMerge::FCanvasPatternMerge(
+FPatternMerge::FPatternMerge(
     TArray<TWeakObjectPtr<APatternMesh>>& InSpawnedActors,
     TArray<FPatternSewingConstraint>& InAllSeams)
     : SpawnedActorsRef(InSpawnedActors)
@@ -33,11 +33,11 @@ FCanvasPatternMerge::FCanvasPatternMerge(
 {}
 
 // Define the static test arrays
-TArray<TWeakObjectPtr<APatternMesh>> FCanvasPatternMerge::TestActors;
-TArray<FPatternSewingConstraint> FCanvasPatternMerge::TestSeams;
+TArray<TWeakObjectPtr<APatternMesh>> FPatternMerge::TestActors;
+TArray<FPatternSewingConstraint> FPatternMerge::TestSeams;
 
 
-void FCanvasPatternMerge::BuildActorListAndIndexMap(
+void FPatternMerge::BuildActorListAndIndexMap(
     TArray<APatternMesh*>& OutActors,
     TMap<APatternMesh*, int32>& OutMap) const
 {
@@ -54,7 +54,7 @@ void FCanvasPatternMerge::BuildActorListAndIndexMap(
     }
 }
 
-void FCanvasPatternMerge::BuildAdjacencyFromSeams(
+void FPatternMerge::BuildAdjacencyFromSeams(
     const TArray<APatternMesh*>& Actors,
     const TMap<APatternMesh*,int32>& ActorToIndex,
     TArray<TArray<int32>>& OutAdj) const
@@ -82,7 +82,7 @@ void FCanvasPatternMerge::BuildAdjacencyFromSeams(
     }
 }
 
-void FCanvasPatternMerge::FindConnectedComponents(
+void FPatternMerge::FindConnectedComponents(
     const TArray<TArray<int32>>& Adj,
     TArray<TArray<int32>>& OutComponents)
 {
@@ -107,7 +107,7 @@ void FCanvasPatternMerge::FindConnectedComponents(
     }
 }
 
-bool FCanvasPatternMerge::ComponentHasExternalEdges(
+bool FPatternMerge::ComponentHasExternalEdges(
     const TArray<int32>& Component,
     const TMap<APatternMesh*,int32>& ActorToIndex) const
 {
@@ -129,7 +129,7 @@ bool FCanvasPatternMerge::ComponentHasExternalEdges(
     return false;
 }
 
-bool FCanvasPatternMerge::MergeComponentToDynamicMesh(
+bool FPatternMerge::MergeComponentToDynamicMesh(
     const TArray<int32>& Component,
     const TArray<APatternMesh*>& Actors,
     UE::Geometry::FDynamicMesh3& OutMerged)
@@ -184,7 +184,7 @@ bool FCanvasPatternMerge::MergeComponentToDynamicMesh(
     return OutMerged.TriangleCount() > 0;
 }
 
-APatternMesh* FCanvasPatternMerge::SpawnMergedActorFromDynamicMesh(
+APatternMesh* FPatternMerge::SpawnMergedActorFromDynamicMesh(
     UE::Geometry::FDynamicMesh3&& MergedMesh)
 {
     // compute centroid in world space (MergedMesh currently stores world positions)
@@ -241,7 +241,7 @@ APatternMesh* FCanvasPatternMerge::SpawnMergedActorFromDynamicMesh(
     return MergedActor;
 }
 
-void FCanvasPatternMerge::ReplaceActorsWithMerged(
+void FPatternMerge::ReplaceActorsWithMerged(
     const TArray<int32>& Component,
     const TArray<APatternMesh*>& Actors,
     APatternMesh* MergedActor) const
@@ -267,7 +267,7 @@ void FCanvasPatternMerge::ReplaceActorsWithMerged(
     SpawnedActorsRef = MoveTemp(NewList);
 }
 
-void FCanvasPatternMerge::RemoveInternalSeams(
+void FPatternMerge::RemoveInternalSeams(
     const TArray<int32>& Component,
     const TMap<APatternMesh*,int32>& ActorToIndex) const
 {
@@ -292,7 +292,7 @@ void FCanvasPatternMerge::RemoveInternalSeams(
     AllSeamsRef = MoveTemp(Kept);
 }
 
-void FCanvasPatternMerge::MergeSewnGroups() const
+void FPatternMerge::MergeSewnGroups() const
 {
     TArray<APatternMesh*> Actors;
     TMap<APatternMesh*,int32> ActorToIndex;
@@ -373,7 +373,7 @@ void FCanvasPatternMerge::MergeSewnGroups() const
 
 
 
-USkeletalMesh* FCanvasPatternMerge::CreateSkeletalFromFDynamicMesh(UDynamicMesh* DynMesh, const FString& AssetPathAndName)
+USkeletalMesh* FPatternMerge::CreateSkeletalFromFDynamicMesh(UDynamicMesh* DynMesh, const FString& AssetPathAndName)
 {
 #if WITH_EDITOR
     if (!IsValid(DynMesh))

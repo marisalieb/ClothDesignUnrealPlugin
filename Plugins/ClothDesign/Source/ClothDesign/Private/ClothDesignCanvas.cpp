@@ -257,7 +257,7 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& Geometry, const FPointer
 				{
 					// Always set the arrive tangent
 					Pt.ArriveTangent = -Delta;
-					// Link it to the leave tangent only if we decided to link
+					// Link it to the leave tangent only if decided to link
 					if (bLinkTangents)
 					{
 						// Pt.LeaveTangent = Pt.ArriveTangent;
@@ -367,14 +367,12 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& Geometry, const FKeyEvent&
 				GetSewingManager().SeamDefinitions.RemoveAt(idx);
 			}
 
-			// 2) Remove runtime cached constraint if you kept one-per-seam in AllDefinedSeams (best-effort)
+			// 2) Remove runtime cached constraint if kept one-per-seam in AllDefinedSeams (best-effort)
 			if (GetSewingManager().AllDefinedSeams.IsValidIndex(idx))
 			{
 				GetSewingManager().AllDefinedSeams.RemoveAt(idx);
 			}
-			// If your runtime sewing constraints are stored separately, try to find and  remove matching entries:
-			// e.g. if you have FPatternSewingConstraint list, compare ScreenPointsA/B or Mesh pointers to find the matching one and remove it.
-
+			
 			// 3) Update the canvas sewn-point cache and redraw
 			UpdateSewnPointSets(); // recompute sewn-point map from SeamDefinitions
 			SelectedSeamIndex = INDEX_NONE;
@@ -524,7 +522,7 @@ int32 SClothDesignCanvas::FinaliseCurrentShape(bool bGenerateNow, TArray<TWeakOb
 	FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
 	
 
-    // Add bezier tangents to the start and end points (same as your original)
+    // Add bezier tangents to the start and end points (same as original)
     if (CurvePoints.Points.Num() >= 2)
     {
         int32 LastIdx = CurvePoints.Points.Num() - 1;
@@ -540,7 +538,7 @@ int32 SClothDesignCanvas::FinaliseCurrentShape(bool bGenerateNow, TArray<TWeakOb
 
     // Move current sketch into CompletedShapes
     CompletedShapes.Add(CurvePoints);
-    CompletedBezierFlags.Add(bUseBezierPerPoint); // keep your existing boolean flags array in sync
+    CompletedBezierFlags.Add(bUseBezierPerPoint); // keep existing boolean flags array in sync
 
 	int32 NewIndex = CompletedShapes.Num() - 1;
 
@@ -560,7 +558,7 @@ FReply SClothDesignCanvas::OnKeyUp(const FGeometry& Geometry, const FKeyEvent& I
 	
 	if (CurrentMode == EClothEditorMode::Select)
 	{
-		if (Key == EKeys::T)
+		if (Key == EKeys::S)
 		{
 			bSeparateTangents = false;
 			return FReply::Handled();
@@ -731,7 +729,7 @@ FCanvasState SClothDesignCanvas::GetCurrentCanvasState() const
 	State.ZoomFactor = ZoomFactor;
 
 	// --- Sewing manager data ---
-	const FCanvasSewing& SewingMgr = GetSewingManager(); // your accessor
+	const FCanvasSewing& SewingMgr = GetSewingManager();
 
 	// copy seam definitions (deep copy)
 	State.SeamDefinitions = SewingMgr.SeamDefinitions;

@@ -18,8 +18,8 @@ bool FCanvasAssets::SaveShapeAsset(
 		return false; // reject illegal chars
 	}
 	
-	// Create package path - e.g. /Game/YourFolder/AssetName
-	FString PackageName = FString::Printf(TEXT("/Game/ClothDesign/%s/%s"), *AssetPath, *AssetName);
+	// Create package path
+	FString PackageName = FString::Printf(TEXT("/Game/ClothDesignAssets/%s/%s"), *AssetPath, *AssetName);
 	FString SanitizedPackageName = UPackageTools::SanitizePackageName(PackageName);
 	
 	UPackage* Package = LoadPackage(nullptr, *SanitizedPackageName, LOAD_None);
@@ -53,7 +53,7 @@ bool FCanvasAssets::SaveShapeAsset(
 		}
 	}
 
-	// Clear and copy your canvas data to the asset
+	// Clear and copy canvas data to the asset
 	TargetAsset->ClothShapes.Empty();
 	TargetAsset->ClothCurvePoints.Empty();
 
@@ -89,7 +89,7 @@ bool FCanvasAssets::SaveShapeAsset(
 
 
 	
-	// Iterate over your FInterpCurve keys (points)
+	// Iterate over FInterpCurve keys (points)
 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
 	{
 		const FInterpCurvePoint<FVector2D>& Point = CurvePoints.Points[i];

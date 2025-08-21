@@ -14,11 +14,11 @@ void FClothDesignStyle::Initialize()
 	{
 		StyleInstance = MakeShareable(new FSlateStyleSet(GetStyleSetName()));
 
-		// Set plugin content root (adjust path to your plugin folder)
+		// Set plugin content root (adjust path to plugin folder)
 		FString ContentDir = IPluginManager::Get().FindPlugin(TEXT("ClothDesign"))->GetBaseDir() / TEXT("Resources");
 		StyleInstance->SetContentRoot(ContentDir);
 
-		// Register your icon (use the correct filename here)
+		// Register icon (use the correct filename here)
 		StyleInstance->Set("ClothDesignIcon", new FSlateImageBrush(
 			StyleInstance->RootToContentDir(TEXT("new_2.png")), FVector2D(40, 40)));
 

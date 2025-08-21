@@ -164,8 +164,8 @@ void FCanvasPaint::BuildShortestArcSegments(
     {
         int segStart = useForward ? mod(s + k) : mod(s - k - 1 + NumPts); 
         // If forward: segments are (s,s+1), (s+1,s+2), ... 
-        // If backward: we choose segments going backward: (s-1,s), (s-2,s-1), ...
-        // We define segment index by the smaller index in the forward sense:
+        // If backward: choose segments going backward: (s-1,s), (s-2,s-1), ...
+        // define segment index by the smaller index in the forward sense:
         if (useForward)
             OutSegments.Add(segStart); // segment from segStart -> segStart+1
         else

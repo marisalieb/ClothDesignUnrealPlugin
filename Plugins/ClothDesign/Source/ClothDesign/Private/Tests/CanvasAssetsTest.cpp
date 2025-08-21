@@ -62,7 +62,7 @@ bool FSaveAndLoad_RoundTrip::RunTest(const FString& Parameters)
 
     // Load it back
     UClothShapeAsset* Loaded = LoadObject<UClothShapeAsset>(
-    nullptr, TEXT("/Game/ClothDesign/UnitTest/TestingAsset.TestingAsset"));
+    nullptr, TEXT("/Game/ClothDesignAssets/UnitTest/TestingAsset.TestingAsset"));
     
     
     TestNotNull("Asset should exist after save", Loaded);

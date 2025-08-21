@@ -133,7 +133,6 @@ void FCanvasUtils::TranslateDynamicMeshBy(UE::Geometry::FDynamicMesh3& Mesh, con
 		p -= Offset;           // subtract offset so mesh becomes local around origin
 		Mesh.SetVertex(vid, p);
 	}
-	// If you cache bounds/normals in other systems, recompute them here if necessary.
 }
 
 

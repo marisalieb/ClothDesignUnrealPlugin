@@ -319,7 +319,6 @@ void FCanvasPatternMerge::MergeSewnGroups() const
         APatternMesh* MergedActor = SpawnMergedActorFromDynamicMesh(MoveTemp(Merged));
         if (!MergedActor) { UE_LOG(LogTemp, Warning, TEXT("[Merge] spawn failed")); continue; }
 
-        // Now update your lists (or you may have destroyed the merged actor already)
         ReplaceActorsWithMerged(Comp, Actors, MergedActor);
         RemoveInternalSeams(Comp, ActorToIndex);
         
@@ -333,7 +332,7 @@ void FCanvasPatternMerge::MergeSewnGroups() const
             FString SafeLabel = MergedActor->GetActorLabel();
             SafeLabel.ReplaceInline(TEXT(" "), TEXT("_"));
             FString Guid = FGuid::NewGuid().ToString(EGuidFormats::Digits);
-            FString AssetPathAndName = FString::Printf(TEXT("/Game/ClothDesign/MergedClothPattern/%s"), *SafeLabel);
+            FString AssetPathAndName = FString::Printf(TEXT("/Game/ClothDesignAssets/MergedClothPattern/%s"), *SafeLabel);
 
             // Use the static helper that creates bone weights then the skeletal asset
             USkeletalMesh* NewSkel = CreateSkeletalFromFDynamicMesh(TempDyn, AssetPathAndName);
@@ -352,7 +351,7 @@ void FCanvasPatternMerge::MergeSewnGroups() const
                         SkelActor->SetFolderPath(FName(TEXT("ClothDesignActors")));
                         SkelActor->SetActorLabel(FString::Printf(TEXT("%s"), *SafeLabel));
 #endif
-                        // remove the merged APatternMesh if you want:
+                        // remove the merged APatternMesh:
                         MergedActor->Destroy();
                         MergedActor = nullptr;
                     }
@@ -367,7 +366,6 @@ void FCanvasPatternMerge::MergeSewnGroups() const
 #endif
 
 
-     // Now update your lists (or you may have destroyed the merged actor already)
      ReplaceActorsWithMerged(Comp, Actors, MergedActor);
      RemoveInternalSeams(Comp, ActorToIndex);
      }
@@ -413,11 +411,8 @@ USkeletalMesh* FCanvasPatternMerge::CreateSkeletalFromFDynamicMesh(UDynamicMesh*
         Profile,
         DebugObj
     );
-
-    // 3) Load a small skeleton asset you've included in your plugin content.
-    // Put the skeleton uasset under Plugins/YourPlugin/Content/SimpleSkeleton.uasset
-    // and use the object path "/Plugin/YourPlugin/SimpleSkeleton.SimpleSkeleton"
-    USkeleton* SkeletonAsset = LoadObject<USkeleton>(nullptr, TEXT("/Game/ClothDesign/SkelAsset/SK_ProcMesh.SK_ProcMesh"));
+    
+    USkeleton* SkeletonAsset = LoadObject<USkeleton>(nullptr, TEXT("/Game/ClothDesignAssets/SkelAsset/SK_ProcMesh.SK_ProcMesh"));
     if (!SkeletonAsset)
     {
         UE_LOG(LogTemp, Warning, TEXT("CreateSkeletal: could not load skeleton asset at '/Plugin/...' - please add it to plugin Content"));

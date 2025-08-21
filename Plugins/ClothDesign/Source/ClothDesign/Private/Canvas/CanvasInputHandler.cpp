@@ -138,7 +138,7 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 		return FReply::Handled();
 	}
 	// if the clicked point is on a completed shape, validate that shape has a generated mesh.
-	// If it's an in-progress shape (BestShape == INDEX_NONE), we cannot validate here.
+	// If it's an in-progress shape (BestShape == INDEX_NONE), cannot validate here.
 	if (BestShape != INDEX_NONE)
 	{
 		if (!Canvas->GetSewingManager().ValidateMeshForShape(BestShape, SpawnedPatternActors, true))
@@ -184,7 +184,7 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 
 
 	
-    // 2) Advance our 4-click state, storing shape+point each time
+    // 2) Advance 4-click state, storing shape+point each time
     switch (SeamClickState)
     {
     case ESeamClickState::None:
@@ -250,7 +250,7 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
     	}
 
     	
-    	// 3) Finalize: now you have (shape,index) for all four clicks
+    	// 3) Finalize: (shape,index) for all four clicks
     	Canvas->GetSewingManager().FinaliseSeamDefinitionByTargets(
     		AStartTarget, AEndTarget, BStartTarget,
     		BEndTarget, Canvas->CurvePoints,
@@ -470,7 +470,6 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	        FVector2D Ps = Canvas->TransformPoint(Aend);
 	        FVector2D Pe = Canvas->TransformPoint(Bend);
 	    	// Before distance test: log everything
-	    	//FVector2D LocalMousePos = /* whatever you get from Geometry.AbsoluteToLocal(...) at the call site */;
 	    	UE_LOG(LogTemp, Warning, TEXT("Debug coords: LocalMouse=(%f,%f) CanvasClick(pos maybe pattern)=(%f,%f) Ps=(%f,%f) Pe=(%f,%f) Zoom=%f Pan=(%f,%f)"),
 				LocalMousePos.X, LocalMousePos.Y,
 				CanvasClickPos.X, CanvasClickPos.Y,

@@ -39,7 +39,7 @@ void FCanvasMesh::SampleShapeCurve(
 	TArray<int32>& OutVertexIDs,
 	FDynamicMesh3& Mesh)
 {
-	// Before your loop, compute the integer sample‐range once:
+	// Before loop, compute the integer sample‐range once:
 	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
 	int SampleCounter = 0;
 
@@ -47,7 +47,7 @@ void FCanvasMesh::SampleShapeCurve(
 	int MinSample = TotalSamples + 1;
 	int MaxSample = -1;
 
-	// Only compute if we really want to record a seam
+	// Only compute if really want to record a seam
 	if (bRecordSeam && StartPointIdx2D >= 0 && EndPointIdx2D >= 0)
 	{
 		int S0 = StartPointIdx2D * SamplesPerSegment;
@@ -87,14 +87,12 @@ void FCanvasMesh::AddGridInteriorPoints(
 	TArray<int32>& OutVertexIDs,
 	FDynamicMesh3& Mesh)
 {
-	// Your code for bounding box, grid sampling, and adding interior points
-
 	
-	// Copy out just the boundary verts for your in‐polygon test:
+	// Copy out just the boundary verts for in‐polygon test:
 	TArray<FVector2f> BoundaryOnly;
 	BoundaryOnly.Append( PolyVerts.GetData(), OriginalBoundaryCount );
 
-	// --- compute 2D bounding‐box of your sampled polyline
+	// --- compute 2D bounding‐box of sampled polyline
 	float MinX = FLT_MAX, MinY = FLT_MAX, MaxX = -FLT_MAX, MaxY = -FLT_MAX;
 	for (int32 i = 0; i < OriginalBoundaryCount; ++i)
 	{
@@ -106,7 +104,7 @@ void FCanvasMesh::AddGridInteriorPoints(
 	}
 
 	// --- grid parameters
-	constexpr int32 GridRes = 20;    // 10×10 grid → up to 100 interior seeds
+	constexpr int32 GridRes = 40;    // 10×10 grid → up to 100 interior seeds
 	int32 Added = 0;
 
 	// --- sample on a regular grid, keep only centers inside the original polygon
@@ -126,7 +124,7 @@ void FCanvasMesh::AddGridInteriorPoints(
 				// add to the full list
 				PolyVerts.Add(Cand);
 
-				// let your Delaunay/CDT see it:
+				// let Delaunay/CDT see it:
 				int32 VID = Mesh.AppendVertex(FVector3d(Cand.X, Cand.Y, 0));
 				OutVertexIDs.Add(VID);
 
@@ -140,7 +138,7 @@ void FCanvasMesh::BuildBoundaryEdges(
 	int32 OriginalBoundaryCount,
 	TArray<UE::Geometry::FIndex2i>& OutBoundaryEdges)
 {
-	// Your code building boundary edges array
+	// code building boundary edges array
 	// Build the list of constrained edges on the original boundary:
 	// TArray<UE::Geometry::FIndex2i> BoundaryEdges;
 	OutBoundaryEdges.Reserve(OriginalBoundaryCount);
@@ -157,7 +155,7 @@ void FCanvasMesh::RunConstrainedDelaunay(
 	const TArray<UE::Geometry::FIndex2i>& BoundaryEdges,
 	UE::Geometry::TConstrainedDelaunay2<float>& OutCDT)
 {
-	// Your code setting up and running CDT triangulation
+	// code setting up and running CDT triangulation
 
 	OutCDT.Vertices      = PolyVerts;          // TArray<TVector2<float>>
 	OutCDT.Edges         = BoundaryEdges;      // TArray<FIndex2i>
@@ -167,7 +165,7 @@ void FCanvasMesh::RunConstrainedDelaunay(
 	// CDT.FillRule      = EFillRule::EvenOdd;  
 	OutCDT.bOutputCCW    = true;               // get CCW‐wound triangles
 
-	// If you want to cut out hole‐loops, you can fill CDT.HoleEdges similarly.
+	// If wanted cut out hole‐loops, can fill CDT.HoleEdges similarly
 
 	// Run the triangulation:
 	bool bOK = OutCDT.Triangulate();
@@ -186,9 +184,8 @@ void FCanvasMesh::ConvertCDTToDynamicMesh(
 	FDynamicMesh3& OutMesh,
 	TArray<int32>& OutPolyIndexToVID)
 {
-	// Your code converting CDT vertices and triangles to FDynamicMesh3
+	// code converting CDT vertices and triangles to FDynamicMesh3
 	OutMesh.EnableTriangleGroups();
-	// MeshOut.SetAllowBowties(true);  // if you expect split‐bowties
 
 	OutPolyIndexToVID.Reset();
 	OutPolyIndexToVID.Reserve(CDT.Vertices.Num());
@@ -218,7 +215,7 @@ void FCanvasMesh::ExtractVerticesAndIndices(
 	TArray<FVector>& OutVertices,
 	TArray<int32>& OutIndices)
 {
-	// Your code extracting vertex and index arrays for procedural mesh
+	// extracting vertex and index arrays for procedural mesh
 	OutVertices.Reserve(OutMesh.VertexCount());
 	for (int vid : OutMesh.VertexIndicesItr())
 	{
@@ -262,7 +259,6 @@ void FCanvasMesh::CreateProceduralMesh(
     OutSpawnedActors.Add(TWeakObjectPtr<APatternMesh>(MeshActor));
 	
     {
-        // If you want to spawn at a specific location, compute that first and use it here.
         const FVector CurrentActorLoc = MeshActor->GetActorLocation();
         const FVector CentroidWorldPos = MeshActor->GetActorTransform().TransformPosition(MeshCentroid);
         const FVector WorldOffset = CentroidWorldPos - CurrentActorLoc;
@@ -301,8 +297,6 @@ void FCanvasMesh::CreateProceduralMesh(
     MeshActor->SetActorLabel(UniqueLabel);
 #endif
 
-    // Build the visible section
-    // NOTE: 'Vertices' must already be centered (centroid subtracted) before you call this fn.
     TArray<FVector>      Normals;      Normals.AddUninitialized(Vertices.Num());
     TArray<FVector2D>    UV0;          UV0.AddUninitialized(Vertices.Num());
     TArray<FLinearColor> VertexColors; VertexColors.AddUninitialized(Vertices.Num());
@@ -386,7 +380,7 @@ void FCanvasMesh::TriangulateAndBuildMesh(
 
 	TArray<FVector2f> BoundarySamples2D;
 	TArray<int32> BoundarySampleVIDs;
-	TArray<FVector> BoundarySampleWorld; // we'll compute world positions in CreateProceduralMesh
+	TArray<FVector> BoundarySampleWorld;
 
 	BoundarySamples2D.Reserve(OriginalBoundaryCount);
 	BoundarySampleVIDs.Reserve(OriginalBoundaryCount);
@@ -486,57 +480,4 @@ void FCanvasMesh::TriangulateAndBuildAllMeshes(
 	}
 }
 
-
-// void FCanvasMesh::TriangulateAndBuildAllMeshes(
-// 	const TArray<FInterpCurve<FVector2D>>& CompletedShapes,
-// 	const FInterpCurve<FVector2D>& CurvePoints,
-// 	TArray<FDynamicMesh3>& OutMeshes,
-// 	TArray<TWeakObjectPtr<APatternMesh>>& OutSpawnedActors)
-// {
-// 	// add check for in-progress shapes to finalise them
-//
-// 	for (const FInterpCurve<FVector2D>& Shape : CompletedShapes)
-// 	{
-// 		FDynamicMesh3 Mesh;
-// 		TArray<int32> SeamVerts;
-// 		TArray<int32> TempSeamVerts;
-//
-// 		TriangulateAndBuildMesh(
-// 			Shape,
-// 			false,
-// 			0, 0,
-// 			SeamVerts,
-// 			Mesh,
-// 			TempSeamVerts,
-// 			OutSpawnedActors);
-// 		
-// 		OutMeshes.Add(Mesh);
-// 	}
-//
-// 	if (CurvePoints.Points.Num() >= 3)
-// 	{
-// 		FDynamicMesh3 Mesh;
-// 		TArray<int32> SeamVerts;
-// 		TArray<int32> TempSeamVerts;
-//
-// 		TriangulateAndBuildMesh(
-// 			CurvePoints,
-// 			false,
-// 			0, 0,
-// 			SeamVerts,
-// 			Mesh,
-// 			TempSeamVerts,
-// 			OutSpawnedActors);
-// 		
-// 		OutMeshes.Add(Mesh);
-// 	}
-//
-// 	for (int i = 0; i < OutSpawnedActors.Num(); ++i)
-// 	{
-// 		if (APatternMesh* A = OutSpawnedActors[i].Get())
-// 		{
-// 			UE_LOG(LogTemp, Warning, TEXT("SpawnedActors[%d] = %s"), i, *A->GetName());
-// 		}
-// 	}
-// }
 

@@ -406,7 +406,7 @@ void FClothDesignToolkit::OnTextileMaterialSelected(const FAssetData& AssetData)
 
 	const FScopedTransaction Transaction(LOCTEXT("ApplyTextileMaterialTx", "Apply Textile Material"));
 
-	// Use the explicit helper so we always test against the current mesh
+	// Use the explicit helper so always test against the current mesh
 	ForEachComponentUsingMesh(TargetMesh, [this](USkeletalMeshComponent* SkelComp)
 	{
 		if (!SkelComp) return;
@@ -456,7 +456,6 @@ TSharedRef<SWidget> FClothDesignToolkit::MakePresetPicker()
 			SNew(SComboBox<TSharedPtr<FPresetItem>>)
 	        .OptionsSource(&SimSettings.PresetOptions)
 	        .InitiallySelectedItem(SelectedPresetSharedPtr)
-			// This fixes your issue:
 	        .OnGenerateWidget_Lambda([](TSharedPtr<FPresetItem> InItem)
 	        {
 	            return SNew(STextBlock)

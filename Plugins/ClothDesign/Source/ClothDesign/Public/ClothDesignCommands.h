@@ -25,7 +25,7 @@ public:
 	/**
 	 * @brief Registers all commands associated with this mode.
 	 * 
-	 * This is where you bind each TSharedPtr<FUICommandInfo> to its input gesture, label, 
+	 * This is where each TSharedPtr<FUICommandInfo> is bound to its input gesture, label, 
 	 * and tooltip. Called automatically when the command framework is initialized.
 	 */
 	virtual void RegisterCommands() override;

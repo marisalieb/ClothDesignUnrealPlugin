@@ -54,7 +54,7 @@ void FClothDesignModule::StartupModule()
 void FClothDesignModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
+	// call this function before unloading the module.
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(TwoDTabName);
 	UToolMenus::UnregisterOwner(this);
 
@@ -66,7 +66,7 @@ void FClothDesignModule::ShutdownModule()
 
 bool FClothDesignModule::CheckSkeletonAssetExists()
 {
-	static const FString SkeletonPath = TEXT("/Game/ClothDesign/SkelAsset/SK_ProcMesh.SK_ProcMesh");
+	static const FString SkeletonPath = TEXT("/Game/ClothDesignAssets/SkelAsset/SK_ProcMesh.SK_ProcMesh");
 	USkeleton* SkeletonAsset = LoadObject<USkeleton>(nullptr, *SkeletonPath);
 
 	if (!SkeletonAsset)
@@ -270,7 +270,7 @@ TSharedRef<SWidget> FClothDesignModule::MakeActionButtons()
 				.WidthOverride(250.f)
 				[
 					SNew(SButton)
-					.Text(LOCTEXT("GenerateMeshBtn", "Generate meshes"))
+					.Text(LOCTEXT("GenerateMeshBtn", "Generate Meshes"))
 					.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnGenerateMeshClicked))
 				]
 			]

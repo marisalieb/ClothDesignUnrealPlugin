@@ -132,7 +132,7 @@ void FCanvasSewing::FinaliseSeamDefinitionByTargets(
 		UE_LOG(LogTemp, Warning, TEXT("[%d] IsValid: %d"), i, SpawnedPatternActors[i].IsValid());
 	}
 	
-	// 2) Build your FPatternSewingConstraint (runtime struct)
+	// 2) Build FPatternSewingConstraint
 	// This stores how to sew those shapes in the actual 3D mesh
 	FPatternSewingConstraint NewSeam;
 
@@ -382,7 +382,7 @@ void FCanvasSewing::BuildAndAlignSeam(
 		{
 			if (APatternMesh* Actor = Weak.Get())
 			{
-				if (Actor->MeshComponent == MeshComp) // adapt if your member has a different name
+				if (Actor->MeshComponent == MeshComp)
 				{
 					return Actor;
 				}
@@ -498,7 +498,7 @@ void FCanvasSewing::BuildAndAlignSeam(
     MapSeam2DToVIDs(ActorA, SeamA2D, VIDsA);
     MapSeam2DToVIDs(ActorB, SeamB2D, VIDsB);
 
-    // Filter out invalid VIDs and keep pairs (we only keep positions where both are valid)
+    // Filter out invalid VIDs and keep pairs (only keep positions where both are valid)
     TArray<int32> PairedA, PairedB;
     int32 PairCount = FMath::Min(VIDsA.Num(), VIDsB.Num());
     for (int i = 0; i < PairCount; ++i) {
@@ -522,7 +522,7 @@ void FCanvasSewing::BuildAndAlignSeam(
 		OutPos.Reset(); OutPos.Reserve(VIDs.Num());
 		for (int id : VIDs)
 		{
-			// Defensive check (shouldn't be necessary if we validated above)
+			// Defensive check (shouldn't be necessary if validated above)
 			if (id < 0 || id >= Actor->DynamicMesh.VertexCount()) continue;
 			FVector3d p3d = Actor->DynamicMesh.GetVertex(id);
 			OutPos.Add(Actor->GetActorTransform().TransformPosition(FVector(p3d.X, p3d.Y, p3d.Z)));

@@ -58,7 +58,6 @@ void FClothDesignToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost, 
 				true)
 		]
 		
-		// + SVerticalBox::Slot().AutoHeight().Padding(4) [ SNew(SSeparator).Thickness(1.5f) ]
 
 		+ SVerticalBox::Slot()
 		.AutoHeight()
@@ -122,7 +121,6 @@ TSharedRef<SWidget> FClothDesignToolkit::MakeClothSettingsSection()
 	return
 		SNew(SExpandableArea)
 		.AreaTitle(LOCTEXT("ClothSettings", "Cloth Settings"))
-		// .AreaTitle(FText::FromString("Cloth Settings"))
 		.InitiallyCollapsed(true) // start collapsed by default
 		.BodyContent()
 		[
@@ -156,7 +154,6 @@ TSharedRef<SWidget> FClothDesignToolkit::MakeCollisionSection()
 	return
 		SNew(SExpandableArea)
 		.AreaTitle(LOCTEXT("Collision", "Collision Object"))
-		// .AreaTitle(FText::FromString("Cloth Settings"))
 		.InitiallyCollapsed(true) // start collapsed by default
 		.BodyContent()
 		[
@@ -234,7 +231,7 @@ TSharedRef<SWidget> FClothDesignToolkit::MakeObjectPicker(
 
                     if (UsedAsset && UsedAsset->GetPathName() == AssetData.GetSoftObjectPath().GetAssetPathString())
                     {
-                        return false; // asset is in scene → don't filter out
+                        return false; // asset is in scene then don't filter out
                     }
                 }
             }
@@ -291,7 +288,6 @@ void FClothDesignToolkit::OnClothMeshSelected(const FAssetData& AssetData)
 		return;
 	}
 
-	// Find all skeletal mesh components in the level that use this mesh
 	UWorld* World = nullptr;
 
 #if WITH_EDITOR
@@ -307,7 +303,6 @@ void FClothDesignToolkit::OnClothMeshSelected(const FAssetData& AssetData)
 	}
 
 	// Apply current preset to all components using this mesh
-	// Make a copy (not a reference) and capture it by value
 	const FClothPhysicalConfig UsedPreset = SimSettings.PresetConfigs[SimSettings.SelectedPreset];
 
 	ForEachComponentUsingSelectedMesh([this, UsedPreset](USkeletalMeshComponent* Comp)
@@ -344,7 +339,6 @@ FString FClothDesignToolkit::GetSelectedTextileMaterialPath() const
 
 #if WITH_EDITOR
 
-// New helper: iterate components that use the given mesh (explicit param)
 void FClothDesignToolkit::ForEachComponentUsingMesh(USkeletalMesh* Mesh, TFunctionRef<void(USkeletalMeshComponent*)> Op) const
 {
 	if (!Mesh)
@@ -373,7 +367,6 @@ void FClothDesignToolkit::ForEachComponentUsingMesh(USkeletalMesh* Mesh, TFuncti
 		{
 			if (!SkelComp) continue;
 
-			// Compare the skeletal mesh asset pointer directly
 			if (SkelComp->GetSkeletalMeshAsset() == Mesh)
 			{
 				Op(SkelComp);
@@ -382,10 +375,9 @@ void FClothDesignToolkit::ForEachComponentUsingMesh(USkeletalMesh* Mesh, TFuncti
 	}
 }
 
-#endif // WITH_EDITOR
+#endif
 
 
-// Modified OnTextileMaterialSelected: explicitly use the current SelectedClothMesh when applying
 void FClothDesignToolkit::OnTextileMaterialSelected(const FAssetData& AssetData)
 {
 	SelectedTextileMaterial = Cast<UMaterialInterface>(AssetData.GetAsset());
@@ -396,17 +388,14 @@ void FClothDesignToolkit::OnTextileMaterialSelected(const FAssetData& AssetData)
 	}
 
 #if WITH_EDITOR
-	// If no cloth mesh currently selected, do nothing (or optionally notify user)
 	USkeletalMesh* TargetMesh = SelectedClothMesh.Get();
 	if (!TargetMesh)
 	{
-		// Optionally: log or notify the user that no mesh is selected
 		return;
 	}
 
 	const FScopedTransaction Transaction(LOCTEXT("ApplyTextileMaterialTx", "Apply Textile Material"));
 
-	// Use the explicit helper so always test against the current mesh
 	ForEachComponentUsingMesh(TargetMesh, [this](USkeletalMeshComponent* SkelComp)
 	{
 		if (!SkelComp) return;
@@ -414,7 +403,6 @@ void FClothDesignToolkit::OnTextileMaterialSelected(const FAssetData& AssetData)
 		const int32 NumMats = SkelComp->GetNumMaterials();
 		for (int32 SlotIndex = 0; SlotIndex < NumMats; ++SlotIndex)
 		{
-			// SkelComp->SetMaterial(SlotIndex, SelectedTextileMaterial.Get());
 			UMaterialInterface* BaseMaterial = SelectedTextileMaterial.Get();
 			UMaterialInstanceDynamic* MID = SkelComp->CreateAndSetMaterialInstanceDynamicFromMaterial(SlotIndex, BaseMaterial);
 
@@ -511,13 +499,7 @@ void FClothDesignToolkit::OnPresetSelected(TSharedPtr<FPresetItem> NewSelection,
 		SimSettings.SelectedPreset = NewSelection->Preset;
 
 		UE_LOG(LogTemp, Log, TEXT("Preset selected: %s"), *SelectedPresetSharedPtr->DisplayName);
-		// Use SelectedPreset->Preset here to access enum value
 
-		// // Re-apply the newly selected preset to all components that use the mesh
-		// ForEachComponentUsingSelectedMesh([this](USkeletalMeshComponent* Comp){
-		// 	SimSettings.ApplyToCloth(Comp);
-		// });
-		// Make a copy (not a reference) and capture it by value
 		const FClothPhysicalConfig UsedPreset = SimSettings.PresetConfigs[SimSettings.SelectedPreset];
 
 		ForEachComponentUsingSelectedMesh([this, UsedPreset](USkeletalMeshComponent* Comp)
@@ -540,7 +522,7 @@ FText FClothDesignToolkit::GetPresetDisplayName(EClothPreset Preset)
 	}
 }
 
-// helper: iterate components using the picked mesh and call a lambda
+// iterate components using the picked mesh and call a lambda
 void FClothDesignToolkit::ForEachComponentUsingSelectedMesh(TFunctionRef<void(USkeletalMeshComponent*)> Fn)
 {
 #if WITH_EDITOR

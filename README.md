@@ -1,11 +1,17 @@
-## Cloth Design Plugin for Unreal Engine 5.5 on Linux
+# Cloth Design Plugin for Unreal Engine 5.5 on Linux
 ### 
+
+![Language](https://img.shields.io/badge/language-C%2B%2B-blue)
+![Engine](https://img.shields.io/badge/engine-Unreal%20Engine%205.5-critical)
+![OS](https://img.shields.io/badge/os-Linux-lightgrey)
+![Interface](https://img.shields.io/badge/interface-UE%20Plugin%20%28Slate%29-orange)
+![Tests](https://img.shields.io/badge/tests-UE%20Automation%20Tests-brightgreen)
 
 
 #
-# Plugin User Instructions
-
-### 1. Loading the Plugin
+## Plugin User Instructions
+#
+### 1. Loading the Plugin (video [here](https://www.youtube.com/watch?v=EFWlgoQcySg))
 - Create an Unreal Engine project and add a "Plugins" folder.
 - Download and unzip the plugin's zip file.
 - Copy the ClothDesignAssets folder in Content Drawer of your project.
@@ -15,7 +21,8 @@
 
 
 
-### 2. Accessing 3D Controls
+### 2. Accessing 3D Controls (full workflow video [here](https://www.youtube.com/watch?v=gF__ZoG9WPg))
+
 - Enter the ClothDesign Editor Mode to access the 3D-side controls.
 - Available controls:
   - 2D Editor Launch Button: Opens the 2D pattern authoring surface.
@@ -73,15 +80,56 @@ Once the merged skeletal mesh is saved in the content browser:
 - Assign a material and select a Simulation Preset.
 - The mesh is now ready to simulate using the grey "Simulate" button in the top bar.
 
-Note: The cloth and material pickers also work with externally imported meshes (e.g., Marvelous Designer), enabling fast setup for any cloth asset in UE.
+Note: The cloth and material pickers also work with externally imported meshes (e.g., Marvelous Designer), enabling fast setup for any cloth asset in UE (video [here](https://www.youtube.com/watch?v=RBReJKRiPME)).
 
-
+#
+# Requirements:
+- Unreal Engine 5.5 - developed and tested in UE 5.5
+- Linux - tested on Linux only
 
 #
 # Testing
 
-to run tests either go to Riders test section in the bar on the left and run the tests there by clicking 'run unit tests'. 
-or go to UE: tools > session frontend > automation > search for your tests there and click run to check them in UE
+To run the tests, there are two options:
+
+In Rider: Open the Tests panel from the left-hand toolbar and select Run Unit Tests.
+
+In Unreal Engine: Navigate to Tools > Session Frontend > Automation, locate the tests using the search function, and click Run to execute them within the editor.
+
+
+
+
+
+
+
+#
+# Videos
+
+### [Installation](https://www.youtube.com/watch?v=EFWlgoQcySg)
+
+### [Full workflow](https://www.youtube.com/watch?v=gF__ZoG9WPg)
+
+### [Workflow for imported meshes](https://www.youtube.com/watch?v=RBReJKRiPME)
+
+# 
+# Acknowledgements & Sources
+
+- The Unreal Engine C++ API documentation was used as a reference for plugin structure and module functionality.
+
+  Available here: https://dev.epicgames.com/documentation/en-us/unreal-engine/API?application_version=5.5
+
+- The Unreal Engine 5.5 documentation was used for in editor workflow reference and functionality.
+
+  Available here: https://dev.epicgames.com/documentation/en-us/unreal-engine/API?application_version=5.5
+
+- Doxygen Awesome was used as a custom CSS theme for Doxygen HTML documentation.
+
+  Available here: https://github.com/jothepro/doxygen-awesome-css?tab=readme-ov-file
+- GitHub Copilot and ChatGPT were used to assist with exploring concepts, debugging and documentation.
+
+
+
+#
 
 # Images
 ### Selection of custom editor mode
@@ -89,8 +137,3 @@ or go to UE: tools > session frontend > automation > search for your tests there
 
 
 
-Further sources:
-https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/GeometryCore/CompGeom/PolygonTriangulation__Triangulat-/1
-https://dev.epicgames.com/community/learning/tutorials/LZZo/unreal-engine-epic-games-store-chaos-cloth-updates-5-6
-
-https://github.com/jothepro/doxygen-awesome-css?tab=readme-ov-file

@@ -20,11 +20,6 @@ UClothDesignEditorMode::UClothDesignEditorMode()
 	FModuleManager::Get().LoadModule("EditorStyle");
 
 	// // appearance and icon in the editing mode ribbon can be customized here
-	// Info = FEditorModeInfo(
-	// 	UClothDesignEditorMode::EM_ClothDesignEditorModeId,
-	// 	LOCTEXT("ModeName", "ClothDesign"),
-	// 	FSlateIcon(),
-	// 	true);
 	Info = FEditorModeInfo(
 	FName("EM_ClothDesign"), // mode ID
 	FText::FromString("Cloth Design"), // display name
@@ -33,9 +28,6 @@ UClothDesignEditorMode::UClothDesignEditorMode()
 );
 }
 
-// UClothDesignEditorMode::~UClothDesignEditorMode()
-// {
-// }
 
 void UClothDesignEditorMode::ActorSelectionChangeNotify()
 {
@@ -53,11 +45,7 @@ void UClothDesignEditorMode::CreateToolkit()
 
 TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> UClothDesignEditorMode::GetModeCommands() const
 {
-	return {}; // empty map = no default buttons
-	// return FClothDesignCommands::Get().GetCommands();
-	// TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> Map;
-	// Map.FindOrAdd(NAME_Default).Add(FClothDesignCommands::Get().Open2DWindow);
-	// return Map;
+	return {}; 
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -29,7 +29,7 @@ FReply FCanvasInputHandler::HandleDraw(const FGeometry& Geo, const FPointerEvent
 
 	FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
 
-	// add a point…
+	// add a point
 	FInterpCurve<FVector2D>& CurvePoints = Canvas->CurvePoints;
 	FInterpCurvePoint<FVector2D> NewPoint;
 	NewPoint.InVal     = CurvePoints.Points.Num();
@@ -48,7 +48,7 @@ FReply FCanvasInputHandler::HandleDraw(const FGeometry& Geo, const FPointerEvent
 		CurvePoints.AutoSetTangents();
 
 	}
-	// 2) ALSO initialize the first/last tangents on current shape
+	// initialize the first/last tangents on current shape
 	int32 NumPts = CurvePoints.Points.Num();
 	if (NumPts >= 2)
 	{
@@ -74,9 +74,8 @@ FReply FCanvasInputHandler::HandleDraw(const FGeometry& Geo, const FPointerEvent
 FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 {
 	
-	// FCanvasUtils::SaveStateForUndo(Canvas->UndoStack, Canvas->RedoStack, Canvas->GetCurrentCanvasState());
 
-	// add a point…
+	// add a point
 	FInterpCurve<FVector2D>& CurvePoints = Canvas->CurvePoints;
 	TArray<FInterpCurve<FVector2D>>& CompletedShapes =Canvas->CompletedShapes;
 	ESeamClickState& SeamClickState =Canvas->GetSewingManager().SeamClickState;
@@ -86,7 +85,7 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 	FClickTarget&  BEndTarget=Canvas->GetSewingManager().BEndTarget ;
 	TArray<TWeakObjectPtr<APatternMesh>>&  SpawnedPatternActors=Canvas->GetSewingManager().SpawnedPatternActors;
 	
-	 // 1) Find nearest control point across all shapes + current
+	 // Find nearest control point across all shapes + current
     const float SelRadius = 10.0f / Canvas->ZoomFactor;
     const float BestRadiusSq = SelRadius * SelRadius;
 
@@ -94,10 +93,10 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
     int32  BestPoint   = INDEX_NONE;
     float  BestDistSq  = BestRadiusSq;
 
-    // -- Check current in-progress shape first --
+    // Check current in-progress shape first
     for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
     {
-        FVector2D Pt = CurvePoints.Points[i].OutVal;   //TransformPoint(CurvePoints.Points[i].OutVal);
+        FVector2D Pt = CurvePoints.Points[i].OutVal;  
         float D2 = FVector2D::DistSquared(Pt, CanvasClickPos);
 	    
         if (D2 < BestDistSq)
@@ -108,12 +107,12 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
         }
     }
 
-    // -- Then each completed shape --
+    // Then each completed shape
     for (int32 s = 0; s < CompletedShapes.Num(); ++s)
     {
         for (int32 i = 0; i < CompletedShapes[s].Points.Num(); ++i)
         {
-            FVector2D Pt = CompletedShapes[s].Points[i].OutVal;   //TransformPoint(CompletedShapes[s].Points[i].OutVal);
+            FVector2D Pt = CompletedShapes[s].Points[i].OutVal;
             float D2 = FVector2D::DistSquared(Pt, CanvasClickPos);
 	        
             if (D2 < BestDistSq)
@@ -125,7 +124,6 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
         }
     }
 	
-    // If user didn't hit anything, just consume the click and exit
     if (BestPoint == INDEX_NONE)
     {
         UE_LOG(LogTemp, Verbose, TEXT("Sew click missed all control points."));
@@ -137,13 +135,11 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 	{
 		return FReply::Handled();
 	}
-	// if the clicked point is on a completed shape, validate that shape has a generated mesh.
-	// If it's an in-progress shape (BestShape == INDEX_NONE), cannot validate here.
+	// if the clicked point is on a completed shape, validate that shape has a generated mesh
 	if (BestShape != INDEX_NONE)
 	{
 		if (!Canvas->GetSewingManager().ValidateMeshForShape(BestShape, SpawnedPatternActors, true))
 		{
-			// validation showed a dialog; abort and do not record any points or advance state
 			return FReply::Handled();
 		}
 	}
@@ -173,7 +169,7 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 				float D2 = FVector2D::DistSquared(Canvas->CompletedShapes[BestShape].Points[i].OutVal, CanvasClickPos);
 				if (D2 <= BestRadiusSq) { BestPoint = i; break; }
 			}
-			if (BestPoint == INDEX_NONE) return FReply::Handled(); // shouldn't happen, but safe
+			if (BestPoint == INDEX_NONE) return FReply::Handled();
 		}
 		else
 		{
@@ -184,7 +180,7 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 
 
 	
-    // 2) Advance 4-click state, storing shape+point each time
+    // Advance 4-click state, storing shape+point each time
     switch (SeamClickState)
     {
     case ESeamClickState::None:
@@ -243,14 +239,11 @@ FReply FCanvasInputHandler::HandleSew(const FVector2D& CanvasClickPos)
 
     	if (!Canvas->GetSewingManager().ValidateMeshesForTargets(AStartTarget, BStartTarget, SpawnedPatternActors, true))
     	{
-    		// Dialog already shown; abort finalise and reset preview state, keep user in BEnd so they can retry.
     		Canvas->GetSewingManager().CurrentSeamPreviewPoints.Empty();
-    		SeamClickState = ESeamClickState::None; // or decide appropriate rollback behavior
+    		SeamClickState = ESeamClickState::None;
     		return FReply::Handled();
     	}
 
-    	
-    	// 3) Finalize: (shape,index) for all four clicks
     	Canvas->GetSewingManager().FinaliseSeamDefinitionByTargets(
     		AStartTarget, AEndTarget, BStartTarget,
     		BEndTarget, Canvas->CurvePoints,
@@ -286,7 +279,7 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	TArray<bool>& bUseBezierPerPoint = Canvas->bUseBezierPerPoint;
 	float  ZoomFactor = Canvas->ZoomFactor;
 	
-	// 3) Selecting whole points on completed shapes
+	// Selecting whole points on completed shapes
 	constexpr float SelectionRadius = 10.f;
 	for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
 	{
@@ -306,7 +299,7 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 		}
 	}
 
-	// 4) Selecting points in the in-progress curve
+	//  Selecting points in the in-progress curve
 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
 	{
 		FVector2D WorldPoint = CurvePoints.Points[i].OutVal;
@@ -323,7 +316,7 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	
 	float TangentRadius = 25.0f;
 
-    // 1) Try selecting a tangent handle on completed shapes
+    // Try selecting a tangent handle on completed shapes
     for (int32 ShapeIndex = 0; ShapeIndex < CompletedShapes.Num(); ++ShapeIndex)
     {
         const FInterpCurve<FVector2D>& Shape = CompletedShapes[ShapeIndex];
@@ -352,7 +345,7 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
                 Canvas->SelectedPointIndex    = i;
                 Canvas->SelectedTangentHandle = SClothDesignCanvas::ETangentHandle::Arrive;
                 Canvas->bIsDraggingTangent    = true;
-                return FReply::Handled();  // capture/focus done by widget
+                return FReply::Handled();
             }
             else if (FVector2D::Distance(CanvasClickPos, Leave) < TangentRadius / ZoomFactor)
             {
@@ -366,7 +359,7 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
         }
     }
 
-    // 2) Then the in-progress shape’s handles
+    // Then the in-progress shape’s handles
     for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
     {
         const FInterpCurvePoint<UE::Math::TVector2<double>>& Pt = CurvePoints.Points[i];
@@ -402,7 +395,7 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	// used to match the coordinate system for the seam selection
 	const FVector2D LocalMousePos = Canvas->TransformPoint(CanvasClickPos);
 
-	constexpr float SeamSelectionRadius = 25.0f ; // pixels threshold (tune as needed)
+	constexpr float SeamSelectionRadius = 25.0f ; // pixels threshold
 	constexpr float SeamSelectionRadiusSq = SeamSelectionRadius * SeamSelectionRadius;
 
 	UE_LOG(LogTemp, Warning, TEXT("HandleSelect called, click pos: (%f, %f), ZoomFactor: %f, Seams count:"), CanvasClickPos.X, CanvasClickPos.Y, ZoomFactor);
@@ -456,10 +449,7 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	            Canvas->SelectedShapeIndex = INDEX_NONE; // clear point selection
 	            Canvas->SelectedPointIndex = INDEX_NONE;
 	    		UE_LOG(LogTemp, Warning, TEXT("Seam %d selected!"), s);
-	    		//UE_LOG(LogTemp, Warning, TEXT("Checking seam %d start-start line: Ps=(%f,%f) Pe=(%f,%f) Click=(%f,%f) DistSq=%f Threshold=%f"), 
-					//s, Ps.X, Ps.Y, Pe.X, Pe.Y, CanvasClickPos.X, CanvasClickPos.Y, DistPointToSegmentSq(CanvasClickPos, Ps, Pe), SeamSelectionRadiusSq);
 
-	            // optionally store which sub-segment clicked (start or end) if needed
 	            return FReply::Handled();
 	        }
 	    }
@@ -469,7 +459,6 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	    {
 	        FVector2D Ps = Canvas->TransformPoint(Aend);
 	        FVector2D Pe = Canvas->TransformPoint(Bend);
-	    	// Before distance test: log everything
 	    	UE_LOG(LogTemp, Warning, TEXT("Debug coords: LocalMouse=(%f,%f) CanvasClick(pos maybe pattern)=(%f,%f) Ps=(%f,%f) Pe=(%f,%f) Zoom=%f Pan=(%f,%f)"),
 				LocalMousePos.X, LocalMousePos.Y,
 				CanvasClickPos.X, CanvasClickPos.Y,
@@ -487,21 +476,16 @@ FReply FCanvasInputHandler::HandleSelect(const FVector2D& CanvasClickPos)
 	            Canvas->SelectedShapeIndex = INDEX_NONE;
 	            Canvas->SelectedPointIndex = INDEX_NONE;
 	    		UE_LOG(LogTemp, Warning, TEXT("Seam %d selected!"), s);
-	    // 		UE_LOG(LogTemp, Warning, TEXT("Checking seam %d end-end line: Ps=(%f,%f) Pe=(%f,%f) Click=(%f,%f) DistSq=%f Threshold=%f"), 
-					// s, Ps.X, Ps.Y, Pe.X, Pe.Y, CanvasClickPos.X, CanvasClickPos.Y, DistPointToSegmentSq(CanvasClickPos, Ps, Pe), SeamSelectionRadiusSq);
 
 	            return FReply::Handled();
 	        }
 	    }
 	}
 
-	// if nothing matched, clear seam selection (or keep it — choose UX)
-	// Canvas->SelectedSeamIndex = INDEX_NONE;
 	Canvas->SelectedSeamIndex = INDEX_NONE;
 	Canvas->SelectedShapeIndex = INDEX_NONE;
 	Canvas->SelectedPointIndex = INDEX_NONE;
 	
-    // Nothing selected—handled, but no capture/focus
     return FReply::Handled();
 }
 

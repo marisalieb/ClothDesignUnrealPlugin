@@ -81,7 +81,7 @@ public:
  * This class provides high-level control over which asset is active in the canvas,
  * ensuring that selection and loading are consistent with user expectations.
  */
-class FCanvasAssetManager
+class FPatternAssetManager
 {
 public:
     TWeakObjectPtr<UClothShapeAsset> ClothAsset; /**< Currently selected shape asset. */

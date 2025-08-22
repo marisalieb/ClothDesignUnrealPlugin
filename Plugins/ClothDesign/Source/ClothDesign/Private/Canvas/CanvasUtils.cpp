@@ -48,7 +48,7 @@ void FCanvasUtils::RecalculateNTangents(
 
 	for (int32 i = 0; i < Num; ++i)
 	{
-		// Only operate on N‑points
+		// Only operate on N‑points/ linear points
 		if (bBezierFlags[i]) continue;
 
 		// Prev
@@ -116,7 +116,7 @@ FVector3d FCanvasUtils::ComputeAreaWeightedCentroid(const UE::Geometry::FDynamic
 	return FVector3d::Zero();
 }
 
-/** Subtract pivotFrom (centroid) from all vertices to move pivot to origin. */
+// Subtract pivotFrom (centroid) from all vertices to move pivot to origin.
 void FCanvasUtils::CenterMeshVerticesToOrigin(TArray<FVector>& Vertices, const FVector& PivotFrom)
 {
     for (FVector& V : Vertices)
@@ -130,7 +130,7 @@ void FCanvasUtils::TranslateDynamicMeshBy(UE::Geometry::FDynamicMesh3& Mesh, con
 	for (int vid : Mesh.VertexIndicesItr())
 	{
 		FVector3d p = Mesh.GetVertex(vid);
-		p -= Offset;           // subtract offset so mesh becomes local around origin
+		p -= Offset; // subtract offset so mesh becomes local around origin
 		Mesh.SetVertex(vid, p);
 	}
 }

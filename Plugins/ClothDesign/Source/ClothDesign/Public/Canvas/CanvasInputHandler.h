@@ -10,8 +10,7 @@
 //  */
 
 /**
- * @file CanvasInputHandler.h
- *
+ * 
  * @note Thesis reference:
  * See Chapter 4.5 (HandleDraw), 4.7 (HandleSew) and 4.9.2 (HandleSelect) for details.
  */

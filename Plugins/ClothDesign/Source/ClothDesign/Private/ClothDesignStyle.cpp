@@ -26,7 +26,7 @@ void FClothDesignStyle::Initialize()
 	}
 }
 /// ICON FROM : https://www.flaticon.com/free-icon/clothing-hanger_18409
-/// 
+
 
 void FClothDesignStyle::Shutdown()
 {

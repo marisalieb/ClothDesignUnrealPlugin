@@ -53,9 +53,6 @@ void FClothSimSettings::SetClothCollisionFlags(USkeletalMeshComponent* SkelComp)
 	SkelComp->bCollideWithEnvironment = true;
 	SkelComp->bForceCollisionUpdate = true;
 
-	// Optionally, update cloth collision immediately
-	// SkelComp->UpdateClothCollision();
-
 	SkelComp->MarkRenderStateDirty();
 	SkelComp->RecreatePhysicsState();
 

@@ -6,7 +6,7 @@
 
 
 
-// 1) Helper: even–odd rule point-in-polygon test
+// even–odd rule point-in-polygon test
 bool FMeshTriangulation::IsPointInPolygon(
 	const FVector2f& Test, 
 	const TArray<FVector2f>& Poly
@@ -39,11 +39,9 @@ void FMeshTriangulation::SampleShapeCurve(
 	TArray<int32>& OutVertexIDs,
 	FDynamicMesh3& Mesh)
 {
-	// Before loop, compute the integer sample‐range once:
 	int TotalSamples = (Shape.Points.Num() - 1) * SamplesPerSegment;
 	int SampleCounter = 0;
 
-	// Default to an empty range
 	int MinSample = TotalSamples + 1;
 	int MaxSample = -1;
 
@@ -92,7 +90,7 @@ void FMeshTriangulation::AddGridInteriorPoints(
 	TArray<FVector2f> BoundaryOnly;
 	BoundaryOnly.Append( PolyVerts.GetData(), OriginalBoundaryCount );
 
-	// --- compute 2D bounding‐box of sampled polyline
+	// compute 2D bounding‐box of sampled polyline
 	float MinX = FLT_MAX, MinY = FLT_MAX, MaxX = -FLT_MAX, MaxY = -FLT_MAX;
 	for (int32 i = 0; i < OriginalBoundaryCount; ++i)
 	{
@@ -103,11 +101,11 @@ void FMeshTriangulation::AddGridInteriorPoints(
 		MaxY = FMath::Max(MaxY, V.Y);
 	}
 
-	// --- grid parameters
+	// grid parameters
 	constexpr int32 GridRes = 40;    // 10×10 grid → up to 100 interior seeds
 	int32 Added = 0;
 
-	// --- sample on a regular grid, keep only centers inside the original polygon
+	// sample on a regular grid, keep only centers inside the original polygon
 	for (int32 iy = 0; iy < GridRes; ++iy)
 	{
 		float fy = (iy + 0.5f) / static_cast<float>(GridRes);
@@ -121,10 +119,8 @@ void FMeshTriangulation::AddGridInteriorPoints(
 			FVector2f Cand(X, Y);
 			if ( IsPointInPolygon(Cand, BoundaryOnly) )
 			{
-				// add to the full list
 				PolyVerts.Add(Cand);
 
-				// let Delaunay/CDT see it:
 				int32 VID = Mesh.AppendVertex(FVector3d(Cand.X, Cand.Y, 0));
 				OutVertexIDs.Add(VID);
 
@@ -138,9 +134,7 @@ void FMeshTriangulation::BuildBoundaryEdges(
 	int32 OriginalBoundaryCount,
 	TArray<UE::Geometry::FIndex2i>& OutBoundaryEdges)
 {
-	// code building boundary edges array
-	// Build the list of constrained edges on the original boundary:
-	// TArray<UE::Geometry::FIndex2i> BoundaryEdges;
+
 	OutBoundaryEdges.Reserve(OriginalBoundaryCount);
 	for (int32 i = 0; i < OriginalBoundaryCount; ++i)
 	{
@@ -162,12 +156,8 @@ void FMeshTriangulation::RunConstrainedDelaunay(
 	OutCDT.bOrientedEdges = true;              // enforce input edge orientation
 	OutCDT.FillRule = UE::Geometry::TConstrainedDelaunay2<float>::EFillRule::Odd;  
 
-	// CDT.FillRule      = EFillRule::EvenOdd;  
-	OutCDT.bOutputCCW    = true;               // get CCW‐wound triangles
-
-	// If wanted cut out hole‐loops, can fill CDT.HoleEdges similarly
-
-	// Run the triangulation:
+	OutCDT.bOutputCCW    = true;
+	
 	bool bOK = OutCDT.Triangulate();
 
 	
@@ -191,18 +181,17 @@ void FMeshTriangulation::ConvertCDTToDynamicMesh(
 	OutPolyIndexToVID.Reserve(CDT.Vertices.Num());
 
 	
-	// Append all vertices:
+	// Append all vertices
 	for (const UE::Geometry::TVector2<float>& V2 : CDT.Vertices)
 	{
 		int NewVID = OutMesh.AppendVertex(FVector3d(V2.X, V2.Y, 0));
 		OutPolyIndexToVID.Add(NewVID);
 	}
 
-	// Append all triangles:
+	// Append all triangles
 	for (const UE::Geometry::FIndex3i& Tri : CDT.Triangles)
 	{
-		// Tri is CCW if bOutputCCW==true
-		//OutMesh.AppendTriangle(Tri.A, Tri.B, Tri.C);
+
 		int VA = OutPolyIndexToVID[Tri.A];
 		int VB = OutPolyIndexToVID[Tri.B];
 		int VC = OutPolyIndexToVID[Tri.C];
@@ -225,7 +214,6 @@ void FMeshTriangulation::ExtractVerticesAndIndices(
 	for (int tid : OutMesh.TriangleIndicesItr())
 	{
 		UE::Geometry::FIndex3i T = OutMesh.GetTriangle(tid);
-		// already CCW, so push A→B→C
 		OutIndices.Add(T.C);
 		OutIndices.Add(T.B);
 		OutIndices.Add(T.A);
@@ -359,10 +347,7 @@ void FMeshTriangulation::TriangulateAndBuildMesh(
 	UE::Geometry::TConstrainedDelaunay2<float> CDT;
 	RunConstrainedDelaunay(PolyVerts, BoundaryEdges, CDT);
 
-
-
-
-
+	
 	
 	// Convert CDT result to dynamic mesh
 	UE::Geometry::FDynamicMesh3 OutMesh;
@@ -387,21 +372,18 @@ void FMeshTriangulation::TriangulateAndBuildMesh(
 
 	for (int b = 0; b < OriginalBoundaryCount; ++b)
 	{
-		BoundarySamples2D.Add(PolyVerts[b]);                 // store 2D sample
+		BoundarySamples2D.Add(PolyVerts[b]);
 		int VID = (b >= 0 && b < PolyIndexToVID.Num()) ? PolyIndexToVID[b] : INDEX_NONE;
 		BoundarySampleVIDs.Add(VID);
 	}
 
-
-
-
+	
 	
 	// Extract vertices and indices for procedural mesh
 	TArray<FVector> Vertices;
 	TArray<int32> Indices;
 	ExtractVerticesAndIndices(OutMesh, Vertices, Indices);
 
-	// Very important: log the triangulated dynamic mesh counts (not the pre-sample Mesh)
 	UE_LOG(LogTemp, Warning, TEXT("[Triangulate] OutMesh has %d verts, %d triangles"), OutMesh.VertexCount(), OutMesh.TriangleCount());
 
 	
@@ -420,13 +402,10 @@ void FMeshTriangulation::TriangulateAndBuildMesh(
 	{
 		CentroidTempMesh.AppendTriangle(Indices[i], Indices[i+1], Indices[i+2]);
 	}
-	// FVector MeshCentroid = CanvasMesh::ComputeAreaWeightedCentroid(Vertices, Indices);
 	FVector3d MeshCentroid = FCanvasUtils::ComputeAreaWeightedCentroid(CentroidTempMesh);
-	// // Shift vertices so centroid becomes local origin (pivot at 0,0,0)
 	FCanvasUtils::CenterMeshVerticesToOrigin(Vertices, MeshCentroid);
-	// ALSO shift the dynamic mesh (double precision)
 	FVector3d Centroid3d(MeshCentroid);
-	FCanvasUtils::TranslateDynamicMeshBy(LastBuiltMesh, Centroid3d);	// CreateProceduralMesh(Vertices, Indices);
+	FCanvasUtils::TranslateDynamicMeshBy(LastBuiltMesh, Centroid3d);	
 
 
 	

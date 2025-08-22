@@ -34,17 +34,15 @@ bool FPatternAssets::SaveShapeAsset(
 		return false;
 	}
 
-	// Force full load of the package (if not already)
+	// Force full load of the package
 	Package->FullyLoad();
 
 	
-	// Try to find existing asset
 	UClothShapeAsset* ExistingAsset = FindObject<UClothShapeAsset>(Package, *AssetName);
 	UClothShapeAsset* TargetAsset = ExistingAsset;
 
 	if (!TargetAsset)
 	{
-		// If it doesn't exist, create a new one
 		TargetAsset = NewObject<UClothShapeAsset>(Package, *AssetName, RF_Public | RF_Standalone);
 		if (!TargetAsset)
 		{
@@ -53,11 +51,9 @@ bool FPatternAssets::SaveShapeAsset(
 		}
 	}
 
-	// Clear and copy canvas data to the asset
 	TargetAsset->ClothShapes.Empty();
 	TargetAsset->ClothCurvePoints.Empty();
-
-
+	
 	
 	for (int32 ShapeIdx = 0; ShapeIdx < CompletedShapes.Num(); ++ShapeIdx)
 	{
@@ -86,8 +82,6 @@ bool FPatternAssets::SaveShapeAsset(
 		TargetAsset->ClothShapes.Add(SavedShape);
 	}
 
-
-
 	
 	// Iterate over FInterpCurve keys (points)
 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
@@ -100,22 +94,19 @@ bool FPatternAssets::SaveShapeAsset(
 		NewPoint.ArriveTangent = Point.ArriveTangent;
 		NewPoint.LeaveTangent = Point.LeaveTangent;
 		NewPoint.bUseBezier = bUseBezierPerPoint.IsValidIndex(i) ? bUseBezierPerPoint[i] : true;
-
-
+		
 		// Add to the array
 		TargetAsset->ClothCurvePoints.Add(NewPoint);
 	}
 
 	
-	// Mark dirty and notify asset registry only once
-	// TargetAsset->MarkPackageDirty();
+
 	FAssetRegistryModule::AssetCreated(TargetAsset);
 	
 
 	// Save package to disk
 	FString PackageFileName = FPackageName::LongPackageNameToFilename(SanitizedPackageName, FPackageName::GetAssetPackageExtension());
 	
-	//bool bSaved = UPackage::SavePackage(Package, TargetAsset, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName);
 	FSavePackageArgs SaveArgs;
 	SaveArgs.TopLevelFlags   = RF_Public | RF_Standalone;
 	SaveArgs.Error           = GError;
@@ -154,7 +145,7 @@ bool FPatternAssets::LoadCanvasState(UClothShapeAsset* ClothAsset, FCanvasState&
     // Start with a fresh state
     OutState = FCanvasState(); 
 
-    // 1) Completed shapes
+    // Completed shapes
     for (int32 ShapeIdx = 0; ShapeIdx < ClothAsset->ClothShapes.Num(); ++ShapeIdx)
     {
         const FShapeData& SavedShape = ClothAsset->ClothShapes[ShapeIdx];
@@ -184,7 +175,7 @@ bool FPatternAssets::LoadCanvasState(UClothShapeAsset* ClothAsset, FCanvasState&
         }
     }
 
-    // 2) Current (in-progress) shape
+    // Current (in-progress) shape
     {
         FInterpCurve<FVector2D> Curve;
         Curve.Points.Reserve(ClothAsset->ClothCurvePoints.Num());
@@ -215,15 +206,13 @@ bool FPatternAssets::LoadCanvasState(UClothShapeAsset* ClothAsset, FCanvasState&
 }
 
 
-// manage the assets here
 
-FString FCanvasAssetManager::GetSelectedShapeAssetPath() const
+FString FPatternAssetManager::GetSelectedShapeAssetPath() const
 {
 	return ClothAsset.IsValid() ? ClothAsset->GetPathName() : FString();
 }
 
-// Moved from OnShapeAssetSelected()
-bool FCanvasAssetManager::OnShapeAssetSelected(const FAssetData& AssetData, FCanvasState& OutState)
+bool FPatternAssetManager::OnShapeAssetSelected(const FAssetData& AssetData, FCanvasState& OutState)
 {
 	ClothAsset = Cast<UClothShapeAsset>(AssetData.GetAsset());
 	if (!ClothAsset.IsValid())
@@ -231,11 +220,10 @@ bool FCanvasAssetManager::OnShapeAssetSelected(const FAssetData& AssetData, FCan
 
 	UE_LOG(LogTemp, Log, TEXT("Selected shape: %s"), *ClothAsset->GetName());
 
-	// Moved from LoadShapeAssetData()
 	return LoadShapeAssetData(OutState);
 }
 
-bool FCanvasAssetManager::LoadShapeAssetData(FCanvasState& OutState) const
+bool FPatternAssetManager::LoadShapeAssetData(FCanvasState& OutState) const
 {
 	if (!ClothAsset.IsValid())
 		return false;

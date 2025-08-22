@@ -4,7 +4,7 @@
 
 
 // class members
-// ---- POINTS AND LINES -----
+// POINTS AND LINES
 const FLinearColor FCanvasPaint::GridColour(0.215f, 0.215f, 0.215f, 0.6f);
 const FLinearColor FCanvasPaint::GridColourSmall(0.081f, 0.081f, 0.081f, 0.4f);
 
@@ -46,15 +46,13 @@ int32 FCanvasPaint::DrawBackground(
     
     FVector2D WorldTopLeft   = FVector2D::ZeroVector;
 
-    FVector2D ScreenTopLeft = Canvas->TransformPoint(WorldTopLeft) ;// * Canvas->ZoomFactor;
+    FVector2D ScreenTopLeft = Canvas->TransformPoint(WorldTopLeft) ;
     const FVector2D ScreenBottomRight = Canvas->TransformPoint(WorldTopLeft + WorldSize);
-    // FVector2D ScreenSize = WorldSize * Canvas->ZoomFactor;
     const FVector2D ScreenSize = ScreenBottomRight - ScreenTopLeft;
 
     FSlateBrush Brush;
     Brush.SetResourceObject(Canvas->BackgroundTexture.Get());
     Brush.ImageSize = NativeImageSize;
-    // Brush.TintColor = FSlateColor(FLinearColor(1,1,1,.15f)); // opacity
     Brush.TintColor = FSlateColor(FLinearColor(1,1,1,1)); // fully white
     FLinearColor DrawTint(1,1,1,0.25f); // actual opacity
 
@@ -139,26 +137,20 @@ void FCanvasPaint::BuildShortestArcSegments(
     int32 StartIdx, int32 EndIdx,
     int32 NumPts, TSet<int32>& OutSegments)
 {
-    // OutSegments.Empty();
     if (NumPts <= 1) return;
     if (StartIdx == EndIdx) return;
 
-    // Normalize into [0,NumPts-1]
     auto mod = [&](int x){ return (x % NumPts + NumPts) % NumPts; };
 
     int s = mod(StartIdx), e = mod(EndIdx);
 
-    // forward distance from s -> e
     int distForward = (e - s + NumPts) % NumPts;
     int distBackward = (s - e + NumPts) % NumPts;
 
     // Choose the shorter arc (if equal, prefer forward)
     bool useForward = (distForward <= distBackward);
     int len = useForward ? distForward : distBackward;
-
-    // If the shape is *open* (not closed loop), avoid wrapping: if useForward but s>e, treat as straight s..e only if s<e and no wrap.
-    // Let caller handle closed vs open shapes; this helper assumes caller wants shortest arc on a circular loop.
-
+    
     // collect segment indices for the arc
     for (int k = 0; k < len; ++k)
     {
@@ -179,25 +171,21 @@ int32 FCanvasPaint::DrawCompletedShapes(
     FSlateWindowElementList& OutDraw,
     int32 Layer) const
 {
-    // Quick refs
     const TArray<FInterpCurve<FVector2D>>& Shapes       = Canvas->CompletedShapes;
     const TArray<TArray<bool>>& BezierFlags  = Canvas->CompletedBezierFlags;
     const int32 NumShapes    = Shapes.Num();
 
     const TArray<FSeamDefinition>& SeamDefs = Canvas->GetSewingManager().SeamDefinitions;
-    // --- Section 1: Draw each completed shape's edges ---
-    // --- Section 1: Draw each completed shape's edges ---
+
     for (int32 ShapeIdx = 0; ShapeIdx < NumShapes; ++ShapeIdx)
     {
         const FInterpCurve<FVector2D>& Shape = Shapes[ShapeIdx];
         const int32 NumPts = Shape.Points.Num();
         if (NumPts < 2) continue;
 
-        // Build per-shape map of segments to highlight (union of all seams that reference this shape)
         TSet<int32> SegmentsToHighlight;
         for (const FSeamDefinition& SD : SeamDefs)
         {
-            // Check both sides — if SD.ShapeA == ShapeIdx handle EdgeA, if SD.ShapeB==ShapeIdx handle EdgeB
             if (SD.ShapeA == ShapeIdx)
             {
                 BuildShortestArcSegments(SD.EdgeA.Start, SD.EdgeA.End, NumPts, SegmentsToHighlight);
@@ -212,10 +200,8 @@ int32 FCanvasPaint::DrawCompletedShapes(
 
         for (int32 Seg = 0; Seg < NumPts - 1; ++Seg)
         {
-            // Is this segment highlighted?
             bool bThisSegIsSewn = SegmentsToHighlight.Contains(Seg);
 
-            // pick the color to draw for this segment
             FLinearColor LineCol = bThisSegIsSewn ? SewingLineColour : CompletedLineColour;
 
             // draw samples for this segment
@@ -245,10 +231,9 @@ int32 FCanvasPaint::DrawCompletedShapes(
 
 
 
-        // Close the loop segment (last -> first) if closed
         if (bClosed)
         {
-            int32 seg = NumPts - 1; // treat as segment index seg -> (seg+1)%NumPts == last->0
+            int32 seg = NumPts - 1; 
             bool bThisSegIsSewn = SegmentsToHighlight.Contains(seg);
             FLinearColor LineCol = bThisSegIsSewn ? SewingLineColour : FLinearColor::Black;
 
@@ -269,7 +254,7 @@ int32 FCanvasPaint::DrawCompletedShapes(
     }    
 
     
-    // --- Section 3: Draw each shape's Bezier handles ---
+    // Draw each shape's Bezier handles
     for (int32 ShapeIdx = 0; ShapeIdx < NumShapes; ++ShapeIdx)
     {
         const FInterpCurve<FVector2D>& Shape = Shapes[ShapeIdx];
@@ -337,14 +322,14 @@ int32 FCanvasPaint::DrawCompletedShapes(
         {
             bool bIsSewn = false;
 
-            // --- Check permanent sewn points ---
+            // check permanent sewn points
             if (const TSet<int32>* SewnSet = Canvas->SewnPointIndicesPerShape.Find(ShapeIdx))
             {
                 if (SewnSet->Contains(PtIdx))
                     bIsSewn = true;
             }
 
-            // --- Check preview points (currently being sewn) ---
+            // Check preview points (currently being sewn)
             if (const TSet<int32>* PreviewSet = Canvas->GetSewingManager().CurrentSeamPreviewPoints.Find(ShapeIdx))
             {
                 if (PreviewSet->Contains(PtIdx))
@@ -372,7 +357,6 @@ int32 FCanvasPaint::DrawCompletedShapes(
         ++Layer;
     }
 
-
     
     return Layer;
 }
@@ -382,7 +366,6 @@ int FCanvasPaint::DrawFinalisedSeamLines(
     FSlateWindowElementList& OutDraw,
     int32 Layer) const
 {
-    // using namespace UE::Slate;
 
     const FPatternSewing& Sewing = Canvas->GetSewingManager();
     const TArray<FSeamDefinition>& Seams = Sewing.SeamDefinitions;
@@ -527,7 +510,7 @@ int32 FCanvasPaint::DrawCurrentShape(
     ++Layer;
 
     
-        // // --- Section 3: Draw shape's Bezier handles ---
+        // //  Draw shape's Bezier handles 
 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
     {
         if (!bUseBezierPerPoint[i]) continue; // skip N-points entirely
@@ -539,7 +522,6 @@ int32 FCanvasPaint::DrawCurrentShape(
         FVector2D H1      = Canvas->TransformPoint(World - Pt.ArriveTangent);
         FVector2D H2      = Canvas->TransformPoint(World + Pt.LeaveTangent);
 	    
-	    // FVector2D Pos = Canvas->TransformPoint(CurvePoints.Points[i].OutVal);
 
 	   FPaintGeometry HandleLineGeo = Geo.ToPaintGeometry();
 
@@ -564,7 +546,6 @@ int32 FCanvasPaint::DrawCurrentShape(
         // Boxes at handle endpoints
         for (const UE::Math::TVector2<double>& PtScreen : {H1, H2})
         {
-    	    // FPaintGeometry BoxGeo = Geo.ToPaintGeometry(Pos - FVector2D(3, 3), FVector2D(6, 6));
             FVector2f BoxPos = FVector2f(PtScreen - FVector2D(3, 3));
             FVector2f BoxSize = FVector2f(6, 6);
             FSlateLayoutTransform LayoutTransform(BoxPos);
@@ -583,7 +564,7 @@ int32 FCanvasPaint::DrawCurrentShape(
     ++Layer;
     
 
-    // --- Section 2: Draw shape's points ---
+    // Draw shape's points
 	for (int32 i = 0; i < CurvePoints.Points.Num(); ++i)
     {
 	    FVector2D Pos = Canvas->TransformPoint(CurvePoints.Points[i].OutVal);

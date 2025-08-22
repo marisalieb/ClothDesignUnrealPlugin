@@ -96,7 +96,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FAssetManager_Selection,
 
 bool FAssetManager_Selection::RunTest(const FString& Parameters)
 {
-    FCanvasAssetManager Manager;
+    FPatternAssetManager Manager;
     FCanvasState Test;
 
     // No asset selected

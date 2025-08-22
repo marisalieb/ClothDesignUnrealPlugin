@@ -3,7 +3,7 @@
 #include "PatternCreation/PatternMerge.h"
 #include "Misc/MessageDialog.h"
 
-// Returns true if the shape index maps to a valid spawned pattern actor.
+// Returns true if the shape index maps to a valid spawned pattern actor
 bool FPatternSewing::ValidateMeshForShape(
     int32 ShapeIndex,
     const TArray<TWeakObjectPtr<APatternMesh>>& SpawnedPatternActors,
@@ -45,7 +45,7 @@ bool FPatternSewing::ValidateMeshForShape(
     return true;
 }
 
-// Validate both A and B targets are backed by real actors. Returns true if both exist.
+// Validate both A and B targets are backed by real actors, Returns true if both exist
 bool FPatternSewing::ValidateMeshesForTargets(
     const FClickTarget& AStart,
     const FClickTarget& BStart,
@@ -67,7 +67,7 @@ bool FPatternSewing::ValidateMeshesForTargets(
         return false;
     }
 
-    // Also prevent sewing a mesh to itself (optional)
+	// enable this again later when physics based seams
     if (AStart.ShapeIndex == BStart.ShapeIndex)
     {
         if (bShowDialog)
@@ -131,12 +131,9 @@ void FPatternSewing::FinaliseSeamDefinitionByTargets(
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[%d] IsValid: %d"), i, SpawnedPatternActors[i].IsValid());
 	}
-	
-	// 2) Build FPatternSewingConstraint
-	// This stores how to sew those shapes in the actual 3D mesh
+
 	FPatternSewingConstraint NewSeam;
 
-	// Mesh pointers
 	APatternMesh* MeshA = SpawnedPatternActors.IsValidIndex(AStart.ShapeIndex) ? SpawnedPatternActors[AStart.ShapeIndex].Get() : nullptr;
 	APatternMesh* MeshB = SpawnedPatternActors.IsValidIndex(BStart.ShapeIndex) ? SpawnedPatternActors[BStart.ShapeIndex].Get() : nullptr;
 
@@ -144,7 +141,7 @@ void FPatternSewing::FinaliseSeamDefinitionByTargets(
 	{
 		FMessageDialog::Open(EAppMsgType::Ok,
 			FText::FromString(TEXT("Cannot finalise seam: both pattern meshes must exist!")));
-		return; // exit early
+		return;
 	}
 
 	
@@ -155,7 +152,6 @@ void FPatternSewing::FinaliseSeamDefinitionByTargets(
 	NewSeam.MeshA = MeshA ? MeshA->MeshComponent : nullptr;
 	NewSeam.MeshB = MeshB ? MeshB->MeshComponent : nullptr;
 
-	// Look up vertex IDs from the mesh's stored mapping
 	NewSeam.VertexIndexA = -1;
 	NewSeam.VertexIndexB = -1;
 
@@ -173,7 +169,6 @@ void FPatternSewing::FinaliseSeamDefinitionByTargets(
 			NewSeam.VertexIndexB = Mapping[BStart.PointIndex];
 	}
 
-	// Screen points for UI (2D points along seam)
 	NewSeam.ScreenPointsA = PointsA;
 	NewSeam.ScreenPointsB = PointsB;
 
@@ -181,8 +176,6 @@ void FPatternSewing::FinaliseSeamDefinitionByTargets(
 	UE_LOG(LogTemp, Warning, TEXT("AStart.ShapeIndex=%d, BStart.ShapeIndex=%d"), AStart.ShapeIndex, BStart.ShapeIndex);
 
 
-
-	// print all stored seams
 	UE_LOG(LogTemp, Log, TEXT("---- Stored Seams ----"));
 	for (int32 i = 0; i < AllDefinedSeams.Num(); i++)
 	{
@@ -195,8 +188,6 @@ void FPatternSewing::FinaliseSeamDefinitionByTargets(
 			Seam.VertexIndexB
 		);
 	}
-
-
 	
 	UE_LOG(LogTemp, Log, TEXT("Seam finalized between shapes %d and %d (points [%d,%d] and [%d,%d])"),
 		NewSeamDef.ShapeA, NewSeamDef.ShapeB,
@@ -218,10 +209,9 @@ void FPatternSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* Mes
         return;
     }
 
-    // Use min count (defensive)
     int32 N = FMath::Min(NumA, NumB);
 
-    // pick first and last valid indices to represent seam endpoints (robust for straight seams)
+    // pick first and last valid indices to represent seam endpoints
     int firstIdx = 0;
     while (firstIdx < N &&
            (IDsA[firstIdx] < 0 || IDsA[firstIdx] >= MeshActorA->DynamicMesh.VertexCount() ||
@@ -243,6 +233,17 @@ void FPatternSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* Mes
         return;
     }
 
+	// code modified from this promt:
+	// Assume that all seams between my meshes are always straight. The translation part of my alignment works well,
+	// but the rotation is where I’m having trouble. What I was thinking is that I could calculate the tangent, or
+	// direction vector, of the seam line on the first mesh and then match the second mesh’s seam line to it, using
+	// their start and end points. If I did the rotation first by aligning these seam directions, and then applied the
+	// translation, the seams should line up correctly. Since all seams are straight anyway, it seems like I should be
+	// able to calculate the axis defined by the two seam points on each mesh and use that for alignment. Also, the
+	// seams aren’t always flat in the XY plane, because some of them are tilted in the Z direction as well. 
+
+	// Co Pilot suggested this:
+	
     // Fetch world-space endpoints
     auto GetWorldVertex = [](const APatternMesh* Actor, int vid) -> FVector {
         FVector3d p = Actor->DynamicMesh.GetVertex(vid);
@@ -313,6 +314,10 @@ void FPatternSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* Mes
         UE_LOG(LogTemp, Log, TEXT("Rotated MeshB by quat (axis=%s angle=%f)"), *RotQuat.GetRotationAxis().ToString(), RotQuat.GetAngle());
     }
 
+	// end of Co Pilot suggestion
+
+
+	
     // Recompute world positions after rotation and compute translation offset (average)
     TArray<FVector> WorldA; WorldA.Reserve(N);
     TArray<FVector> WorldB; WorldB.Reserve(N);
@@ -374,7 +379,6 @@ void FPatternSewing::AlignSeamMeshes(APatternMesh* MeshActorA, APatternMesh* Mes
 void FPatternSewing::BuildAndAlignSeam(
 	const FPatternSewingConstraint& Seam)
 {
-	// --- helper: find the APatternMesh that owns this procedural mesh component ---
 	auto FindActorForMesh = [&](const UProceduralMeshComponent* MeshComp) -> APatternMesh*
 	{
 		if (!MeshComp) return nullptr;
@@ -406,7 +410,7 @@ void FPatternSewing::BuildAndAlignSeam(
 	FVector2D B2 = Seam.ScreenPointsB.Last();
 
 
-    // Sample seam 2D points (same as FinalizeSeamDefinitionByTargets)
+    // Sample seam 2D points
     constexpr int32 NumSeamSamples = 10;
     auto SampleSegment2D = [&](const FVector2D& A, const FVector2D& B, TArray<FVector2D>& Out)
 	{
@@ -442,7 +446,7 @@ void FPatternSewing::BuildAndAlignSeam(
     SampleSegment2D(A1, A2, SeamA2D);
     SampleSegment2D(B1, B2, SeamB2D);
 
-	// 3) Find owning actors for the seam meshes
+	// Find owning actors for the seam meshes
 	APatternMesh* ActorA = FindActorForMesh(Seam.MeshA);
 	APatternMesh* ActorB = FindActorForMesh(Seam.MeshB);
 	
@@ -453,11 +457,10 @@ void FPatternSewing::BuildAndAlignSeam(
 			Seam.MeshB ? *Seam.MeshB->GetName() : TEXT("NULL"));
 		FMessageDialog::Open(EAppMsgType::Ok,
 			FText::FromString(TEXT("Cannot sew: one or more associated mesh actors might be out of date.")));
-		// Skip this seam (actor missing or not spawned)
 		return;
 	}
 	
-	// 4) Make sure the actors have boundary samples ready (MapSeam2DToVIDs relies on them)
+	//  Make sure the actors have boundary samples ready (MapSeam2DToVIDs relies on them)
 	if (ActorA->BoundarySamplePoints2D.Num() == 0 || ActorA->BoundarySampleVertexIDs.Num() == 0 ||
 		ActorB->BoundarySamplePoints2D.Num() == 0 || ActorB->BoundarySampleVertexIDs.Num() == 0)
 	{
@@ -467,7 +470,7 @@ void FPatternSewing::BuildAndAlignSeam(
 		return;
 	}
 	
-    // Helper: map a set of seam 2D points -> an array of VIDs by nearest boundary sample on the actor
+    // map a set of seam 2D points, an array of VIDs by nearest boundary sample on the actor
     auto MapSeam2DToVIDs = [&](APatternMesh* Actor, const TArray<FVector2D>& Seam2D, TArray<int32>& OutVIDs) {
         OutVIDs.Reset();
         int32 NumBoundary = Actor->BoundarySamplePoints2D.Num();
@@ -478,8 +481,8 @@ void FPatternSewing::BuildAndAlignSeam(
         for (const FVector2D& Q : Seam2D) {
             int BestIdx = INDEX_NONE;
             float BestDist2 = FLT_MAX;
-            // BoundarySamplePoints2D are stored as FVector2f (x,y)
-            for (int i = 0; i < NumBoundary; ++i) {
+
+        	for (int i = 0; i < NumBoundary; ++i) {
                 const FVector2f& S = Actor->BoundarySamplePoints2D[i];
             	float dx = S.X - static_cast<float>(Q.X);
             	float dy = S.Y - static_cast<float>(Q.Y);
@@ -522,7 +525,7 @@ void FPatternSewing::BuildAndAlignSeam(
 		OutPos.Reset(); OutPos.Reserve(VIDs.Num());
 		for (int id : VIDs)
 		{
-			// Defensive check (shouldn't be necessary if validated above)
+			// Defensive check
 			if (id < 0 || id >= Actor->DynamicMesh.VertexCount()) continue;
 			FVector3d p3d = Actor->DynamicMesh.GetVertex(id);
 			OutPos.Add(Actor->GetActorTransform().TransformPosition(FVector(p3d.X, p3d.Y, p3d.Z)));
@@ -546,7 +549,7 @@ void FPatternSewing::BuildAndAlignSeam(
 
     // build reversed WorldB and compute distance
     TArray<FVector> WorldBRev = WorldB;
-    Algo::Reverse(WorldBRev); // requires #include "Algo/Reverse.h"
+    Algo::Reverse(WorldBRev);
     double avgReversed = AverageDistance(WorldA, WorldBRev);
 
     if (avgReversed + KINDA_SMALL_NUMBER < avgNormal) { // reversed matches better; reverse PairedB
@@ -584,7 +587,6 @@ void FPatternSewing::BuildAndAlignAllSeams()
 
 void FPatternSewing::ClearAllSeams()
 {
-	// SewingConstraints.Empty();
 	SeamDefinitions.Empty();
 	AllDefinedSeams.Empty();
 	SeamClickState = ESeamClickState::None;

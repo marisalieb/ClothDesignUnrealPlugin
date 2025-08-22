@@ -42,7 +42,6 @@ void FClothDesignModule::StartupModule()
 		UE_LOG(LogTemp, Error, TEXT("Open2DWindow command NOT valid after Register()!"));
 	}
 	
-	// static const FName TwoDTabName("TwoDWindowTab");
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(TwoDTabName,
 	  FOnSpawnTab::CreateRaw(this, &FClothDesignModule::OnSpawn2DWindowTab))
 	  .SetDisplayName(LOCTEXT("TwoDTabTitle", "ClothDesign 2D Editor"))
@@ -53,8 +52,8 @@ void FClothDesignModule::StartupModule()
 
 void FClothDesignModule::ShutdownModule()
 {
-	// This function may be called during shutdown to clean up module.  For modules that support dynamic reloading,
-	// call this function before unloading the module.
+	// This function may be called during shutdown to clean up module.
+	// For modules that support dynamic reloading, call this function before unloading the module.
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(TwoDTabName);
 	UToolMenus::UnregisterOwner(this);
 
@@ -144,7 +143,7 @@ TSharedRef<SWidget> FClothDesignModule::MakeBackgroundControls()
         [
             SNew(SVerticalBox)
 
-            // === Image picker ===
+            // background image picker 
             + SVerticalBox::Slot()
             .AutoHeight()
             .Padding(2)
@@ -170,7 +169,7 @@ TSharedRef<SWidget> FClothDesignModule::MakeBackgroundControls()
                 ]
             ]
 
-            // === Scale control ===
+            // scale control
             + SVerticalBox::Slot()
             .AutoHeight()
             .Padding(2)
@@ -315,18 +314,15 @@ TSharedRef<SWidget> FClothDesignModule::MakeClearButtons()
 		.AutoHeight()
 		.Padding(6)
 		[
-			// SNew(SBorder)
-			// .BorderImage(FAppStyle::Get().GetBrush("ToolPanel.GroupBorder"))
-			// .Padding(8)
-			// [
+
 				SNew(SVerticalBox)
 				+ SVerticalBox::Slot()
 				.AutoHeight()
 				.Padding(10)
-				.HAlign(HAlign_Left) // Optional: Align button to the left
+				.HAlign(HAlign_Left) 
 				[
 					SNew(SBox)
-					.WidthOverride(250.f) // Set desired fixed width here
+					.WidthOverride(250.f)
 					[
 						SNew(SButton)
 						.Text(FText::FromString("Clear All"))
@@ -336,17 +332,16 @@ TSharedRef<SWidget> FClothDesignModule::MakeClearButtons()
 				+ SVerticalBox::Slot()
 				.AutoHeight()
 				.Padding(10)
-				.HAlign(HAlign_Left) // Optional: Align button to the left
+				.HAlign(HAlign_Left) 
 				[
 					SNew(SBox)
-					.WidthOverride(250.f) // Set desired fixed width here
+					.WidthOverride(250.f) 
 					[
 						SNew(SButton)
 						.Text(FText::FromString("Clear Sewing"))
 						.OnClicked(FOnClicked::CreateRaw(this, &FClothDesignModule::OnClearSewingClicked))
 					]
 				]
-			// ]
 		];
 	
 }
@@ -482,7 +477,7 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 				MakeModeToolbar()
 			]
 			
-			+ SOverlay::Slot()  // top-right toolbar
+			+ SOverlay::Slot()  // top-left
 			.VAlign(VAlign_Top).HAlign(HAlign_Left).Padding(FMargin(260, 20, 0, 0))  // Left=300, Top=10, Right=0, Bottom=0
 
 			[
@@ -492,7 +487,6 @@ TSharedRef<SDockTab> FClothDesignModule::OnSpawn2DWindowTab(const FSpawnTabArgs&
 		];
 
 	// Delay focus until next tick/frame to ensure UI is ready
-	//FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this, NewTab](float DeltaTime)
 	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this](float)
 	{
 		if (CanvasWidget.IsValid())

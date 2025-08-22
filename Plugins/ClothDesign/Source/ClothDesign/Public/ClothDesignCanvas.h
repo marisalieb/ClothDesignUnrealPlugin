@@ -433,7 +433,7 @@ private:
 	FGeometry LastGeometry; /**< Cached geometry to avoid repeatedly querying Slate during input handling. */
 
 	/** Manages save/load of canvas state tied to assets. */
-	FCanvasAssetManager AssetManager; /**< Centralises asset I/O so code does not duplicate load/save logic. */
+	FPatternAssetManager AssetManager; /**< Centralises asset I/O so code does not duplicate load/save logic. */
 
 	/** Sewing helper that encapsulates seam definition, validation and merging. */
 	FPatternSewing SewingManager; /**< Separates seam workflow from canvas rendering and input logic. */

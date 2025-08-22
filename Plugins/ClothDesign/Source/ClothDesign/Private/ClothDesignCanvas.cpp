@@ -66,16 +66,11 @@ int32 SClothDesignCanvas::OnPaint(
 {
 	const_cast<SClothDesignCanvas*>(this)->LastGeometry = AllottedGeometry;
 	
-	// Respect parent clipping
-	// const bool bEnabled = ShouldBeEnabled(bParentEnabled);
-	// ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
-
 
 	FSlateClippingZone ClippingZone(AllottedGeometry);
 	OutDrawElements.PushClip(ClippingZone);
-	// OutDrawElements.PushClip(FSlateClippingZone(AllottedGeometry));
 	
-	int32 Layer = LayerId + 1;  // Instead of 0
+	int32 Layer = LayerId + 1;  // Instead of 0 as it errors
 	FCanvasPaint Drawer(const_cast<SClothDesignCanvas*>(this));
 	
 	Layer = Drawer.DrawBackground(AllottedGeometry, OutDrawElements, Layer);
@@ -99,21 +94,17 @@ FReply SClothDesignCanvas::OnMouseWheel(const FGeometry& Geometry, const FPointe
 	// Compute the world position under the mouse before zoom
 	const FVector2D WorldBeforeZoom = (MousePos - PanOffset) / ZoomFactor;
 
-	// constexpr float ZoomDelta = 0.1f; // How fast to zoom
 	// Adjust zoom factor multiplicatively
-	float ZoomScale = 1.1f; // How much each wheel tick zooms (10% per tick)
+	float ZoomScale = 1.1f; // 10% per tick
 	if (ScrollDelta < 0)
 		ZoomFactor /= FMath::Pow(ZoomScale, -ScrollDelta);
 	else
 		ZoomFactor *= FMath::Pow(ZoomScale, ScrollDelta);
 	
-	// Adjust zoom factor
 	ZoomFactor = FMath::Clamp(ZoomFactor, 1.f, 20.0f);
 
-	// Recalculate pan offset to keep zoom centered under mouse
 	PanOffset = MousePos - WorldBeforeZoom * ZoomFactor;
 
-	// Repaint
 	Invalidate(EInvalidateWidget::LayoutAndVolatility);
 
 	return FReply::Handled();
@@ -159,7 +150,6 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& Geometry, const FP
 		if (CurvePoints.Points.Num() < 2)
 			return FReply::Handled(); // not enough points
 		
-		// Clicked on empty space; DESELECT
 		
 		SelectedSeamIndex = INDEX_NONE;
 		SelectedShapeIndex = INDEX_NONE;
@@ -167,7 +157,7 @@ FReply SClothDesignCanvas::OnMouseButtonDown(const FGeometry& Geometry, const FP
 		bIsDraggingPoint = false;
 		bIsShapeSelected = false;
 		UE_LOG(LogTemp, Warning, TEXT("Deselected all"));
-		// Invalidate(EInvalidateWidget::Paint);  // trigger repaint so highlight updates
+
 		return FReply::Handled()
 			.SetUserFocus(SharedThis(this), EFocusCause::SetDirectly);
 	}
@@ -183,13 +173,13 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& Geometry, const FPointer
 	if (bIsPanning)
 	{
 		FVector2D CurrentMousePos = MouseEvent.GetScreenSpacePosition();
-		FVector2D Delta = (CurrentMousePos - LastMousePos) / ZoomFactor; // Normalize for zoom
+		FVector2D Delta = (CurrentMousePos - LastMousePos) / ZoomFactor;
 
 		float PanSpeedMultiplier = 2.f; // faster panning 
 		PanOffset += Delta * PanSpeedMultiplier;
 		LastMousePos = CurrentMousePos;
 
-		Invalidate(EInvalidateWidget::Paint); // Trigger repaint
+		Invalidate(EInvalidateWidget::Paint);
 		return FReply::Handled();
 	}
 
@@ -198,7 +188,6 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& Geometry, const FPointer
 	{
 		FVector2D LocalMousePos = Geometry.AbsoluteToLocal(MouseEvent.GetScreenSpacePosition());
 		const FVector2D CanvasMousePos = InverseTransformPoint(LocalMousePos);
-		//UE_LOG(LogTemp, Warning, TEXT("CanvasClick: %s"), *CanvasMousePos.ToString());
 
 		if (bIsDraggingTangent && SelectedPointIndex != INDEX_NONE)
 		{
@@ -219,7 +208,6 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& Geometry, const FPointer
 					Pt.ArriveTangent = -Delta;
 					if (bLinkTangents)
 					{
-						// Pt.LeaveTangent = Pt.ArriveTangent;
 						float LeaveLen = Pt.LeaveTangent.Size();
 						FVector2D OppositeDir = -Delta.GetSafeNormal();
 						Pt.LeaveTangent = OppositeDir * LeaveLen;
@@ -230,7 +218,6 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& Geometry, const FPointer
 					Pt.LeaveTangent = Delta;
 					if (bLinkTangents)
 					{
-						// Pt.ArriveTangent = Pt.LeaveTangent;
 						float ArriveLen = Pt.ArriveTangent.Size();  // preserve original length
 						FVector2D OppositeDir = Delta.GetSafeNormal();
 						Pt.ArriveTangent = OppositeDir * ArriveLen;
@@ -260,18 +247,16 @@ FReply SClothDesignCanvas::OnMouseMove(const FGeometry& Geometry, const FPointer
 					// Link it to the leave tangent only if decided to link
 					if (bLinkTangents)
 					{
-						// Pt.LeaveTangent = Pt.ArriveTangent;
 						float LeaveLen = Pt.LeaveTangent.Size();
 						FVector2D OppositeDir = -Delta.GetSafeNormal();
 						Pt.LeaveTangent = OppositeDir * LeaveLen;
 					}
 				}
-				else // ETangentHandle::Leave
+				else
 				{
 					Pt.LeaveTangent = Delta;
 					if (bLinkTangents)
 					{
-						// Pt.ArriveTangent = Pt.LeaveTangent;
 						float ArriveLen = Pt.ArriveTangent.Size();  // preserve original length
 						FVector2D OppositeDir = Delta.GetSafeNormal();
 						Pt.ArriveTangent = OppositeDir * ArriveLen;
@@ -323,15 +308,12 @@ FReply SClothDesignCanvas::OnMouseButtonUp(const FGeometry& Geometry, const FPoi
 	}
 
 	if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
-	// if (MouseEvent.GetEffectingButton() == EKeys::LeftMouseButton && bIsDragging)
 	{
 		bool WasDragging = bIsDraggingPoint || bIsDraggingTangent;
 
 		bIsDraggingPoint = false;
 		bIsDraggingTangent = false;
-		// SelectedPointIndex = INDEX_NONE;
 		SelectedTangentHandle = ETangentHandle::None;
-		// return FReply::Handled().ReleaseMouseCapture();
 		
 		if (WasDragging)
 		{
@@ -354,7 +336,7 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& Geometry, const FKeyEvent&
 	if (Key == EKeys::Delete || Key == EKeys::BackSpace)
 	{
 		// seam deletion
-		// If a seam is selected -> delete the seam (remove its bookkeeping + runtime constraint)
+		// If a seam is selected, delete the seam (remove its bookkeeping + runtime constraint)
 		if (SelectedSeamIndex != INDEX_NONE)
 		{
 			FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
@@ -367,7 +349,7 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& Geometry, const FKeyEvent&
 				GetSewingManager().SeamDefinitions.RemoveAt(idx);
 			}
 
-			// 2) Remove runtime cached constraint if kept one-per-seam in AllDefinedSeams (best-effort)
+			// 2) Remove runtime cached constraint
 			if (GetSewingManager().AllDefinedSeams.IsValidIndex(idx))
 			{
 				GetSewingManager().AllDefinedSeams.RemoveAt(idx);
@@ -445,7 +427,6 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& Geometry, const FKeyEvent&
 		return FReply::Handled();
 	}
 	
-	// Check for Undo (Ctrl+Z)
 	if (Key == EKeys::Z && InKeyEvent.IsControlDown())
 	{
 		FCanvasState CurrentState = GetCurrentCanvasState();
@@ -504,7 +485,6 @@ FReply SClothDesignCanvas::OnKeyDown(const FGeometry& Geometry, const FKeyEvent&
 		}
 	}
 	
-	//return FReply::Unhandled();
 	return SCompoundWidget::OnKeyDown(Geometry, InKeyEvent);
 
 }
@@ -522,7 +502,6 @@ int32 SClothDesignCanvas::FinaliseCurrentShape(bool bGenerateNow, TArray<TWeakOb
 	FCanvasUtils::SaveStateForUndo(UndoStack, RedoStack, GetCurrentCanvasState());
 	
 
-    // Add bezier tangents to the start and end points (same as original)
     if (CurvePoints.Points.Num() >= 2)
     {
         int32 LastIdx = CurvePoints.Points.Num() - 1;
@@ -536,7 +515,6 @@ int32 SClothDesignCanvas::FinaliseCurrentShape(bool bGenerateNow, TArray<TWeakOb
         CurvePoints.Points[LastIdx].LeaveTangent  = FVector2D::ZeroVector;
     }
 
-    // Move current sketch into CompletedShapes
     CompletedShapes.Add(CurvePoints);
     CompletedBezierFlags.Add(bUseBezierPerPoint); // keep existing boolean flags array in sync
 
@@ -564,7 +542,7 @@ FReply SClothDesignCanvas::OnKeyUp(const FGeometry& Geometry, const FKeyEvent& I
 			return FReply::Handled();
 		}
 	}
-	//return FReply::Unhandled();
+
 	return SCompoundWidget::OnKeyUp(Geometry, InKeyEvent);
 }
 
@@ -615,9 +593,8 @@ void SClothDesignCanvas::FocusViewportOnPoints()
 	FVector2D Center = (Min + Max) * 0.5f;
 	FVector2D BoundsSize = Max - Min;
 
-	// Optional: adjust zoom to fit bounds
 	const FVector2D ViewportSize = LastGeometry.GetLocalSize();
-	constexpr float Margin = 1.2f; // add some margin around the bounds
+	constexpr float Margin = 1.2f; // add margin around the bounds
 
 	float ZoomX = ViewportSize.X / (BoundsSize.X * Margin);
 	float ZoomY = ViewportSize.Y / (BoundsSize.Y * Margin);
@@ -641,12 +618,12 @@ bool SClothDesignCanvas::AreAtLeastTwoClothMeshesInScene() const
 			Count++;
 			if (Count >= 2)
 			{
-				return true; // Found at least two, no need to keep iterating
+				return true;
 			}
 		}
 	}
 
-	return false; // Fewer than two found
+	return false;
 }
 
 
@@ -718,7 +695,7 @@ FReply SClothDesignCanvas::OnModeButtonClicked(EClothEditorMode NewMode)
 FCanvasState SClothDesignCanvas::GetCurrentCanvasState() const
 {
 	FCanvasState State;
-	State.CurvePoints = CurvePoints; // Full copy, includes tangents and interp mode
+	State.CurvePoints = CurvePoints; 
 	State.CompletedShapes = CompletedShapes;
 	
 	State.bUseBezierPerPoint = bUseBezierPerPoint;
@@ -728,16 +705,14 @@ FCanvasState SClothDesignCanvas::GetCurrentCanvasState() const
 	State.PanOffset = PanOffset;
 	State.ZoomFactor = ZoomFactor;
 
-	// --- Sewing manager data ---
+	// Sewing manager data
 	const FPatternSewing& SewingMgr = GetSewingManager();
 
-	// copy seam definitions (deep copy)
+	// copy seam definitions 
 	State.SeamDefinitions = SewingMgr.SeamDefinitions;
 
-	// copy the transient preview points drawn during sewing
 	State.SeamPreviewPoints = SewingMgr.CurrentSeamPreviewPoints;
 
-	// store click-state as int
 	State.SeamClickState = static_cast<int32>(SewingMgr.SeamClickState);
 
 	// copy the 4 targets (shape,index) into FIntPoint pairs
@@ -813,18 +788,11 @@ TOptional<float> SClothDesignCanvas::GetBackgroundImageScale() const
 void SClothDesignCanvas::OnBackgroundImageScaleChanged(float NewScale)
 {
 	BackgroundImageScale = NewScale;
-	// Force redraw after scale change
+
 	this->Invalidate(EInvalidateWidget::LayoutAndVolatility);
 
 }
 
-
-
-
-
-
-
-// manager is a data only layer, canvas widget is the ui layer so it owns the visual state
 
 
 FString SClothDesignCanvas::GetSelectedShapeAssetPath() const
@@ -837,8 +805,7 @@ void SClothDesignCanvas::OnShapeAssetSelected(const FAssetData& AssetData)
 	FCanvasState LoadedState;
 	if (AssetManager.OnShapeAssetSelected(AssetData, LoadedState))
 	{
-		// UI-specific steps:
-		// ClearAllShapeData();
+
 		RestoreCanvasState(LoadedState);
 		FocusViewportOnPoints();
 		Invalidate(EInvalidateWidgetReason::Paint);
@@ -854,7 +821,6 @@ void SClothDesignCanvas::ClearAllShapeData()
 	CurvePoints.Points.Empty();
 	bUseBezierPerPoint.Empty();
 	
-	// Reset selection and indices
 	SelectedPointIndex = INDEX_NONE;
 	SelectedShapeIndex = INDEX_NONE;
 	
@@ -883,7 +849,6 @@ void SClothDesignCanvas::ClearAllSewing()
 }
 
 
-// move here from the uimodule class so that canvas owns all the how to save logic using the canvasassets
 FReply SClothDesignCanvas::SaveClick(const FString& SaveName)
 {
 	if (SaveName.IsEmpty())
@@ -892,7 +857,6 @@ FReply SClothDesignCanvas::SaveClick(const FString& SaveName)
 		return FReply::Handled();
 	}
 	
-	// Save
 	bool bOK = FPatternAssets::SaveShapeAsset(
 		TEXT("SavedClothMeshes"),
 		SaveName,
@@ -918,8 +882,7 @@ void SClothDesignCanvas::DeleteOldClothMeshesFromScene()
 	for (TActorIterator<APatternMesh> It(World); It; ++It)
 	{
 		APatternMesh* Actor = *It;
-		// AActor* Actor = *It;
-		if (Actor) // && Actor->GetName().StartsWith(TEXT("ClothMeshhActor_")))
+		if (Actor) 
 		{
 			Actor->Modify();  // make undoable
 			World->DestroyActor(Actor);
@@ -958,33 +921,16 @@ void SClothDesignCanvas::GenerateMeshesClick()
 		AllMeshes,
 		SewingManager.SpawnedPatternActors);
 	
-	// CanvasMesh.TriangulateAndBuildAllMeshes(
-	// 	this,
-	// 	CompletedShapes,
-	// 	CurvePoints,
-	// 	AllMeshes,
-	// 	SewingManager.SpawnedPatternActors);
 
-	// for (int i = 0; i < SewingManager.SpawnedPatternActors.Num(); ++i)
-	// {
-	// 	if (APatternMesh* A = SewingManager.SpawnedPatternActors[i].Get())
-	// 	{
-	// 		UE_LOG(LogTemp, Warning, TEXT("overall SpawnedActors[%d] = %s"), i, *A->GetName());
-	// 	}
-	// }
 
 	UE_LOG(LogTemp, Log, TEXT("Built %d meshes"), AllMeshes.Num());
 }
 
 
-// Canvas.cpp
 void SClothDesignCanvas::UpdateSewnPointSets()
 {
-	//SewnPointIndicesPerShape.Empty();
-
 	SewingManager.BuildSewnPointSets(SewnPointIndicesPerShape);
 	
-	// request redraw
 	Invalidate(EInvalidateWidget::Paint);
 }
 

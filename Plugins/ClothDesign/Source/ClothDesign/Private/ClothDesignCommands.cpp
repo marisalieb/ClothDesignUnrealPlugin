@@ -20,7 +20,6 @@ FClothDesignCommands::FClothDesignCommands()
 
 void FClothDesignCommands::RegisterCommands()
 {
-	// TArray <TSharedPtr<FUICommandInfo>>& ToolCommands = Commands.FindOrAdd(NAME_Default);
 	
 	UI_COMMAND(Open2DWindow, "Open 2D Window", "Opens the custom 2D editor window", EUserInterfaceActionType::Button, FInputChord());
 }

@@ -46,7 +46,7 @@ void FPatternMerge::BuildActorListAndIndexMap(
     OutActors.Reserve(SpawnedActorsRef.Num());
     for (const TWeakObjectPtr<APatternMesh>& W : SpawnedActorsRef)
     {
-        OutActors.Add(W.Get()); // may add nullptrs; callers handle them
+        OutActors.Add(W.Get());
     }
     for (int i = 0; i < OutActors.Num(); ++i)
     {
@@ -177,7 +177,7 @@ bool FPatternMerge::MergeComponentToDynamicMesh(
         UE_LOG(LogTemp, Warning, TEXT("[Merge] MergeCoincidentMeshEdges did not merge anything."));
     }
 
-    // Step 3: Recompute normals (optional)
+    // Step 3: Recompute normals
     UE::Geometry::FMeshNormals Normals(&OutMerged);
     Normals.ComputeVertexNormals();
 
@@ -206,12 +206,12 @@ APatternMesh* FPatternMerge::SpawnMergedActorFromDynamicMesh(
     SpawnTransform.SetLocation(CentroidF);
 
     APatternMesh* MergedActor = World->SpawnActor<APatternMesh>(APatternMesh::StaticClass(), SpawnTransform, Params);
-    // APatternMesh* MergedActor = World->SpawnActor<APatternMesh>(Params);
+
     if (!MergedActor) return nullptr;
 
     MergedActor->SetFolderPath(FName(TEXT("ClothDesignActors")));
 #if WITH_EDITOR
-    //MergedActor->SetActorLabel(TEXT("MergedPatternMesh"));
+
     MergedActor->SetActorLabel(UniqueLabel);
 #endif
 
@@ -382,10 +382,8 @@ USkeletalMesh* FPatternMerge::CreateSkeletalFromFDynamicMesh(UDynamicMesh* DynMe
         return nullptr;
     }
 
-    // optional debug object
     UGeometryScriptDebug* DebugObj = NewObject<UGeometryScriptDebug>(GetTransientPackage(), NAME_None);
 
-    // 1) Create/replace a bone-weight profile named "Default"
     bool bReplaceExistingProfile = true;
     FGeometryScriptBoneWeightProfile Profile;
     Profile.ProfileName = FName(TEXT("Default"));
@@ -397,14 +395,12 @@ USkeletalMesh* FPatternMerge::CreateSkeletalFromFDynamicMesh(UDynamicMesh* DynMe
         Profile
     );
 
-    // 2) Set all vertex weights to bone 0 with weight 1.0 (rigid bind)
     FGeometryScriptBoneWeight SingleBW;
     SingleBW.BoneIndex = 0;
     SingleBW.Weight = 1.0f;
     TArray<FGeometryScriptBoneWeight> AllWeights;
     AllWeights.Add(SingleBW);
 
-    // Some builds accept Debug as optional 4th param; include it for safety
     UGeometryScriptLibrary_MeshBoneWeightFunctions::SetAllVertexBoneWeights(
         DynMesh,
         AllWeights,
@@ -429,15 +425,14 @@ USkeletalMesh* FPatternMerge::CreateSkeletalFromFDynamicMesh(UDynamicMesh* DynMe
         return nullptr;
     }
 
-    // 4) Create the skeletal mesh asset (pass the skeleton so generator has bone definitions)
     FGeometryScriptCreateNewSkeletalMeshAssetOptions Options;
     Options.bEnableRecomputeNormals = false;
     Options.bEnableRecomputeTangents = false;
     EGeometryScriptOutcomePins Outcome = EGeometryScriptOutcomePins::Failure;
 
     USkeletalMesh* NewSkeletal = UGeometryScriptLibrary_CreateNewAssetFunctions::CreateNewSkeletalMeshAssetFromMesh(
-        DynMesh,          // UDynamicMesh*
-        SkeletonAsset,    // pass real skeleton (not nullptr)
+        DynMesh,      
+        SkeletonAsset,  
         AssetPathAndName,
         Options,
         Outcome,
@@ -450,8 +445,6 @@ USkeletalMesh* FPatternMerge::CreateSkeletalFromFDynamicMesh(UDynamicMesh* DynMe
         return nullptr;
     }
     
-  
-
 
     UE_LOG(LogTemp, Display, TEXT("Created SkeletalMesh asset at %s"), *AssetPathAndName);
     return NewSkeletal;

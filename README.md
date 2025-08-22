@@ -27,8 +27,8 @@ cinematic pipelines, while highlighting new possibilities for UE’s native syst
 
 #
 ## Plugin User Instructions
-#
-### 1. Loading the Plugin (video [here](https://www.youtube.com/watch?v=EFWlgoQcySg))
+
+### 1. Loading the Plugin (installation video [here](https://www.youtube.com/watch?v=EFWlgoQcySg))
 - Create an Unreal Engine project and add a "Plugins" folder.
 - Download and unzip the plugin's zip file.
 - Copy the ClothDesignAssets folder in Content Drawer of your project.
@@ -86,7 +86,7 @@ Note: Sewing and merging are separate steps to allow precise placement before co
 
 ### 5. Preparing Skeletal Mesh for Simulation
 Once the merged skeletal mesh is saved in the content browser:
-- OPen the Skeletal Mesh Editor
+- Open the Skeletal Mesh Editor
 - Create and apply Clothing Data.
 - Enter Cloth Painting Mode and paint the mesh entirely.
 - Exit painting mode.
@@ -96,7 +96,7 @@ Once the merged skeletal mesh is saved in the content browser:
 - Select the skeletal mesh in the Cloth Object Picker on the 3D UI.
 - Assign a material and select a Simulation Preset.
 - The mesh is now ready to simulate using the grey "Simulate" button in the top bar.
-- The most reliable collisions can be achieved with UE native geometry (like cylinders and sphere). Add these at the menu next to the editor mode selection window. 
+- The most reliable collisions can be achieved with UE native geometry (like cylinders and spheres). Add these from the Shapes menu on the right of the editor mode selection window. 
 
 Note: The cloth and material pickers also work with externally imported meshes (e.g., Marvelous Designer), enabling fast setup for any cloth asset in UE (video [here](https://www.youtube.com/watch?v=RBReJKRiPME)).
 
@@ -155,11 +155,11 @@ In Unreal Engine: Navigate to Tools > Session Frontend > Automation, locate the 
 ![keys.png](media/keys.png)
 #
 
-### Mesh triangulation
+### Mesh triangulation result
 ![meshgen.png](media/meshgen.png)
 
 #
-### Seam placement and highlighting
+### Seam placement and highlighting (pink connecting lines)
 ![seamsright.png](media/seamsright.png)
 
 #

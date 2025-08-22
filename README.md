@@ -29,8 +29,8 @@ cinematic pipelines, while highlighting new possibilities for UE’s native syst
 ## Plugin User Instructions
 
 ### 1. Loading the Plugin (installation video [here](https://www.youtube.com/watch?v=EFWlgoQcySg))
-- Create an Unreal Engine project and add a "Plugins" folder.
-- Download and unzip the plugin's zip file.
+- Create a C++ Unreal Engine project and add a "Plugins" folder.
+- Download and unzip the plugin's zip file (ClothDesignPlugin.zip).
 - Copy the ClothDesignAssets folder in Content Drawer of your project.
 - Copy the ClothDesign folder into the Plugins folder in your project.
 - Launch Unreal Engine and ensure the ClothDesign plugin is installed.

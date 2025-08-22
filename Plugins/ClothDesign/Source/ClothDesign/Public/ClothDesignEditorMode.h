@@ -13,6 +13,7 @@
 
 
 /**
+ * @class UClothDesignEditorMode
  * @brief Custom editor mode for cloth design in the editor.
  * 
  * This class defines a specialized editor mode for manipulating cloth assets. 

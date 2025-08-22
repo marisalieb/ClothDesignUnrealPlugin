@@ -12,9 +12,10 @@
 
 
 /**
- * @brief Stores a single point on a curve, including position and tangents.
+ * @struct FCurvePointData
+ * @brief Represents a single point on a curve, including its position, tangents, and interpolation settings.
  * 
- * Used for defining cloth patterns and Bezier curve control points.
+ * This struct is used to define points on a curve for cloth shapes, supporting Bezier interpolation.
  */
 USTRUCT(BlueprintType)
 struct FCurvePointData
@@ -43,7 +44,10 @@ struct FCurvePointData
 };
 
 /**
- * @brief Represents a completed cloth shape made of multiple curve points.
+ * @struct FShapeData
+ * @brief Represents a completed cloth shape defined by an array of curve points.
+ * 
+ * This struct is used to store the data for a completed cloth shape, which is defined by multiple curve points.
  */
 USTRUCT(BlueprintType)
 struct FShapeData
@@ -56,9 +60,11 @@ struct FShapeData
 };
 
 /**
- * @brief Data asset storing multiple cloth shapes and their curve points.
+ * @class UClothShapeAsset
+ * @brief A data asset for managing cloth shapes, including editable curves and completed shapes.
  * 
- * Can be used to save and load predefined cloth patterns in the editor or at runtime.
+ * This class provides functionality to store and manage cloth shapes, including their curve points
+ * and completed shapes for use in cloth simulation or design.
  */
 UCLASS(BlueprintType)
 class UClothShapeAsset : public UDataAsset

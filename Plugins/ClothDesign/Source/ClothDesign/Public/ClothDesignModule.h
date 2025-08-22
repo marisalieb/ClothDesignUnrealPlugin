@@ -10,17 +10,15 @@
  */
 
 /**
+ * @class FClothDesignModule
  * @brief Main module class for the Cloth Design editor plugin.
  *
- * This module initialises and tears down the editor integration, registers commands,
- * and provides the UI entry point for the 2D cloth design window. By centralising
- * module lifecycle and UI creation here, the plugin keeps startup/shutdown concerns
- * and UI wiring separate from canvas logic, making the system easier to test and extend.
+ * This module handles the initialization and shutdown of the plugin, as well as
+ * the registration of commands and UI elements for the editor integration.
  */
 class FClothDesignModule : public IModuleInterface
 {
 public:
-	// --- IModuleInterface implementation ---
 
 	/**
 	 * @brief Called when the module is starting up.

@@ -10,30 +10,34 @@
 
 
 /**
- * @brief Defines UI commands for the Cloth Design editor mode.
+ * @class FClothDesignCommands
+ * @brief Handles the registration and management of commands for the Cloth Design Editor Mode.
  * 
- * This class registers and stores all the user interface commands that are used in the 
- * Cloth Design editor mode, such as opening windows or triggering specific tools. 
- * It derives from TCommands to integrate with Unreal's command framework.
+ * This class defines and manages UI commands used in the Cloth Design Editor Mode.
+ * 
+ * @note For implementation details, see Chapter 4.2 of the thesis.
  */
 class FClothDesignCommands : public TCommands<FClothDesignCommands>
 {
 public:
-	/** Constructor */
+	/**
+	 * @brief Constructor for the FClothDesignCommands class.
+	 * 
+	 * Initializes the command context for the Cloth Design Editor Mode.
+	 */
 	FClothDesignCommands();
 
 	/**
-	 * @brief Registers all commands associated with this mode.
+	 * @brief Registers all commands for the Cloth Design Editor Mode.
 	 * 
-	 * This is where each TSharedPtr<FUICommandInfo> is bound to its input gesture, label, 
-	 * and tooltip. Called automatically when the command framework is initialized.
+	 * This method defines and binds UI commands, such as the "Open 2D Window" command.
 	 */
 	virtual void RegisterCommands() override;
 
 	/**
-	 * @brief Retrieves all registered commands for this mode.
+	 * @brief Retrieves all registered commands.
 	 * 
-	 * @return Map of command categories to arrays of command info shared pointers.
+	 * @return A map containing the registered commands, grouped by their names.
 	 */
 	static TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> GetCommands();
 

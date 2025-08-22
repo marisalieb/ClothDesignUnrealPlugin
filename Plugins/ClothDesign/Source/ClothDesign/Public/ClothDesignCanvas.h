@@ -17,14 +17,13 @@
 
 
 /**
+ * @class SClothDesignCanvas
  * @brief Primary Slate widget for the cloth design canvas.
  *
  * This widget encapsulates the entire interactive canvas used to draw shapes,
  * define seams, preview sewing, and generate meshes. It centralises input handling,
  * rendering, and state management so the editor UI and underlying geometry remain
  * consistent and testable.
- *
- * @note Thesis reference: See Chapter 4.x for the canvas interaction and rendering rationale.
  */
 class SClothDesignCanvas : public SCompoundWidget
 {

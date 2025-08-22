@@ -11,9 +11,10 @@
 
 
 /**
- * @brief Enumerates preset types for cloth simulation properties.
+ * @enum EClothPreset
+ * @brief Enumerates the available cloth simulation presets.
  * 
- * Used to quickly apply common cloth materials with pre-defined physical configurations.
+ * This enum defines various preset configurations for cloth simulation, such as Denim, Leather, Silk, etc.
  */
 UENUM()
 enum class EClothPreset : uint8
@@ -26,7 +27,11 @@ enum class EClothPreset : uint8
 };
 
 /**
- * @brief Represents a single item in the cloth preset dropdown or UI.
+ * @struct FPresetItem
+ * @brief Represents a cloth preset item with its type and display name.
+ * 
+ * This struct is used to store information about a cloth preset, including its type
+ * (as an enum value) and its display name for the UI.
  */
 struct FPresetItem
 {
@@ -36,15 +41,22 @@ struct FPresetItem
 	/** Display name for the UI */
 	FString DisplayName;
 
+	/**
+	 * @brief Constructs an FPresetItem with the given preset type and display name.
+	 * 
+	 * @param InPreset The preset type.
+	 * @param InName The display name for the preset.
+	 */
 	FPresetItem(EClothPreset InPreset, const FString& InName)
 		: Preset(InPreset), DisplayName(InName) {}
 };
 
 /**
- * @brief Stores the physical parameters for a cloth material.
+ * @struct FClothPhysicalConfig
+ * @brief Defines the physical properties of a cloth simulation configuration.
  * 
- * Includes density, bending stiffness, area stiffness, tethers, friction, damping, drag,
- * lift, and gravity scaling. Can be used for both presets and custom configurations.
+ * This struct contains various parameters that control the physical behavior of the cloth,
+ * such as density, stiffness, friction, damping, and aerodynamic properties.
  */
 struct FClothPhysicalConfig
 {
@@ -86,13 +98,19 @@ struct FClothPhysicalConfig
 };
 
 /**
- * @brief Manages cloth simulation settings and presets.
+ * @struct FClothSimSettings
+ * @brief Manages the settings for cloth simulation, including presets and their configurations.
  * 
- * Provides helper methods to apply presets to a skeletal mesh and configure cloth collision.
+ * This struct provides functionality to manage cloth simulation presets, apply them to skeletal meshes,
+ * and configure collision flags.
  */
 struct FClothSimSettings
 {
-	/** Default constructor */
+	/** 
+	 * @brief Default constructor for FClothSimSettings.
+	 * 
+	 * Initializes the selected preset to Custom.
+	 */
 	FClothSimSettings();
 
 	/** Currently selected preset */
@@ -105,10 +123,11 @@ struct FClothSimSettings
 	TArray<TSharedPtr<FPresetItem>> PresetOptions;
 
 	/**
-	 * @brief Apply a given preset configuration to a skeletal mesh component.
-	 * @param SkelComp Skeletal mesh component to apply settings to
-	 * @param Preset The cloth physical configuration to apply
-	 * @param SelectedPreset Enum representing the selected preset
+	 * @brief Applies a cloth preset configuration to the specified skeletal mesh component.
+	 * 
+	 * @param SkelComp The skeletal mesh component to apply the preset to.
+	 * @param Preset The physical configuration of the preset.
+	 * @param SelectedPreset The selected preset type.
 	 */
 	void ApplyPresetToCloth(
 		USkeletalMeshComponent* SkelComp,
@@ -116,8 +135,9 @@ struct FClothSimSettings
 		EClothPreset SelectedPreset) const;
 
 	/**
-	 * @brief Sets default collision flags for the cloth on a skeletal mesh.
-	 * @param SkelComp Skeletal mesh component to configure
+	 * @brief Sets collision flags for the cloth simulation on the specified skeletal mesh component.
+	 * 
+	 * @param SkelComp The skeletal mesh component to configure collision flags for.
 	 */
 	static void SetClothCollisionFlags(USkeletalMeshComponent* SkelComp);
 };

@@ -10,10 +10,6 @@
 //  */
 
 
-/**
- * @note Thesis reference:
- * See Chapter 4.9.1 for detailed explanations.
- */
 
 /**
  * @brief Stores all data needed to reconstruct a previously completed shape.

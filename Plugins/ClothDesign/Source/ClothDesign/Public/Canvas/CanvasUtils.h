@@ -9,12 +9,7 @@
 //  * See Chapter 4.9.2 for detailed explanations.
 //  */
 
-/**
- * @file CanvasUtils.h
- *
- * @note Thesis reference:
- * See Chapter 4.9.2 for detailed explanations.
- */
+
 
 
 /**
@@ -72,7 +67,7 @@ public:
 	  FCanvasState& CurrentState);
 
 	/**
-	 * @brief Recalculates tangents for an non-bezier/linear point curve.
+	 * @brief Recalculates tangents for a non-bezier/linear point curve.
 	 * @param Curve The curve to update.
 	 * @param bBezierFlags Flags indicating which points are Bezier handles.
 	 * 

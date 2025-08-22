@@ -18,12 +18,11 @@
 
 
 /**
- * @brief Represents a single cloth pattern mesh actor in the scene.
+ * @class APatternMesh
+ * @brief Represents a procedural mesh actor used for cloth simulation or pattern design.
  * 
- * This actor encapsulates a procedural mesh component along with metadata for
- * sewing, boundary sampling, and vertex alignment. It maintains both 2D pattern
- * information and corresponding 3D mesh data, allowing seamless interaction
- * between the design canvas and the runtime mesh.
+ * This class encapsulates a procedural mesh component and provides functionality for managing
+ * boundary samples, seam vertices, and dynamic mesh data.
  */
 UCLASS()
 class APatternMesh : public AActor
@@ -33,65 +32,73 @@ class APatternMesh : public AActor
 public:
 
 	/** 
-	 * @brief The main procedural mesh component for this pattern mesh.
-	 * Exposed as read-only in Blueprints for visualization and runtime operations.
+	 * @brief Procedural mesh component representing the cloth or pattern mesh.
+	 * 
+	 * This component is used to render and manipulate the mesh in the scene.
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Cloth Mesh")
 	UProceduralMeshComponent* MeshComponent;
 
-	/** Default constructor. Initializes internal state and components. */
+	/**
+	 * @brief Default constructor for APatternMesh.
+	 * 
+	 * Initializes the procedural mesh component and other member variables.
+	 */
 	APatternMesh();
 
-	/**
-	 * @brief Stores the vertex IDs used in the last sewing operation.
-	 * Useful for reconstructing seams or reapplying constraints.
+	/** 
+	 * @brief Stores the vertex IDs of the last seam created on the mesh.
 	 */
 	UPROPERTY()
 	TArray<int32> LastSeamVertexIDs;
 
-	/**
-	 * @brief Sampled points along the 2D boundary of the cloth pattern.
-	 * The order of points is preserved to maintain polygon topology.
+	/** 
+	 * @brief Stores 2D sample points along the boundary of the mesh.
+	 * 
+	 * These points are used for operations such as boundary processing or visualization.
 	 */
 	UPROPERTY()
 	TArray<FVector2f> BoundarySamplePoints2D;
 
-	/**
-	 * @brief Corresponding vertex IDs in the dynamic 3D mesh for each sampled 2D boundary point.
+	/** 
+	 * @brief Stores the vertex IDs corresponding to the boundary sample points.
 	 */
 	UPROPERTY()
 	TArray<int32> BoundarySampleVertexIDs;
 
-	/**
-	 * @brief Cached world-space positions of the boundary vertices.
-	 * Speeds up alignment and visualization without recalculating transforms.
+	/** 
+	 * @brief Stores the world positions of the boundary sample points.
 	 */
 	UPROPERTY()
 	TArray<FVector> BoundarySampleWorldPositions;
 
 	/**
-	 * @brief Set the mapping from 2D polygon indices to 3D vertex IDs.
-	 * @param InMapping Array mapping polygon index to vertex ID.
+	 * @brief Sets the mapping from polygon indices to vertex IDs.
+	 * 
+	 * @param InMapping The mapping array to set.
 	 */
 	void SetPolyIndexToVID(const TArray<int32>& InMapping) { PolyIndexToVID = InMapping; }
 
 	/**
-	 * @brief Get the current mapping from 2D polygon indices to 3D vertex IDs.
-	 * @return Reference to the internal PolyIndexToVID array.
+	 * @brief Retrieves the mapping from polygon indices to vertex IDs.
+	 * 
+	 * @return A reference to the mapping array.
 	 */
 	const TArray<int32>& GetPolyIndexToVID() const { return PolyIndexToVID; }
 
-	/**
-	 * @brief Full dynamic mesh data associated with this pattern.
-	 * Maintained for alignment, sewing, and vertex queries at runtime.
+	/** 
+	 * @brief The dynamic mesh data structure used for mesh operations.
+	 * 
+	 * This is part of the Unreal Engine Geometry Framework.
 	 */
 	UE::Geometry::FDynamicMesh3 DynamicMesh;
 
 private:
 
-	/**
-	 * @brief Maps polygon indices from 2D pattern space to 3D vertex IDs in DynamicMesh.
-	 * This mapping allows quick lookups when constructing boundaries and seams.
+	/** 
+	 * @brief Stores the mapping from polygon indices to vertex IDs.
+	 * 
+	 * This is used internally for managing mesh data.
 	 */
 	UPROPERTY()
 	TArray<int32> PolyIndexToVID;

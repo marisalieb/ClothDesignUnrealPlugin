@@ -100,7 +100,7 @@ $(document).ready(function(){initNavTree('structFClothSimSettings.html',''); ini
 </div><!--header-->
 <div class="contents">
 
-<p>Manages cloth simulation settings and presets.  
+<p>Manages the settings for cloth simulation, including presets and their configurations.  
  <a href="structFClothSimSettings.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ClothSimSettings_8h_source.html">ClothSimSettings.h</a>&gt;</code></p>
@@ -108,15 +108,16 @@ $(document).ready(function(){initNavTree('structFClothSimSettings.html',''); ini
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:acf2f4882ff0b7158652138a179259d51" id="r_acf2f4882ff0b7158652138a179259d51"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFClothSimSettings.html#acf2f4882ff0b7158652138a179259d51">FClothSimSettings</a> ()</td></tr>
+<tr class="memdesc:acf2f4882ff0b7158652138a179259d51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor for <a class="el" href="structFClothSimSettings.html" title="Manages the settings for cloth simulation, including presets and their configurations.">FClothSimSettings</a>.  <br /></td></tr>
 <tr class="separator:acf2f4882ff0b7158652138a179259d51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a701c1da2dcc96bf79b33321c7ff51f85" id="r_a701c1da2dcc96bf79b33321c7ff51f85"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFClothSimSettings.html#a701c1da2dcc96bf79b33321c7ff51f85">ApplyPresetToCloth</a> (USkeletalMeshComponent *SkelComp, const <a class="el" href="structFClothPhysicalConfig.html">FClothPhysicalConfig</a> &amp;Preset, EClothPreset <a class="el" href="structFClothSimSettings.html#a3b753852490d269a5040449a3569c302">SelectedPreset</a>) const</td></tr>
-<tr class="memdesc:a701c1da2dcc96bf79b33321c7ff51f85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply a given preset configuration to a skeletal mesh component.  <br /></td></tr>
+<tr class="memdesc:a701c1da2dcc96bf79b33321c7ff51f85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies a cloth preset configuration to the specified skeletal mesh component.  <br /></td></tr>
 <tr class="separator:a701c1da2dcc96bf79b33321c7ff51f85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a7e5b0131d2ef5a9254b9ab9ea9fe57f0" id="r_a7e5b0131d2ef5a9254b9ab9ea9fe57f0"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFClothSimSettings.html#a7e5b0131d2ef5a9254b9ab9ea9fe57f0">SetClothCollisionFlags</a> (USkeletalMeshComponent *SkelComp)</td></tr>
-<tr class="memdesc:a7e5b0131d2ef5a9254b9ab9ea9fe57f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets default collision flags for the cloth on a skeletal mesh.  <br /></td></tr>
+<tr class="memdesc:a7e5b0131d2ef5a9254b9ab9ea9fe57f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets collision flags for the cloth simulation on the specified skeletal mesh component.  <br /></td></tr>
 <tr class="separator:a7e5b0131d2ef5a9254b9ab9ea9fe57f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -129,8 +130,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a809b4a18be79a70e0af06581a816a754"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Manages cloth simulation settings and presets. </p>
-<p>Provides helper methods to apply presets to a skeletal mesh and configure cloth collision. </p>
+<div class="textblock"><p>Manages the settings for cloth simulation, including presets and their configurations. </p>
+<p>This struct provides functionality to manage cloth simulation presets, apply them to skeletal meshes, and configure collision flags. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="acf2f4882ff0b7158652138a179259d51" name="acf2f4882ff0b7158652138a179259d51"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acf2f4882ff0b7158652138a179259d51">&#9670;&#160;</a></span>FClothSimSettings()</h2>
@@ -146,7 +147,9 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Default constructor </p>
+
+<p>Default constructor for <a class="el" href="structFClothSimSettings.html" title="Manages the settings for cloth simulation, including presets and their configurations.">FClothSimSettings</a>. </p>
+<p>Initializes the selected preset to Custom. </p>
 
 </div>
 </div>
@@ -183,12 +186,12 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Apply a given preset configuration to a skeletal mesh component. </p>
+<p>Applies a cloth preset configuration to the specified skeletal mesh component. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">SkelComp</td><td>Skeletal mesh component to apply settings to </td></tr>
-    <tr><td class="paramname">Preset</td><td>The cloth physical configuration to apply </td></tr>
-    <tr><td class="paramname">SelectedPreset</td><td>Enum representing the selected preset </td></tr>
+    <tr><td class="paramname">SkelComp</td><td>The skeletal mesh component to apply the preset to. </td></tr>
+    <tr><td class="paramname">Preset</td><td>The physical configuration of the preset. </td></tr>
+    <tr><td class="paramname">SelectedPreset</td><td>The selected preset type. </td></tr>
   </table>
   </dd>
 </dl>
@@ -219,10 +222,10 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Sets default collision flags for the cloth on a skeletal mesh. </p>
+<p>Sets collision flags for the cloth simulation on the specified skeletal mesh component. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">SkelComp</td><td>Skeletal mesh component to configure </td></tr>
+    <tr><td class="paramname">SkelComp</td><td>The skeletal mesh component to configure collision flags for. </td></tr>
   </table>
   </dd>
 </dl>

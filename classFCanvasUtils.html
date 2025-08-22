@@ -115,7 +115,7 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memdesc:ac6df9e20ec42d85dec821cfc608ba36a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reapplies a previously undone canvas state.  <br /></td></tr>
 <tr class="separator:ac6df9e20ec42d85dec821cfc608ba36a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae84d22bca04c1b638a65d8a1f192418" id="r_aae84d22bca04c1b638a65d8a1f192418"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasUtils.html#aae84d22bca04c1b638a65d8a1f192418">RecalculateNTangents</a> (FInterpCurve&lt; FVector2D &gt; &amp;Curve, const TArray&lt; bool &gt; &amp;bBezierFlags)</td></tr>
-<tr class="memdesc:aae84d22bca04c1b638a65d8a1f192418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recalculates tangents for an non-bezier/linear point curve.  <br /></td></tr>
+<tr class="memdesc:aae84d22bca04c1b638a65d8a1f192418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recalculates tangents for a non-bezier/linear point curve.  <br /></td></tr>
 <tr class="separator:aae84d22bca04c1b638a65d8a1f192418"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c60bf1fd99120c2e73745306855af0d" id="r_a7c60bf1fd99120c2e73745306855af0d"><td class="memItemLeft" align="right" valign="top">static FVector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasUtils.html#a7c60bf1fd99120c2e73745306855af0d">ComputeAreaWeightedCentroid</a> (const UE::Geometry::FDynamicMesh3 &amp;Mesh)</td></tr>
 <tr class="memdesc:a7c60bf1fd99120c2e73745306855af0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the area-weighted centroid of a dynamic mesh.  <br /></td></tr>
@@ -173,8 +173,7 @@ Static Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Centering vertices simplifies subsequent transformations and ensures consistent alignment relative to the chosen pivot.</p>
-<p>Subtract pivotFrom (centroid) from all vertices to move pivot to origin. </p>
+<p>Centering vertices simplifies subsequent transformations and ensures consistent alignment relative to the chosen pivot. </p>
 
 </div>
 </div>
@@ -248,7 +247,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Recalculates tangents for an non-bezier/linear point curve. </p>
+<p>Recalculates tangents for a non-bezier/linear point curve. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">Curve</td><td>The curve to update. </td></tr>

@@ -209,11 +209,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a47d066ca0797fd7ff8dc80e877a9de9d" id="r_a47d066ca0797fd7ff8dc80e877a9de9d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSClothDesignCanvas.html#a52130105a63f2d73cb879fad1af11fd4">EClothEditorMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a47d066ca0797fd7ff8dc80e877a9de9d">GetCurrentMode</a> () const</td></tr>
 <tr class="memdesc:a47d066ca0797fd7ff8dc80e877a9de9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the editor's current mode (draw/select/sew).  <br /></td></tr>
 <tr class="separator:a47d066ca0797fd7ff8dc80e877a9de9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a764cac01236766e076a42d7943f0d676" id="r_a764cac01236766e076a42d7943f0d676"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classFCanvasSewing.html">FCanvasSewing</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a764cac01236766e076a42d7943f0d676">GetSewingManager</a> ()</td></tr>
-<tr class="separator:a764cac01236766e076a42d7943f0d676"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a220a3b6ebe0476acf11d35dc19a5511b" id="r_a220a3b6ebe0476acf11d35dc19a5511b"><td class="memItemLeft" align="right" valign="top"><a id="a220a3b6ebe0476acf11d35dc19a5511b" name="a220a3b6ebe0476acf11d35dc19a5511b"></a>
-const <a class="el" href="classFCanvasSewing.html">FCanvasSewing</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetSewingManager</b> () const</td></tr>
-<tr class="separator:a220a3b6ebe0476acf11d35dc19a5511b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af45051a830a42c889123e9eb34ae9844" id="r_af45051a830a42c889123e9eb34ae9844"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classFPatternSewing.html">FPatternSewing</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#af45051a830a42c889123e9eb34ae9844">GetSewingManager</a> ()</td></tr>
+<tr class="separator:af45051a830a42c889123e9eb34ae9844"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f27f9e53bcf90ac761f36a798e823f1" id="r_a0f27f9e53bcf90ac761f36a798e823f1"><td class="memItemLeft" align="right" valign="top"><a id="a0f27f9e53bcf90ac761f36a798e823f1" name="a0f27f9e53bcf90ac761f36a798e823f1"></a>
+const <a class="el" href="classFPatternSewing.html">FPatternSewing</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetSewingManager</b> () const</td></tr>
+<tr class="separator:a0f27f9e53bcf90ac761f36a798e823f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2354ca688a65ef411bb02cc008756de5" id="r_a2354ca688a65ef411bb02cc008756de5"><td class="memItemLeft" align="right" valign="top">int32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSClothDesignCanvas.html#a2354ca688a65ef411bb02cc008756de5">FinaliseCurrentShape</a> (bool bGenerateNow=false, TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; *OutSpawnedActors=nullptr)</td></tr>
 <tr class="memdesc:a2354ca688a65ef411bb02cc008756de5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalises the current shape, optionally generating its mesh immediately.  <br /></td></tr>
 <tr class="separator:a2354ca688a65ef411bb02cc008756de5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -281,8 +281,7 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Primary Slate widget for the cloth design canvas. </p>
-<p>This widget encapsulates the entire interactive canvas used to draw shapes, define seams, preview sewing, and generate meshes. It centralises input handling, rendering, and state management so the editor UI and underlying geometry remain consistent and testable.</p>
-<dl class="section note"><dt>Note</dt><dd>Thesis reference: See Chapter 4.x for the canvas interaction and rendering rationale. </dd></dl>
+<p>This widget encapsulates the entire interactive canvas used to draw shapes, define seams, preview sewing, and generate meshes. It centralises input handling, rendering, and state management so the editor UI and underlying geometry remain consistent and testable. </p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a52130105a63f2d73cb879fad1af11fd4" name="a52130105a63f2d73cb879fad1af11fd4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a52130105a63f2d73cb879fad1af11fd4">&#9670;&#160;</a></span>EClothEditorMode</h2>
@@ -586,8 +585,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a764cac01236766e076a42d7943f0d676" name="a764cac01236766e076a42d7943f0d676"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a764cac01236766e076a42d7943f0d676">&#9670;&#160;</a></span>GetSewingManager()</h2>
+<a id="af45051a830a42c889123e9eb34ae9844" name="af45051a830a42c889123e9eb34ae9844"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af45051a830a42c889123e9eb34ae9844">&#9670;&#160;</a></span>GetSewingManager()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -596,7 +595,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classFCanvasSewing.html">FCanvasSewing</a> &amp; SClothDesignCanvas::GetSewingManager </td>
+          <td class="memname"><a class="el" href="classFPatternSewing.html">FPatternSewing</a> &amp; SClothDesignCanvas::GetSewingManager </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>

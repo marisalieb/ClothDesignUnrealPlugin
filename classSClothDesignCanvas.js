@@ -20,7 +20,7 @@ var classSClothDesignCanvas =
     [ "GetCurrentMode", "classSClothDesignCanvas.html#a47d066ca0797fd7ff8dc80e877a9de9d", null ],
     [ "GetSelectedShapeAssetPath", "classSClothDesignCanvas.html#a45e1bb4c77f9252b08fbc1af5945a071", null ],
     [ "GetSelectedTexturePath", "classSClothDesignCanvas.html#a09387db29555c2470734baa9bf88a960", null ],
-    [ "GetSewingManager", "classSClothDesignCanvas.html#a764cac01236766e076a42d7943f0d676", null ],
+    [ "GetSewingManager", "classSClothDesignCanvas.html#af45051a830a42c889123e9eb34ae9844", null ],
     [ "InverseTransformPoint", "classSClothDesignCanvas.html#a554253f9466ef2dba2a93e87762dea38", null ],
     [ "MergeClick", "classSClothDesignCanvas.html#a886be65af485900bf807c83d14a0c793", null ],
     [ "OnBackgroundImageScaleChanged", "classSClothDesignCanvas.html#a043334f2e2c4fbf04d5e9130dc2756fa", null ],

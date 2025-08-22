@@ -45,8 +45,8 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"CanvasAssets_8h.html",
-"structFCurvePointData.html#a8cdcaed368d3da0f172fbe7c680d257d"
+"CanvasInputHandler_8h_source.html",
+"structFEdgeIndices.html#a03d28ac4f2426e3a0f56cf3f55a7b79a"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

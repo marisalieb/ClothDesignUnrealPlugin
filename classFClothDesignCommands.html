@@ -101,7 +101,7 @@ $(document).ready(function(){initNavTree('classFClothDesignCommands.html',''); i
 </div><!--header-->
 <div class="contents">
 
-<p>Defines UI commands for the Cloth Design editor mode.  
+<p>Handles the registration and management of commands for the Cloth Design Editor Mode.  
  <a href="classFClothDesignCommands.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ClothDesignCommands_8h_source.html">ClothDesignCommands.h</a>&gt;</code></p>
@@ -115,15 +115,16 @@ Inheritance diagram for FClothDesignCommands:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a322bba9e48534e319d1bf315b437aab7" id="r_a322bba9e48534e319d1bf315b437aab7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignCommands.html#a322bba9e48534e319d1bf315b437aab7">FClothDesignCommands</a> ()</td></tr>
+<tr class="memdesc:a322bba9e48534e319d1bf315b437aab7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the <a class="el" href="classFClothDesignCommands.html" title="Handles the registration and management of commands for the Cloth Design Editor Mode.">FClothDesignCommands</a> class.  <br /></td></tr>
 <tr class="separator:a322bba9e48534e319d1bf315b437aab7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a893464eeb31014db96e70c8439187332" id="r_a893464eeb31014db96e70c8439187332"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignCommands.html#a893464eeb31014db96e70c8439187332">RegisterCommands</a> () override</td></tr>
-<tr class="memdesc:a893464eeb31014db96e70c8439187332"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers all commands associated with this mode.  <br /></td></tr>
+<tr class="memdesc:a893464eeb31014db96e70c8439187332"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers all commands for the Cloth Design Editor Mode.  <br /></td></tr>
 <tr class="separator:a893464eeb31014db96e70c8439187332"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a985176dfd7d8860ed3a9efdac867a901" id="r_a985176dfd7d8860ed3a9efdac867a901"><td class="memItemLeft" align="right" valign="top">static TMap&lt; FName, TArray&lt; TSharedPtr&lt; FUICommandInfo &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFClothDesignCommands.html#a985176dfd7d8860ed3a9efdac867a901">GetCommands</a> ()</td></tr>
-<tr class="memdesc:a985176dfd7d8860ed3a9efdac867a901"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves all registered commands for this mode.  <br /></td></tr>
+<tr class="memdesc:a985176dfd7d8860ed3a9efdac867a901"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves all registered commands.  <br /></td></tr>
 <tr class="separator:a985176dfd7d8860ed3a9efdac867a901"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -137,8 +138,9 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a59f113c66bbfac7fc0d98644bac18ea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Defines UI commands for the Cloth Design editor mode. </p>
-<p>This class registers and stores all the user interface commands that are used in the Cloth Design editor mode, such as opening windows or triggering specific tools. It derives from TCommands to integrate with Unreal's command framework. </p>
+<div class="textblock"><p>Handles the registration and management of commands for the Cloth Design Editor Mode. </p>
+<p>This class defines and manages UI commands used in the Cloth Design Editor Mode.</p>
+<dl class="section note"><dt>Note</dt><dd>For implementation details, see Chapter 4.2 of the thesis. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a322bba9e48534e319d1bf315b437aab7" name="a322bba9e48534e319d1bf315b437aab7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a322bba9e48534e319d1bf315b437aab7">&#9670;&#160;</a></span>FClothDesignCommands()</h2>
@@ -154,7 +156,9 @@ Protected Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Constructor </p>
+
+<p>Constructor for the <a class="el" href="classFClothDesignCommands.html" title="Handles the registration and management of commands for the Cloth Design Editor Mode.">FClothDesignCommands</a> class. </p>
+<p>Initializes the command context for the Cloth Design Editor Mode. </p>
 
 </div>
 </div>
@@ -182,8 +186,8 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Retrieves all registered commands for this mode. </p>
-<dl class="section return"><dt>Returns</dt><dd>Map of command categories to arrays of command info shared pointers. </dd></dl>
+<p>Retrieves all registered commands. </p>
+<dl class="section return"><dt>Returns</dt><dd>A map containing the registered commands, grouped by their names. </dd></dl>
 
 </div>
 </div>
@@ -210,8 +214,8 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Registers all commands associated with this mode. </p>
-<p>This is where each TSharedPtr&lt;FUICommandInfo&gt; is bound to its input gesture, label, and tooltip. Called automatically when the command framework is initialized. </p>
+<p>Registers all commands for the Cloth Design Editor Mode. </p>
+<p>This method defines and binds UI commands, such as the "Open 2D Window" command. </p>
 
 </div>
 </div>

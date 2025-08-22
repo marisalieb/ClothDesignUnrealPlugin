@@ -99,7 +99,7 @@ $(document).ready(function(){initNavTree('CanvasUtils_8h_source.html',''); initR
   <div class="headertitle"><div class="title">CanvasUtils.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="CanvasUtils_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef FCanvasUtils_H</span></div>
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef FCanvasUtils_H</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define FCanvasUtils_H</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;CanvasState.h&quot;</span></div>
@@ -110,46 +110,49 @@ $(document).ready(function(){initNavTree('CanvasUtils_8h_source.html',''); initR
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">//  * See Chapter 4.9.2 for detailed explanations.</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">//  */</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="foldopen" id="foldopen00027" data-start="{" data-end="};">
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="classFCanvasUtils.html">   27</a></span><span class="keyword">class </span><a class="code hl_class" href="classFCanvasUtils.html">FCanvasUtils</a></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>{</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classFCanvasUtils.html#a29259166293c672422b4445a09bbe018">SaveStateForUndo</a>(</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>      TArray&lt;FCanvasState&gt;&amp; UndoStack,</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>      TArray&lt;FCanvasState&gt;&amp; RedoStack,</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>      <span class="keyword">const</span> <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; CurrentState);</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="classFCanvasUtils.html#ac636b8dc281c1dc3047f24922d7ebec1">Undo</a>(</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>      TArray&lt;FCanvasState&gt;&amp; UndoStack,</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>      TArray&lt;FCanvasState&gt;&amp; RedoStack,</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>      <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; CurrentState);</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="classFCanvasUtils.html#ac6df9e20ec42d85dec821cfc608ba36a">Redo</a>(</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>      TArray&lt;FCanvasState&gt;&amp; UndoStack,</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>      TArray&lt;FCanvasState&gt;&amp; RedoStack,</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>      <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; CurrentState);</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classFCanvasUtils.html#aae84d22bca04c1b638a65d8a1f192418">RecalculateNTangents</a>(</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        FInterpCurve&lt;FVector2D&gt;&amp; Curve,</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <span class="keyword">const</span> TArray&lt;bool&gt;&amp;      bBezierFlags);</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keyword">static</span> FVector3d <a class="code hl_function" href="classFCanvasUtils.html#a7c60bf1fd99120c2e73745306855af0d">ComputeAreaWeightedCentroid</a>(<span class="keyword">const</span> UE::Geometry::FDynamicMesh3&amp; Mesh);</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classFCanvasUtils.html#ab29c3062f58d7e232766b6700b8630d0">CenterMeshVerticesToOrigin</a>(TArray&lt;FVector&gt;&amp; Vertices, <span class="keyword">const</span> FVector&amp; PivotFrom);</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classFCanvasUtils.html#a1d79cacad8690e37f4922591543adac4">TranslateDynamicMeshBy</a>(UE::Geometry::FDynamicMesh3&amp; Mesh, <span class="keyword">const</span> FVector3d&amp; Offset);</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>};</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="foldopen" id="foldopen00022" data-start="{" data-end="};">
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="classFCanvasUtils.html">   22</a></span><span class="keyword">class </span><a class="code hl_class" href="classFCanvasUtils.html">FCanvasUtils</a></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>{</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classFCanvasUtils.html#a29259166293c672422b4445a09bbe018">SaveStateForUndo</a>(</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>      TArray&lt;FCanvasState&gt;&amp; UndoStack,</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>      TArray&lt;FCanvasState&gt;&amp; RedoStack,</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>      <span class="keyword">const</span> <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; CurrentState);</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="classFCanvasUtils.html#ac636b8dc281c1dc3047f24922d7ebec1">Undo</a>(</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>      TArray&lt;FCanvasState&gt;&amp; UndoStack,</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>      TArray&lt;FCanvasState&gt;&amp; RedoStack,</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>      <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; CurrentState);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="classFCanvasUtils.html#ac6df9e20ec42d85dec821cfc608ba36a">Redo</a>(</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>      TArray&lt;FCanvasState&gt;&amp; UndoStack,</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>      TArray&lt;FCanvasState&gt;&amp; RedoStack,</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>      <a class="code hl_struct" href="structFCanvasState.html">FCanvasState</a>&amp; CurrentState);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classFCanvasUtils.html#aae84d22bca04c1b638a65d8a1f192418">RecalculateNTangents</a>(</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        FInterpCurve&lt;FVector2D&gt;&amp; Curve,</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        <span class="keyword">const</span> TArray&lt;bool&gt;&amp;      bBezierFlags);</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keyword">static</span> FVector3d <a class="code hl_function" href="classFCanvasUtils.html#a7c60bf1fd99120c2e73745306855af0d">ComputeAreaWeightedCentroid</a>(<span class="keyword">const</span> UE::Geometry::FDynamicMesh3&amp; Mesh);</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classFCanvasUtils.html#ab29c3062f58d7e232766b6700b8630d0">CenterMeshVerticesToOrigin</a>(TArray&lt;FVector&gt;&amp; Vertices, <span class="keyword">const</span> FVector&amp; PivotFrom);</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classFCanvasUtils.html#a1d79cacad8690e37f4922591543adac4">TranslateDynamicMeshBy</a>(UE::Geometry::FDynamicMesh3&amp; Mesh, <span class="keyword">const</span> FVector3d&amp; Offset);</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>};</div>
 </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
-<div class="ttc" id="aclassFCanvasUtils_html"><div class="ttname"><a href="classFCanvasUtils.html">FCanvasUtils</a></div><div class="ttdoc">Utility functions for managing canvas state and mesh operations.</div><div class="ttdef"><b>Definition</b> CanvasUtils.h:28</div></div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
+<div class="ttc" id="aclassFCanvasUtils_html"><div class="ttname"><a href="classFCanvasUtils.html">FCanvasUtils</a></div><div class="ttdoc">Utility functions for managing canvas state and mesh operations.</div><div class="ttdef"><b>Definition</b> CanvasUtils.h:23</div></div>
 <div class="ttc" id="aclassFCanvasUtils_html_a1d79cacad8690e37f4922591543adac4"><div class="ttname"><a href="classFCanvasUtils.html#a1d79cacad8690e37f4922591543adac4">FCanvasUtils::TranslateDynamicMeshBy</a></div><div class="ttdeci">static void TranslateDynamicMeshBy(UE::Geometry::FDynamicMesh3 &amp;Mesh, const FVector3d &amp;Offset)</div><div class="ttdoc">Translates a dynamic mesh by a given offset.</div><div class="ttdef"><b>Definition</b> CanvasUtils.cpp:128</div></div>
 <div class="ttc" id="aclassFCanvasUtils_html_a29259166293c672422b4445a09bbe018"><div class="ttname"><a href="classFCanvasUtils.html#a29259166293c672422b4445a09bbe018">FCanvasUtils::SaveStateForUndo</a></div><div class="ttdeci">static void SaveStateForUndo(TArray&lt; FCanvasState &gt; &amp;UndoStack, TArray&lt; FCanvasState &gt; &amp;RedoStack, const FCanvasState &amp;CurrentState)</div><div class="ttdoc">Saves the current canvas state for undo purposes.</div><div class="ttdef"><b>Definition</b> CanvasUtils.cpp:3</div></div>
 <div class="ttc" id="aclassFCanvasUtils_html_a7c60bf1fd99120c2e73745306855af0d"><div class="ttname"><a href="classFCanvasUtils.html#a7c60bf1fd99120c2e73745306855af0d">FCanvasUtils::ComputeAreaWeightedCentroid</a></div><div class="ttdeci">static FVector3d ComputeAreaWeightedCentroid(const UE::Geometry::FDynamicMesh3 &amp;Mesh)</div><div class="ttdoc">Computes the area-weighted centroid of a dynamic mesh.</div><div class="ttdef"><b>Definition</b> CanvasUtils.cpp:81</div></div>
-<div class="ttc" id="aclassFCanvasUtils_html_aae84d22bca04c1b638a65d8a1f192418"><div class="ttname"><a href="classFCanvasUtils.html#aae84d22bca04c1b638a65d8a1f192418">FCanvasUtils::RecalculateNTangents</a></div><div class="ttdeci">static void RecalculateNTangents(FInterpCurve&lt; FVector2D &gt; &amp;Curve, const TArray&lt; bool &gt; &amp;bBezierFlags)</div><div class="ttdoc">Recalculates tangents for an non-bezier/linear point curve.</div><div class="ttdef"><b>Definition</b> CanvasUtils.cpp:42</div></div>
+<div class="ttc" id="aclassFCanvasUtils_html_aae84d22bca04c1b638a65d8a1f192418"><div class="ttname"><a href="classFCanvasUtils.html#aae84d22bca04c1b638a65d8a1f192418">FCanvasUtils::RecalculateNTangents</a></div><div class="ttdeci">static void RecalculateNTangents(FInterpCurve&lt; FVector2D &gt; &amp;Curve, const TArray&lt; bool &gt; &amp;bBezierFlags)</div><div class="ttdoc">Recalculates tangents for a non-bezier/linear point curve.</div><div class="ttdef"><b>Definition</b> CanvasUtils.cpp:42</div></div>
 <div class="ttc" id="aclassFCanvasUtils_html_ab29c3062f58d7e232766b6700b8630d0"><div class="ttname"><a href="classFCanvasUtils.html#ab29c3062f58d7e232766b6700b8630d0">FCanvasUtils::CenterMeshVerticesToOrigin</a></div><div class="ttdeci">static void CenterMeshVerticesToOrigin(TArray&lt; FVector &gt; &amp;Vertices, const FVector &amp;PivotFrom)</div><div class="ttdoc">Moves mesh vertices so that the mesh is centred at a reference point.</div><div class="ttdef"><b>Definition</b> CanvasUtils.cpp:120</div></div>
 <div class="ttc" id="aclassFCanvasUtils_html_ac636b8dc281c1dc3047f24922d7ebec1"><div class="ttname"><a href="classFCanvasUtils.html#ac636b8dc281c1dc3047f24922d7ebec1">FCanvasUtils::Undo</a></div><div class="ttdeci">static bool Undo(TArray&lt; FCanvasState &gt; &amp;UndoStack, TArray&lt; FCanvasState &gt; &amp;RedoStack, FCanvasState &amp;CurrentState)</div><div class="ttdoc">Reverts the canvas to the previous state.</div><div class="ttdef"><b>Definition</b> CanvasUtils.cpp:13</div></div>
 <div class="ttc" id="aclassFCanvasUtils_html_ac6df9e20ec42d85dec821cfc608ba36a"><div class="ttname"><a href="classFCanvasUtils.html#ac6df9e20ec42d85dec821cfc608ba36a">FCanvasUtils::Redo</a></div><div class="ttdeci">static bool Redo(TArray&lt; FCanvasState &gt; &amp;UndoStack, TArray&lt; FCanvasState &gt; &amp;RedoStack, FCanvasState &amp;CurrentState)</div><div class="ttdoc">Reapplies a previously undone canvas state.</div><div class="ttdef"><b>Definition</b> CanvasUtils.cpp:27</div></div>
@@ -159,7 +162,7 @@ $(document).ready(function(){initNavTree('CanvasUtils_8h_source.html',''); initR
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b4eaef40a1fe20bedafe9e8e719ce66.html">Plugins</a></li><li class="navelem"><a class="el" href="dir_e73a24b9f56b67762402fc59bf305c32.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_00130aff64f0cd43764efd6f84b16d7b.html">Source</a></li><li class="navelem"><a class="el" href="dir_8aeeb0e0a1a8ea6a84d44b7114371350.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_3786820cdedd5409c11f18a4e1deb575.html">Public</a></li><li class="navelem"><a class="el" href="dir_727f76c6ea6965b7f2dd168a109f7adb.html">Canvas</a></li><li class="navelem"><a class="el" href="CanvasUtils_8h.html">CanvasUtils.h</a></li>
+    <li class="navelem"><a class="el" href="dir_0b4eaef40a1fe20bedafe9e8e719ce66.html">Plugins</a></li><li class="navelem"><a class="el" href="dir_e73a24b9f56b67762402fc59bf305c32.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_00130aff64f0cd43764efd6f84b16d7b.html">Source</a></li><li class="navelem"><a class="el" href="dir_8aeeb0e0a1a8ea6a84d44b7114371350.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_3786820cdedd5409c11f18a4e1deb575.html">Public</a></li><li class="navelem"><a class="el" href="dir_727f76c6ea6965b7f2dd168a109f7adb.html">Canvas</a></li><li class="navelem"><b>CanvasUtils.h</b></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>

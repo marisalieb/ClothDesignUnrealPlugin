@@ -16,6 +16,6 @@ var searchData=
   ['bseparatetangents_13',['bSeparateTangents',['../classSClothDesignCanvas.html#a1431752aa9a9e3e2eeb0bf10c22b446d',1,'SClothDesignCanvas']]],
   ['bstarttarget_14',['BStartTarget',['../structFCanvasState.html#afe3c687a0142c9d5008fc8f03e90c6ee',1,'FCanvasState']]],
   ['busebezier_15',['bUseBezier',['../structFCurvePointData.html#a8cdcaed368d3da0f172fbe7c680d257d',1,'FCurvePointData']]],
-  ['busebezierperpoint_16',['busebezierperpoint',['../structFLoadedShapeData.html#af4ee0017673f496b9c936d72d90584a7',1,'FLoadedShapeData::bUseBezierPerPoint'],['../structFCanvasState.html#aedef968ba4d1a88aaef25cffddc4bbed',1,'FCanvasState::bUseBezierPerPoint'],['../classSClothDesignCanvas.html#ac5b631ed031a8da7216180f5b169c8db',1,'SClothDesignCanvas::bUseBezierPerPoint']]],
+  ['busebezierperpoint_16',['busebezierperpoint',['../structFCanvasState.html#aedef968ba4d1a88aaef25cffddc4bbed',1,'FCanvasState::bUseBezierPerPoint'],['../classSClothDesignCanvas.html#ac5b631ed031a8da7216180f5b169c8db',1,'SClothDesignCanvas::bUseBezierPerPoint'],['../structFLoadedShapeData.html#af4ee0017673f496b9c936d72d90584a7',1,'FLoadedShapeData::bUseBezierPerPoint']]],
   ['busebezierpoints_17',['bUseBezierPoints',['../classSClothDesignCanvas.html#ac3e8151dc25b607050b155929fd77362',1,'SClothDesignCanvas']]]
 ];

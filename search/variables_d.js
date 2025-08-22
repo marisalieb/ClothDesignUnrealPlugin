@@ -2,8 +2,8 @@ var searchData=
 [
   ['screenpointsa_0',['ScreenPointsA',['../structFPatternSewingConstraint.html#a9862bcedec7b04ba9af7e1997c22554b',1,'FPatternSewingConstraint']]],
   ['screenpointsb_1',['ScreenPointsB',['../structFPatternSewingConstraint.html#a7b7d6829ef90c024e2fc4edee632dfc9',1,'FPatternSewingConstraint']]],
-  ['seamclickstate_2',['seamclickstate',['../classFCanvasSewing.html#a9aec7b4f651286b755fdc361cab74838',1,'FCanvasSewing::SeamClickState'],['../structFCanvasState.html#a34e869cc9128fa86afb1ab10fd24d2f7',1,'FCanvasState::SeamClickState']]],
-  ['seamdefinitions_3',['seamdefinitions',['../classFCanvasSewing.html#a19e159801fb8ad0ec040eeee89c317e5',1,'FCanvasSewing::SeamDefinitions'],['../structFCanvasState.html#a592c2997a46cb59d26a63256ec1dca1b',1,'FCanvasState::SeamDefinitions']]],
+  ['seamclickstate_2',['seamclickstate',['../structFCanvasState.html#a34e869cc9128fa86afb1ab10fd24d2f7',1,'FCanvasState::SeamClickState'],['../classFPatternSewing.html#abe9bbab326b9b01aa065835c6ec492fb',1,'FPatternSewing::SeamClickState']]],
+  ['seamdefinitions_3',['seamdefinitions',['../structFCanvasState.html#a592c2997a46cb59d26a63256ec1dca1b',1,'FCanvasState::SeamDefinitions'],['../classFPatternSewing.html#abc1b0c67881bd128b691856d6f5f709d',1,'FPatternSewing::SeamDefinitions']]],
   ['seampreviewpoints_4',['SeamPreviewPoints',['../structFCanvasState.html#a29b17398df1f74a575893f3b3d5e1100',1,'FCanvasState']]],
   ['selectedpointindex_5',['selectedpointindex',['../structFCanvasState.html#ad38bc0257d5870fca04956229bdc40c2',1,'FCanvasState::SelectedPointIndex'],['../classSClothDesignCanvas.html#ac214b0a982ee6f520981ddaa86461704',1,'SClothDesignCanvas::SelectedPointIndex']]],
   ['selectedpreset_6',['SelectedPreset',['../structFClothSimSettings.html#a3b753852490d269a5040449a3569c302',1,'FClothSimSettings']]],
@@ -14,6 +14,6 @@ var searchData=
   ['shapea_11',['ShapeA',['../structFSeamDefinition.html#ad153d464d325e24152dc8f1c92f621ca',1,'FSeamDefinition']]],
   ['shapeb_12',['ShapeB',['../structFSeamDefinition.html#a7574f77efe6cc023e6c401c4b9bafd4c',1,'FSeamDefinition']]],
   ['shapeindex_13',['ShapeIndex',['../structFClickTarget.html#adca2cd2551fa292f14168a442da6d4b8',1,'FClickTarget']]],
-  ['spawnedpatternactors_14',['SpawnedPatternActors',['../classFCanvasSewing.html#a39403e55ba3f6d80933d41545292d121',1,'FCanvasSewing']]],
+  ['spawnedpatternactors_14',['SpawnedPatternActors',['../classFPatternSewing.html#a24a3ca22d3cbb0abe2444b42a673b3a9',1,'FPatternSewing']]],
   ['start_15',['Start',['../structFEdgeIndices.html#aea0d3d085d810002cf5fec3c9d181af7',1,'FEdgeIndices']]]
 ];

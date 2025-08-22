@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Master&#39;s Project (MP): Plugins/ClothDesign/Source/ClothDesign/Public/Canvas/CanvasPatternMerge.h Source File</title>
+<title>Master&#39;s Project (MP): Plugins/ClothDesign/Source/ClothDesign/Public/PatternCreation/PatternMerge.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -70,7 +70,7 @@ $(document).ready(function() { init_codefold(0); });
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('CanvasPatternMerge_8h_source.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('PatternMerge_8h_source.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -96,12 +96,12 @@ $(document).ready(function(){initNavTree('CanvasPatternMerge_8h_source.html','')
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">CanvasPatternMerge.h</div></div>
+  <div class="headertitle"><div class="title">PatternMerge.h</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#ifndef FCanvasPatternMerge_H</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#define FCanvasPatternMerge_H</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#ifndef FPatternMerge_H</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#define FPatternMerge_H</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;CoreMinimal.h&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;Containers/Array.h&quot;</span></div>
@@ -114,28 +114,28 @@ $(document).ready(function(){initNavTree('CanvasPatternMerge_8h_source.html','')
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment"> * See Chapter 4.8.1 for detailed explanations.</span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">// Forward declarations of classes used by FCanvasPatternMerge</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">// Forward declarations of classes used by FPatternMerge</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">class </span><a class="code hl_class" href="classAPatternMesh.html">APatternMesh</a>; </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">struct </span><a class="code hl_struct" href="structFPatternSewingConstraint.html">FPatternSewingConstraint</a>; </div>
 <div class="foldopen" id="foldopen00029" data-start="{" data-end="};">
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="classFCanvasPatternMerge.html">   29</a></span><span class="keyword">class </span><a class="code hl_class" href="classFCanvasPatternMerge.html">FCanvasPatternMerge</a></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="classFPatternMerge.html">   29</a></span><span class="keyword">class </span><a class="code hl_class" href="classFPatternMerge.html">FPatternMerge</a></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>{</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <a class="code hl_function" href="classFCanvasPatternMerge.html#a097537ababb0cd6b484770240ac043bc">FCanvasPatternMerge</a>(</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <a class="code hl_function" href="classFPatternMerge.html#a895d9710eafc37261948084af4bdaece">FPatternMerge</a>(</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        TArray&lt;TWeakObjectPtr&lt;APatternMesh&gt;&gt;&amp; InSpawnedActors,</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        TArray&lt;FPatternSewingConstraint&gt;&amp; InAllSeams);</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classFCanvasPatternMerge.html#ae006355b79ab873a330c8b6a662dac2a">MergeSewnGroups</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classFPatternMerge.html#a7e046efe380fc01413781a4041216c27">MergeSewnGroups</a>() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
 <div class="foldopen" id="foldopen00061" data-start="{" data-end="}">
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="classFCanvasPatternMerge.html#a097537ababb0cd6b484770240ac043bc">   61</a></span>    <a class="code hl_function" href="classFCanvasPatternMerge.html#a097537ababb0cd6b484770240ac043bc">FCanvasPatternMerge</a>()</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        : SpawnedActorsRef(<a class="code hl_variable" href="classFCanvasPatternMerge.html#a2ad391b87fecbf9f006265ccdfcf2fa2">TestActors</a>), AllSeamsRef(<a class="code hl_variable" href="classFCanvasPatternMerge.html#ae2217c083500232acdf95ace65e27681">TestSeams</a>) {}</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="classFPatternMerge.html#a895d9710eafc37261948084af4bdaece">   61</a></span>    <a class="code hl_function" href="classFPatternMerge.html#a895d9710eafc37261948084af4bdaece">FPatternMerge</a>()</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        : SpawnedActorsRef(<a class="code hl_variable" href="classFPatternMerge.html#a9ea4531a1efa9443c47ba858d1a93fc9">TestActors</a>), AllSeamsRef(<a class="code hl_variable" href="classFPatternMerge.html#ab2a62600a88bb1ea8a3b22cd35fb38b0">TestSeams</a>) {}</div>
 </div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="classFCanvasPatternMerge.html#a2ad391b87fecbf9f006265ccdfcf2fa2">   65</a></span>    <span class="keyword">static</span> TArray&lt;TWeakObjectPtr&lt;APatternMesh&gt;&gt; <a class="code hl_variable" href="classFCanvasPatternMerge.html#a2ad391b87fecbf9f006265ccdfcf2fa2">TestActors</a>;</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="classFPatternMerge.html#a9ea4531a1efa9443c47ba858d1a93fc9">   65</a></span>    <span class="keyword">static</span> TArray&lt;TWeakObjectPtr&lt;APatternMesh&gt;&gt; <a class="code hl_variable" href="classFPatternMerge.html#a9ea4531a1efa9443c47ba858d1a93fc9">TestActors</a>;</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="classFCanvasPatternMerge.html#ae2217c083500232acdf95ace65e27681">   68</a></span>    <span class="keyword">static</span> TArray&lt;FPatternSewingConstraint&gt; <a class="code hl_variable" href="classFCanvasPatternMerge.html#ae2217c083500232acdf95ace65e27681">TestSeams</a>;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="classFPatternMerge.html#ab2a62600a88bb1ea8a3b22cd35fb38b0">   68</a></span>    <span class="keyword">static</span> TArray&lt;FPatternSewingConstraint&gt; <a class="code hl_variable" href="classFPatternMerge.html#ab2a62600a88bb1ea8a3b22cd35fb38b0">TestSeams</a>;</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
@@ -181,26 +181,26 @@ $(document).ready(function(){initNavTree('CanvasPatternMerge_8h_source.html','')
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        UDynamicMesh* DynMesh,</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        <span class="keyword">const</span> FString&amp; AssetPathAndName);</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno"><a class="line" href="classFCanvasPatternMerge.html#a43a430b9ac9f72b954d9ff1f27c63e58">  169</a></span>    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code hl_friend" href="classFCanvasPatternMerge.html#a43a430b9ac9f72b954d9ff1f27c63e58">FCanvasPatternMergeTests</a>;</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno"><a class="line" href="classFPatternMerge.html#a4626d20eddc05d540e09912c2291bc59">  169</a></span>    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code hl_friend" href="classFPatternMerge.html#a4626d20eddc05d540e09912c2291bc59">FPatternMergeTests</a>;</div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>};</div>
 </div>
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclassAPatternMesh_html"><div class="ttname"><a href="classAPatternMesh.html">APatternMesh</a></div><div class="ttdoc">Represents a single cloth pattern mesh actor in the scene.</div><div class="ttdef"><b>Definition</b> PatternMesh.h:30</div></div>
-<div class="ttc" id="aclassFCanvasPatternMerge_html"><div class="ttname"><a href="classFCanvasPatternMerge.html">FCanvasPatternMerge</a></div><div class="ttdoc">Handles merging of sewn pattern mesh groups in the canvas.</div><div class="ttdef"><b>Definition</b> CanvasPatternMerge.h:30</div></div>
-<div class="ttc" id="aclassFCanvasPatternMerge_html_a097537ababb0cd6b484770240ac043bc"><div class="ttname"><a href="classFCanvasPatternMerge.html#a097537ababb0cd6b484770240ac043bc">FCanvasPatternMerge::FCanvasPatternMerge</a></div><div class="ttdeci">FCanvasPatternMerge()</div><div class="ttdoc">Test-only constructor that binds to static test arrays.</div><div class="ttdef"><b>Definition</b> CanvasPatternMerge.h:61</div></div>
-<div class="ttc" id="aclassFCanvasPatternMerge_html_a2ad391b87fecbf9f006265ccdfcf2fa2"><div class="ttname"><a href="classFCanvasPatternMerge.html#a2ad391b87fecbf9f006265ccdfcf2fa2">FCanvasPatternMerge::TestActors</a></div><div class="ttdeci">static TArray&lt; TWeakObjectPtr&lt; APatternMesh &gt; &gt; TestActors</div><div class="ttdoc">Static array used for test-only actor references.</div><div class="ttdef"><b>Definition</b> CanvasPatternMerge.h:65</div></div>
-<div class="ttc" id="aclassFCanvasPatternMerge_html_a43a430b9ac9f72b954d9ff1f27c63e58"><div class="ttname"><a href="classFCanvasPatternMerge.html#a43a430b9ac9f72b954d9ff1f27c63e58">FCanvasPatternMerge::FCanvasPatternMergeTests</a></div><div class="ttdeci">friend class FCanvasPatternMergeTests</div><div class="ttdoc">Grants test class access to private members.</div><div class="ttdef"><b>Definition</b> CanvasPatternMerge.h:169</div></div>
-<div class="ttc" id="aclassFCanvasPatternMerge_html_ae006355b79ab873a330c8b6a662dac2a"><div class="ttname"><a href="classFCanvasPatternMerge.html#ae006355b79ab873a330c8b6a662dac2a">FCanvasPatternMerge::MergeSewnGroups</a></div><div class="ttdeci">void MergeSewnGroups() const</div><div class="ttdoc">Top-level function to merge sewn groups of pattern meshes.</div><div class="ttdef"><b>Definition</b> CanvasPatternMerge.cpp:295</div></div>
-<div class="ttc" id="aclassFCanvasPatternMerge_html_ae2217c083500232acdf95ace65e27681"><div class="ttname"><a href="classFCanvasPatternMerge.html#ae2217c083500232acdf95ace65e27681">FCanvasPatternMerge::TestSeams</a></div><div class="ttdeci">static TArray&lt; FPatternSewingConstraint &gt; TestSeams</div><div class="ttdoc">Static array used for test-only seam constraints.</div><div class="ttdef"><b>Definition</b> CanvasPatternMerge.h:68</div></div>
-<div class="ttc" id="astructFPatternSewingConstraint_html"><div class="ttname"><a href="structFPatternSewingConstraint.html">FPatternSewingConstraint</a></div><div class="ttdoc">Represents a sewing constraint between two procedural mesh vertices in the cloth pattern editor.</div><div class="ttdef"><b>Definition</b> PatternSewingConstraint.h:25</div></div>
+<div class="ttc" id="aclassAPatternMesh_html"><div class="ttname"><a href="classAPatternMesh.html">APatternMesh</a></div><div class="ttdoc">Represents a procedural mesh actor used for cloth simulation or pattern design.</div><div class="ttdef"><b>Definition</b> PatternMesh.h:29</div></div>
+<div class="ttc" id="aclassFPatternMerge_html"><div class="ttname"><a href="classFPatternMerge.html">FPatternMerge</a></div><div class="ttdoc">Handles merging of sewn pattern mesh groups in the canvas.</div><div class="ttdef"><b>Definition</b> PatternMerge.h:30</div></div>
+<div class="ttc" id="aclassFPatternMerge_html_a4626d20eddc05d540e09912c2291bc59"><div class="ttname"><a href="classFPatternMerge.html#a4626d20eddc05d540e09912c2291bc59">FPatternMerge::FPatternMergeTests</a></div><div class="ttdeci">friend class FPatternMergeTests</div><div class="ttdoc">Grants test class access to private members.</div><div class="ttdef"><b>Definition</b> PatternMerge.h:169</div></div>
+<div class="ttc" id="aclassFPatternMerge_html_a7e046efe380fc01413781a4041216c27"><div class="ttname"><a href="classFPatternMerge.html#a7e046efe380fc01413781a4041216c27">FPatternMerge::MergeSewnGroups</a></div><div class="ttdeci">void MergeSewnGroups() const</div><div class="ttdoc">Top-level function to merge sewn groups of pattern meshes.</div><div class="ttdef"><b>Definition</b> PatternMerge.cpp:295</div></div>
+<div class="ttc" id="aclassFPatternMerge_html_a895d9710eafc37261948084af4bdaece"><div class="ttname"><a href="classFPatternMerge.html#a895d9710eafc37261948084af4bdaece">FPatternMerge::FPatternMerge</a></div><div class="ttdeci">FPatternMerge()</div><div class="ttdoc">Test-only constructor that binds to static test arrays.</div><div class="ttdef"><b>Definition</b> PatternMerge.h:61</div></div>
+<div class="ttc" id="aclassFPatternMerge_html_a9ea4531a1efa9443c47ba858d1a93fc9"><div class="ttname"><a href="classFPatternMerge.html#a9ea4531a1efa9443c47ba858d1a93fc9">FPatternMerge::TestActors</a></div><div class="ttdeci">static TArray&lt; TWeakObjectPtr&lt; APatternMesh &gt; &gt; TestActors</div><div class="ttdoc">Static array used for test-only actor references.</div><div class="ttdef"><b>Definition</b> PatternMerge.h:65</div></div>
+<div class="ttc" id="aclassFPatternMerge_html_ab2a62600a88bb1ea8a3b22cd35fb38b0"><div class="ttname"><a href="classFPatternMerge.html#ab2a62600a88bb1ea8a3b22cd35fb38b0">FPatternMerge::TestSeams</a></div><div class="ttdeci">static TArray&lt; FPatternSewingConstraint &gt; TestSeams</div><div class="ttdoc">Static array used for test-only seam constraints.</div><div class="ttdef"><b>Definition</b> PatternMerge.h:68</div></div>
+<div class="ttc" id="astructFPatternSewingConstraint_html"><div class="ttname"><a href="structFPatternSewingConstraint.html">FPatternSewingConstraint</a></div><div class="ttdoc">Represents a sewing constraint between two procedural mesh components.</div><div class="ttdef"><b>Definition</b> PatternSewingConstraint.h:26</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_0b4eaef40a1fe20bedafe9e8e719ce66.html">Plugins</a></li><li class="navelem"><a class="el" href="dir_e73a24b9f56b67762402fc59bf305c32.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_00130aff64f0cd43764efd6f84b16d7b.html">Source</a></li><li class="navelem"><a class="el" href="dir_8aeeb0e0a1a8ea6a84d44b7114371350.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_3786820cdedd5409c11f18a4e1deb575.html">Public</a></li><li class="navelem"><a class="el" href="dir_727f76c6ea6965b7f2dd168a109f7adb.html">Canvas</a></li><li class="navelem"><b>CanvasPatternMerge.h</b></li>
+    <li class="navelem"><a class="el" href="dir_0b4eaef40a1fe20bedafe9e8e719ce66.html">Plugins</a></li><li class="navelem"><a class="el" href="dir_e73a24b9f56b67762402fc59bf305c32.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_00130aff64f0cd43764efd6f84b16d7b.html">Source</a></li><li class="navelem"><a class="el" href="dir_8aeeb0e0a1a8ea6a84d44b7114371350.html">ClothDesign</a></li><li class="navelem"><a class="el" href="dir_3786820cdedd5409c11f18a4e1deb575.html">Public</a></li><li class="navelem"><a class="el" href="dir_5f34a3d40f54d117c7843da080cb9906.html">PatternCreation</a></li><li class="navelem"><b>PatternMerge.h</b></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>

@@ -99,15 +99,15 @@ $(document).ready(function(){initNavTree('structFPresetItem.html',''); initResiz
 </div><!--header-->
 <div class="contents">
 
-<p>Represents a single item in the cloth preset dropdown or UI.  
+<p>Represents a cloth preset item with its type and display name.  
  <a href="structFPresetItem.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ClothSimSettings_8h_source.html">ClothSimSettings.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a44d9bee1beda497f4feff9b2f037d717" id="r_a44d9bee1beda497f4feff9b2f037d717"><td class="memItemLeft" align="right" valign="top"><a id="a44d9bee1beda497f4feff9b2f037d717" name="a44d9bee1beda497f4feff9b2f037d717"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>FPresetItem</b> (EClothPreset InPreset, const FString &amp;InName)</td></tr>
+<tr class="memitem:a44d9bee1beda497f4feff9b2f037d717" id="r_a44d9bee1beda497f4feff9b2f037d717"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFPresetItem.html#a44d9bee1beda497f4feff9b2f037d717">FPresetItem</a> (EClothPreset InPreset, const FString &amp;InName)</td></tr>
+<tr class="memdesc:a44d9bee1beda497f4feff9b2f037d717"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an <a class="el" href="structFPresetItem.html" title="Represents a cloth preset item with its type and display name.">FPresetItem</a> with the given preset type and display name.  <br /></td></tr>
 <tr class="separator:a44d9bee1beda497f4feff9b2f037d717"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -118,8 +118,55 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ad21c7e1d412ec7487969954d382d7df8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Represents a single item in the cloth preset dropdown or UI. </p>
-</div><h2 class="groupheader">Member Data Documentation</h2>
+<div class="textblock"><p>Represents a cloth preset item with its type and display name. </p>
+<p>This struct is used to store information about a cloth preset, including its type (as an enum value) and its display name for the UI. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a44d9bee1beda497f4feff9b2f037d717" name="a44d9bee1beda497f4feff9b2f037d717"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44d9bee1beda497f4feff9b2f037d717">&#9670;&#160;</a></span>FPresetItem()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FPresetItem::FPresetItem </td>
+          <td>(</td>
+          <td class="paramtype">EClothPreset&#160;</td>
+          <td class="paramname"><em>InPreset</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FString &amp;&#160;</td>
+          <td class="paramname"><em>InName</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructs an <a class="el" href="structFPresetItem.html" title="Represents a cloth preset item with its type and display name.">FPresetItem</a> with the given preset type and display name. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">InPreset</td><td>The preset type. </td></tr>
+    <tr><td class="paramname">InName</td><td>The display name for the preset. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
 <a id="ad21c7e1d412ec7487969954d382d7df8" name="ad21c7e1d412ec7487969954d382d7df8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad21c7e1d412ec7487969954d382d7df8">&#9670;&#160;</a></span>DisplayName</h2>
 

@@ -99,7 +99,7 @@ $(document).ready(function(){initNavTree('classAPatternMesh.html',''); initResiz
 </div><!--header-->
 <div class="contents">
 
-<p>Represents a single cloth pattern mesh actor in the scene.  
+<p>Represents a procedural mesh actor used for cloth simulation or pattern design.  
  <a href="classAPatternMesh.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="PatternMesh_8h_source.html">PatternMesh.h</a>&gt;</code></p>
@@ -113,44 +113,42 @@ Inheritance diagram for APatternMesh:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a263dbe2bd18418ffc1d883cb68f0ed13" id="r_a263dbe2bd18418ffc1d883cb68f0ed13"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPatternMesh.html#a263dbe2bd18418ffc1d883cb68f0ed13">APatternMesh</a> ()</td></tr>
+<tr class="memdesc:a263dbe2bd18418ffc1d883cb68f0ed13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor for <a class="el" href="classAPatternMesh.html" title="Represents a procedural mesh actor used for cloth simulation or pattern design.">APatternMesh</a>.  <br /></td></tr>
 <tr class="separator:a263dbe2bd18418ffc1d883cb68f0ed13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac60fa7863a70a4be1328b6fb3d09095c" id="r_ac60fa7863a70a4be1328b6fb3d09095c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPatternMesh.html#ac60fa7863a70a4be1328b6fb3d09095c">SetPolyIndexToVID</a> (const TArray&lt; int32 &gt; &amp;InMapping)</td></tr>
-<tr class="memdesc:ac60fa7863a70a4be1328b6fb3d09095c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the mapping from 2D polygon indices to 3D vertex IDs.  <br /></td></tr>
+<tr class="memdesc:ac60fa7863a70a4be1328b6fb3d09095c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the mapping from polygon indices to vertex IDs.  <br /></td></tr>
 <tr class="separator:ac60fa7863a70a4be1328b6fb3d09095c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafe158b11d5f79d3df42f44ffe23f28a" id="r_aafe158b11d5f79d3df42f44ffe23f28a"><td class="memItemLeft" align="right" valign="top">const TArray&lt; int32 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPatternMesh.html#aafe158b11d5f79d3df42f44ffe23f28a">GetPolyIndexToVID</a> () const</td></tr>
-<tr class="memdesc:aafe158b11d5f79d3df42f44ffe23f28a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current mapping from 2D polygon indices to 3D vertex IDs.  <br /></td></tr>
+<tr class="memdesc:aafe158b11d5f79d3df42f44ffe23f28a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the mapping from polygon indices to vertex IDs.  <br /></td></tr>
 <tr class="separator:aafe158b11d5f79d3df42f44ffe23f28a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab42abb646b2fb396e55c41d384a01238" id="r_ab42abb646b2fb396e55c41d384a01238"><td class="memItemLeft" align="right" valign="top"><a id="ab42abb646b2fb396e55c41d384a01238" name="ab42abb646b2fb396e55c41d384a01238"></a>
-UProceduralMeshComponent *&#160;</td><td class="memItemRight" valign="bottom"><b>MeshComponent</b></td></tr>
-<tr class="memdesc:ab42abb646b2fb396e55c41d384a01238"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main procedural mesh component for this pattern mesh. Exposed as read-only in Blueprints for visualization and runtime operations. <br /></td></tr>
+<tr class="memitem:ab42abb646b2fb396e55c41d384a01238" id="r_ab42abb646b2fb396e55c41d384a01238"><td class="memItemLeft" align="right" valign="top">UProceduralMeshComponent *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPatternMesh.html#ab42abb646b2fb396e55c41d384a01238">MeshComponent</a></td></tr>
+<tr class="memdesc:ab42abb646b2fb396e55c41d384a01238"><td class="mdescLeft">&#160;</td><td class="mdescRight">Procedural mesh component representing the cloth or pattern mesh.  <br /></td></tr>
 <tr class="separator:ab42abb646b2fb396e55c41d384a01238"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78493025a3e76de47f32fdece8fb89c7" id="r_a78493025a3e76de47f32fdece8fb89c7"><td class="memItemLeft" align="right" valign="top"><a id="a78493025a3e76de47f32fdece8fb89c7" name="a78493025a3e76de47f32fdece8fb89c7"></a>
 TArray&lt; int32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>LastSeamVertexIDs</b></td></tr>
-<tr class="memdesc:a78493025a3e76de47f32fdece8fb89c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the vertex IDs used in the last sewing operation. Useful for reconstructing seams or reapplying constraints. <br /></td></tr>
+<tr class="memdesc:a78493025a3e76de47f32fdece8fb89c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the vertex IDs of the last seam created on the mesh. <br /></td></tr>
 <tr class="separator:a78493025a3e76de47f32fdece8fb89c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2165e3559f3f0bdf2a96f06872cfa857" id="r_a2165e3559f3f0bdf2a96f06872cfa857"><td class="memItemLeft" align="right" valign="top"><a id="a2165e3559f3f0bdf2a96f06872cfa857" name="a2165e3559f3f0bdf2a96f06872cfa857"></a>
-TArray&lt; FVector2f &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>BoundarySamplePoints2D</b></td></tr>
-<tr class="memdesc:a2165e3559f3f0bdf2a96f06872cfa857"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sampled points along the 2D boundary of the cloth pattern. The order of points is preserved to maintain polygon topology. <br /></td></tr>
+<tr class="memitem:a2165e3559f3f0bdf2a96f06872cfa857" id="r_a2165e3559f3f0bdf2a96f06872cfa857"><td class="memItemLeft" align="right" valign="top">TArray&lt; FVector2f &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPatternMesh.html#a2165e3559f3f0bdf2a96f06872cfa857">BoundarySamplePoints2D</a></td></tr>
+<tr class="memdesc:a2165e3559f3f0bdf2a96f06872cfa857"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores 2D sample points along the boundary of the mesh.  <br /></td></tr>
 <tr class="separator:a2165e3559f3f0bdf2a96f06872cfa857"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6e2476732e90c20060e22061d073e3e" id="r_ad6e2476732e90c20060e22061d073e3e"><td class="memItemLeft" align="right" valign="top"><a id="ad6e2476732e90c20060e22061d073e3e" name="ad6e2476732e90c20060e22061d073e3e"></a>
 TArray&lt; int32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>BoundarySampleVertexIDs</b></td></tr>
-<tr class="memdesc:ad6e2476732e90c20060e22061d073e3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Corresponding vertex IDs in the dynamic 3D mesh for each sampled 2D boundary point. <br /></td></tr>
+<tr class="memdesc:ad6e2476732e90c20060e22061d073e3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the vertex IDs corresponding to the boundary sample points. <br /></td></tr>
 <tr class="separator:ad6e2476732e90c20060e22061d073e3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae65237a5e9e65f063c7bd33d210fd39" id="r_aae65237a5e9e65f063c7bd33d210fd39"><td class="memItemLeft" align="right" valign="top"><a id="aae65237a5e9e65f063c7bd33d210fd39" name="aae65237a5e9e65f063c7bd33d210fd39"></a>
 TArray&lt; FVector &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>BoundarySampleWorldPositions</b></td></tr>
-<tr class="memdesc:aae65237a5e9e65f063c7bd33d210fd39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cached world-space positions of the boundary vertices. Speeds up alignment and visualization without recalculating transforms. <br /></td></tr>
+<tr class="memdesc:aae65237a5e9e65f063c7bd33d210fd39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the world positions of the boundary sample points. <br /></td></tr>
 <tr class="separator:aae65237a5e9e65f063c7bd33d210fd39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a263ad973e5d466c6228df661d3309b03" id="r_a263ad973e5d466c6228df661d3309b03"><td class="memItemLeft" align="right" valign="top"><a id="a263ad973e5d466c6228df661d3309b03" name="a263ad973e5d466c6228df661d3309b03"></a>
-UE::Geometry::FDynamicMesh3&#160;</td><td class="memItemRight" valign="bottom"><b>DynamicMesh</b></td></tr>
-<tr class="memdesc:a263ad973e5d466c6228df661d3309b03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Full dynamic mesh data associated with this pattern. Maintained for alignment, sewing, and vertex queries at runtime. <br /></td></tr>
+<tr class="memitem:a263ad973e5d466c6228df661d3309b03" id="r_a263ad973e5d466c6228df661d3309b03"><td class="memItemLeft" align="right" valign="top">UE::Geometry::FDynamicMesh3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPatternMesh.html#a263ad973e5d466c6228df661d3309b03">DynamicMesh</a></td></tr>
+<tr class="memdesc:a263ad973e5d466c6228df661d3309b03"><td class="mdescLeft">&#160;</td><td class="mdescRight">The dynamic mesh data structure used for mesh operations.  <br /></td></tr>
 <tr class="separator:a263ad973e5d466c6228df661d3309b03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Represents a single cloth pattern mesh actor in the scene. </p>
-<p>This actor encapsulates a procedural mesh component along with metadata for sewing, boundary sampling, and vertex alignment. It maintains both 2D pattern information and corresponding 3D mesh data, allowing seamless interaction between the design canvas and the runtime mesh. </p>
+<div class="textblock"><p>Represents a procedural mesh actor used for cloth simulation or pattern design. </p>
+<p>This class encapsulates a procedural mesh component and provides functionality for managing boundary samples, seam vertices, and dynamic mesh data. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a263dbe2bd18418ffc1d883cb68f0ed13" name="a263dbe2bd18418ffc1d883cb68f0ed13"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a263dbe2bd18418ffc1d883cb68f0ed13">&#9670;&#160;</a></span>APatternMesh()</h2>
@@ -166,7 +164,9 @@ UE::Geometry::FDynamicMesh3&#160;</td><td class="memItemRight" valign="bottom"><
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Default constructor. Initializes internal state and components. </p>
+
+<p>Default constructor for <a class="el" href="classAPatternMesh.html" title="Represents a procedural mesh actor used for cloth simulation or pattern design.">APatternMesh</a>. </p>
+<p>Initializes the procedural mesh component and other member variables. </p>
 
 </div>
 </div>
@@ -194,8 +194,8 @@ UE::Geometry::FDynamicMesh3&#160;</td><td class="memItemRight" valign="bottom"><
 </table>
 </div><div class="memdoc">
 
-<p>Get the current mapping from 2D polygon indices to 3D vertex IDs. </p>
-<dl class="section return"><dt>Returns</dt><dd>Reference to the internal PolyIndexToVID array. </dd></dl>
+<p>Retrieves the mapping from polygon indices to vertex IDs. </p>
+<dl class="section return"><dt>Returns</dt><dd>A reference to the mapping array. </dd></dl>
 
 </div>
 </div>
@@ -223,13 +223,65 @@ UE::Geometry::FDynamicMesh3&#160;</td><td class="memItemRight" valign="bottom"><
 </table>
 </div><div class="memdoc">
 
-<p>Set the mapping from 2D polygon indices to 3D vertex IDs. </p>
+<p>Sets the mapping from polygon indices to vertex IDs. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">InMapping</td><td>Array mapping polygon index to vertex ID. </td></tr>
+    <tr><td class="paramname">InMapping</td><td>The mapping array to set. </td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a2165e3559f3f0bdf2a96f06872cfa857" name="a2165e3559f3f0bdf2a96f06872cfa857"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2165e3559f3f0bdf2a96f06872cfa857">&#9670;&#160;</a></span>BoundarySamplePoints2D</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TArray&lt;FVector2f&gt; APatternMesh::BoundarySamplePoints2D</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stores 2D sample points along the boundary of the mesh. </p>
+<p>These points are used for operations such as boundary processing or visualization. </p>
+
+</div>
+</div>
+<a id="a263ad973e5d466c6228df661d3309b03" name="a263ad973e5d466c6228df661d3309b03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a263ad973e5d466c6228df661d3309b03">&#9670;&#160;</a></span>DynamicMesh</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">UE::Geometry::FDynamicMesh3 APatternMesh::DynamicMesh</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The dynamic mesh data structure used for mesh operations. </p>
+<p>This is part of the Unreal Engine Geometry Framework. </p>
+
+</div>
+</div>
+<a id="ab42abb646b2fb396e55c41d384a01238" name="ab42abb646b2fb396e55c41d384a01238"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab42abb646b2fb396e55c41d384a01238">&#9670;&#160;</a></span>MeshComponent</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">UProceduralMeshComponent* APatternMesh::MeshComponent</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Procedural mesh component representing the cloth or pattern mesh. </p>
+<p>This component is used to render and manipulate the mesh in the scene. </p>
 
 </div>
 </div>

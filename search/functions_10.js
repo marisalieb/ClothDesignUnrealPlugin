@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['validatemeshesfortargets_0',['ValidateMeshesForTargets',['../classFCanvasSewing.html#a79897ee7d4e30a89a197e2f495f0aa2c',1,'FCanvasSewing']]],
-  ['validatemeshforshape_1',['ValidateMeshForShape',['../classFCanvasSewing.html#a015c1a56032eab1f89a524bd1e1f8845',1,'FCanvasSewing']]]
+  ['validatemeshesfortargets_0',['ValidateMeshesForTargets',['../classFPatternSewing.html#a8c4ef52c76511933e46cc67d6214384b',1,'FPatternSewing']]],
+  ['validatemeshforshape_1',['ValidateMeshForShape',['../classFPatternSewing.html#a5acece760c36d5179907a769e95093a6',1,'FPatternSewing']]]
 ];

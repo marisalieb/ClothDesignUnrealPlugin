@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Master&#39;s Project (MP): FCanvasSewing Class Reference</title>
+<title>Master&#39;s Project (MP): FPatternSewing Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -65,7 +65,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('classFCanvasSewing.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('classFPatternSewing.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -95,84 +95,84 @@ $(document).ready(function(){initNavTree('classFCanvasSewing.html',''); initResi
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
-<a href="classFCanvasSewing-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">FCanvasSewing Class Reference</div></div>
+<a href="classFPatternSewing-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">FPatternSewing Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Handles seam definition and alignment between canvas shapes.  
- <a href="classFCanvasSewing.html#details">More...</a></p>
+ <a href="classFPatternSewing.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="CanvasSewing_8h_source.html">CanvasSewing.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="PatternSewing_8h_source.html">PatternSewing.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae4de1cf2bd225ac98d3e106909fd36b4" id="r_ae4de1cf2bd225ac98d3e106909fd36b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#ae4de1cf2bd225ac98d3e106909fd36b4">FinaliseSeamDefinitionByTargets</a> (const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;AStart, const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;AEnd, const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;BStart, const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;BEnd, const FInterpCurve&lt; FVector2D &gt; &amp;CurvePoints, const TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt; &amp;CompletedShapes, const TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; &amp;<a class="el" href="classFCanvasSewing.html#a39403e55ba3f6d80933d41545292d121">SpawnedPatternActors</a>)</td></tr>
-<tr class="memdesc:ae4de1cf2bd225ac98d3e106909fd36b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalises a seam definition using the given targets.  <br /></td></tr>
-<tr class="separator:ae4de1cf2bd225ac98d3e106909fd36b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68e5809fbf2b51f6d139bbbf8c50bb97" id="r_a68e5809fbf2b51f6d139bbbf8c50bb97"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a68e5809fbf2b51f6d139bbbf8c50bb97">BuildAndAlignAllSeams</a> ()</td></tr>
-<tr class="memdesc:a68e5809fbf2b51f6d139bbbf8c50bb97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds and aligns all seams defined on the canvas.  <br /></td></tr>
-<tr class="separator:a68e5809fbf2b51f6d139bbbf8c50bb97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ec6499d7e75c8d78fdb3c0999dffce6" id="r_a9ec6499d7e75c8d78fdb3c0999dffce6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a9ec6499d7e75c8d78fdb3c0999dffce6">ClearAllSeams</a> ()</td></tr>
-<tr class="memdesc:a9ec6499d7e75c8d78fdb3c0999dffce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all seams from the canvas.  <br /></td></tr>
-<tr class="separator:a9ec6499d7e75c8d78fdb3c0999dffce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c53308855442ce7ba0e592764fb5cb6" id="r_a4c53308855442ce7ba0e592764fb5cb6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a4c53308855442ce7ba0e592764fb5cb6">MergeSewnPatternPieces</a> ()</td></tr>
-<tr class="memdesc:a4c53308855442ce7ba0e592764fb5cb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Merges the pattern meshes based on sewn seams.  <br /></td></tr>
-<tr class="separator:a4c53308855442ce7ba0e592764fb5cb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7d241ee73dd0ab92202acb9d06a92b7" id="r_af7d241ee73dd0ab92202acb9d06a92b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#af7d241ee73dd0ab92202acb9d06a92b7">BuildSewnPointSets</a> (TMap&lt; int32, TSet&lt; int32 &gt; &gt; &amp;OutSewn) const</td></tr>
-<tr class="memdesc:af7d241ee73dd0ab92202acb9d06a92b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds sets of sewn points for all defined seams.  <br /></td></tr>
-<tr class="separator:af7d241ee73dd0ab92202acb9d06a92b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afab5da100568c10f433b38f9a4f0d279" id="r_afab5da100568c10f433b38f9a4f0d279"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#afab5da100568c10f433b38f9a4f0d279">AddPreviewPoint</a> (int32 ShapeIndex, int32 PointIndex)</td></tr>
-<tr class="memdesc:afab5da100568c10f433b38f9a4f0d279"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a preview point for the currently defined seam.  <br /></td></tr>
-<tr class="separator:afab5da100568c10f433b38f9a4f0d279"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79897ee7d4e30a89a197e2f495f0aa2c" id="r_a79897ee7d4e30a89a197e2f495f0aa2c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a79897ee7d4e30a89a197e2f495f0aa2c">ValidateMeshesForTargets</a> (const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;AStart, const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;BStart, const TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; &amp;<a class="el" href="classFCanvasSewing.html#a39403e55ba3f6d80933d41545292d121">SpawnedPatternActors</a>, bool bShowDialog)</td></tr>
-<tr class="memdesc:a79897ee7d4e30a89a197e2f495f0aa2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates that meshes can be sewn for the given targets.  <br /></td></tr>
-<tr class="separator:a79897ee7d4e30a89a197e2f495f0aa2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a015c1a56032eab1f89a524bd1e1f8845" id="r_a015c1a56032eab1f89a524bd1e1f8845"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a015c1a56032eab1f89a524bd1e1f8845">ValidateMeshForShape</a> (int32 ShapeIndex, const TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; &amp;<a class="el" href="classFCanvasSewing.html#a39403e55ba3f6d80933d41545292d121">SpawnedPatternActors</a>, bool bShowDialog)</td></tr>
-<tr class="memdesc:a015c1a56032eab1f89a524bd1e1f8845"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates that a specific shape mesh is suitable for sewing.  <br /></td></tr>
-<tr class="separator:a015c1a56032eab1f89a524bd1e1f8845"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15b574d8c26fd639406a4fcd0883a4d4" id="r_a15b574d8c26fd639406a4fcd0883a4d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#a15b574d8c26fd639406a4fcd0883a4d4">FinaliseSeamDefinitionByTargets</a> (const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;AStart, const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;AEnd, const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;BStart, const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;BEnd, const FInterpCurve&lt; FVector2D &gt; &amp;CurvePoints, const TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt; &amp;CompletedShapes, const TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; &amp;<a class="el" href="classFPatternSewing.html#a24a3ca22d3cbb0abe2444b42a673b3a9">SpawnedPatternActors</a>)</td></tr>
+<tr class="memdesc:a15b574d8c26fd639406a4fcd0883a4d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalises a seam definition using the given targets.  <br /></td></tr>
+<tr class="separator:a15b574d8c26fd639406a4fcd0883a4d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa1ab2136afeffdc7881724088486e3d" id="r_afa1ab2136afeffdc7881724088486e3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#afa1ab2136afeffdc7881724088486e3d">BuildAndAlignAllSeams</a> ()</td></tr>
+<tr class="memdesc:afa1ab2136afeffdc7881724088486e3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds and aligns all seams defined on the canvas.  <br /></td></tr>
+<tr class="separator:afa1ab2136afeffdc7881724088486e3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade9e039eea149348312e87c9de4bca9e" id="r_ade9e039eea149348312e87c9de4bca9e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#ade9e039eea149348312e87c9de4bca9e">ClearAllSeams</a> ()</td></tr>
+<tr class="memdesc:ade9e039eea149348312e87c9de4bca9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all seams from the canvas.  <br /></td></tr>
+<tr class="separator:ade9e039eea149348312e87c9de4bca9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e00a9e34a437ce2db2dc47e8042ac0a" id="r_a0e00a9e34a437ce2db2dc47e8042ac0a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#a0e00a9e34a437ce2db2dc47e8042ac0a">MergeSewnPatternPieces</a> ()</td></tr>
+<tr class="memdesc:a0e00a9e34a437ce2db2dc47e8042ac0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Merges the pattern meshes based on sewn seams.  <br /></td></tr>
+<tr class="separator:a0e00a9e34a437ce2db2dc47e8042ac0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba1bf359409e29ec6264137f5e2c1cfa" id="r_aba1bf359409e29ec6264137f5e2c1cfa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#aba1bf359409e29ec6264137f5e2c1cfa">BuildSewnPointSets</a> (TMap&lt; int32, TSet&lt; int32 &gt; &gt; &amp;OutSewn) const</td></tr>
+<tr class="memdesc:aba1bf359409e29ec6264137f5e2c1cfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds sets of sewn points for all defined seams.  <br /></td></tr>
+<tr class="separator:aba1bf359409e29ec6264137f5e2c1cfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ee2c9a286a1edaa41db84848a242bff" id="r_a0ee2c9a286a1edaa41db84848a242bff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#a0ee2c9a286a1edaa41db84848a242bff">AddPreviewPoint</a> (int32 ShapeIndex, int32 PointIndex)</td></tr>
+<tr class="memdesc:a0ee2c9a286a1edaa41db84848a242bff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a preview point for the currently defined seam.  <br /></td></tr>
+<tr class="separator:a0ee2c9a286a1edaa41db84848a242bff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c4ef52c76511933e46cc67d6214384b" id="r_a8c4ef52c76511933e46cc67d6214384b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#a8c4ef52c76511933e46cc67d6214384b">ValidateMeshesForTargets</a> (const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;AStart, const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;BStart, const TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; &amp;<a class="el" href="classFPatternSewing.html#a24a3ca22d3cbb0abe2444b42a673b3a9">SpawnedPatternActors</a>, bool bShowDialog)</td></tr>
+<tr class="memdesc:a8c4ef52c76511933e46cc67d6214384b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates that meshes can be sewn for the given targets.  <br /></td></tr>
+<tr class="separator:a8c4ef52c76511933e46cc67d6214384b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5acece760c36d5179907a769e95093a6" id="r_a5acece760c36d5179907a769e95093a6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#a5acece760c36d5179907a769e95093a6">ValidateMeshForShape</a> (int32 ShapeIndex, const TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; &amp;<a class="el" href="classFPatternSewing.html#a24a3ca22d3cbb0abe2444b42a673b3a9">SpawnedPatternActors</a>, bool bShowDialog)</td></tr>
+<tr class="memdesc:a5acece760c36d5179907a769e95093a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validates that a specific shape mesh is suitable for sewing.  <br /></td></tr>
+<tr class="separator:a5acece760c36d5179907a769e95093a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a19e159801fb8ad0ec040eeee89c317e5" id="r_a19e159801fb8ad0ec040eeee89c317e5"><td class="memItemLeft" align="right" valign="top">TArray&lt; <a class="el" href="structFSeamDefinition.html">FSeamDefinition</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a19e159801fb8ad0ec040eeee89c317e5">SeamDefinitions</a></td></tr>
-<tr class="separator:a19e159801fb8ad0ec040eeee89c317e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a089935a0ed1411d1c6d3a33af491b348" id="r_a089935a0ed1411d1c6d3a33af491b348"><td class="memItemLeft" align="right" valign="top">TArray&lt; <a class="el" href="structFPatternSewingConstraint.html">FPatternSewingConstraint</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a089935a0ed1411d1c6d3a33af491b348">AllDefinedSeams</a></td></tr>
-<tr class="separator:a089935a0ed1411d1c6d3a33af491b348"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9aec7b4f651286b755fdc361cab74838" id="r_a9aec7b4f651286b755fdc361cab74838"><td class="memItemLeft" align="right" valign="top">ESeamClickState&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a9aec7b4f651286b755fdc361cab74838">SeamClickState</a> = ESeamClickState::None</td></tr>
-<tr class="separator:a9aec7b4f651286b755fdc361cab74838"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5451b7e542caca8c875f9fc0da8009b3" id="r_a5451b7e542caca8c875f9fc0da8009b3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFClickTarget.html">FClickTarget</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a5451b7e542caca8c875f9fc0da8009b3">AStartTarget</a></td></tr>
-<tr class="separator:a5451b7e542caca8c875f9fc0da8009b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ff2823ce628ed6767ee63867f4135c3" id="r_a2ff2823ce628ed6767ee63867f4135c3"><td class="memItemLeft" align="right" valign="top"><a id="a2ff2823ce628ed6767ee63867f4135c3" name="a2ff2823ce628ed6767ee63867f4135c3"></a>
+<tr class="memitem:abc1b0c67881bd128b691856d6f5f709d" id="r_abc1b0c67881bd128b691856d6f5f709d"><td class="memItemLeft" align="right" valign="top">TArray&lt; <a class="el" href="structFSeamDefinition.html">FSeamDefinition</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#abc1b0c67881bd128b691856d6f5f709d">SeamDefinitions</a></td></tr>
+<tr class="separator:abc1b0c67881bd128b691856d6f5f709d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b86593aec0291dad28c5483edcc860a" id="r_a1b86593aec0291dad28c5483edcc860a"><td class="memItemLeft" align="right" valign="top">TArray&lt; <a class="el" href="structFPatternSewingConstraint.html">FPatternSewingConstraint</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#a1b86593aec0291dad28c5483edcc860a">AllDefinedSeams</a></td></tr>
+<tr class="separator:a1b86593aec0291dad28c5483edcc860a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe9bbab326b9b01aa065835c6ec492fb" id="r_abe9bbab326b9b01aa065835c6ec492fb"><td class="memItemLeft" align="right" valign="top">ESeamClickState&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#abe9bbab326b9b01aa065835c6ec492fb">SeamClickState</a> = ESeamClickState::None</td></tr>
+<tr class="separator:abe9bbab326b9b01aa065835c6ec492fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8b426e7cf5c4eb630deceaf87bb6da9" id="r_ab8b426e7cf5c4eb630deceaf87bb6da9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFClickTarget.html">FClickTarget</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#ab8b426e7cf5c4eb630deceaf87bb6da9">AStartTarget</a></td></tr>
+<tr class="separator:ab8b426e7cf5c4eb630deceaf87bb6da9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a597eedeb2cfe1a6fa4e7b419244b9d63" id="r_a597eedeb2cfe1a6fa4e7b419244b9d63"><td class="memItemLeft" align="right" valign="top"><a id="a597eedeb2cfe1a6fa4e7b419244b9d63" name="a597eedeb2cfe1a6fa4e7b419244b9d63"></a>
 <a class="el" href="structFClickTarget.html">FClickTarget</a>&#160;</td><td class="memItemRight" valign="bottom"><b>AEndTarget</b></td></tr>
-<tr class="separator:a2ff2823ce628ed6767ee63867f4135c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdea49023c60078e0f01cf5627464840" id="r_acdea49023c60078e0f01cf5627464840"><td class="memItemLeft" align="right" valign="top"><a id="acdea49023c60078e0f01cf5627464840" name="acdea49023c60078e0f01cf5627464840"></a>
+<tr class="separator:a597eedeb2cfe1a6fa4e7b419244b9d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2404cbc27f78abfc6cefba39cf2d6fd" id="r_ac2404cbc27f78abfc6cefba39cf2d6fd"><td class="memItemLeft" align="right" valign="top"><a id="ac2404cbc27f78abfc6cefba39cf2d6fd" name="ac2404cbc27f78abfc6cefba39cf2d6fd"></a>
 <a class="el" href="structFClickTarget.html">FClickTarget</a>&#160;</td><td class="memItemRight" valign="bottom"><b>BStartTarget</b></td></tr>
-<tr class="separator:acdea49023c60078e0f01cf5627464840"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d3050a5765ecf6352b9b2d9149ca589" id="r_a5d3050a5765ecf6352b9b2d9149ca589"><td class="memItemLeft" align="right" valign="top"><a id="a5d3050a5765ecf6352b9b2d9149ca589" name="a5d3050a5765ecf6352b9b2d9149ca589"></a>
+<tr class="separator:ac2404cbc27f78abfc6cefba39cf2d6fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f8c34a37f95330709fd97ba6578edd5" id="r_a8f8c34a37f95330709fd97ba6578edd5"><td class="memItemLeft" align="right" valign="top"><a id="a8f8c34a37f95330709fd97ba6578edd5" name="a8f8c34a37f95330709fd97ba6578edd5"></a>
 <a class="el" href="structFClickTarget.html">FClickTarget</a>&#160;</td><td class="memItemRight" valign="bottom"><b>BEndTarget</b></td></tr>
-<tr class="separator:a5d3050a5765ecf6352b9b2d9149ca589"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39403e55ba3f6d80933d41545292d121" id="r_a39403e55ba3f6d80933d41545292d121"><td class="memItemLeft" align="right" valign="top">TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a39403e55ba3f6d80933d41545292d121">SpawnedPatternActors</a></td></tr>
-<tr class="separator:a39403e55ba3f6d80933d41545292d121"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15805bbf8c5104d052ed1b60267ee9c8" id="r_a15805bbf8c5104d052ed1b60267ee9c8"><td class="memItemLeft" align="right" valign="top">TMap&lt; int32, TSet&lt; int32 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a15805bbf8c5104d052ed1b60267ee9c8">CurrentSeamPreviewPoints</a></td></tr>
-<tr class="separator:a15805bbf8c5104d052ed1b60267ee9c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a8f8c34a37f95330709fd97ba6578edd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24a3ca22d3cbb0abe2444b42a673b3a9" id="r_a24a3ca22d3cbb0abe2444b42a673b3a9"><td class="memItemLeft" align="right" valign="top">TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#a24a3ca22d3cbb0abe2444b42a673b3a9">SpawnedPatternActors</a></td></tr>
+<tr class="separator:a24a3ca22d3cbb0abe2444b42a673b3a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b55e8cf943a75de3546bb4286dc3f23" id="r_a6b55e8cf943a75de3546bb4286dc3f23"><td class="memItemLeft" align="right" valign="top">TMap&lt; int32, TSet&lt; int32 &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#a6b55e8cf943a75de3546bb4286dc3f23">CurrentSeamPreviewPoints</a></td></tr>
+<tr class="separator:a6b55e8cf943a75de3546bb4286dc3f23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a0bc7e2b0850403c0d0cb79d46bcd509f" id="r_a0bc7e2b0850403c0d0cb79d46bcd509f"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasSewing.html#a0bc7e2b0850403c0d0cb79d46bcd509f">FCanvasSewingTestHelper</a></td></tr>
-<tr class="separator:a0bc7e2b0850403c0d0cb79d46bcd509f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b0860f478171122a9fb92b8f8d7996f" id="r_a2b0860f478171122a9fb92b8f8d7996f"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFPatternSewing.html#a2b0860f478171122a9fb92b8f8d7996f">FPatternSewingTestHelper</a></td></tr>
+<tr class="separator:a2b0860f478171122a9fb92b8f8d7996f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Handles seam definition and alignment between canvas shapes. </p>
 <p>This class manages user interactions and pattern meshes to define, validate, and merge seams between shapes. It ensures that sewing operations are logically consistent and supports visual previews of seams. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="afab5da100568c10f433b38f9a4f0d279" name="afab5da100568c10f433b38f9a4f0d279"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afab5da100568c10f433b38f9a4f0d279">&#9670;&#160;</a></span>AddPreviewPoint()</h2>
+<a id="a0ee2c9a286a1edaa41db84848a242bff" name="a0ee2c9a286a1edaa41db84848a242bff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ee2c9a286a1edaa41db84848a242bff">&#9670;&#160;</a></span>AddPreviewPoint()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void FCanvasSewing::AddPreviewPoint </td>
+          <td class="memname">void FPatternSewing::AddPreviewPoint </td>
           <td>(</td>
           <td class="paramtype">int32&#160;</td>
           <td class="paramname"><em>ShapeIndex</em>, </td>
@@ -203,14 +203,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a68e5809fbf2b51f6d139bbbf8c50bb97" name="a68e5809fbf2b51f6d139bbbf8c50bb97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a68e5809fbf2b51f6d139bbbf8c50bb97">&#9670;&#160;</a></span>BuildAndAlignAllSeams()</h2>
+<a id="afa1ab2136afeffdc7881724088486e3d" name="afa1ab2136afeffdc7881724088486e3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa1ab2136afeffdc7881724088486e3d">&#9670;&#160;</a></span>BuildAndAlignAllSeams()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void FCanvasSewing::BuildAndAlignAllSeams </td>
+          <td class="memname">void FPatternSewing::BuildAndAlignAllSeams </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -223,14 +223,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="af7d241ee73dd0ab92202acb9d06a92b7" name="af7d241ee73dd0ab92202acb9d06a92b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af7d241ee73dd0ab92202acb9d06a92b7">&#9670;&#160;</a></span>BuildSewnPointSets()</h2>
+<a id="aba1bf359409e29ec6264137f5e2c1cfa" name="aba1bf359409e29ec6264137f5e2c1cfa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba1bf359409e29ec6264137f5e2c1cfa">&#9670;&#160;</a></span>BuildSewnPointSets()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void FCanvasSewing::BuildSewnPointSets </td>
+          <td class="memname">void FPatternSewing::BuildSewnPointSets </td>
           <td>(</td>
           <td class="paramtype">TMap&lt; int32, TSet&lt; int32 &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>OutSewn</em></td><td>)</td>
@@ -249,14 +249,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a9ec6499d7e75c8d78fdb3c0999dffce6" name="a9ec6499d7e75c8d78fdb3c0999dffce6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ec6499d7e75c8d78fdb3c0999dffce6">&#9670;&#160;</a></span>ClearAllSeams()</h2>
+<a id="ade9e039eea149348312e87c9de4bca9e" name="ade9e039eea149348312e87c9de4bca9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade9e039eea149348312e87c9de4bca9e">&#9670;&#160;</a></span>ClearAllSeams()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void FCanvasSewing::ClearAllSeams </td>
+          <td class="memname">void FPatternSewing::ClearAllSeams </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -269,14 +269,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="ae4de1cf2bd225ac98d3e106909fd36b4" name="ae4de1cf2bd225ac98d3e106909fd36b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae4de1cf2bd225ac98d3e106909fd36b4">&#9670;&#160;</a></span>FinaliseSeamDefinitionByTargets()</h2>
+<a id="a15b574d8c26fd639406a4fcd0883a4d4" name="a15b574d8c26fd639406a4fcd0883a4d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15b574d8c26fd639406a4fcd0883a4d4">&#9670;&#160;</a></span>FinaliseSeamDefinitionByTargets()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void FCanvasSewing::FinaliseSeamDefinitionByTargets </td>
+          <td class="memname">void FPatternSewing::FinaliseSeamDefinitionByTargets </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;&#160;</td>
           <td class="paramname"><em>AStart</em>, </td>
@@ -342,14 +342,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a4c53308855442ce7ba0e592764fb5cb6" name="a4c53308855442ce7ba0e592764fb5cb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c53308855442ce7ba0e592764fb5cb6">&#9670;&#160;</a></span>MergeSewnPatternPieces()</h2>
+<a id="a0e00a9e34a437ce2db2dc47e8042ac0a" name="a0e00a9e34a437ce2db2dc47e8042ac0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e00a9e34a437ce2db2dc47e8042ac0a">&#9670;&#160;</a></span>MergeSewnPatternPieces()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void FCanvasSewing::MergeSewnPatternPieces </td>
+          <td class="memname">void FPatternSewing::MergeSewnPatternPieces </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -362,14 +362,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a79897ee7d4e30a89a197e2f495f0aa2c" name="a79897ee7d4e30a89a197e2f495f0aa2c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79897ee7d4e30a89a197e2f495f0aa2c">&#9670;&#160;</a></span>ValidateMeshesForTargets()</h2>
+<a id="a8c4ef52c76511933e46cc67d6214384b" name="a8c4ef52c76511933e46cc67d6214384b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c4ef52c76511933e46cc67d6214384b">&#9670;&#160;</a></span>ValidateMeshesForTargets()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool FCanvasSewing::ValidateMeshesForTargets </td>
+          <td class="memname">bool FPatternSewing::ValidateMeshesForTargets </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structFClickTarget.html">FClickTarget</a> &amp;&#160;</td>
           <td class="paramname"><em>AStart</em>, </td>
@@ -415,14 +415,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a015c1a56032eab1f89a524bd1e1f8845" name="a015c1a56032eab1f89a524bd1e1f8845"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a015c1a56032eab1f89a524bd1e1f8845">&#9670;&#160;</a></span>ValidateMeshForShape()</h2>
+<a id="a5acece760c36d5179907a769e95093a6" name="a5acece760c36d5179907a769e95093a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5acece760c36d5179907a769e95093a6">&#9670;&#160;</a></span>ValidateMeshForShape()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool FCanvasSewing::ValidateMeshForShape </td>
+          <td class="memname">bool FPatternSewing::ValidateMeshForShape </td>
           <td>(</td>
           <td class="paramtype">int32&#160;</td>
           <td class="paramname"><em>ShapeIndex</em>, </td>
@@ -462,8 +462,8 @@ Friends</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Symbol Documentation</h2>
-<a id="a0bc7e2b0850403c0d0cb79d46bcd509f" name="a0bc7e2b0850403c0d0cb79d46bcd509f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0bc7e2b0850403c0d0cb79d46bcd509f">&#9670;&#160;</a></span>FCanvasSewingTestHelper</h2>
+<a id="a2b0860f478171122a9fb92b8f8d7996f" name="a2b0860f478171122a9fb92b8f8d7996f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b0860f478171122a9fb92b8f8d7996f">&#9670;&#160;</a></span>FPatternSewingTestHelper</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -472,7 +472,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">friend class FCanvasSewingTestHelper</td>
+          <td class="memname">friend class FPatternSewingTestHelper</td>
         </tr>
       </table>
   </td>
@@ -486,14 +486,14 @@ Friends</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a089935a0ed1411d1c6d3a33af491b348" name="a089935a0ed1411d1c6d3a33af491b348"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a089935a0ed1411d1c6d3a33af491b348">&#9670;&#160;</a></span>AllDefinedSeams</h2>
+<a id="a1b86593aec0291dad28c5483edcc860a" name="a1b86593aec0291dad28c5483edcc860a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b86593aec0291dad28c5483edcc860a">&#9670;&#160;</a></span>AllDefinedSeams</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">TArray&lt;<a class="el" href="structFPatternSewingConstraint.html">FPatternSewingConstraint</a>&gt; FCanvasSewing::AllDefinedSeams</td>
+          <td class="memname">TArray&lt;<a class="el" href="structFPatternSewingConstraint.html">FPatternSewingConstraint</a>&gt; FPatternSewing::AllDefinedSeams</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -501,14 +501,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a5451b7e542caca8c875f9fc0da8009b3" name="a5451b7e542caca8c875f9fc0da8009b3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5451b7e542caca8c875f9fc0da8009b3">&#9670;&#160;</a></span>AStartTarget</h2>
+<a id="ab8b426e7cf5c4eb630deceaf87bb6da9" name="ab8b426e7cf5c4eb630deceaf87bb6da9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8b426e7cf5c4eb630deceaf87bb6da9">&#9670;&#160;</a></span>AStartTarget</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structFClickTarget.html">FClickTarget</a> FCanvasSewing::AStartTarget</td>
+          <td class="memname"><a class="el" href="structFClickTarget.html">FClickTarget</a> FPatternSewing::AStartTarget</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -516,14 +516,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a15805bbf8c5104d052ed1b60267ee9c8" name="a15805bbf8c5104d052ed1b60267ee9c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a15805bbf8c5104d052ed1b60267ee9c8">&#9670;&#160;</a></span>CurrentSeamPreviewPoints</h2>
+<a id="a6b55e8cf943a75de3546bb4286dc3f23" name="a6b55e8cf943a75de3546bb4286dc3f23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b55e8cf943a75de3546bb4286dc3f23">&#9670;&#160;</a></span>CurrentSeamPreviewPoints</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">TMap&lt;int32, TSet&lt;int32&gt; &gt; FCanvasSewing::CurrentSeamPreviewPoints</td>
+          <td class="memname">TMap&lt;int32, TSet&lt;int32&gt; &gt; FPatternSewing::CurrentSeamPreviewPoints</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -531,14 +531,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a9aec7b4f651286b755fdc361cab74838" name="a9aec7b4f651286b755fdc361cab74838"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9aec7b4f651286b755fdc361cab74838">&#9670;&#160;</a></span>SeamClickState</h2>
+<a id="abe9bbab326b9b01aa065835c6ec492fb" name="abe9bbab326b9b01aa065835c6ec492fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe9bbab326b9b01aa065835c6ec492fb">&#9670;&#160;</a></span>SeamClickState</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ESeamClickState FCanvasSewing::SeamClickState = ESeamClickState::None</td>
+          <td class="memname">ESeamClickState FPatternSewing::SeamClickState = ESeamClickState::None</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -546,14 +546,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a19e159801fb8ad0ec040eeee89c317e5" name="a19e159801fb8ad0ec040eeee89c317e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19e159801fb8ad0ec040eeee89c317e5">&#9670;&#160;</a></span>SeamDefinitions</h2>
+<a id="abc1b0c67881bd128b691856d6f5f709d" name="abc1b0c67881bd128b691856d6f5f709d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc1b0c67881bd128b691856d6f5f709d">&#9670;&#160;</a></span>SeamDefinitions</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">TArray&lt;<a class="el" href="structFSeamDefinition.html">FSeamDefinition</a>&gt; FCanvasSewing::SeamDefinitions</td>
+          <td class="memname">TArray&lt;<a class="el" href="structFSeamDefinition.html">FSeamDefinition</a>&gt; FPatternSewing::SeamDefinitions</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -561,14 +561,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a39403e55ba3f6d80933d41545292d121" name="a39403e55ba3f6d80933d41545292d121"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39403e55ba3f6d80933d41545292d121">&#9670;&#160;</a></span>SpawnedPatternActors</h2>
+<a id="a24a3ca22d3cbb0abe2444b42a673b3a9" name="a24a3ca22d3cbb0abe2444b42a673b3a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24a3ca22d3cbb0abe2444b42a673b3a9">&#9670;&#160;</a></span>SpawnedPatternActors</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">TArray&lt;TWeakObjectPtr&lt;<a class="el" href="classAPatternMesh.html">APatternMesh</a>&gt; &gt; FCanvasSewing::SpawnedPatternActors</td>
+          <td class="memname">TArray&lt;TWeakObjectPtr&lt;<a class="el" href="classAPatternMesh.html">APatternMesh</a>&gt; &gt; FPatternSewing::SpawnedPatternActors</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -577,15 +577,15 @@ Friends</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>Plugins/ClothDesign/Source/ClothDesign/Public/Canvas/<a class="el" href="CanvasSewing_8h_source.html">CanvasSewing.h</a></li>
-<li>Plugins/ClothDesign/Source/ClothDesign/Private/Canvas/<b>CanvasSewing.cpp</b></li>
+<li>Plugins/ClothDesign/Source/ClothDesign/Public/PatternCreation/<a class="el" href="PatternSewing_8h_source.html">PatternSewing.h</a></li>
+<li>Plugins/ClothDesign/Source/ClothDesign/Private/PatternCreation/<b>PatternSewing.cpp</b></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="classFCanvasSewing.html">FCanvasSewing</a></li>
+    <li class="navelem"><a class="el" href="classFPatternSewing.html">FPatternSewing</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>

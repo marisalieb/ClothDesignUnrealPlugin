@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Master&#39;s Project (MP): FCanvasMesh Class Reference</title>
+<title>Master&#39;s Project (MP): FMeshTriangulation Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -65,7 +65,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('classFCanvasMesh.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('classFMeshTriangulation.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -94,33 +94,34 @@ $(document).ready(function(){initNavTree('classFCanvasMesh.html',''); initResiza
   <div class="summary">
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
-<a href="classFCanvasMesh-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">FCanvasMesh Class Reference</div></div>
+<a href="classFMeshTriangulation-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">FMeshTriangulation Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Handles triangulation and procedural mesh generation from canvas shapes.  
- <a href="classFCanvasMesh.html#details">More...</a></p>
+ <a href="classFMeshTriangulation.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="CanvasMesh_8h_source.html">CanvasMesh.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="MeshTriangulation_8h_source.html">MeshTriangulation.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aa1bec92acc5c92ae5fde3a5ec6816e71" id="r_aa1bec92acc5c92ae5fde3a5ec6816e71"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasMesh.html#aa1bec92acc5c92ae5fde3a5ec6816e71">TriangulateAndBuildAllMeshes</a> (const TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt; &amp;CompletedShapes, TArray&lt; FDynamicMesh3 &gt; &amp;OutMeshes, TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; &amp;OutSpawnedActors)</td></tr>
-<tr class="memdesc:aa1bec92acc5c92ae5fde3a5ec6816e71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts completed shapes into dynamic meshes and spawns corresponding actors.  <br /></td></tr>
-<tr class="separator:aa1bec92acc5c92ae5fde3a5ec6816e71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab94d5f6e17ae6f2d19316df40f0d0002" id="r_ab94d5f6e17ae6f2d19316df40f0d0002"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFMeshTriangulation.html#ab94d5f6e17ae6f2d19316df40f0d0002">TriangulateAndBuildAllMeshes</a> (const TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt; &amp;CompletedShapes, TArray&lt; FDynamicMesh3 &gt; &amp;OutMeshes, TArray&lt; TWeakObjectPtr&lt; <a class="el" href="classAPatternMesh.html">APatternMesh</a> &gt; &gt; &amp;OutSpawnedActors)</td></tr>
+<tr class="memdesc:ab94d5f6e17ae6f2d19316df40f0d0002"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts completed shapes into dynamic meshes and spawns corresponding actors.  <br /></td></tr>
+<tr class="separator:ab94d5f6e17ae6f2d19316df40f0d0002"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:ad28b395551aa4ff2d6bc3546a59e6e33" id="r_ad28b395551aa4ff2d6bc3546a59e6e33"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCanvasMesh.html#ad28b395551aa4ff2d6bc3546a59e6e33">FCanvasMeshTests</a></td></tr>
-<tr class="separator:ad28b395551aa4ff2d6bc3546a59e6e33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01e751e9454defc2bd370d437ba4569d" id="r_a01e751e9454defc2bd370d437ba4569d"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFMeshTriangulation.html#a01e751e9454defc2bd370d437ba4569d">FMeshTriangulationTests</a></td></tr>
+<tr class="separator:a01e751e9454defc2bd370d437ba4569d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Handles triangulation and procedural mesh generation from canvas shapes. </p>
+<dl class="section note"><dt>Note</dt><dd>Thesis reference: See Chapter 4.6 for detailed explanations. </dd></dl>
 <p>This class centralises all operations needed to convert user-drawn 2D shapes into fully triangulated 3D meshes. By encapsulating this functionality, it ensures that mesh construction is consistent, reusable, and maintainable. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa1bec92acc5c92ae5fde3a5ec6816e71" name="aa1bec92acc5c92ae5fde3a5ec6816e71"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1bec92acc5c92ae5fde3a5ec6816e71">&#9670;&#160;</a></span>TriangulateAndBuildAllMeshes()</h2>
+<a id="ab94d5f6e17ae6f2d19316df40f0d0002" name="ab94d5f6e17ae6f2d19316df40f0d0002"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab94d5f6e17ae6f2d19316df40f0d0002">&#9670;&#160;</a></span>TriangulateAndBuildAllMeshes()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -129,7 +130,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void FCanvasMesh::TriangulateAndBuildAllMeshes </td>
+          <td class="memname">void FMeshTriangulation::TriangulateAndBuildAllMeshes </td>
           <td>(</td>
           <td class="paramtype">const TArray&lt; FInterpCurve&lt; FVector2D &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>CompletedShapes</em>, </td>
@@ -173,8 +174,8 @@ Friends</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Symbol Documentation</h2>
-<a id="ad28b395551aa4ff2d6bc3546a59e6e33" name="ad28b395551aa4ff2d6bc3546a59e6e33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad28b395551aa4ff2d6bc3546a59e6e33">&#9670;&#160;</a></span>FCanvasMeshTests</h2>
+<a id="a01e751e9454defc2bd370d437ba4569d" name="a01e751e9454defc2bd370d437ba4569d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01e751e9454defc2bd370d437ba4569d">&#9670;&#160;</a></span>FMeshTriangulationTests</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -183,7 +184,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">friend class FCanvasMeshTests</td>
+          <td class="memname">friend class FMeshTriangulationTests</td>
         </tr>
       </table>
   </td>
@@ -197,15 +198,15 @@ Friends</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>Plugins/ClothDesign/Source/ClothDesign/Public/Canvas/<a class="el" href="CanvasMesh_8h_source.html">CanvasMesh.h</a></li>
-<li>Plugins/ClothDesign/Source/ClothDesign/Private/Canvas/<b>CanvasMesh.cpp</b></li>
+<li>Plugins/ClothDesign/Source/ClothDesign/Public/PatternCreation/<a class="el" href="MeshTriangulation_8h_source.html">MeshTriangulation.h</a></li>
+<li>Plugins/ClothDesign/Source/ClothDesign/Private/PatternCreation/<b>MeshTriangulation.cpp</b></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="classFCanvasMesh.html">FCanvasMesh</a></li>
+    <li class="navelem"><a class="el" href="classFMeshTriangulation.html">FMeshTriangulation</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>

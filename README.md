@@ -8,6 +8,23 @@
 ![Tests](https://img.shields.io/badge/tests-UE%20Automation%20Tests-brightgreen)
 
 
+A lightweight Unreal Engine 5.5 plugin that brings 2D pattern drafting, automatic mesh generation 
+and real-time cloth simulation (via Chaos Cloth) into a single, in-editor workflow.
+
+With this plugin, users can:
+
+- Sketch and edit 2D garment patterns directly in UE
+
+- Automatically generate triangulated meshes from flat patterns
+
+- Define seams and preview cloth draping in real time using UE’s built-in simulation
+
+- Iterate quickly without relying on external tools
+
+Built entirely on UE’s native geometry and UI modules, the plugin demonstrates a streamlined approach 
+to digital garment creation, suitable for both real-time previews and 
+cinematic pipelines, while highlighting new possibilities for UE’s native systems in cloth design.
+
 #
 ## Plugin User Instructions
 #
@@ -79,6 +96,7 @@ Once the merged skeletal mesh is saved in the content browser:
 - Select the skeletal mesh in the Cloth Object Picker on the 3D UI.
 - Assign a material and select a Simulation Preset.
 - The mesh is now ready to simulate using the grey "Simulate" button in the top bar.
+- The most reliable collisions can be achieved with UE native geometry (like cylinders and sphere). Add these at the menu next to the editor mode selection window. 
 
 Note: The cloth and material pickers also work with externally imported meshes (e.g., Marvelous Designer), enabling fast setup for any cloth asset in UE (video [here](https://www.youtube.com/watch?v=RBReJKRiPME)).
 
@@ -132,8 +150,28 @@ In Unreal Engine: Navigate to Tools > Session Frontend > Automation, locate the 
 #
 
 # Images
-### Selection of custom editor mode
-![photo](media/photo1.png)
 
+### Modes and shortcuts overview
+![keys.png](media/keys.png)
+#
+
+### Mesh triangulation
+![meshgen.png](media/meshgen.png)
+
+#
+### Seam placement and highlighting
+![seamsright.png](media/seamsright.png)
+
+#
+### The following workflow remains after mesh creation
+![hshortworkflow.png](media/hshortworkflow.png)
+
+#
+### Example of the different simulation presets applied to an imported mesh (left to right: denim, leather, silk, jersey).
+![diffpresetssim.png](media/diffpresetssim.png)
+
+#
+### Full overview of drawn, triangulated, sewn and then simulated mesh in UE.
+![full_overview.png](media/full_overview.png)
 
 
